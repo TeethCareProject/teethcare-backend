@@ -1,2 +1,7 @@
-package com.teethcare.repository;public interface CustomerServiceRepository {
+package com.teethcare.repository;
+
+import com.teethcare.model.entity.CustomerService;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CustomerServiceRepository extends JpaRepository<CustomerService, String> {
 }
