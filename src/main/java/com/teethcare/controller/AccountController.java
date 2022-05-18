@@ -3,23 +3,21 @@ package com.teethcare.controller;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.List;
 
 @RestController
 @EnableSwagger2
-@RequestMapping("/")
+@RequestMapping("/api/accounts")
 public class AccountController {
 
     @Autowired
     AccountRepository accountRepository;
-    @PostMapping("/account/")
-    public Account addAccount(@Validated  @RequestBody Account account) {
-        return  accountRepository.save(account);
+    @GetMapping
+    public List<Account> getAllAccounts() {
+        return accountRepository.findAll();
     }
 
 }

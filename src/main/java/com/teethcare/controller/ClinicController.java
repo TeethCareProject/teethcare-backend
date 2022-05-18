@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,13 +42,5 @@ public class ClinicController {
             return new ResponseEntity<>(clinicRepository.save(nClinic), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<Clinic> delClinic(@PathVariable("id") int id, @Valid @RequestBody Clinic clinic) {
-        Optional<Clinic> clinicData = clinicRepository.findById(id);
-        return clinicData.map(category1 -> {
-            clinic.setId(category1.getId());
-            return new ResponseEntity<>(clinicRepository.save(clinic), HttpStatus.OK);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
