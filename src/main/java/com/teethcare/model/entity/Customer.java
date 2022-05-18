@@ -1,2 +1,4 @@
-package com.teethcare.model.entity;public class Customer {
+package com.teethcare.model.entity;
+
+public class Customer {
 }

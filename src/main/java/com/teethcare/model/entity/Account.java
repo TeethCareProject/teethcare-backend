@@ -1,2 +1,9 @@
-package com.teethcare.model.entity;public class Account {
+package com.teethcare.model.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "account")
+public class Account {
 }
