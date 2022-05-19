@@ -35,7 +35,7 @@ public class CustomerServiceController {
     }
 
     @DeleteMapping ("/{id}")
-    public ResponseEntity<CustomerService> delCustomer(@PathVariable("id") Integer id) {
+    public ResponseEntity<CustomerService> delCustomerService(@PathVariable("id") Integer id) {
         return csServiceImp.delete(id);
     }
 }
