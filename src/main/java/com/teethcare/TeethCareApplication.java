@@ -11,6 +11,14 @@ public class TeethCareApplication {
     public static void main(String[] args) {
         SpringApplication.run(TeethCareApplication.class, args);
     }
+<<<<<<< Updated upstream
+=======
+//
+//    @Bean
+//    PasswordEncoder passwordEncoder(){
+//        return new BCryptPasswordEncoder();
+//    }
+>>>>>>> Stashed changes
 
 
 }
