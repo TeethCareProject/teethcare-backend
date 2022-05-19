@@ -10,8 +10,10 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "account")
+@Entity(name = "account")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role_id",
+        discriminatorType = DiscriminatorType.INTEGER)
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,16 +26,16 @@ public class Account {
     @NotEmpty
     private String password;
 
-    @Column(name = "role_id", nullable = false)
+    @Column(name = "role_id", nullable = false, insertable = false, updatable = false)
     @NotEmpty
     private int roleId;
 
     @NotEmpty
-    @Column(name = "first_name",length = 40, nullable = false)
+    @Column(name = "first_name", length = 40, nullable = false)
     private String fistName;
 
     @NotEmpty
-    @Column(name = "last_name",length = 10, nullable = false)
+    @Column(name = "last_name", length = 10, nullable = false)
     private String lastName;
 
     @Column(name = "gender")

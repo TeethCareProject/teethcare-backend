@@ -39,7 +39,7 @@ public class CustomerController {
         Optional<Customer> CustomerData = customerRepository.findById(id);
         if (CustomerData.isPresent()) {
             Customer customer = CustomerData.get();
-            customer.getAccount().setStatus(false);
+            customer.setStatus(false);
             return new ResponseEntity<>(customerRepository.save(customer), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

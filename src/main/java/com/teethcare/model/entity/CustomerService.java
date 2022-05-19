@@ -10,16 +10,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "customer_service")
-public class CustomerService {
-    @Id
-    @Column(name = "account_id")
-    private int id;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "account_id")
-    private Account account;
-
+@DiscriminatorValue("2")
+public class CustomerService  extends Account{
     @ManyToOne
     private Clinic clinic;
 }

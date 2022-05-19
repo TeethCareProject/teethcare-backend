@@ -12,16 +12,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Entity
 @Table(name = "customer")
-public class Customer {
-    @Id
-    @Column(name = "account_id")
-    private String id;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "account_id")
-    private Account account;
-
+@DiscriminatorValue("3")
+public class Customer extends Account {
     @Email
     @Column(name = "email", length = 320)
     private String email;
