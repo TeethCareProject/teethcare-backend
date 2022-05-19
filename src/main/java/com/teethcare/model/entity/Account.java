@@ -11,6 +11,7 @@ import java.sql.Date;
 @Entity(name = "account")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

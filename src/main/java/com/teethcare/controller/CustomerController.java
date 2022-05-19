@@ -32,6 +32,7 @@ public class CustomerController {
     }
 
     @PostMapping
+    @PreAuthorize("permitAll()")
     public Customer addCustomer(@Valid @RequestBody Customer customer) {
         return customerServiceImp.save(customer);
     }
