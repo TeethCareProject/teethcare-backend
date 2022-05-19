@@ -27,7 +27,7 @@ public class JwtTokenUtil implements Serializable {
 
     public String generateToken(Authentication authen){
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000);
+        Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000 *24 *60);
         UserDetailsImpl userDetails = (UserDetailsImpl) authen.getPrincipal();
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -38,7 +38,7 @@ public class JwtTokenUtil implements Serializable {
     }
     public String generateToken(String username){
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000);
+        Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000 * 24 * 60);
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(now)

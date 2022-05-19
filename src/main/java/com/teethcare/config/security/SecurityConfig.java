@@ -50,7 +50,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/api/dentists/**");
         http.authorizeRequests().antMatchers("/api/customer-services/**");
         http.authorizeRequests().antMatchers("/api/patients/**");
-        http.authorizeRequests().antMatchers("/api/hello");
         http.authorizeRequests().anyRequest().authenticated();
         http.headers().contentSecurityPolicy("script-src 'self'");
         http.logout().logoutUrl("/api/logout").invalidateHttpSession(true);
@@ -64,8 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/configuration/security",
                 "/webjars/**",
                 "/csrf",
-                "/error",
-                "/swagger-ui/**"
+                "/swagger-ui.html",
+                "/error"
         );
     }
     @Bean

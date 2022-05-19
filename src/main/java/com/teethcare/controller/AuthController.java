@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authManager;
@@ -33,7 +33,7 @@ public class AuthController {
     private final JwtTokenUtil jwtTokenUtil;
 
     private final AccountService accountService;
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginRequest request){
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
@@ -67,7 +67,7 @@ public class AuthController {
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 
-    @PostMapping("/auth/refresh-token")
+    @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest){
         if(!jwtTokenUtil.validateToken(tokenRequest.getRefreshToken())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
