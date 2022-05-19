@@ -49,5 +49,5 @@ public class Clinic {
     private Float avgRatingScore;
 
     @Column(name = "status")
-    private int status;
+    private boolean status;
 }

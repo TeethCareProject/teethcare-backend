@@ -51,7 +51,7 @@ public class Account {
     private Date dateOfBirth;
 
     @Column(name = "status")
-    private int status;
+    private boolean status;
 
 
 }

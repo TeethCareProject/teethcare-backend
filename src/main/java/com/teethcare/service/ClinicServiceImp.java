@@ -36,7 +36,7 @@ public class ClinicServiceImp implements CRUDService<Clinic> {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
         if (clinicData.isPresent()) {
             Clinic clinic = clinicData.get();
-            clinic.setStatus(0);
+            clinic.setStatus(false);
             return new ResponseEntity<>(clinicRepository.save(clinic), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
