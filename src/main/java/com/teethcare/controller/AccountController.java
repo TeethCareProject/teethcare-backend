@@ -1,7 +1,8 @@
 package com.teethcare.controller;
 
 import com.teethcare.model.entity.Account;
-import com.teethcare.repository.AccountRepository;
+import com.teethcare.service.AccountServiceImp;
+import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -14,10 +15,9 @@ import java.util.List;
 public class AccountController {
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountServiceImp accountServiceImp;
     @GetMapping
     public List<Account> getAllAccounts() {
-        return accountRepository.findAll();
+        return accountServiceImp.findAll();
     }
-
 }

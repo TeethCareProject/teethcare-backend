@@ -44,9 +44,7 @@ public class Clinic {
     private String taxCode;
 
     @Column(name = "avg_rating_score")
-    @Max(value = 5)
-    @Min(value = 0)
-    private float avgRatingScore;
+    private Float avgRatingScore;
 
     @Column(name = "status")
     private boolean status;

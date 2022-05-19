@@ -1,5 +1,6 @@
 package com.teethcare.model.entity;
 
+import io.swagger.models.auth.In;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,7 +18,7 @@ import java.util.Date;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Integer id;
 
     @Column(name = "username", length = 72, nullable = false)
     private String username;
@@ -27,7 +28,6 @@ public class Account {
     private String password;
 
     @Column(name = "role_id", nullable = false, insertable = false, updatable = false)
-    @NotEmpty
     private int roleId;
 
     @NotEmpty
@@ -47,7 +47,6 @@ public class Account {
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
-    @NotEmpty
     private boolean status;
 
 
