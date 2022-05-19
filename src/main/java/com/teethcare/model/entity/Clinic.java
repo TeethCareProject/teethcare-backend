@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 
 @Getter
@@ -44,6 +45,7 @@ public class Clinic {
     private String taxCode;
 
     @Column(name = "avg_rating_score")
+    @Max(value = 5)
     private Float avgRatingScore;
 
     @Column(name = "status")
