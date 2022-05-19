@@ -1,6 +1,9 @@
 package com.teethcare.model.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -9,8 +12,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "customer_service")
-public class CustomerService {
+@Table(name = "application_owner")
+public class ApplicationOwner {
     @Id
     @Column(name = "account_id")
     private String id;
@@ -19,7 +22,4 @@ public class CustomerService {
     @MapsId
     @JoinColumn(name = "account_id")
     private Account account;
-
-    @ManyToOne
-    private Clinic clinic;
 }

@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "customer_service")
-public class CustomerService {
+public class Manager {
     @Id
     @Column(name = "account_id")
     private String id;
@@ -20,6 +20,4 @@ public class CustomerService {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @ManyToOne
-    private Clinic clinic;
 }
