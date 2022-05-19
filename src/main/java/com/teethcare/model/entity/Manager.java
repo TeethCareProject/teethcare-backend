@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Manager {
     @Id
     @Column(name = "account_id")
-    private String id;
+    private int id;
 
     @OneToOne
     @MapsId

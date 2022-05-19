@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class CustomerService {
     @Id
     @Column(name = "account_id")
-    private String id;
+    private int id;
 
     @OneToOne
     @MapsId

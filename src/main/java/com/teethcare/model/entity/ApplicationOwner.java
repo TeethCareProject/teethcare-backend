@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class ApplicationOwner {
     @Id
     @Column(name = "account_id")
-    private String id;
+    private int id;
 
     @OneToOne
     @MapsId

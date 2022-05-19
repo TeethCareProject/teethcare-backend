@@ -37,9 +37,6 @@ public class Clinic {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "gender")
-    private boolean gender;
-
     @Column(name = "image_url")
     private String imageUrl;
 

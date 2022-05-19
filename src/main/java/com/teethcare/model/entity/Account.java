@@ -17,6 +17,9 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
+    @Column(name = "username", length = 72, nullable = false)
+    private String username;
+
     @Column(name = "password", length = 72, nullable = false)
     @NotEmpty
     private String password;
