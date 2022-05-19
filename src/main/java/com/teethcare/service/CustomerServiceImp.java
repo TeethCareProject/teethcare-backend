@@ -35,7 +35,7 @@ public class CustomerServiceImp implements CRUDService<Customer> {
         Optional<Customer> CustomerData = customerRepository.findById(id);
         if (CustomerData.isPresent()) {
             Customer customer = CustomerData.get();
-            customer.setStatus(0);
+            customer.setStatus(false);
             return new ResponseEntity<>(customerRepository.save(customer), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
