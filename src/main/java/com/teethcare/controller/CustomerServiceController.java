@@ -38,7 +38,7 @@ public class CustomerServiceController {
         Optional<CustomerService> customerServiceData = customerServiceRepository.findById(id);
         if (customerServiceData.isPresent()) {
             CustomerService customerService = customerServiceData.get();
-            customerService.getAccount().setStatus(false);
+            customerService.setStatus(false);
             return new ResponseEntity<>(customerServiceRepository.save(customerService), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
