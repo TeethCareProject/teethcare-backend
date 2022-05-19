@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class CustomerServiceImp implements CRUDService<Customer> {
     }
 
     @Override
-    public Customer save(Customer customer) {
+    public Customer save(@Valid Customer customer) {
          return  customerRepository.save(customer);
     }
     @Override

@@ -1,19 +1,20 @@
 package com.teethcare.service;
 
-import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ClinicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ClinicServiceImp implements CRUDService<Clinic> {
     @Autowired
-    private ClinicRepository clinicRepository;
+    ClinicRepository clinicRepository;
 
     @Override
     public List<Clinic> findAll() {
@@ -26,7 +27,7 @@ public class ClinicServiceImp implements CRUDService<Clinic> {
     }
 
     @Override
-    public Clinic save(Clinic clinic) {
+    public Clinic save(@Valid Clinic clinic) {
         return clinicRepository.save(clinic);
     }
 
