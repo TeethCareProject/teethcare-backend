@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,6 +22,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private  final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
@@ -40,19 +43,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/accounts/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/admins/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/managers/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/dentists/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/customer-services/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/patients/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/auth/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/accounts/**");
+        http.authorizeRequests().antMatchers("/api/admins/**");
+        http.authorizeRequests().antMatchers("/api/managers/**");
+        http.authorizeRequests().antMatchers("/api/dentists/**");
+        http.authorizeRequests().antMatchers("/api/customer-services/**");
+        http.authorizeRequests().antMatchers("/api/patients/**");
+        http.authorizeRequests().antMatchers("/api/hello");
         http.authorizeRequests().anyRequest().authenticated();
         http.headers().contentSecurityPolicy("script-src 'self'");
         http.logout().logoutUrl("/api/logout").invalidateHttpSession(true);
         http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/webjars/**",
+                "/csrf",
+                "/error",
+                "/swagger-ui/**"
+        );
+    }
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception{

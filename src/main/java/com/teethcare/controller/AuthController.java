@@ -2,9 +2,12 @@ package com.teethcare.controller;
 
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailsImpl;
+import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.LoginRequest;
+import com.teethcare.model.request.RefreshTokenRequest;
 import com.teethcare.model.response.LoginResponse;
 import com.teethcare.model.response.RefreshTokeResponse;
+import com.teethcare.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,13 +28,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
-    @Autowired
     private final AuthenticationManager authManager;
 
-    @Autowired
     private final JwtTokenUtil jwtTokenUtil;
 
-    @PostMapping("/login")
+    private final AccountService accountService;
+    @PostMapping("/auth/login")
     public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginRequest request){
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
@@ -64,5 +66,25 @@ public class AuthController {
         }
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
+
+    @PostMapping("/auth/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest){
+        if(!jwtTokenUtil.validateToken(tokenRequest.getRefreshToken())){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+        String username = jwtTokenUtil.getUsernameFromJwt(tokenRequest.getRefreshToken());
+        Account account = accountService.getAccountByUsername(username);
+        if(account == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Token claim is invalid");
+        }
+        String newToken = jwtTokenUtil.generateToken(account.getUsername());
+        String newRefreshToken = jwtTokenUtil.generateRefreshToken(account.getUsername());
+        RefreshTokeResponse response = new RefreshTokeResponse(newToken, newRefreshToken);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+
     
 }
