@@ -2,8 +2,10 @@ package com.teethcare.model.entity;
 
 import io.swagger.models.auth.In;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
@@ -20,6 +22,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @NotEmpty
     @Column(name = "username", length = 72, nullable = false)
     private String username;
 
@@ -30,11 +33,11 @@ public class Account {
     @Column(name = "role_id", nullable = false, insertable = false, updatable = false)
     private int roleId;
 
-    @NotEmpty
+    @NotBlank
     @Column(name = "first_name", length = 40, nullable = false)
     private String fistName;
 
-    @NotEmpty
+    @NotBlank
     @Column(name = "last_name", length = 10, nullable = false)
     private String lastName;
 
@@ -47,7 +50,8 @@ public class Account {
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
-    private boolean status;
+    @Column(name = "status")
+    private int status;
 
 
 }
