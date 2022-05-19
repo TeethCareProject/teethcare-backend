@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 
 @Getter
@@ -37,9 +38,6 @@ public class Clinic {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "gender")
-    private boolean gender;
-
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -48,8 +46,7 @@ public class Clinic {
 
     @Column(name = "avg_rating_score")
     @Max(value = 5)
-    @Min(value = 0)
-    private float avgRatingScore;
+    private Float avgRatingScore;
 
     @Column(name = "status")
     private boolean status;

@@ -9,17 +9,9 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "application_owner")
-public class ApplicationOwner {
-    @Id
-    @Column(name = "account_id")
-    private String id;
+@DiscriminatorValue("5")
+public class ApplicationOwner extends Account {
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "account_id")
-    private Account account;
 }

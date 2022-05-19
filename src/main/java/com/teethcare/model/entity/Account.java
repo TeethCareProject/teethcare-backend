@@ -1,5 +1,6 @@
 package com.teethcare.model.entity;
 
+import io.swagger.models.auth.In;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,27 +11,31 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "account")
+@Entity(name = "account")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role_id",
+        discriminatorType = DiscriminatorType.INTEGER)
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Integer id;
+
+    @Column(name = "username", length = 72, nullable = false)
+    private String username;
 
     @Column(name = "password", length = 72, nullable = false)
     @NotEmpty
     private String password;
 
-    @Column(name = "role_id", nullable = false)
-    @NotEmpty
+    @Column(name = "role_id", nullable = false, insertable = false, updatable = false)
     private int roleId;
 
     @NotEmpty
-    @Column(name = "first_name",length = 40, nullable = false)
+    @Column(name = "first_name", length = 40, nullable = false)
     private String fistName;
 
     @NotEmpty
-    @Column(name = "last_name",length = 10, nullable = false)
+    @Column(name = "last_name", length = 10, nullable = false)
     private String lastName;
 
     @Column(name = "gender")
@@ -42,7 +47,6 @@ public class Account {
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
-    @NotEmpty
     private boolean status;
 
 
