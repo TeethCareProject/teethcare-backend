@@ -1,5 +1,6 @@
 package com.teethcare.model.entity;
 
+import io.swagger.models.auth.In;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
@@ -10,17 +11,14 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "clinic")
 public class Clinic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "manager_id", length = 72, nullable = false)
     @NotEmpty

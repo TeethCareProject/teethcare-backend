@@ -1,25 +1,18 @@
 package com.teethcare.model.entity;
 
-import io.swagger.models.auth.In;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.util.Date;
+import java.sql.Date;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Entity(name = "account")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "role_id",
-        discriminatorType = DiscriminatorType.INTEGER)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotEmpty
@@ -30,8 +23,9 @@ public class Account {
     @NotEmpty
     private String password;
 
-    @Column(name = "role_id", nullable = false, insertable = false, updatable = false)
-    private int roleId;
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role roleId;
 
     @NotBlank
     @Column(name = "first_name", length = 40, nullable = false)
@@ -52,6 +46,4 @@ public class Account {
 
     @Column(name = "status")
     private boolean status;
-
-
 }

@@ -28,6 +28,7 @@ public class CustomerServiceImp implements CRUDService<Customer> {
 
     @Override
     public Customer save(@Valid Customer customer) {
+        customer.setId(null);
          return  customerRepository.save(customer);
     }
     @Override

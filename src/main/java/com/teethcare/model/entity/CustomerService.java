@@ -4,14 +4,12 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "customer_service")
-@DiscriminatorValue("2")
+@PrimaryKeyJoinColumn(name = "account_id")
 public class CustomerService  extends Account{
+
     @ManyToOne
     private Clinic clinic;
 }

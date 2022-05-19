@@ -6,13 +6,10 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "customer")
-@DiscriminatorValue("3")
+@PrimaryKeyJoinColumn(name = "account_id")
 public class Customer extends Account {
     @Email
     @Column(name = "email", length = 320)

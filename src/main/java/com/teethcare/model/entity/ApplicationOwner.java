@@ -1,17 +1,13 @@
 package com.teethcare.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "application_owner")
-@DiscriminatorValue("5")
+@PrimaryKeyJoinColumn(name = "account_id")
 public class ApplicationOwner extends Account {
 
 }

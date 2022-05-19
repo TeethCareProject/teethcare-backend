@@ -16,7 +16,7 @@ public class TeethCareApplication {
     public static void main(String[] args) {
         SpringApplication.run(TeethCareApplication.class, args);
     }
-//
+
 //    @Bean
 //    PasswordEncoder passwordEncoder(){
 //        return new BCryptPasswordEncoder();

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,10 @@ public class ClinicServiceImp implements CRUDService<Clinic> {
         return clinicRepository.findAll();
     }
 
+    public Collection<Clinic> findAllActive() {
+        return clinicRepository.findAllActive();
+    }
+
     @Override
     public Optional<Clinic> findById(Integer id) {
         return clinicRepository.findById(id);
@@ -28,6 +33,7 @@ public class ClinicServiceImp implements CRUDService<Clinic> {
 
     @Override
     public Clinic save(@Valid Clinic clinic) {
+        clinic.setId(null);
         return clinicRepository.save(clinic);
     }
 

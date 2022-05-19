@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +21,8 @@ public class ClinicController {
     ClinicServiceImp clinicServiceImp;
 
     @GetMapping
-    public List<Clinic> getAllClinics() {
-        return clinicServiceImp.findAll();
+    public Collection<Clinic> findAllActive() {
+        return clinicServiceImp.findAllActive();
     }
 
     @GetMapping("/{id}")
