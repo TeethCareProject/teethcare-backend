@@ -4,6 +4,7 @@ import com.teethcare.model.entity.Clinic;
 import com.teethcare.service.ClinicServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -21,21 +22,25 @@ public class ClinicController {
     ClinicServiceImp clinicServiceImp;
 
     @GetMapping
-    public Collection<Clinic> findAllActive() {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT')")
+    public Collection<Clinic> getAllActiveClinics() {
         return clinicServiceImp.findAllActive();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT', 'MANAGER', 'DENTIST', 'CUSTOMER_SERVICE')")
     public Optional<Clinic> getClinic(@PathVariable("id") int id) {
         return clinicServiceImp.findById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Clinic addClinic(@Valid @RequestBody Clinic clinic) {
         return clinicServiceImp.save(clinic);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Clinic> delClinic(@PathVariable("id") int id) {
         return clinicServiceImp.delete(id);
     }

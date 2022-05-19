@@ -25,11 +25,11 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private Role roleId;
+    private Role role;
 
     @NotBlank
     @Column(name = "first_name", length = 40, nullable = false)
-    private String fistName;
+    private String firstName;
 
     @NotBlank
     @Column(name = "last_name", length = 10, nullable = false)

@@ -4,6 +4,7 @@ import com.teethcare.model.entity.Customer;
 import com.teethcare.service.CustomerServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -19,11 +20,13 @@ public class CustomerController {
     private CustomerServiceImp customerServiceImp;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public List<Customer> getAllCustomers() {
         return customerServiceImp.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT', 'DENTIST', 'CUSTOMER_SERVICE')")
     public Optional<Customer> getCustomer(@PathVariable("id") Integer id) {
         return customerServiceImp.findById(id);
     }
@@ -34,6 +37,7 @@ public class CustomerController {
     }
 
     @DeleteMapping ("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Customer> delCustomer(@PathVariable("id") Integer id) {
         return customerServiceImp.delete(id);
     }

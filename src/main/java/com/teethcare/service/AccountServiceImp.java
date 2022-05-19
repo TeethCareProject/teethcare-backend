@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AccountServiceImp implements CRUDService<Account> {
+public class AccountServiceImp implements CRUDService<Account>, AccountService {
     @Autowired
     AccountRepository accountRepository;
 
@@ -39,5 +39,10 @@ public class AccountServiceImp implements CRUDService<Account> {
             return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public Account getAccountByUsername(String username) {
+        return accountRepository.findAccountByUsername(username);
     }
 }
