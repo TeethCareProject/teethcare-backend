@@ -6,10 +6,8 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "customer_service")
+@Table(name = "application_owner")
 @PrimaryKeyJoinColumn(name = "account_id")
-public class CustomerService  extends Account{
+public class ApplicationOwner extends Account {
 
-    @ManyToOne
-    private Clinic clinic;
 }
