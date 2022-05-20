@@ -1,7 +1,5 @@
 package com.teethcare.service;
 
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Customer;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

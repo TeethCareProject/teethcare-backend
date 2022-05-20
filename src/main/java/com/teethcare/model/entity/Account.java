@@ -7,7 +7,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "account")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Account {
@@ -37,7 +40,7 @@ public class Account {
     private String lastName;
 
     @Column(name = "gender")
-    private boolean gender;
+    private int gender;
 
     @Column(name = "avatar_image")
     private String avatarImage;
@@ -46,5 +49,5 @@ public class Account {
     private Date dateOfBirth;
 
     @Column(name = "status")
-    private boolean status;
+    private int status;
 }

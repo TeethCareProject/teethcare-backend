@@ -35,7 +35,7 @@ public class AccountServiceImp implements CRUDService<Account>, AccountService {
         Optional<Account> accountData = accountRepository.findById(id);
         if (accountData.isPresent()) {
             Account account = accountData.get();
-            account.setStatus(false);
+            account.setStatus(0);
             return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

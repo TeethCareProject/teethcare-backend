@@ -1,7 +1,16 @@
 package com.teethcare.model.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "service")
 public class Service {
@@ -16,10 +25,10 @@ public class Service {
     private String description;
 
     @Column(name = "price")
-    private boolean price;
+    private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "clinic_id")
+    @JoinColumn(name = "clinic_id", referencedColumnName = "id")
     private Clinic clinic;
 
     @Column(name = "image_url")

@@ -13,6 +13,6 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account findAccountByUsername(String username);
 
-    @Query(value = "SELECT a.username FROM account a WHERE a.status = true and a.username = ?1")
+    @Query(value = "SELECT a.username FROM account a WHERE a.status = 1 and a.username = ?1")
     String getActiveUserName(String username);
 }

@@ -42,8 +42,23 @@ public class ClinicServiceImp implements CRUDService<Clinic> {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
         if (clinicData.isPresent()) {
             Clinic clinic = clinicData.get();
-            clinic.setStatus(false);
+            clinic.setStatus(0);
             return new ResponseEntity<>(clinicRepository.save(clinic), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity update(Integer id, Clinic clinic) {
+        if (clinicRepository.findById(id).isPresent()) {
+            Clinic nClinic = clinicRepository.findById(id).get();
+            nClinic.setManagerId(clinic.getManagerId());
+            nClinic.setLocationId(clinic.getLocationId());
+            nClinic.setName(clinic.getName());
+            nClinic.setDescription(clinic.getDescription());
+            nClinic.setImageUrl(clinic.getImageUrl());
+            nClinic.setTaxCode(clinic.getTaxCode());
+            nClinic.setAvgRatingScore(clinic.getAvgRatingScore());
+            return new ResponseEntity(clinicRepository.save(nClinic), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

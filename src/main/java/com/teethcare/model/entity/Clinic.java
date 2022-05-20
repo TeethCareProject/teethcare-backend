@@ -11,7 +11,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "clinic")
 public class Clinic {
@@ -47,5 +50,5 @@ public class Clinic {
     private Float avgRatingScore;
 
     @Column(name = "status")
-    private boolean status;
+    private int status;
 }

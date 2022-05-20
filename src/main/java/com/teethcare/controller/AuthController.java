@@ -54,10 +54,10 @@ public class AuthController {
                     role,
                     userDetails.getFirstName(),
                     userDetails.getLastName(),
-                    userDetails.isGender(),
+                    userDetails.getGender(),
                     userDetails.getAvatarImage(),
                     userDetails.getDateOfBirth(),
-                    userDetails.isStatus(),
+                    userDetails.getStatus(),
                     jwt,
                     refreshToken
 

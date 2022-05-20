@@ -4,7 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "customer_service")
 @PrimaryKeyJoinColumn(name = "account_id")

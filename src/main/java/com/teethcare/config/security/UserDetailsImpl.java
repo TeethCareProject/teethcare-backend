@@ -20,17 +20,17 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private String firstName;
     private String lastName;
-    private boolean gender;
+    private int gender;
     private String avatarImage;
     private Date dateOfBirth;
-    private boolean status;
+    private int status;
     private Collection<? extends  GrantedAuthority> authorities;
 
     public static UserDetailsImpl build(Account account){
         List<GrantedAuthority> authorityList= new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority(account.getRole().getName()));
         UserDetailsImpl userDetails = new UserDetailsImpl(account.getUsername(),account.getPassword(), account.getFirstName(),
-                account.getLastName(), account.isGender(), account.getAvatarImage(), account.getDateOfBirth(), account.isStatus(), authorityList);
+                account.getLastName(), account.getGender(), account.getAvatarImage(), account.getDateOfBirth(), account.getStatus(), authorityList);
         return userDetails;
     }
 
@@ -56,7 +56,7 @@ public class UserDetailsImpl implements UserDetails {
         return lastName;
     }
 
-    public boolean isGender() {
+    public int getGender() {
         return gender;
     }
 
@@ -68,7 +68,7 @@ public class UserDetailsImpl implements UserDetails {
         return dateOfBirth;
     }
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 

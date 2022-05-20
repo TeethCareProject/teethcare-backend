@@ -1,7 +1,7 @@
 package com.teethcare.controller;
 
-import com.teethcare.model.entity.Customer;
-import com.teethcare.service.CustomerServiceImp;
+import com.teethcare.model.entity.Patient;
+import com.teethcare.service.PatientServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,32 +14,32 @@ import java.util.Optional;
 
 @RestController
 @EnableSwagger2
-@RequestMapping("/api/customers")
-public class CustomerController {
+@RequestMapping("/api/patients")
+public class PatientController {
     @Autowired
-    private CustomerServiceImp customerServiceImp;
+    private PatientServiceImp patientServiceImp;
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public List<Customer> getAllCustomers() {
-        return customerServiceImp.findAll();
+    public List<Patient> getAllPatients() {
+        return patientServiceImp.findAll();
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT', 'DENTIST', 'CUSTOMER_SERVICE')")
-    public Optional<Customer> getCustomer(@PathVariable("id") Integer id) {
-        return customerServiceImp.findById(id);
+    public Optional<Patient> getPatient(@PathVariable("id") Integer id) {
+        return patientServiceImp.findById(id);
     }
 
     @PostMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity addCustomer(@Valid @RequestBody Customer customer) {
-        return customerServiceImp.save(customer);
+    public ResponseEntity addPatient(@Valid @RequestBody Patient patient) {
+        return patientServiceImp.save(patient);
     }
 
     @DeleteMapping ("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<Customer> delCustomer(@PathVariable("id") Integer id) {
-        return customerServiceImp.delete(id);
+    public ResponseEntity<Patient> delPatient(@PathVariable("id") Integer id) {
+        return patientServiceImp.delete(id);
     }
 }
