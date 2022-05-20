@@ -7,7 +7,7 @@ public interface CRUDService<T> {
 
     T findById(int theId);
 
-    void save(T theEmployee);
+    void save(T theEntity);
 
     void deleteById(int theId);
 }

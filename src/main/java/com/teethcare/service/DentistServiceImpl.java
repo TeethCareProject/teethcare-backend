@@ -28,7 +28,6 @@ public class DentistServiceImpl implements CRUDService<Dentist> {
             theDentist = result.get();
         }
         else {
-            // we didn't find the employee
             throw new NotFoundException();
         }
 

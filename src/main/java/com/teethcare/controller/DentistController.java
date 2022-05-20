@@ -58,12 +58,4 @@ public class DentistController {
 
         return dentist;
     }
-
-    @PutMapping
-    public Dentist updateCustomer(@RequestBody Dentist dentist) {
-
-        dentistService.save(dentist);
-
-        return dentist;
-    }
 }

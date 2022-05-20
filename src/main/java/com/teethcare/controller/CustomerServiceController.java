@@ -39,14 +39,6 @@ public class CustomerServiceController {
         return customerService;
     }
 
-    @PutMapping
-    public CustomerService updateCS(@RequestBody CustomerService customerService) {
-
-        CSService.save(customerService);
-
-        return customerService;
-    }
-
     @DeleteMapping("/{id}")
     public CustomerService updateAccountStatus(@PathVariable("id") int id) {
         if (id < 1) {
