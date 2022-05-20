@@ -1,5 +1,6 @@
 package com.teethcare.config.security;
 
+import com.teethcare.common.EndpointConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +25,10 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private  final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -35,26 +37,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(request -> {
-                    CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.applyPermitDefaultValues();
-                    configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
-                    return configuration;
-                });
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.applyPermitDefaultValues();
+            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+            return configuration;
+        });
         http.csrf().disable();
         http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/auth/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/accounts/**");
-        http.authorizeRequests().antMatchers("/api/admins/**");
-        http.authorizeRequests().antMatchers("/api/managers/**");
-        http.authorizeRequests().antMatchers("/api/dentists/**");
-        http.authorizeRequests().antMatchers("/api/customer-services/**");
-        http.authorizeRequests().antMatchers("/api/patients/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.Account.ACCOUNT_ENDPOINT + "/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Manager.MANAGER_ENDPOINT + "/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Dentist.DENTIST_ENDPOINT + "**");
+        http.authorizeRequests().antMatchers(EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT + "/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Customer.CUSTOMER_ENDPOINT + "/**");
         http.authorizeRequests().anyRequest().authenticated();
         http.headers().contentSecurityPolicy("script-src 'self'");
         http.logout().logoutUrl("/api/logout").invalidateHttpSession(true);
         http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/v2/api-docs",
@@ -67,22 +69,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/error"
         );
     }
+
     @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception{
-        return  super.authenticationManagerBean();
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Bean
-    public CustomAuthorizationFilter customAuthorizationFilter(){
+    public CustomAuthorizationFilter customAuthorizationFilter() {
         return new CustomAuthorizationFilter(jwtTokenUtil, userDetailsService);
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
 
 }

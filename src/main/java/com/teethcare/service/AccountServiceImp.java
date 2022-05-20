@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AccountServiceImp implements AccountService{
+public class AccountServiceImp implements AccountService {
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
+
     @Override
     public Account getAccountByUsername(String username) {
-        return accountRepository.findAccountByUsername(username);
+        return accountRepository.findAccountByUsernameAndStatus(username, true);
     }
 }

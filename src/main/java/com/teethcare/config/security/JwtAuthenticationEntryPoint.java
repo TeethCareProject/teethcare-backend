@@ -1,5 +1,6 @@
 package com.teethcare.config.security;
 
+import com.teethcare.exception.UnauthorizedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
+        throw new UnauthorizedException("Error: Unauthorized");
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 @Slf4j
@@ -21,13 +22,13 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.refresh-expiration}")
     private long refreshExpiration;
 
-    public String getUsernameFromJwt(String token){
+    public String getUsernameFromJwt(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String generateToken(Authentication authen){
+    public String generateToken(Authentication authen) {
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000 *24 *60);
+        Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000 * 24 * 60);
         UserDetailsImpl userDetails = (UserDetailsImpl) authen.getPrincipal();
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -36,7 +37,8 @@ public class JwtTokenUtil implements Serializable {
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
-    public String generateToken(String username){
+
+    public String generateToken(String username) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000 * 24 * 60);
         return Jwts.builder()
@@ -46,7 +48,8 @@ public class JwtTokenUtil implements Serializable {
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
-    public String generateRefreshToken(Authentication authen){
+
+    public String generateRefreshToken(Authentication authen) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + refreshExpiration * 60 * 1000 * 24 * 60);
         UserDetailsImpl userDetails = (UserDetailsImpl) authen.getPrincipal();
@@ -57,7 +60,8 @@ public class JwtTokenUtil implements Serializable {
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
-    public String generateRefreshToken(String username){
+
+    public String generateRefreshToken(String username) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + refreshExpiration * 60 * 1000 * 24 * 60);
         return Jwts.builder()
@@ -67,6 +71,7 @@ public class JwtTokenUtil implements Serializable {
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
