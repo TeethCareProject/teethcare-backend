@@ -28,8 +28,8 @@ public class CSServiceImp implements CRUDService<CustomerService> {
     }
 
     @Override
-    public CustomerService save(CustomerService customerService) {
-         return  customerServiceRepository.save(customerService);
+    public ResponseEntity save(CustomerService customerService) {
+        return new ResponseEntity<>(customerServiceRepository.save(customerService), HttpStatus.OK);
     }
 
     @Override

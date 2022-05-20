@@ -26,8 +26,8 @@ public class AccountServiceImp implements CRUDService<Account>, AccountService {
     }
 
     @Override
-    public Account save(Account account) {
-        return accountRepository.save(account);
+    public ResponseEntity save(Account account) {
+        return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class AccountServiceImp implements CRUDService<Account>, AccountService {
     }
 
     @Override
-    public Account getActiveAccountByUsername(String username) {
+    public List<Account> getActiveAccountByUsername(String username) {
         return accountRepository.getActiveAccountByUsername(username);
     }
 }

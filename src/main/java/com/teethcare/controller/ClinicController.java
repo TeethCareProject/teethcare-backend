@@ -35,7 +35,7 @@ public class ClinicController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public Clinic addClinic(@Valid @RequestBody Clinic clinic) {
+    public ResponseEntity<Clinic> addClinic(@Valid @RequestBody Clinic clinic) {
         return clinicServiceImp.save(clinic);
     }
 

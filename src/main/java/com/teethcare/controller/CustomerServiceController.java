@@ -30,7 +30,7 @@ public class CustomerServiceController {
     }
 
     @PostMapping
-    public CustomerService addCustomerService(@RequestBody CustomerService customerService) {
+    public ResponseEntity<CustomerService> addCustomerService(@RequestBody CustomerService customerService) {
         return csServiceImp.save(customerService);
     }
 

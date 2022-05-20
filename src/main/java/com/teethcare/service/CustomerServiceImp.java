@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Customer;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.CustomerRepository;
@@ -33,14 +34,15 @@ public class CustomerServiceImp implements CRUDService<Customer> {
     }
 
     @Override
-    public Customer save(@Valid Customer customer) {
-//        if (accountRepository.findAccountByUsername(customer.getUsername()) != null) {
+    public ResponseEntity save(@Valid Customer customer) {
+        List<Account> list = accountRepository.getActiveAccountByUsername(customer.getUsername());
+        if (list.size() == 0) {
             customer.setId(null);
             customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-            return customerRepository.save(customer);
-//        } else {
-//            return (Customer) accountRepository.findAccountByUsername(customer.getUsername());
-//        }
+            return new ResponseEntity<>(customerRepository.save(customer), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
     @Override

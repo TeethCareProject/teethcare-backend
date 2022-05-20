@@ -12,7 +12,7 @@ public interface CRUDService<T> {
 
     public Optional<T> findById(Integer id);
 
-    public T save(T item) ;
+    public ResponseEntity save(T item) ;
 
     public ResponseEntity delete(Integer id);
 

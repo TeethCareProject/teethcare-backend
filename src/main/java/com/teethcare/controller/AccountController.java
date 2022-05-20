@@ -21,4 +21,9 @@ public class AccountController {
     public List<Account> getAllAccounts() {
         return accountServiceImp.findAll();
     }
+
+    @GetMapping("/{username}")
+    public List<Account> getAllActiveAccounts(@PathVariable("username") String username) {
+        return accountServiceImp.getActiveAccountByUsername(username);
+    }
 }

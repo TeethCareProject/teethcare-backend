@@ -32,9 +32,9 @@ public class ClinicServiceImp implements CRUDService<Clinic> {
     }
 
     @Override
-    public Clinic save(@Valid Clinic clinic) {
+    public ResponseEntity save(@Valid Clinic clinic) {
         clinic.setId(null);
-        return clinicRepository.save(clinic);
+        return new ResponseEntity<>(clinicRepository.save(clinic), HttpStatus.OK);
     }
 
     @Override
