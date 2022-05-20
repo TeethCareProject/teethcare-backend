@@ -25,7 +25,7 @@ public class Account {
     private String username;
 
     @Column(name = "password")
-    private String passsword;
+    private String password;
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
@@ -41,7 +41,7 @@ public class Account {
     private boolean gender;
 
     @Column(name = "avatar_image")
-    private String avaterImage;
+    private String avatarImage;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
