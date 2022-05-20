@@ -10,10 +10,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
-public class AccountServiceImp implements CRUDService<Account>, AccountService {
+public class AccountServiceImp implements AccountService {
+
+    private AccountRepository accountRepository;
+
     @Autowired
-    AccountRepository accountRepository;
+    public AccountServiceImp(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     @Override
     public List<Account> findAll() {
@@ -26,19 +32,19 @@ public class AccountServiceImp implements CRUDService<Account>, AccountService {
     }
 
     @Override
-    public ResponseEntity save(Account account) {
-        return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
+    public Account save(Account account) {
+        return accountRepository.save(account);
     }
 
     @Override
-    public ResponseEntity delete(Integer id) {
+    public Account delete(Integer id) {
         Optional<Account> accountData = accountRepository.findById(id);
         if (accountData.isPresent()) {
             Account account = accountData.get();
             account.setStatus(0);
-            return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
+            return account;
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return null;
     }
 
     @Override
@@ -47,7 +53,7 @@ public class AccountServiceImp implements CRUDService<Account>, AccountService {
     }
 
     @Override
-    public String getActiveAccountByUsername(String username) {
-        return accountRepository.getActiveUserName(username);
+    public Account getActiveAccountByUsername(String username) {
+        return accountRepository.getAccountByUsernameAndAndStatus(username, 1);
     }
 }

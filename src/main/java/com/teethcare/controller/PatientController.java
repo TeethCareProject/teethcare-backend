@@ -1,8 +1,9 @@
 package com.teethcare.controller;
 
 import com.teethcare.model.entity.Patient;
-import com.teethcare.service.PatientServiceImp;
+import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,30 +17,42 @@ import java.util.Optional;
 @EnableSwagger2
 @RequestMapping("/api/patients")
 public class PatientController {
-    @Autowired
-    private PatientServiceImp patientServiceImp;
+
+    private CRUDService<Patient> patientService;
+
+    public PatientController(CRUDService<Patient> patientService) {
+        this.patientService = patientService;
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public List<Patient> getAllPatients() {
-        return patientServiceImp.findAll();
+    public ResponseEntity<List<Patient>> getAllPatients() {
+        return new ResponseEntity<>(patientService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT', 'DENTIST', 'CUSTOMER_SERVICE')")
-    public Optional<Patient> getPatient(@PathVariable("id") Integer id) {
-        return patientServiceImp.findById(id);
+    public ResponseEntity<Optional<Patient>> getPatient(@PathVariable("id") Integer id) {
+        return new ResponseEntity<>(patientService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity addPatient(@Valid @RequestBody Patient patient) {
-        return patientServiceImp.save(patient);
+    public ResponseEntity addPatient(@Valid @RequestBody Patient manager) {
+        Patient addedPatient = patientService.save(manager);
+        if (addedPatient != null) {
+            return new ResponseEntity<>(addedPatient, HttpStatus.OK);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User existed!");
     }
 
-    @DeleteMapping ("/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Patient> delPatient(@PathVariable("id") Integer id) {
-        return patientServiceImp.delete(id);
+        Patient deletedPatient = patientService.delete(id);
+        if (deletedPatient != null) {
+            return new ResponseEntity<>(deletedPatient, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

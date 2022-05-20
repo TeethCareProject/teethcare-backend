@@ -19,24 +19,20 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotEmpty
-    @Column(name = "username", length = 72, nullable = false)
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "password", length = 72, nullable = false)
-    @NotEmpty
+    @Column(name = "password")
     private String password;
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
-    @NotBlank
-    @Column(name = "first_name", length = 40, nullable = false)
+    @Column(name = "first_name")
     private String firstName;
 
-    @NotBlank
-    @Column(name = "last_name", length = 10, nullable = false)
+    @Column(name = "last_name")
     private String lastName;
 
     @Column(name = "gender")

@@ -8,11 +8,11 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "customer_service")
+@Entity(name = "customer_service")
 @PrimaryKeyJoinColumn(name = "account_id")
 public class CustomerService  extends Account{
 
     @ManyToOne
+    @JoinColumn(name = "clinic_id", referencedColumnName = "id")
     private Clinic clinic;
 }

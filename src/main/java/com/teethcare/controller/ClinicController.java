@@ -1,6 +1,8 @@
 package com.teethcare.controller;
 
 import com.teethcare.model.entity.Clinic;
+import com.teethcare.service.CRUDService;
+import com.teethcare.service.ClinicService;
 import com.teethcare.service.ClinicServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,36 +20,58 @@ import java.util.Optional;
 @RequestMapping("/api/clinics")
 public class ClinicController {
 
+    private ClinicService clinicService;
+
     @Autowired
-    ClinicServiceImp clinicServiceImp;
+    public ClinicController(ClinicService clinicService) {
+        this.clinicService = clinicService;
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT')")
-    public Collection<Clinic> getAllActiveClinics() {
-        return clinicServiceImp.findAllActive();
+    public ResponseEntity<Collection<Clinic>> getAllActiveClinics() {
+        return new ResponseEntity<>(clinicService.findAllActive(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT', 'MANAGER', 'DENTIST', 'CUSTOMER_SERVICE')")
-    public Optional<Clinic> getClinic(@PathVariable("id") int id) {
-        return clinicServiceImp.findById(id);
+    public ResponseEntity<Optional<Clinic>> getClinic(@PathVariable("id") int id) {
+        return new ResponseEntity<>(clinicService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Clinic> addClinic(@Valid @RequestBody Clinic clinic) {
-        return clinicServiceImp.save(clinic);
+        clinic.setId(null);
+        return new ResponseEntity<>(clinicService.save(clinic), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Clinic> delClinic(@PathVariable("id") int id) {
-        return clinicServiceImp.delete(id);
+        Optional<Clinic> clinicData = clinicService.findById(id);
+        if (clinicData.isPresent()) {
+            Clinic clinic = clinicData.get();
+            clinic.setStatus(0);
+            return new ResponseEntity<>(clinicService.save(clinic), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('MANAGER')")
     public ResponseEntity<Clinic> updateClinic(@PathVariable("id") int id, @Valid @RequestBody Clinic clinic) {
-        return clinicServiceImp.update(id, clinic);
+        if (clinicService.findById(id).isPresent()) {
+            Clinic nClinic = clinicService.findById(id).get();
+            nClinic.setManagerId(clinic.getManagerId());
+            nClinic.setLocationId(clinic.getLocationId());
+            nClinic.setName(clinic.getName());
+            nClinic.setDescription(clinic.getDescription());
+            nClinic.setImageUrl(clinic.getImageUrl());
+            nClinic.setTaxCode(clinic.getTaxCode());
+            nClinic.setAvgRatingScore(clinic.getAvgRatingScore());
+            return new ResponseEntity(clinicService.save(nClinic), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

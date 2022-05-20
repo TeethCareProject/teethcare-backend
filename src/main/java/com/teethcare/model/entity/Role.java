@@ -12,7 +12,6 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @Table(name = "role")
 public class Role {
-
     @Id
     @Column(name = "id")
     private Integer id;

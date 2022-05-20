@@ -15,12 +15,19 @@ import java.util.Optional;
 
 @Service
 public class ManagerServiceImp implements CRUDService<Manager> {
-    @Autowired
-    ManagerRepository managerRepository;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
+
+    private ManagerRepository managerRepository;
+
+    private AccountRepository accountRepository;
+
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public ManagerServiceImp(ManagerRepository managerRepository, AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+        this.managerRepository = managerRepository;
+        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public List<Manager> findAll() {
@@ -33,25 +40,24 @@ public class ManagerServiceImp implements CRUDService<Manager> {
     }
 
     @Override
-    public ResponseEntity save(@Valid Manager manager) {
+    public Manager save(@Valid Manager manager) {
         String username = accountRepository.getActiveUserName(manager.getUsername());
         if (username == null) {
             manager.setId(null);
             manager.setPassword(passwordEncoder.encode(manager.getPassword()));
-            return new ResponseEntity<>(managerRepository.save(manager), HttpStatus.OK);
+            return managerRepository.save(manager);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User existed!");
-
+        return null;
     }
 
     @Override
-    public ResponseEntity delete(Integer id) {
+    public Manager delete(Integer id) {
         Optional<Manager> managerData = managerRepository.findById(id);
         if (managerData.isPresent()) {
             Manager manager = managerData.get();
             manager.setStatus(0);
-            return new ResponseEntity<>(managerRepository.save(manager), HttpStatus.OK);
+            return manager;
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return null;
     }
 }

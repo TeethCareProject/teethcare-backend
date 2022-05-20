@@ -9,7 +9,6 @@ import com.teethcare.model.response.LoginResponse;
 import com.teethcare.model.response.RefreshTokeResponse;
 import com.teethcare.service.AccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,8 +32,9 @@ public class AuthController {
     private final JwtTokenUtil jwtTokenUtil;
 
     private final AccountService accountService;
+
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginRequest request){
+    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authentication = authManager.authenticate(authenticationToken);
@@ -68,13 +68,13 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest){
-        if(!jwtTokenUtil.validateToken(tokenRequest.getRefreshToken())){
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+        if (!jwtTokenUtil.validateToken(tokenRequest.getRefreshToken())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
         String username = jwtTokenUtil.getUsernameFromJwt(tokenRequest.getRefreshToken());
         Account account = accountService.getAccountByUsername(username);
-        if(account == null){
+        if (account == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Token claim is invalid");
         }
@@ -86,5 +86,4 @@ public class AuthController {
     }
 
 
-    
 }

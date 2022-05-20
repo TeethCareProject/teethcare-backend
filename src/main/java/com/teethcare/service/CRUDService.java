@@ -1,17 +1,19 @@
 package com.teethcare.service;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
 public interface CRUDService<T> {
-    public List<T> findAll();
+     List<T> findAll();
 
-    public Optional<T> findById(Integer id);
+     Optional<T> findById(Integer id);
 
-    public ResponseEntity save(T item) ;
+     T save(T item) ;
 
-    public ResponseEntity delete(Integer id);
+     T delete(Integer id);
 
 }

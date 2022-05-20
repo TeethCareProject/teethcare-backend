@@ -15,10 +15,9 @@ import javax.validation.constraints.Size;
 @PrimaryKeyJoinColumn(name = "account_id")
 public class Patient extends Account {
     @Email
-    @Column(name = "email", length = 320)
+    @Column(name = "email")
     private String email;
 
     @Column(name = "phone_number")
-    @Size(min = 10, max = 10)
     private String phoneNumber;
 }

@@ -1,7 +1,10 @@
 package com.teethcare.service;
 
+import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Patient;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.repository.AccountRepository;
+import com.teethcare.repository.ManagerRepository;
 import com.teethcare.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,13 +18,18 @@ import java.util.Optional;
 
 @Service
 public class PatientServiceImp implements CRUDService<Patient> {
-    @Autowired
-    PatientRepository patientRepository;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
+    private PatientRepository patientRepository;
+
+    private AccountRepository accountRepository;
+
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    public PatientServiceImp(PatientRepository patientRepository, AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+        this.patientRepository = patientRepository;
+        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     @Override
     public List<Patient> findAll() {
         return patientRepository.findAll();
@@ -33,25 +41,24 @@ public class PatientServiceImp implements CRUDService<Patient> {
     }
 
     @Override
-    public ResponseEntity save(@Valid Patient patient) {
-        String username = accountRepository.getActiveUserName(patient.getUsername());
-        if (username == null) {
+    public Patient save(@Valid Patient patient) {
+        Account account = accountRepository.getAccountByUsernameAndAndStatus(patient.getUsername(), 1);
+        if (account == null) {
             patient.setId(null);
             patient.setPassword(passwordEncoder.encode(patient.getPassword()));
-            return new ResponseEntity<>(patientRepository.save(patient), HttpStatus.OK);
+            return patientRepository.save(patient);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User existed!");
-
+        return null;
     }
 
     @Override
-    public ResponseEntity delete(Integer id) {
+    public Patient delete(Integer id) {
         Optional<Patient> patientData = patientRepository.findById(id);
         if (patientData.isPresent()) {
             Patient patient = patientData.get();
             patient.setStatus(0);
-            return new ResponseEntity<>(patientRepository.save(patient), HttpStatus.OK);
+            return patient;
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return null;
     }
 }

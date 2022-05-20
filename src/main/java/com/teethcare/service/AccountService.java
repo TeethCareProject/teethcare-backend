@@ -1,12 +1,10 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.Account;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
 
-
-public interface AccountService {
-    public Account getAccountByUsername(String username);
-
-   String getActiveAccountByUsername(String username);
+public interface AccountService extends CRUDService<Account> {
+    Account getAccountByUsername(String username);
+    Account getActiveAccountByUsername(String username);
 }

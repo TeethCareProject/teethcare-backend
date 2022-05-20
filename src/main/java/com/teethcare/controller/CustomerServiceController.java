@@ -1,8 +1,11 @@
 package com.teethcare.controller;
 
 import com.teethcare.model.entity.CustomerService;
+import com.teethcare.service.CRUDService;
 import com.teethcare.service.CSServiceImp;
+import com.teethcare.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -14,26 +17,33 @@ import java.util.Optional;
 @EnableSwagger2
 @RequestMapping("/api/customer-services")
 public class CustomerServiceController {
+
+    private CRUDService<CustomerService> cSService;
+
     @Autowired
-    private CSServiceImp csServiceImp;
+    public CustomerServiceController(CRUDService<CustomerService> cSService) {
+        this.cSService = cSService;
+    }
 
     @GetMapping
-    public List<CustomerService> getAllCustomerServices() {
-        return csServiceImp.findAll();
+    public ResponseEntity<List<CustomerService>> getAllCustomerServices() {
+        return new ResponseEntity<>(cSService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Optional<CustomerService> getCustomerService(@PathVariable("id") Integer id) {
-        return csServiceImp.findById(id);
+    public ResponseEntity<Optional<CustomerService>> getCustomerService(@PathVariable("id") Integer id) {
+        return new ResponseEntity<>(cSService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<CustomerService> addCustomerService(@RequestBody CustomerService customerService) {
-        return csServiceImp.save(customerService);
+        return new ResponseEntity<>(cSService.save(customerService), HttpStatus.OK);
+
     }
 
-    @DeleteMapping ("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CustomerService> delCustomerService(@PathVariable("id") Integer id) {
-        return csServiceImp.delete(id);
+        return new ResponseEntity<>(cSService.delete(id), HttpStatus.OK);
+
     }
 }

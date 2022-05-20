@@ -12,8 +12,13 @@ import java.util.Optional;
 
 @Service
 public class CSServiceImp implements CRUDService<CustomerService> {
+
+    private CustomerServiceRepository customerServiceRepository;
+
     @Autowired
-    CustomerServiceRepository customerServiceRepository;
+    public CSServiceImp(CustomerServiceRepository customerServiceRepository) {
+        this.customerServiceRepository = customerServiceRepository;
+    }
 
     @Override
     public List<CustomerService> findAll() {
@@ -26,18 +31,18 @@ public class CSServiceImp implements CRUDService<CustomerService> {
     }
 
     @Override
-    public ResponseEntity save(CustomerService customerService) {
-        return new ResponseEntity<>(customerServiceRepository.save(customerService), HttpStatus.OK);
+    public CustomerService save(CustomerService customerService) {
+        return customerServiceRepository.save(customerService);
     }
 
     @Override
-    public ResponseEntity delete(Integer id) {
+    public CustomerService delete(Integer id) {
         Optional<CustomerService> CSData = customerServiceRepository.findById(id);
         if (CSData.isPresent()) {
             CustomerService customerService = CSData.get();
             customerService.setStatus(0);
-            return new ResponseEntity<>(customerServiceRepository.save(customerService), HttpStatus.OK);
+            return customerServiceRepository.save(customerService);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return null;
     }
 }

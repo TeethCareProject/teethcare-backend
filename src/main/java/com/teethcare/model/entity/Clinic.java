@@ -23,30 +23,25 @@ public class Clinic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "manager_id", length = 72, nullable = false)
-    @NotEmpty
+    @Column(name = "manager_id")
     private String managerId;
 
-    @Column(name = "location_id ", nullable = false)
-    @NotEmpty
+    @Column(name = "location_id ")
     private String locationId;
 
-    @NotEmpty
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @NotEmpty
     @Column(name = "description")
     private String description;
 
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "tax_code", length = 13, unique = true, nullable = false)
+    @Column(name = "tax_code")
     private String taxCode;
 
     @Column(name = "avg_rating_score")
-    @Max(value = 5)
     private Float avgRatingScore;
 
     @Column(name = "status")

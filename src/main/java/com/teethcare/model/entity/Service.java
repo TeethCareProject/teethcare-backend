@@ -15,10 +15,10 @@ import javax.persistence.*;
 @Table(name = "service")
 public class Service {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "description")
