@@ -23,7 +23,7 @@ public class AccountController {
     }
 
     @GetMapping("/{username}")
-    public List<Account> getAllActiveAccounts(@PathVariable("username") String username) {
+    public String getAllActiveAccounts(@PathVariable("username") String username) {
         return accountServiceImp.getActiveAccountByUsername(username);
     }
 }

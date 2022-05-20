@@ -47,7 +47,7 @@ public class AccountServiceImp implements CRUDService<Account>, AccountService {
     }
 
     @Override
-    public List<Account> getActiveAccountByUsername(String username) {
-        return accountRepository.getActiveAccountByUsername(username);
+    public String getActiveAccountByUsername(String username) {
+        return accountRepository.getActiveUserName(username);
     }
 }

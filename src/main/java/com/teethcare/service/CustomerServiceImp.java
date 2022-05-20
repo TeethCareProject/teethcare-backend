@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -35,13 +36,13 @@ public class CustomerServiceImp implements CRUDService<Customer> {
 
     @Override
     public ResponseEntity save(@Valid Customer customer) {
-        List<Account> list = accountRepository.getActiveAccountByUsername(customer.getUsername());
-        if (list.size() == 0) {
+        String username = accountRepository.getActiveUserName(customer.getUsername());
+        if (username == null) {
             customer.setId(null);
             customer.setPassword(passwordEncoder.encode(customer.getPassword()));
             return new ResponseEntity<>(customerRepository.save(customer), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User existed!");
 
     }
 
