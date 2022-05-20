@@ -1,8 +1,9 @@
 package com.teethcare.model.entity;
 
-import lombok.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -13,11 +14,16 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "account")
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "username", length = 72, nullable = false)
+    @NotEmpty
+    private String username;
 
     @Column(name = "password", length = 72, nullable = false)
     @NotEmpty
@@ -45,7 +51,6 @@ public class Account {
     private Date dateOfBirth;
 
     @NotEmpty
+    @Column(name = "status")
     private boolean status;
-
-
 }

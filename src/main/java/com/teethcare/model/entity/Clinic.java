@@ -1,31 +1,33 @@
 package com.teethcare.model.entity;
 
-import lombok.*;
-import org.hibernate.annotations.Type;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "clinic")
 public class Clinic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "manager_id", length = 72, nullable = false)
     @NotEmpty
     private String managerId;
 
-    @Column(name = "location_id ", nullable = false)
+    @Column(name = "location_id", nullable = false)
     @NotEmpty
     private String locationId;
 
@@ -36,9 +38,6 @@ public class Clinic {
     @NotEmpty
     @Column(name = "description")
     private String description;
-
-    @Column(name = "gender")
-    private boolean gender;
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -53,4 +52,16 @@ public class Clinic {
 
     @Column(name = "status")
     private boolean status;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "clinic",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Dentist> dentists;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "clinic",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<CustomerService> customerServices;
 }

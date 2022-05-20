@@ -1,25 +1,24 @@
 package com.teethcare.model.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "customer_service")
-public class CustomerService {
-    @Id
-    @Column(name = "account_id")
-    private String id;
+@PrimaryKeyJoinColumn(name="account_id")
+public class CustomerService extends Account {
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "account_id")
-    private Account account;
-
+//    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+//            CascadeType.PERSIST, CascadeType.REFRESH})
+//    @JoinColumn(name = "clinic_id")
     @ManyToOne
+    @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 }

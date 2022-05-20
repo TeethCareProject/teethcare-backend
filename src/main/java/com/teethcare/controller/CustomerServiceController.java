@@ -1,46 +1,69 @@
 package com.teethcare.controller;
 
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.repository.CustomerServiceRepository;
+import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+//import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@EnableSwagger2
+//@EnableSwagger2
 @RequestMapping("/api/customer-services")
 public class CustomerServiceController {
-    @Autowired
-    private CustomerServiceRepository customerServiceRepository;
 
-    @GetMapping
-    public List<CustomerService> getAllCustomerServices() {
-        return customerServiceRepository.findAll();
+    private CRUDService<CustomerService> CSService;
+
+    @Autowired
+    public CustomerServiceController (@Qualifier("CSServiceImpl") CRUDService<CustomerService> CSService) {
+        this.CSService = CSService;
+    }
+
+    @GetMapping()
+    public List<CustomerService> findAll() {
+        return CSService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Optional<CustomerService> getCustomerService(@PathVariable("id") String id) {
-        return customerServiceRepository.findById(id);
-    }
+    public CustomerService getCSById(@PathVariable int id) {
 
-    @PostMapping
-    public CustomerService addCustomerService(@RequestBody CustomerService customerService) {
-        return customerServiceRepository.save(customerService);
-    }
+        CustomerService customerService = CSService.findById(id);
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerService> delCustomerService(@PathVariable("id") String id) {
-        Optional<CustomerService> customerServiceData = customerServiceRepository.findById(id);
-        if (customerServiceData.isPresent()) {
-            CustomerService customerService = customerServiceData.get();
-            customerService.getAccount().setStatus(false);
-            return new ResponseEntity<>(customerServiceRepository.save(customerService), HttpStatus.OK);
+        if (customerService == null) {
+            throw new NotFoundException();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return customerService;
+    }
+
+    @PutMapping
+    public CustomerService updateCS(@RequestBody CustomerService customerService) {
+
+        CSService.save(customerService);
+
+        return customerService;
+    }
+
+    @DeleteMapping("/{id}")
+    public CustomerService updateAccountStatus(@PathVariable("id") int id) {
+        if (id < 1) {
+            throw new NotFoundException();
+        }
+
+        CustomerService customerService = CSService.findById(id);
+
+        if (customerService == null) {
+            throw new NotFoundException();
+        }
+
+        customerService.setId(id);
+        customerService.setStatus(false);
+
+        CSService.save(customerService);
+
+        return customerService;
     }
 }

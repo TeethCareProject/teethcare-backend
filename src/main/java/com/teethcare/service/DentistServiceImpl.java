@@ -1,18 +1,16 @@
 package com.teethcare.service;
 
-import com.teethcare.model.entity.CustomerService;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.DentistRepository;
-import org.hibernate.metamodel.model.convert.spi.JpaAttributeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DentistServiceImpl implements AccountService<Dentist> {
+public class DentistServiceImpl implements CRUDService<Dentist> {
     private DentistRepository dentistRepository;
 
     @Autowired
@@ -21,7 +19,7 @@ public class DentistServiceImpl implements AccountService<Dentist> {
     }
 
     @Override
-    public Dentist findById(String theId) {
+    public Dentist findById(int theId) {
         Optional<Dentist> result = dentistRepository.findById(theId);
 
         Dentist theDentist = null;
@@ -31,25 +29,15 @@ public class DentistServiceImpl implements AccountService<Dentist> {
         }
         else {
             // we didn't find the employee
-            throw new RuntimeException("Did not find employee id - " + theId);
+            throw new NotFoundException();
         }
 
         return theDentist;
     }
 
     @Override
-    public void deleteById(String theId) {
-        dentistRepository.deleteById(theId);
-    }
-
-    @Override
     public List<Dentist> findAll() {
-        return null;
-    }
-
-    @Override
-    public Dentist findById(int theId) {
-        return null;
+        return dentistRepository.findAll();
     }
 
     @Override
