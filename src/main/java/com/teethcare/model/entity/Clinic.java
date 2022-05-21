@@ -1,14 +1,11 @@
 package com.teethcare.model.entity;
 
-import io.swagger.models.auth.In;
-import lombok.*;
-import org.hibernate.annotations.Type;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 
 @Getter
@@ -23,11 +20,12 @@ public class Clinic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "manager_id")
-    private String managerId;
+    @OneToOne
+    @JoinColumn(name = "manager_id", referencedColumnName = "id")
+    private Manager manager;
 
     @Column(name = "location_id ")
-    private String locationId;
+    private int locationId;
 
     @Column(name = "name")
     private String name;
@@ -45,5 +43,5 @@ public class Clinic {
     private Float avgRatingScore;
 
     @Column(name = "status")
-    private int status;
+    private String status;
 }

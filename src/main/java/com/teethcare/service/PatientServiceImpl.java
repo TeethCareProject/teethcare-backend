@@ -1,14 +1,11 @@
 package com.teethcare.service;
 
-import com.teethcare.model.entity.Account;
+import com.teethcare.common.Status;
 import com.teethcare.model.entity.Patient;
-import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,16 +13,12 @@ import java.util.Optional;
 public class PatientServiceImpl implements CRUDService<Patient> {
     private PatientRepository patientRepository;
 
-    private AccountRepository accountRepository;
-
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PatientServiceImpl(PatientRepository patientRepository, AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public PatientServiceImpl(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
-        this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
     }
+
     @Override
     public List<Patient> findAll() {
         return patientRepository.getPatientByStatusIsNot(0);
@@ -37,15 +30,8 @@ public class PatientServiceImpl implements CRUDService<Patient> {
     }
 
     @Override
-    public Patient save(@Valid Patient patient) {
-        Account account = accountRepository.getAccountByUsernameAndAndStatusIsNot(patient.getUsername(), 0);
-        if (account == null) {
-            patient.setId(null);
-            patient.setStatus(1);
-            patient.setPassword(passwordEncoder.encode(patient.getPassword()));
-            return patientRepository.save(patient);
-        }
-        return null;
+    public Patient save(Patient patient) {
+        return patientRepository.save(patient);
     }
 
     @Override
@@ -53,7 +39,7 @@ public class PatientServiceImpl implements CRUDService<Patient> {
         Optional<Patient> patientData = patientRepository.findById(id);
         if (patientData.isPresent()) {
             Patient patient = patientData.get();
-            patient.setStatus(0);
+            patient.setStatus(Status.INACTIVE.name());
             return patient;
         }
         return null;

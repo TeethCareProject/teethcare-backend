@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.teethcare.common.Status;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> accountData = accountRepository.findById(id);
         if (accountData.isPresent()) {
             Account account = accountData.get();
-            account.setStatus(0);
+            account.setStatus(Status.INACTIVE.name());
             return account;
         }
         return null;
@@ -52,6 +53,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getActiveAccountByUsername(String username) {
-        return accountRepository.getAccountByUsernameAndAndStatusIsNot(username, 0);
+        return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name());
+    }
+
+    @Override
+    public boolean isDuplicated(String username, String status) {
+        return accountRepository.getAccountByUsernameAndStatusIsNot(username, status) != null;
     }
 }

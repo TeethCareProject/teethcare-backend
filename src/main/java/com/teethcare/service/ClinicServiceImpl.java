@@ -5,7 +5,6 @@ import com.teethcare.repository.ClinicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -35,9 +34,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public Clinic save(@Valid Clinic clinic) {
-        clinic.setId(null);
-        clinic.setStatus(1);
+    public Clinic save(Clinic clinic) {
         return clinicRepository.save(clinic);
     }
 

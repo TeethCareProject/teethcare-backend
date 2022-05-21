@@ -1,11 +1,18 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Status;
+import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Manager;
+import com.teethcare.model.entity.Role;
+import com.teethcare.model.request.ManagerRegisterRequest;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.CRUDService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -19,11 +26,18 @@ import java.util.Optional;
 public class ManagerController {
 
     private CRUDService<Manager> managerService;
+    private AccountService accountService;
 
     @Autowired
-    public ManagerController(CRUDService<Manager> managerService) {
+    public ManagerController(CRUDService<Manager> managerService, AccountService accountService, PasswordEncoder passwordEncoder) {
         this.managerService = managerService;
+        this.accountService = accountService;
+        this.passwordEncoder = passwordEncoder;
     }
+
+    private ModelMapper mapper;
+    private PasswordEncoder passwordEncoder;
+
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
@@ -39,12 +53,30 @@ public class ManagerController {
 
     @PostMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity addManager(@Valid @RequestBody Manager manager) {
-        Manager addedManager = managerService.save(manager);
-        if (addedManager != null) {
+    public ResponseEntity addManager(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
+        boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername(), Status.INACTIVE.name());
+        if (!isDuplicated) {
+            Manager manager = new Manager();
+            manager.setUsername(managerRegisterRequest.getUsername());
+            manager.setPassword(managerRegisterRequest.getPassword());
+            manager.setFirstName(managerRegisterRequest.getFirstName());
+            manager.setLastName(managerRegisterRequest.getLastName());
+            manager.setGender(managerRegisterRequest.getGender());
+            manager.setRole(new Role(1, "MANAGER"));
+            manager.setStatus(Status.PENDING.name());
+            manager.setPassword(passwordEncoder.encode(manager.getPassword()));
+
+            Clinic clinic = new Clinic();
+            clinic.setManager(manager);
+            clinic.setName(managerRegisterRequest.getClinicName());
+            clinic.setTaxCode(managerRegisterRequest.getClinicTaxCode());
+            clinic.setLocationId(managerRegisterRequest.getWardId());
+            clinic.setStatus(Status.PENDING.name());
+            Manager addedManager = managerService.save(manager);
             return new ResponseEntity<>(addedManager, HttpStatus.OK);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User existed!");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("User existed!");
+
     }
 
     @DeleteMapping("/{id}")

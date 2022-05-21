@@ -12,17 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserDetailServiceImp implements UserDetailsService {
 
-    @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    public UserDetailServiceImp(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findAccountByUsername(username);
-        if (account!=null){
+        if (account != null) {
             return UserDetailsImpl.build(account);
-        }else{
-            throw new RuntimeException("Employee id not found " +  username);
+        } else {
+            throw new RuntimeException("Employee id not found " + username);
         }
     }
 }

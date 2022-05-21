@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Status;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT', 'MANAGER', 'DENTIST', 'CUSTOMER_SERVICE')")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<Optional<Clinic>> getClinic(@PathVariable("id") int id) {
         return new ResponseEntity<>(clinicService.findById(id), HttpStatus.OK);
     }
@@ -49,26 +50,26 @@ public class ClinicController {
         Optional<Clinic> clinicData = clinicService.findById(id);
         if (clinicData.isPresent()) {
             Clinic clinic = clinicData.get();
-            clinic.setStatus(0);
+            clinic.setStatus(Status.INACTIVE.name());
             return new ResponseEntity<>(clinicService.save(clinic), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('MANAGER')")
-    public ResponseEntity<Clinic> updateClinic(@PathVariable("id") int id, @Valid @RequestBody Clinic clinic) {
-        if (clinicService.findById(id).isPresent()) {
-            Clinic nClinic = clinicService.findById(id).get();
-            nClinic.setManagerId(clinic.getManagerId());
-            nClinic.setLocationId(clinic.getLocationId());
-            nClinic.setName(clinic.getName());
-            nClinic.setDescription(clinic.getDescription());
-            nClinic.setImageUrl(clinic.getImageUrl());
-            nClinic.setTaxCode(clinic.getTaxCode());
-            nClinic.setAvgRatingScore(clinic.getAvgRatingScore());
-            return new ResponseEntity(clinicService.save(nClinic), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+//    @PutMapping("/{id}")
+//    @PreAuthorize("hasAnyAuthority('MANAGER')")
+//    public ResponseEntity<Clinic> updateClinic(@PathVariable("id") int id, @Valid @RequestBody Clinic clinic) {
+//        if (clinicService.findById(id).isPresent()) {
+//            Clinic nClinic = clinicService.findById(id).get();
+//            nClinic.setManager(clinic.getManager());
+//            nClinic.setLocationId(clinic.getLocationId());
+//            nClinic.setName(clinic.getName());
+//            nClinic.setDescription(clinic.getDescription());
+//            nClinic.setImageUrl(clinic.getImageUrl());
+//            nClinic.setTaxCode(clinic.getTaxCode());
+//            nClinic.setAvgRatingScore(clinic.getAvgRatingScore());
+//            return new ResponseEntity(clinicService.save(nClinic), HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 }

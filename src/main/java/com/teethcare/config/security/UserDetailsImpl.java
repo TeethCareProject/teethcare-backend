@@ -9,7 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -19,16 +21,16 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private String firstName;
     private String lastName;
-    private int gender;
+    private String gender;
     private String avatarImage;
     private Date dateOfBirth;
-    private int status;
-    private Collection<? extends  GrantedAuthority> authorities;
+    private String status;
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(Account account){
-        List<GrantedAuthority> authorityList= new ArrayList<>();
+    public static UserDetailsImpl build(Account account) {
+        List<GrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority(account.getRole().getName()));
-        UserDetailsImpl userDetails = new UserDetailsImpl(account.getUsername(),account.getPassword(), account.getFirstName(),
+        UserDetailsImpl userDetails = new UserDetailsImpl(account.getUsername(), account.getPassword(), account.getFirstName(),
                 account.getLastName(), account.getGender(), account.getAvatarImage(), account.getDateOfBirth(), account.getStatus(), authorityList);
         return userDetails;
     }
@@ -37,6 +39,7 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
+
     @Override
     public String getPassword() {
         return password;
@@ -55,7 +58,7 @@ public class UserDetailsImpl implements UserDetails {
         return lastName;
     }
 
-    public int getGender() {
+    public String getGender() {
         return gender;
     }
 
@@ -67,7 +70,7 @@ public class UserDetailsImpl implements UserDetails {
         return dateOfBirth;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 

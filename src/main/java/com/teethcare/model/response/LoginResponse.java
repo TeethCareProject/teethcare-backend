@@ -17,10 +17,10 @@ public class LoginResponse {
     private String roles;
     private String firstName;
     private String lastName;
-    private int  gender;
+    private String gender;
     private String avatarImage;
     private Date dateOfBirth;
-    private int status;
+    private String status;
     private String token;
     private String refreshToken;
 }

@@ -1,10 +1,11 @@
 package com.teethcare.model.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
 
 @Getter
@@ -36,7 +37,7 @@ public class Account {
     private String lastName;
 
     @Column(name = "gender")
-    private int gender;
+    private String gender;
 
     @Column(name = "avatar_image")
     private String avatarImage;
@@ -45,5 +46,5 @@ public class Account {
     private Date dateOfBirth;
 
     @Column(name = "status")
-    private int status;
+    private String status;
 }
