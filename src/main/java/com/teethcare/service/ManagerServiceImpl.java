@@ -1,11 +1,10 @@
 package com.teethcare.service;
 
+import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ManagerServiceImp implements CRUDService<Manager> {
+public class ManagerServiceImpl implements CRUDService<Manager> {
 
     private ManagerRepository managerRepository;
 
@@ -23,7 +22,7 @@ public class ManagerServiceImp implements CRUDService<Manager> {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ManagerServiceImp(ManagerRepository managerRepository, AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public ManagerServiceImpl(ManagerRepository managerRepository, AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
         this.managerRepository = managerRepository;
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
@@ -41,9 +40,10 @@ public class ManagerServiceImp implements CRUDService<Manager> {
 
     @Override
     public Manager save(@Valid Manager manager) {
-        String username = accountRepository.getActiveUserName(manager.getUsername());
+        Account username = accountRepository.getAccountByUsernameAndAndStatusIsNot(manager.getUsername(), 0);
         if (username == null) {
             manager.setId(null);
+            manager.setStatus(1);
             manager.setPassword(passwordEncoder.encode(manager.getPassword()));
             return managerRepository.save(manager);
         }

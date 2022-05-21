@@ -3,20 +3,18 @@ package com.teethcare.service;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.repository.CustomerServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CSServiceImp implements CRUDService<CustomerService> {
+public class CSServiceImpl implements CRUDService<CustomerService> {
 
     private CustomerServiceRepository customerServiceRepository;
 
     @Autowired
-    public CSServiceImp(CustomerServiceRepository customerServiceRepository) {
+    public CSServiceImpl(CustomerServiceRepository customerServiceRepository) {
         this.customerServiceRepository = customerServiceRepository;
     }
 

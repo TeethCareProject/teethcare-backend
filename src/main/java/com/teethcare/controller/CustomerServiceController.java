@@ -2,8 +2,6 @@ package com.teethcare.controller;
 
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.service.CRUDService;
-import com.teethcare.service.CSServiceImp;
-import com.teethcare.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

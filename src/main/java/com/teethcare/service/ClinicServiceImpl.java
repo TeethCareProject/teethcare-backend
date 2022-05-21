@@ -2,10 +2,7 @@ package com.teethcare.service;
 
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.repository.ClinicRepository;
-import com.teethcare.repository.CustomerServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -15,11 +12,11 @@ import java.util.Optional;
 
 
 @Service
-public class ClinicServiceImp implements ClinicService {
+public class ClinicServiceImpl implements ClinicService {
     private ClinicRepository clinicRepository;
 
     @Autowired
-    public ClinicServiceImp(ClinicRepository clinicRepository) {
+    public ClinicServiceImpl(ClinicRepository clinicRepository) {
         this.clinicRepository = clinicRepository;
     }
 
@@ -29,7 +26,7 @@ public class ClinicServiceImp implements ClinicService {
     }
 
     public Collection<Clinic> findAllActive() {
-        return clinicRepository.findAllActive();
+        return clinicRepository.getClinicByStatusIsNot(0);
     }
 
     @Override
@@ -40,6 +37,7 @@ public class ClinicServiceImp implements ClinicService {
     @Override
     public Clinic save(@Valid Clinic clinic) {
         clinic.setId(null);
+        clinic.setStatus(1);
         return clinicRepository.save(clinic);
     }
 

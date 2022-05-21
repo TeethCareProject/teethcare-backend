@@ -1,9 +1,7 @@
 package com.teethcare.controller;
 
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.service.CRUDService;
 import com.teethcare.service.ClinicService;
-import com.teethcare.service.ClinicServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +40,6 @@ public class ClinicController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Clinic> addClinic(@Valid @RequestBody Clinic clinic) {
-        clinic.setId(null);
         return new ResponseEntity<>(clinicService.save(clinic), HttpStatus.OK);
     }
 

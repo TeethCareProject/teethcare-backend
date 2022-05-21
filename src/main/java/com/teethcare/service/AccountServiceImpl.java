@@ -3,8 +3,6 @@ package com.teethcare.service;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,12 +10,12 @@ import java.util.Optional;
 
 
 @Service
-public class AccountServiceImp implements AccountService {
+public class AccountServiceImpl implements AccountService {
 
     private AccountRepository accountRepository;
 
     @Autowired
-    public AccountServiceImp(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
@@ -54,6 +52,6 @@ public class AccountServiceImp implements AccountService {
 
     @Override
     public Account getActiveAccountByUsername(String username) {
-        return accountRepository.getAccountByUsernameAndAndStatus(username, 1);
+        return accountRepository.getAccountByUsernameAndAndStatusIsNot(username, 0);
     }
 }

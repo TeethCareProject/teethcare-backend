@@ -7,9 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account findAccountByUsername(String username);
 
-    @Query(value = "SELECT a.username FROM account a WHERE a.status = 1 and a.username = ?1")
-    String getActiveUserName(String username);
-
-    Account getAccountByUsernameAndAndStatus(String username, int status);
+    Account getAccountByUsernameAndAndStatusIsNot(String username, int status);
 
 }

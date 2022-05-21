@@ -38,8 +38,8 @@ public class PatientController {
 
     @PostMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity addPatient(@Valid @RequestBody Patient manager) {
-        Patient addedPatient = patientService.save(manager);
+    public ResponseEntity addPatient(@Valid @RequestBody Patient patient) {
+        Patient addedPatient = patientService.save(patient);
         if (addedPatient != null) {
             return new ResponseEntity<>(addedPatient, HttpStatus.OK);
         }
