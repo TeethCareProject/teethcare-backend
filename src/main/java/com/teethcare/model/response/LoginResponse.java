@@ -5,22 +5,21 @@ import lombok.*;
 
 import java.sql.Date;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class LoginResponse {
     private String username;
-    @JsonIgnore
-    private String password;
-    private String roles;
+    private String role;
     private String firstName;
     private String lastName;
-    private boolean gender;
     private String avatarImage;
     private Date dateOfBirth;
-    private boolean status;
+    private String email;
+    private String phone;
+    private String gender;
+    private String status;
     private String token;
     private String refreshToken;
 }

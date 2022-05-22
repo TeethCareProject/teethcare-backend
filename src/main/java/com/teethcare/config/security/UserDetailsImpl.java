@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teethcare.model.entity.Account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.security.access.expression.SecurityExpressionRoot;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,23 +14,27 @@ import java.util.*;
 
 @Data
 @AllArgsConstructor
+@Getter
 public class UserDetailsImpl implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
     private String firstName;
     private String lastName;
-    private boolean gender;
     private String avatarImage;
     private Date dateOfBirth;
-    private boolean status;
-    private Collection<? extends  GrantedAuthority> authorities;
+    private String email;
+    private String phone;
+    private String gender;
+    private String status;
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(Account account){
-        List<GrantedAuthority> authorityList= new ArrayList<>();
+    public static UserDetailsImpl build(Account account) {
+        List<GrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority(account.getRole().getName()));
-        UserDetailsImpl userDetails = new UserDetailsImpl(account.getUsername(),account.getPassword(), account.getFirstName(),
-                account.getLastName(), account.isGender(), account.getAvatarImage(), account.getDateOfBirth(), account.isStatus(), authorityList);
+        UserDetailsImpl userDetails = new UserDetailsImpl(account.getUsername(), account.getPassword(), account.getFirstName(),
+                account.getLastName(), account.getAvatarImage(), account.getDateOfBirth(), account.getEmail(),
+                account.getPhone(), account.getGender(), account.getStatus(), authorityList);
         return userDetails;
     }
 
@@ -38,6 +42,7 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
+
     @Override
     public String getPassword() {
         return password;
@@ -46,30 +51,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername() {
         return username;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public boolean isGender() {
-        return gender;
-    }
-
-    public String getAvatarImage() {
-        return avatarImage;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public boolean isStatus() {
-        return status;
     }
 
     @Override

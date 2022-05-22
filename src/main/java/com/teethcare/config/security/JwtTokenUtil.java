@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.function.Function;
 
 @Component
 @Slf4j
@@ -51,7 +50,7 @@ public class JwtTokenUtil implements Serializable {
 
     public String generateRefreshToken(Authentication authen) {
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + refreshExpiration * 60 * 1000 * 24 * 60);
+        Date expiredDate = new Date(now.getTime() + refreshExpiration * 60 * 1000 * 1000);
         UserDetailsImpl userDetails = (UserDetailsImpl) authen.getPrincipal();
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -63,7 +62,7 @@ public class JwtTokenUtil implements Serializable {
 
     public String generateRefreshToken(String username) {
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + refreshExpiration * 60 * 1000 * 24 * 60);
+        Date expiredDate = new Date(now.getTime() + refreshExpiration * 60 * 1000 * 1000);
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(now)

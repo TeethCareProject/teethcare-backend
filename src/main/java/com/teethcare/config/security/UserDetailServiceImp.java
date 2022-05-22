@@ -1,5 +1,6 @@
 package com.teethcare.config.security;
 
+import com.teethcare.common.Status;
 import com.teethcare.exception.AccountNotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
@@ -20,11 +21,11 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findAccountByUsernameAndStatus(username, true);
+        Account account = accountRepository.findAccountByUsernameAndStatus(username, Status.ACTIVE.name());
         if (account != null) {
             return UserDetailsImpl.build(account);
         } else {
-            throw new AccountNotFoundException("Username" + username + "not found ");
+            throw new AccountNotFoundException("Username " + username + " not found ");
         }
     }
 }
