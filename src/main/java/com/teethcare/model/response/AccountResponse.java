@@ -18,7 +18,7 @@ public class AccountResponse {
     private String firstName;
     private String lastName;
     private String gender;
-    private String avatarImage;
-    private Date dateOfBirth;
+    private String email;
+    private String phoneNumber;
     private String status;
 }

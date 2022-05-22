@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,5 +38,6 @@ public class PatientRegisterRequest {
     private String email;
 
     @NotEmpty
+    @Pattern(regexp = "(0)+(\\d){9}")
     private String phoneNumber;
 }

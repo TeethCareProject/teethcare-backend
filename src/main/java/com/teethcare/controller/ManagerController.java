@@ -50,7 +50,7 @@ public class ManagerController {
         List<ManagerResponse> managerResponses = new ArrayList<>();
         for (Manager manager : managers) {
             Clinic clinic = clinicService.getClinicByManager(manager);
-            managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getAvatarImage(), manager.getDateOfBirth(), manager.getStatus(), clinic));
+            managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhoneNumber(), manager.getStatus(), clinic));
         }
         return new ResponseEntity<>(managerResponses, HttpStatus.OK);
     }
@@ -66,26 +66,29 @@ public class ManagerController {
     public ResponseEntity addManager(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername(), Status.INACTIVE.name());
         if (!isDuplicated) {
-            Manager manager = new Manager();
-            manager.setUsername(managerRegisterRequest.getUsername());
-            manager.setPassword(managerRegisterRequest.getPassword());
-            manager.setFirstName(managerRegisterRequest.getFirstName());
-            manager.setLastName(managerRegisterRequest.getLastName());
-            manager.setGender(managerRegisterRequest.getGender());
-            manager.setRole(new Role(1, "MANAGER"));
-            manager.setStatus(Status.PENDING.name());
-            manager.setPassword(passwordEncoder.encode(manager.getPassword()));
+            if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
+                Manager manager = new Manager();
+                manager.setUsername(managerRegisterRequest.getUsername());
+                manager.setPassword(managerRegisterRequest.getPassword());
+                manager.setFirstName(managerRegisterRequest.getFirstName());
+                manager.setLastName(managerRegisterRequest.getLastName());
+                manager.setGender(managerRegisterRequest.getGender());
+                manager.setRole(new Role(1, "MANAGER"));
+                manager.setStatus(Status.PENDING.name());
+                manager.setPassword(passwordEncoder.encode(manager.getPassword()));
 
-            Clinic clinic = new Clinic();
-            clinic.setManager(manager);
-            clinic.setName(managerRegisterRequest.getClinicName());
-            clinic.setTaxCode(managerRegisterRequest.getClinicTaxCode());
-            clinic.setLocationId(managerRegisterRequest.getWardId());
-            clinic.setStatus(Status.PENDING.name());
-            managerService.save(manager);
-            clinicService.save(clinic);
-            ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getAvatarImage(), manager.getDateOfBirth(), manager.getStatus(), clinic);
-            return new ResponseEntity<>(managerResponse, HttpStatus.OK);
+                Clinic clinic = new Clinic();
+                clinic.setManager(manager);
+                clinic.setName(managerRegisterRequest.getClinicName());
+                clinic.setTaxCode(managerRegisterRequest.getClinicTaxCode());
+                clinic.setLocationId(managerRegisterRequest.getWardId());
+                clinic.setStatus(Status.PENDING.name());
+                managerService.save(manager);
+                clinicService.save(clinic);
+                ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhoneNumber(), manager.getStatus(), clinic);
+                return new ResponseEntity<>(managerResponse, HttpStatus.OK);
+            } else
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("confirm Password is not match with password");
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("User existed!");
     }

@@ -19,8 +19,8 @@ public class ManagerResponse {
     private String firstName;
     private String lastName;
     private String gender;
-    private String avatarImage;
-    private Date dateOfBirth;
+    private String email;
+    private String phoneNumber;
     private String status;
     private Clinic clinic;
 }

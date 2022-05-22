@@ -43,8 +43,8 @@ public class AccountController {
                     account.getFirstName(),
                     account.getLastName(),
                     account.getGender(),
-                    account.getAvatarImage(),
-                    account.getDateOfBirth(),
+                    account.getEmail(),
+                    account.getPhoneNumber(),
                     account.getStatus()));
         }
         return new ResponseEntity<>(accountResponses, HttpStatus.OK);

@@ -66,14 +66,16 @@ public class PatientController {
     public ResponseEntity addPatient(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername(), Status.INACTIVE.name());
         if (!isDuplicated) {
-            Patient patient = mapper.map(patientRegisterRequest, Patient.class);
-            patient.setRole(new Role(3, "PATIENT"));
-            patient.setStatus(Status.ACTIVE.name());
-            patient.setPassword(passwordEncoder.encode(patient.getPassword()));
-            Patient addedPatient = patientService.save(patient);
-            PatientResponse patientResponse = mapper.map(addedPatient, PatientResponse.class);
-            patientResponse.setRole(com.teethcare.common.Role.PATIENT.name());
-            return new ResponseEntity<>(patientResponse, HttpStatus.OK);
+            if (patientRegisterRequest.getPassword().equals(patientRegisterRequest.getConfirmPassword())) {
+                Patient patient = mapper.map(patientRegisterRequest, Patient.class);
+                patient.setRole(new Role(3, "PATIENT"));
+                patient.setStatus(Status.ACTIVE.name());
+                patient.setPassword(passwordEncoder.encode(patient.getPassword()));
+                Patient addedPatient = patientService.save(patient);
+                PatientResponse patientResponse = mapper.map(addedPatient, PatientResponse.class);
+                patientResponse.setRole(com.teethcare.common.Role.PATIENT.name());
+                return new ResponseEntity<>(patientResponse, HttpStatus.OK);
+            } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("confirm Password is not match with password");
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("User existed!");
     }
