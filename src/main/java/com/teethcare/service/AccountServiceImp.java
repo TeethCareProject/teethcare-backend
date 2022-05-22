@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.teethcare.common.Status;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,6 @@ public class AccountServiceImp implements AccountService {
 
     @Override
     public Account getAccountByUsername(String username) {
-        return accountRepository.findAccountByUsernameAndStatus(username, true);
+        return accountRepository.findAccountByUsernameAndStatus(username, Status.ACTIVE.name());
     }
 }

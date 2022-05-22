@@ -37,15 +37,21 @@ public class Account {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "gender")
-    private boolean gender;
-
     @Column(name = "avatar_image")
     private String avatarImage;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "gender")
+    private String gender;
+
     @Column(name = "status")
-    private boolean status;
+    private String status;
 }
