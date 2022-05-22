@@ -21,7 +21,7 @@ public class PatientServiceImpl implements CRUDService<Patient> {
 
     @Override
     public List<Patient> findAll() {
-        return patientRepository.getPatientByStatusIsNot(0);
+        return patientRepository.getPatientByStatus(Status.ACTIVE.name());
     }
 
     @Override

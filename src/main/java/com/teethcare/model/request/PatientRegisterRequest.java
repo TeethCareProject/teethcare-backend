@@ -30,7 +30,7 @@ public class PatientRegisterRequest {
     private String lastName;
 
     @NotNull
-    private int gender;
+    private String gender;
 
     @Email
     @NotEmpty

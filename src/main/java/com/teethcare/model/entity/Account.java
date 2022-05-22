@@ -18,6 +18,7 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     @Column(name = "username")
@@ -44,6 +45,12 @@ public class Account {
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "phone")
+    private String phoneNumber;
 
     @Column(name = "status")
     private String status;

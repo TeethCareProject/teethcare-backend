@@ -5,8 +5,10 @@ import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.entity.Role;
 import com.teethcare.model.request.ManagerRegisterRequest;
+import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.CRUDService;
+import com.teethcare.service.ClinicService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @EnableSwagger2
@@ -27,11 +29,13 @@ public class ManagerController {
 
     private CRUDService<Manager> managerService;
     private AccountService accountService;
+    private ClinicService clinicService;
 
     @Autowired
-    public ManagerController(CRUDService<Manager> managerService, AccountService accountService, PasswordEncoder passwordEncoder) {
+    public ManagerController(CRUDService<Manager> managerService, AccountService accountService, ClinicService clinicService, PasswordEncoder passwordEncoder) {
         this.managerService = managerService;
         this.accountService = accountService;
+        this.clinicService = clinicService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -41,15 +45,21 @@ public class ManagerController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<List<Manager>> getAllManagers() {
-        return new ResponseEntity<>(managerService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<ManagerResponse>> getAllManagers() {
+        List<Manager> managers = managerService.findAll();
+        List<ManagerResponse> managerResponses = new ArrayList<>();
+        for (Manager manager : managers) {
+            Clinic clinic = clinicService.getClinicByManager(manager);
+            managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getAvatarImage(), manager.getDateOfBirth(), manager.getStatus(), clinic));
+        }
+        return new ResponseEntity<>(managerResponses, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'DENTIST', 'CUSTOMER_SERVICE')")
-    public ResponseEntity<Optional<Manager>> getManager(@PathVariable("id") Integer id) {
-        return new ResponseEntity<>(managerService.findById(id), HttpStatus.OK);
-    }
+//    @GetMapping("/{id}")
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'DENTIST', 'CUSTOMER_SERVICE')")
+//    public ResponseEntity<Optional<Manager>> getManager(@PathVariable("id") Integer id) {
+//        return new ResponseEntity<>(managerService.findById(id), HttpStatus.OK);
+//    }
 
     @PostMapping
     @PreAuthorize("permitAll()")
@@ -66,6 +76,7 @@ public class ManagerController {
             manager.setStatus(Status.PENDING.name());
             manager.setPassword(passwordEncoder.encode(manager.getPassword()));
 
+
             Clinic clinic = new Clinic();
             clinic.setManager(manager);
             clinic.setName(managerRegisterRequest.getClinicName());
@@ -73,10 +84,12 @@ public class ManagerController {
             clinic.setLocationId(managerRegisterRequest.getWardId());
             clinic.setStatus(Status.PENDING.name());
             Manager addedManager = managerService.save(manager);
-            return new ResponseEntity<>(addedManager, HttpStatus.OK);
+
+            ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getAvatarImage(), manager.getDateOfBirth(), manager.getStatus(), clinic);
+
+            return new ResponseEntity<>(managerResponse, HttpStatus.OK);
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("User existed!");
-
     }
 
     @DeleteMapping("/{id}")

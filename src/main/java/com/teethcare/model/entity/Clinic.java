@@ -18,13 +18,14 @@ public class Clinic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     @OneToOne
     @JoinColumn(name = "manager_id", referencedColumnName = "id")
-    private Manager manager;
+    private Account manager;
 
-    @Column(name = "location_id ")
+    @Column(name = "location_id")
     private int locationId;
 
     @Column(name = "name")
@@ -44,4 +45,6 @@ public class Clinic {
 
     @Column(name = "status")
     private String status;
+
+    
 }

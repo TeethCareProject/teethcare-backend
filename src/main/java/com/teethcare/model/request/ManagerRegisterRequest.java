@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -13,28 +14,25 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class ManagerRegisterRequest {
-    @NotEmpty
+    @NotBlank
     private String username;
-    @NotEmpty
+    @NotBlank
     private String password;
-    @NotEmpty
+    @NotBlank
     private String confirmPassword;
-    @NotEmpty
+    @NotBlank
     private String firstName;
-    @NotEmpty
+    @NotBlank
     private String lastName;
-    @NotNull
+    @NotBlank
     private String gender;
-    @NotEmpty
+    @NotBlank
     private String clinicName;
-    @NotEmpty
+    @NotBlank
     private String clinicTaxCode;
-    @NotEmpty
+    @NotBlank
     private String clinicAddress;
-    @NotEmpty
     private int provinceId;
-    @NotEmpty
     private int districtId;
-    @NotEmpty
     private int wardId;
 }

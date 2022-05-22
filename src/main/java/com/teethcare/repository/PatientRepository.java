@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PatientRepository extends JpaRepository<Patient, Integer> {
-    List<Patient> getPatientByStatusIsNot(int status);
+    List<Patient> getPatientByStatus(String status);
 }
