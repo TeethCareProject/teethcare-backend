@@ -4,7 +4,6 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.service.AccountService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
