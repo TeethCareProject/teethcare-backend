@@ -76,17 +76,15 @@ public class ManagerController {
             manager.setStatus(Status.PENDING.name());
             manager.setPassword(passwordEncoder.encode(manager.getPassword()));
 
-
             Clinic clinic = new Clinic();
             clinic.setManager(manager);
             clinic.setName(managerRegisterRequest.getClinicName());
             clinic.setTaxCode(managerRegisterRequest.getClinicTaxCode());
             clinic.setLocationId(managerRegisterRequest.getWardId());
             clinic.setStatus(Status.PENDING.name());
-            Manager addedManager = managerService.save(manager);
-
+            managerService.save(manager);
+            clinicService.save(clinic);
             ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getAvatarImage(), manager.getDateOfBirth(), manager.getStatus(), clinic);
-
             return new ResponseEntity<>(managerResponse, HttpStatus.OK);
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("User existed!");

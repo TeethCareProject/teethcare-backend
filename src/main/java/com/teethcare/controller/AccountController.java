@@ -34,8 +34,6 @@ public class AccountController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<List<AccountResponse>> getAllAccounts() {
-//        TypeToken<List<AccountResponse>> typeToken = new TypeToken<>() {
-//        };
         List<Account> accounts = accountService.findAll();
         List<AccountResponse> accountResponses = new ArrayList<>();
         for (Account account : accounts) {
@@ -49,7 +47,6 @@ public class AccountController {
                     account.getDateOfBirth(),
                     account.getStatus()));
         }
-        //        List<AccountResponse> accountResponses = mapper.map(accounts, typeToken.getType());
         return new ResponseEntity<>(accountResponses, HttpStatus.OK);
     }
 
