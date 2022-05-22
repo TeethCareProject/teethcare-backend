@@ -1,14 +1,13 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.Status;
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Manager;
-import com.teethcare.model.entity.Role;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.CRUDService;
 import com.teethcare.service.ClinicService;
+import com.teethcare.service.LocationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,13 +29,17 @@ public class ManagerController {
     private CRUDService<Manager> managerService;
     private AccountService accountService;
     private ClinicService clinicService;
+    private LocationService locationService;
 
     @Autowired
-    public ManagerController(CRUDService<Manager> managerService, AccountService accountService, ClinicService clinicService, PasswordEncoder passwordEncoder) {
+    public ManagerController(CRUDService<Manager> managerService, AccountService accountService,
+                             ClinicService clinicService, PasswordEncoder passwordEncoder,
+                             LocationService locationService) {
         this.managerService = managerService;
         this.accountService = accountService;
         this.clinicService = clinicService;
         this.passwordEncoder = passwordEncoder;
+        this.locationService = locationService;
     }
 
     private ModelMapper mapper;
@@ -81,7 +84,9 @@ public class ManagerController {
                 clinic.setManager(manager);
                 clinic.setName(managerRegisterRequest.getClinicName());
                 clinic.setTaxCode(managerRegisterRequest.getClinicTaxCode());
-                clinic.setLocationId(managerRegisterRequest.getWardId());
+                Location location = new Location();
+                location.setWard(locationService.getWardById(managerRegisterRequest.getWardId()));
+                clinic.setLocation(location);
                 clinic.setStatus(Status.PENDING.name());
                 managerService.save(manager);
                 clinicService.save(clinic);

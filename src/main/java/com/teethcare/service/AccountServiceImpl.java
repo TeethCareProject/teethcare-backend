@@ -24,7 +24,6 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> findAll() {
         return accountRepository.findAll();
     }
-
     @Override
     public Optional<Account> findById(Integer id) {
         return accountRepository.findById(id);

@@ -25,8 +25,9 @@ public class Clinic {
     @JoinColumn(name = "manager_id", referencedColumnName = "id")
     private Account manager;
 
-    @Column(name = "location_id")
-    private int locationId;
+    @OneToOne
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 
     @Column(name = "name")
     private String name;
@@ -46,5 +47,5 @@ public class Clinic {
     @Column(name = "status")
     private String status;
 
-    
+
 }
