@@ -1,4 +1,4 @@
-package com.teethcare.model.dto;
+package com.teethcare.model.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class ClinicPreDTO {
+public class ClinicRequest {
 
     @JsonProperty("id")
     private int id;
@@ -27,7 +27,7 @@ public class ClinicPreDTO {
 
     @Override
     public String toString() {
-        return "ClinicPreDTO{" +
+        return "ClinicRequest{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

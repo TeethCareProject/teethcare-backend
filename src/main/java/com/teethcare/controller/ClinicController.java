@@ -2,7 +2,7 @@ package com.teethcare.controller;
 
 import com.teethcare.config.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
-import com.teethcare.model.dto.ClinicPreDTO;
+import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
@@ -42,11 +42,11 @@ public class ClinicController {
     }
 
     @PutMapping("/{id}")
-    public Clinic update(@Valid @RequestBody ClinicPreDTO clinicPreDTO, @PathVariable int id) {
+    public Clinic update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable int id) {
 
-        clinicPreDTO.setId(id);
+        clinicRequest.setId(id);
         Clinic clinic = clinicService.findById(id);
-        mapstructMapper.updateClinicFromDTO(clinicPreDTO, clinic);
+        mapstructMapper.updateClinicFromDTO(clinicRequest, clinic);
         clinicService.save(clinic);
         return clinic;
     }

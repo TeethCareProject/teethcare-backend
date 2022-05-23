@@ -65,9 +65,9 @@ public class DentistServiceImpl implements DentistService {
     public List<Dentist> findByClinicIdAndStatus(int theId, String status) {
         List<Dentist> dentistList = dentistRepository.findByClinicIdAndStatus(theId, status);
 
-        if (dentistList == null || dentistList.size() == 0) {
-            throw new NotFoundException();
-        }
+//        if (dentistList == null || dentistList.size() == 0) {
+//            throw new NotFoundException();
+//        }
 
         return dentistList;
     }

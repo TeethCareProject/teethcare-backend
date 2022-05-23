@@ -38,7 +38,7 @@ public class CustomerServiceController {
     }
 
     @GetMapping("/{id}")
-    public CustomerServiceResponse getCSById(@PathVariable int id) {
+    public ResponseEntity<CustomerServiceResponse> getCSById(@PathVariable int id) {
 
         CustomerService customerService = CSService.findById(id);
 
@@ -49,7 +49,7 @@ public class CustomerServiceController {
         CustomerServiceResponse customerServiceResponse = new CustomerServiceResponse();
         customerServiceResponse = mapstructMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
 
-        return customerServiceResponse;
+        return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -1,6 +1,6 @@
 package com.teethcare.config;
 
-import com.teethcare.model.dto.ClinicPreDTO;
+import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
@@ -20,7 +20,7 @@ public interface MapStructMapper {
     @Mapping(target = "avgRatingScore", ignore = true)
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
-    void updateClinicFromDTO(ClinicPreDTO dto, @MappingTarget Clinic entity);
+    void updateClinicFromDTO(ClinicRequest dto, @MappingTarget Clinic entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")
