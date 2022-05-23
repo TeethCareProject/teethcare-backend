@@ -40,7 +40,7 @@ public class PatientServiceImpl implements CRUDService<Patient> {
         if (patientData.isPresent()) {
             Patient patient = patientData.get();
             patient.setStatus(Status.INACTIVE.name());
-            return patient;
+            return patientRepository.save(patient);
         }
         return null;
     }

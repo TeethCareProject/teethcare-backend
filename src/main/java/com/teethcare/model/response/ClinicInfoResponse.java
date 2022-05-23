@@ -10,10 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ClinicResponse {
-
+public class ClinicInfoResponse {
     private Integer id;
-    private AccountResponse manager;
     private Location location;
     private String name;
     private String description;
@@ -21,5 +19,4 @@ public class ClinicResponse {
     private String taxCode;
     private Float avgRatingScore;
     private String status;
-
 }

@@ -4,6 +4,7 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.service.AccountService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,17 +21,13 @@ import java.util.List;
 
 @RestController
 @EnableSwagger2
+@RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Account.ACCOUNT_ENDPOINT)
 public class AccountController {
 
-    private AccountService accountService;
-    private ModelMapper mapper;
+    private final AccountService accountService;
+    private final ModelMapper mapper;
 
-    @Autowired
-    public AccountController(AccountService accountService, ModelMapper mapper) {
-        this.accountService = accountService;
-        this.mapper = mapper;
-    }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
