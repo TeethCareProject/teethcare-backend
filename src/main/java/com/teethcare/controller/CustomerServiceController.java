@@ -1,10 +1,16 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Status;
+import com.teethcare.config.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 //import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -12,13 +18,17 @@ import java.util.List;
 
 @RestController
 //@EnableSwagger2
+@PreAuthorize("hasAuthority('MANAGER')")
 @RequestMapping("/api/customer-services")
 public class CustomerServiceController {
 
     private CRUDService<CustomerService> CSService;
+    private MapStructMapper mapstructMapper;
 
     @Autowired
-    public CustomerServiceController (@Qualifier("CSServiceImpl") CRUDService<CustomerService> CSService) {
+    public CustomerServiceController (@Qualifier("CSServiceImpl") CRUDService<CustomerService> CSService,
+                                      MapStructMapper mapstructMapper) {
+        this.mapstructMapper = mapstructMapper;
         this.CSService = CSService;
     }
 
@@ -28,7 +38,7 @@ public class CustomerServiceController {
     }
 
     @GetMapping("/{id}")
-    public CustomerService getCSById(@PathVariable int id) {
+    public CustomerServiceResponse getCSById(@PathVariable int id) {
 
         CustomerService customerService = CSService.findById(id);
 
@@ -36,11 +46,14 @@ public class CustomerServiceController {
             throw new NotFoundException();
         }
 
-        return customerService;
+        CustomerServiceResponse customerServiceResponse = new CustomerServiceResponse();
+        customerServiceResponse = mapstructMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
+
+        return customerServiceResponse;
     }
 
     @DeleteMapping("/{id}")
-    public CustomerService updateAccountStatus(@PathVariable("id") int id) {
+    public ResponseEntity<String> updateAccountStatus(@PathVariable("id") int id) {
         if (id < 1) {
             throw new NotFoundException();
         }
@@ -52,10 +65,10 @@ public class CustomerServiceController {
         }
 
         customerService.setId(id);
-        customerService.setStatus(false);
+        customerService.setStatus("INACTIVE");
 
         CSService.save(customerService);
 
-        return customerService;
+        return new ResponseEntity<>("Delete successfully", HttpStatus.OK);
     }
 }

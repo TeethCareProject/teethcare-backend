@@ -29,7 +29,6 @@ public class Account {
     private String password;
 
     @Column(name = "role_id", nullable = false)
-    @NotEmpty
     private int roleId;
 
     @NotEmpty
@@ -41,7 +40,7 @@ public class Account {
     private String lastName;
 
     @Column(name = "gender")
-    private boolean gender;
+    private String gender;
 
     @Column(name = "avatar_image")
     private String avatarImage;
@@ -49,7 +48,12 @@ public class Account {
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
-    @NotEmpty
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "status")
-    private boolean status;
+    private String status;
 }

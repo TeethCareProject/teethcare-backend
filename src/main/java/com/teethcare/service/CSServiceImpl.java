@@ -1,6 +1,8 @@
 package com.teethcare.service;
 
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.CustomerServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CSServiceImpl implements CRUDService<CustomerService>{
+public class CSServiceImpl implements CSService{
 
     private CustomerServiceRepository customerServiceRepository;
 
@@ -44,5 +46,27 @@ public class CSServiceImpl implements CRUDService<CustomerService>{
     @Override
     public void deleteById(int theId) {
         customerServiceRepository.deleteById(theId);
+    }
+
+    @Override
+    public List<CustomerService> findByClinicId(int theId) {
+        List<CustomerService> customerServiceList = customerServiceRepository.findByClinicId(theId);
+
+        if (customerServiceList == null) {
+            throw new NotFoundException();
+        }
+
+        return customerServiceList;
+    }
+
+    @Override
+    public List<CustomerService> findByClinicIdAndStatus(int theId, String status) {
+        List<CustomerService> customerServiceList = customerServiceRepository.findByClinicIdAndStatus(theId, status);
+
+        if (customerServiceList == null) {
+            throw new NotFoundException();
+        }
+
+        return customerServiceList;
     }
 }

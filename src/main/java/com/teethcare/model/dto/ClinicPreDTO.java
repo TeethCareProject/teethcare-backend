@@ -5,11 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-public class ClinicDTO {
+public class ClinicPreDTO {
 
     @JsonProperty("id")
     private int id;
@@ -28,7 +27,7 @@ public class ClinicDTO {
 
     @Override
     public String toString() {
-        return "ClinicDTO{" +
+        return "ClinicPreDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

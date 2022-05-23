@@ -1,5 +1,7 @@
 package com.teethcare.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,18 +50,16 @@ public class Clinic {
     private float avgRatingScore;
 
     @Column(name = "status")
-    private boolean status;
+    private String status;
 
     @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "clinic",
-            cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.PERSIST, CascadeType.REFRESH})
+            mappedBy = "clinic")
+    @JsonBackReference
     private List<Dentist> dentists;
 
     @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "clinic",
-            cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.PERSIST, CascadeType.REFRESH})
+            mappedBy = "clinic")
+    @JsonBackReference
     private List<CustomerService> customerServices;
 
     public int getId() {
@@ -126,28 +126,27 @@ public class Clinic {
         this.avgRatingScore = avgRatingScore;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "Clinic{" +
-                "id=" + id +
-                ", managerId='" + managerId + '\'' +
-                ", locationId='" + locationId + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", taxCode='" + taxCode + '\'' +
-                ", avgRatingScore=" + avgRatingScore +
-                ", status=" + status +
-                ", dentists=" + dentists +
-                ", customerServices=" + customerServices +
-                '}';
+    public List<Dentist> getDentists() {
+        return dentists;
+    }
+
+    public void setDentists(List<Dentist> dentists) {
+        this.dentists = dentists;
+    }
+
+    public List<CustomerService> getCustomerServices() {
+        return customerServices;
+    }
+
+    public void setCustomerServices(List<CustomerService> customerServices) {
+        this.customerServices = customerServices;
     }
 }

@@ -1,11 +1,17 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Status;
+import com.teethcare.config.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
+import com.teethcare.model.response.DentistResponse;
 import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 //import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -13,12 +19,16 @@ import java.util.List;
 
 @RestController
 //@EnableSwagger2
+@PreAuthorize("hasAuthority('MANAGER')")
 @RequestMapping("/api/dentists")
 public class DentistController {
     private CRUDService<Dentist> dentistService;
+    private MapStructMapper mapstructMapper;
 
     @Autowired
-    public DentistController (@Qualifier("dentistServiceImpl") CRUDService<Dentist> dentistService) {
+    public DentistController (@Qualifier("dentistServiceImpl") CRUDService<Dentist> dentistService,
+                                MapStructMapper mapstructMapper) {
+        this.mapstructMapper = mapstructMapper;
         this.dentistService = dentistService;
     }
 
@@ -28,19 +38,21 @@ public class DentistController {
     }
 
     @GetMapping("/{id}")
-    public Dentist getDentist(@PathVariable int id) {
+    public DentistResponse getDentist(@PathVariable int id) {
 
-        Dentist theEmployee = dentistService.findById(id);
+        Dentist theDentist = dentistService.findById(id);
 
-        if (theEmployee == null) {
+        if (theDentist == null) {
             throw new NotFoundException();
         }
 
-        return theEmployee;
+        DentistResponse dentistResponse = new DentistResponse();
+        dentistResponse = mapstructMapper.mapDentistToDentistResponse(theDentist);
+        return dentistResponse;
     }
 
     @DeleteMapping("/{id}")
-    public Dentist updateAccountStatus(@PathVariable("id") int id) {
+    public ResponseEntity<String> updateAccountStatus(@PathVariable("id") int id) {
         if (id < 1) {
             throw new NotFoundException();
         }
@@ -52,10 +64,10 @@ public class DentistController {
         }
 
         dentist.setId(id);
-        dentist.setStatus(false);
+        dentist.setStatus("INACTIVE");
 
         dentistService.save(dentist);
 
-        return dentist;
+        return new ResponseEntity<>("Delete successfully", HttpStatus.OK);
     }
 }

@@ -1,2 +1,7 @@
-package com.teethcare.common;public class Status {
+package com.teethcare.common;
+
+public enum Status {
+    ACTIVE,
+    INACTIVE,
+    PENDING;
 }

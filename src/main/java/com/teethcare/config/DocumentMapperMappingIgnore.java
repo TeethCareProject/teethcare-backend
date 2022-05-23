@@ -1,6 +1,6 @@
 package com.teethcare.config;
 
-import com.teethcare.model.dto.ClinicDTO;
+import com.teethcare.model.dto.ClinicPreDTO;
 import com.teethcare.model.entity.Clinic;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,5 +15,5 @@ public interface DocumentMapperMappingIgnore {
     @Mapping(target = "avgRatingScore", ignore = true)
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
-    Clinic mapClinicDTOToClinic(ClinicDTO clinicDTO);
+    Clinic mapClinicDTOToClinic(ClinicPreDTO clinicPreDTO);
 }
