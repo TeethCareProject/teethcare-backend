@@ -1,13 +1,12 @@
 package com.teethcare.exception;
 
-import com.teethcare.model.dto.ErrorResponseDTO;
+import com.teethcare.model.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +15,8 @@ import java.util.Map;
 public class NotFoundExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseDTO> handleException(NotFoundException exc) {
-        ErrorResponseDTO error = new ErrorResponseDTO();
+    public ResponseEntity<ErrorResponse> handleException(NotFoundException exc) {
+        ErrorResponse error = new ErrorResponse();
 
         error.setStatus(HttpStatus.NOT_FOUND.value());
         error.setMessage(exc.getMessage());
@@ -27,8 +26,8 @@ public class NotFoundExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseDTO> handleException(NumberFormatException exc) {
-        ErrorResponseDTO error = new ErrorResponseDTO();
+    public ResponseEntity<ErrorResponse> handleException(NumberFormatException exc) {
+        ErrorResponse error = new ErrorResponse();
 
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         error.setMessage(exc.getMessage());

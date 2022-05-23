@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Message;
 import com.teethcare.config.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.request.ClinicRequest;
@@ -8,17 +9,22 @@ import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.AccountResponse;
+import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CRUDService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.DentistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.teethcare.common.Message.SUCCESS_FUNCTION;
 
 @RestController
 @PreAuthorize("hasAuthority('MANAGER')")
@@ -42,13 +48,13 @@ public class ClinicController {
     }
 
     @PutMapping("/{id}")
-    public Clinic update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable int id) {
+    public ResponseEntity<MessageResponse> update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable int id) {
 
         clinicRequest.setId(id);
         Clinic clinic = clinicService.findById(id);
         mapstructMapper.updateClinicFromDTO(clinicRequest, clinic);
         clinicService.save(clinic);
-        return clinic;
+        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -63,7 +69,7 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}/staffs")
-    public List<AccountResponse> findAllStaffs(@PathVariable int id) {
+    public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable int id) {
         List<Account> staffList = new ArrayList<>();
         List<AccountResponse> staffResponseList = new ArrayList<>();
 
@@ -79,6 +85,6 @@ public class ClinicController {
             throw new NotFoundException();
         }
 
-        return staffResponseList;
+        return new ResponseEntity<>(staffResponseList, HttpStatus.OK);
     }
 }

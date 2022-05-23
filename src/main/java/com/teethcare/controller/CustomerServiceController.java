@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.config.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
@@ -69,6 +70,6 @@ public class CustomerServiceController {
 
         CSService.save(customerService);
 
-        return new ResponseEntity<>("Delete successfully", HttpStatus.OK);
+        return new ResponseEntity<>(Message.SUCCESS_FUNCTION.name(), HttpStatus.OK);
     }
 }

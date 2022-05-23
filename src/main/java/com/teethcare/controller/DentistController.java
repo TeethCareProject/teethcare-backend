@@ -35,7 +35,7 @@ public class DentistController {
     }
 
     @GetMapping("/{id}")
-    public DentistResponse getDentist(@PathVariable int id) {
+    public ResponseEntity<DentistResponse> getDentist(@PathVariable int id) {
 
         Dentist theDentist = dentistService.findById(id);
 
@@ -45,7 +45,7 @@ public class DentistController {
 
         DentistResponse dentistResponse = new DentistResponse();
         dentistResponse = mapstructMapper.mapDentistToDentistResponse(theDentist);
-        return dentistResponse;
+        return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
