@@ -13,6 +13,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "clinic")
@@ -61,92 +63,4 @@ public class Clinic {
             mappedBy = "clinic")
     @JsonBackReference
     private List<CustomerService> customerServices;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getManagerId() {
-        return managerId;
-    }
-
-    public void setManagerId(String managerId) {
-        this.managerId = managerId;
-    }
-
-    public String getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
-    public float getAvgRatingScore() {
-        return avgRatingScore;
-    }
-
-    public void setAvgRatingScore(float avgRatingScore) {
-        this.avgRatingScore = avgRatingScore;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public List<Dentist> getDentists() {
-        return dentists;
-    }
-
-    public void setDentists(List<Dentist> dentists) {
-        this.dentists = dentists;
-    }
-
-    public List<CustomerService> getCustomerServices() {
-        return customerServices;
-    }
-
-    public void setCustomerServices(List<CustomerService> customerServices) {
-        this.customerServices = customerServices;
-    }
 }

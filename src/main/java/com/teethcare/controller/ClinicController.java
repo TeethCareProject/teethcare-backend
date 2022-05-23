@@ -1,7 +1,8 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.Message;
-import com.teethcare.config.MapStructMapper;
+import com.teethcare.config.mapper.AccountMapper;
+import com.teethcare.config.mapper.ClinicMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.entity.Account;
@@ -24,8 +25,6 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.teethcare.common.Message.SUCCESS_FUNCTION;
-
 @RestController
 @PreAuthorize("hasAuthority('MANAGER')")
 @RequestMapping("/api/clinics")
@@ -34,17 +33,20 @@ public class ClinicController {
     private CRUDService<Clinic> clinicService;
     private DentistService dentistService;
     private CSService CSService;
-    private MapStructMapper mapstructMapper;
+    private ClinicMapper clinicMapper;
+    private AccountMapper accountMapper;
 
     @Autowired
     public ClinicController (@Qualifier("clinicServiceImpl") CRUDService<Clinic> clinicService,
                              DentistService dentistService,
                              CSService CSService,
-                             MapStructMapper mapstructMapper) {
+                             ClinicMapper clinicMapper,
+                             AccountMapper accountMapper) {
         this.dentistService = dentistService;
         this.CSService = CSService;
         this.clinicService = clinicService;
-        this.mapstructMapper = mapstructMapper;
+        this.clinicMapper = clinicMapper;
+        this.accountMapper = accountMapper;
     }
 
     @PutMapping("/{id}")
@@ -52,21 +54,21 @@ public class ClinicController {
 
         clinicRequest.setId(id);
         Clinic clinic = clinicService.findById(id);
-        mapstructMapper.updateClinicFromDTO(clinicRequest, clinic);
+        clinicMapper.updateClinicFromDTO(clinicRequest, clinic);
         clinicService.save(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public Clinic getClinicById(@PathVariable int id) {
-        Clinic clinic = clinicService.findById(id);
-
-        if (clinic == null) {
-            throw new NotFoundException();
-        }
-
-        return clinic;
-    }
+//    @GetMapping("/{id}")
+//    public Clinic getClinicById(@PathVariable int id) {
+//        Clinic clinic = clinicService.findById(id);
+//
+//        if (clinic == null) {
+//            throw new NotFoundException();
+//        }
+//
+//        return clinic;
+//    }
 
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable int id) {
@@ -79,7 +81,7 @@ public class ClinicController {
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);
 
-        staffResponseList = mapstructMapper.mapAccountListToAccountDTOList(staffList);
+        staffResponseList = accountMapper.mapAccountListToAccountDTOList(staffList);
 
         if (staffResponseList == null || staffResponseList.size() == 0) {
             throw new NotFoundException();

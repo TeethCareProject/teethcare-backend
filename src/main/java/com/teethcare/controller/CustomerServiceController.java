@@ -1,11 +1,12 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.Message;
-import com.teethcare.common.Status;
-import com.teethcare.config.MapStructMapper;
+import com.teethcare.config.mapper.AccountMapper;
+import com.teethcare.config.mapper.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.response.CustomerServiceResponse;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,12 +25,12 @@ import java.util.List;
 public class CustomerServiceController {
 
     private CRUDService<CustomerService> CSService;
-    private MapStructMapper mapstructMapper;
+    private AccountMapper accountMapper;
 
     @Autowired
     public CustomerServiceController (@Qualifier("CSServiceImpl") CRUDService<CustomerService> CSService,
-                                      MapStructMapper mapstructMapper) {
-        this.mapstructMapper = mapstructMapper;
+                                      AccountMapper accountMapper) {
+        this.accountMapper = accountMapper;
         this.CSService = CSService;
     }
 
@@ -48,7 +49,7 @@ public class CustomerServiceController {
         }
 
         CustomerServiceResponse customerServiceResponse = new CustomerServiceResponse();
-        customerServiceResponse = mapstructMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
+        customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
 
         return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
     }

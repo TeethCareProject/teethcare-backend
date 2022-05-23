@@ -1,6 +1,7 @@
 package com.teethcare.controller;
 
-import com.teethcare.config.MapStructMapper;
+import com.teethcare.config.mapper.AccountMapper;
+import com.teethcare.config.mapper.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;
@@ -20,12 +21,12 @@ import java.util.List;
 @RequestMapping("/api/dentists")
 public class DentistController {
     private CRUDService<Dentist> dentistService;
-    private MapStructMapper mapstructMapper;
+    private AccountMapper accountMapper;
 
     @Autowired
     public DentistController (@Qualifier("dentistServiceImpl") CRUDService<Dentist> dentistService,
-                                MapStructMapper mapstructMapper) {
-        this.mapstructMapper = mapstructMapper;
+                              AccountMapper accountMapper) {
+        this.accountMapper = accountMapper;
         this.dentistService = dentistService;
     }
 
@@ -44,7 +45,7 @@ public class DentistController {
         }
 
         DentistResponse dentistResponse = new DentistResponse();
-        dentistResponse = mapstructMapper.mapDentistToDentistResponse(theDentist);
+        dentistResponse = accountMapper.mapDentistToDentistResponse(theDentist);
         return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
     }
 
