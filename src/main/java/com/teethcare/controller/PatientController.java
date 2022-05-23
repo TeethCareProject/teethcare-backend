@@ -2,6 +2,8 @@ package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
+import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.entity.Role;
 import com.teethcare.model.request.PatientRegisterRequest;
@@ -12,7 +14,6 @@ import com.teethcare.service.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,7 +41,7 @@ public class PatientController {
     private final AccountService accountService;
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<PatientResponse>> getAllPatients() {
         TypeToken<List<PatientResponse>> typeToken = new TypeToken<>() {
         };
@@ -51,7 +52,8 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PATIENT', 'DENTIST', 'CUSTOMER_SERVICE')")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
+            "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity getPatient(@PathVariable("id") Integer id) {
         Optional<Patient> patient = patientService.findById(id);
         if (patient.isPresent()) {
@@ -59,7 +61,7 @@ public class PatientController {
             patientResponse.setRole(com.teethcare.common.Role.PATIENT.name());
             return new ResponseEntity<>(patientResponse, HttpStatus.OK);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No patient");
+        throw new IdNotFoundException("Patient id " + id + " not found");
 
     }
 
@@ -70,27 +72,29 @@ public class PatientController {
         if (!isDuplicated) {
             if (patientRegisterRequest.getPassword().equals(patientRegisterRequest.getConfirmPassword())) {
                 Patient patient = mapper.map(patientRegisterRequest, Patient.class);
-                patient.setRole(new Role(3, "PATIENT"));
+                patient.setRole(new Role(3, com.teethcare.common.Role.PATIENT.name()));
                 patient.setStatus(Status.ACTIVE.name());
                 patient.setPassword(passwordEncoder.encode(patient.getPassword()));
                 Patient addedPatient = patientService.save(patient);
                 PatientResponse patientResponse = mapper.map(addedPatient, PatientResponse.class);
                 patientResponse.setRole(com.teethcare.common.Role.PATIENT.name());
                 return new ResponseEntity<>(patientResponse, HttpStatus.OK);
-            } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("confirm Password is not match with password");
+            } else
+                throw new RegisterAccountException("confirm Password is not match with password");
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("User existed!");
+        throw new RegisterAccountException("User existed!");
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<Patient> delPatient(@PathVariable("id") Integer id) {
         Patient deletedPatient = patientService.delete(id);
         if (deletedPatient != null) {
             return new ResponseEntity<>(deletedPatient, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new IdNotFoundException("Patient id " + id + " not found");
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorResponse> handleValidationExceptions(

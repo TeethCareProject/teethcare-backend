@@ -28,15 +28,14 @@ public class AccountController {
     private final AccountService accountService;
     private final ModelMapper mapper;
 
-
     @GetMapping
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<AccountResponse>> getAllAccounts() {
         List<Account> accounts = accountService.findAll();
         List<AccountResponse> accountResponses = new ArrayList<>();
         for (Account account : accounts) {
             accountResponses.add(new AccountResponse(
-                account.getId(), account.getUsername(), account.getRole().getName(), account.getFirstName(),
+                    account.getId(), account.getUsername(), account.getRole().getName(), account.getFirstName(),
                     account.getLastName(), account.getAvatarImage(), account.getDateOfBirth(), account.getEmail(),
                     account.getPhone(), account.getGender(), account.getStatus()
             ));

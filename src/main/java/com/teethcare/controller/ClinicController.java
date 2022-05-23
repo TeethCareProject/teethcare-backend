@@ -2,9 +2,11 @@ package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
+import com.teethcare.exception.ClinicNotFoundException;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
+import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -70,20 +73,20 @@ public class ClinicController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") int id) {
         Optional<Clinic> clinicTmp = clinicService.findById(id);
-        AccountResponse accountResponse = new AccountResponse(
-                clinicTmp.get().getManager().getId(),
-                clinicTmp.get().getManager().getUsername(),
-                clinicTmp.get().getManager().getRole().getName(),
-                clinicTmp.get().getManager().getFirstName(),
-                clinicTmp.get().getManager().getLastName(),
-                clinicTmp.get().getManager().getAvatarImage(),
-                clinicTmp.get().getManager().getDateOfBirth(),
-                clinicTmp.get().getManager().getEmail(),
-                clinicTmp.get().getManager().getPhone(),
-                clinicTmp.get().getManager().getGender(),
-                clinicTmp.get().getManager().getStatus()
-        );
         if (clinicTmp.isPresent()) {
+            AccountResponse accountResponse = new AccountResponse(
+                    clinicTmp.get().getManager().getId(),
+                    clinicTmp.get().getManager().getUsername(),
+                    clinicTmp.get().getManager().getRole().getName(),
+                    clinicTmp.get().getManager().getFirstName(),
+                    clinicTmp.get().getManager().getLastName(),
+                    clinicTmp.get().getManager().getAvatarImage(),
+                    clinicTmp.get().getManager().getDateOfBirth(),
+                    clinicTmp.get().getManager().getEmail(),
+                    clinicTmp.get().getManager().getPhone(),
+                    clinicTmp.get().getManager().getGender(),
+                    clinicTmp.get().getManager().getStatus()
+            );
             ClinicResponse clinicResponse = new ClinicResponse(
                     clinicTmp.get().getId(),
                     accountResponse,
@@ -97,20 +100,22 @@ public class ClinicController {
 
             );
             return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
+        } else {
+            throw new ClinicNotFoundException("Clinic id " + id + " not found");
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<Clinic> delClinic(@PathVariable("id") int id) {
         Optional<Clinic> clinicData = clinicService.findById(id);
         if (clinicData.isPresent()) {
             Clinic clinic = clinicData.get();
             clinic.setStatus(Status.INACTIVE.name());
             return new ResponseEntity<>(clinicService.save(clinic), HttpStatus.OK);
+        } else {
+            throw new ClinicNotFoundException("Clinic id " + id + " not found");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
