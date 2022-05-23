@@ -26,7 +26,7 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicRepository.findAll();
     }
 
-    public Collection<Clinic> findAllActive() {
+    public List<Clinic> findAllActive() {
         return clinicRepository.getClinicByStatus(Status.ACTIVE.name());
     }
 

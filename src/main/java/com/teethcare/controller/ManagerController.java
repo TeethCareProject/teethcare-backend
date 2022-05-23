@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
@@ -23,7 +24,7 @@ import java.util.List;
 
 @RestController
 @EnableSwagger2
-@RequestMapping("/api/managers")
+@RequestMapping(path = EndpointConstant.Manager.MANAGER_ENDPOINT)
 public class ManagerController {
 
     private CRUDService<Manager> managerService;
@@ -47,22 +48,18 @@ public class ManagerController {
 
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<ManagerResponse>> getAllManagers() {
         List<Manager> managers = managerService.findAll();
         List<ManagerResponse> managerResponses = new ArrayList<>();
         for (Manager manager : managers) {
             Clinic clinic = clinicService.getClinicByManager(manager);
-            managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhoneNumber(), manager.getStatus(), clinic));
+            managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(),
+                    manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
+                    manager.getStatus(), clinic));
         }
         return new ResponseEntity<>(managerResponses, HttpStatus.OK);
     }
-
-//    @GetMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER', 'DENTIST', 'CUSTOMER_SERVICE')")
-//    public ResponseEntity<Optional<Manager>> getManager(@PathVariable("id") Integer id) {
-//        return new ResponseEntity<>(managerService.findById(id), HttpStatus.OK);
-//    }
 
     @PostMapping
     @PreAuthorize("permitAll()")
@@ -86,11 +83,14 @@ public class ManagerController {
                 clinic.setTaxCode(managerRegisterRequest.getClinicTaxCode());
                 Location location = new Location();
                 location.setWard(locationService.getWardById(managerRegisterRequest.getWardId()));
+                locationService.save(location);
                 clinic.setLocation(location);
                 clinic.setStatus(Status.PENDING.name());
                 managerService.save(manager);
                 clinicService.save(clinic);
-                ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhoneNumber(), manager.getStatus(), clinic);
+                ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(),
+                        manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(),
+                        manager.getEmail(), manager.getPhone(), manager.getStatus(), clinic);
                 return new ResponseEntity<>(managerResponse, HttpStatus.OK);
             } else
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("confirm Password is not match with password");
@@ -99,7 +99,7 @@ public class ManagerController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<Manager> delManager(@PathVariable("id") Integer id) {
         Manager deletedManager = managerService.delete(id);
         if (deletedManager != null) {

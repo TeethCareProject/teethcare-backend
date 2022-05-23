@@ -50,9 +50,10 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findAccountByUsername(username);
     }
 
+
     @Override
     public Account getActiveAccountByUsername(String username) {
-        return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name());
+        return accountRepository.findAccountByUsernameAndStatus(username, Status.ACTIVE.name());
     }
 
     @Override

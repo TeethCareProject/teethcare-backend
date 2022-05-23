@@ -5,8 +5,9 @@ import com.teethcare.model.entity.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface ClinicRepository extends JpaRepository<Clinic, Integer> {
-    Collection<Clinic> getClinicByStatus(String Status);
+    List<Clinic> getClinicByStatus(String Status);
     Clinic getClinicByManager(Manager manager);
 }

@@ -1,10 +1,8 @@
 package com.teethcare.exception;
 
 import com.teethcare.model.response.CustomErrorResponse;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,5 +30,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
 
     }
+/*    @ExceptionHandler(EntityNotFoundException.class)
+    private ResponseEntity<CustomErrorResponse> handleEntityNotFound(EntityNotFoundException ex) {
+        List<String> error = new ArrayList<>();
+        error.add("Entity not found");
+        CustomErrorResponse response = new CustomErrorResponse(
+                new Timestamp(System.currentTimeMillis()),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.toString(),
+                error
+        );
 
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }*/
 }

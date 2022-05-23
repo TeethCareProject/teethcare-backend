@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.EndpointConstant;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.service.AccountService;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @RestController
 @EnableSwagger2
-@RequestMapping("/api/accounts")
+@RequestMapping(path = EndpointConstant.Account.ACCOUNT_ENDPOINT)
 public class AccountController {
 
     private AccountService accountService;
@@ -32,27 +33,17 @@ public class AccountController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<AccountResponse>> getAllAccounts() {
         List<Account> accounts = accountService.findAll();
         List<AccountResponse> accountResponses = new ArrayList<>();
         for (Account account : accounts) {
-            accountResponses.add(new AccountResponse(account.getId(),
-                    account.getUsername(),
-                    account.getRole().getName(),
-                    account.getFirstName(),
-                    account.getLastName(),
-                    account.getGender(),
-                    account.getEmail(),
-                    account.getPhoneNumber(),
-                    account.getStatus()));
+            accountResponses.add(new AccountResponse(
+                account.getId(), account.getUsername(), account.getRole().getName(), account.getFirstName(),
+                    account.getLastName(), account.getAvatarImage(), account.getDateOfBirth(), account.getEmail(),
+                    account.getPhone(), account.getGender(), account.getStatus()
+            ));
         }
         return new ResponseEntity<>(accountResponses, HttpStatus.OK);
-    }
-
-    @GetMapping("/{username}")
-    public ResponseEntity<Account> getAllActiveAccounts(@PathVariable("username") String username) {
-        return new ResponseEntity<>(accountService.getActiveAccountByUsername(username), HttpStatus.OK);
-
     }
 }
