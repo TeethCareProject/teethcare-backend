@@ -16,8 +16,8 @@ public final class EndpointConstant {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Customer {
-        public static final String CUSTOMER_ENDPOINT = ROOT_ENDPOINT + "/customers";
+    public static final class Patient {
+        public static final String PATIENT_ENDPOINT = ROOT_ENDPOINT + "/patients";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

@@ -1,7 +1,7 @@
 package com.teethcare.common;
 
 public enum Status {
-    PENDING,
+    INACTIVE,
     ACTIVE,
-    UNACTIVE
+    PENDING
 }

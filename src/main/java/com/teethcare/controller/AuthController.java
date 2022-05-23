@@ -108,6 +108,7 @@ public class AuthController {
 
         );
         return new ResponseEntity<>(customErrorResponse, HttpStatus.BAD_REQUEST);
+
     }
 
 

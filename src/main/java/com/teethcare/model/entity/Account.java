@@ -5,15 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Entity;
+
 import javax.persistence.*;
 import java.sql.Date;
 
-@Entity
-@Table(name = "account")
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "account")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Account {
 
     @Id
