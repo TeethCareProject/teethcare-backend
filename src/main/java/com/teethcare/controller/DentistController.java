@@ -1,9 +1,7 @@
 package com.teethcare.controller;
 
-import com.teethcare.common.Status;
 import com.teethcare.config.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
-import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.service.CRUDService;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-//import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 

@@ -52,7 +52,7 @@ public class CSServiceImpl implements CSService{
     public List<CustomerService> findByClinicId(int theId) {
         List<CustomerService> customerServiceList = customerServiceRepository.findByClinicId(theId);
 
-        if (customerServiceList == null) {
+        if (customerServiceList == null || customerServiceList.size() == 0) {
             throw new NotFoundException();
         }
 
@@ -63,7 +63,8 @@ public class CSServiceImpl implements CSService{
     public List<CustomerService> findByClinicIdAndStatus(int theId, String status) {
         List<CustomerService> customerServiceList = customerServiceRepository.findByClinicIdAndStatus(theId, status);
 
-        if (customerServiceList == null) {
+        System.out.println(customerServiceList);
+        if (customerServiceList == null || customerServiceList.size() == 0) {
             throw new NotFoundException();
         }
 

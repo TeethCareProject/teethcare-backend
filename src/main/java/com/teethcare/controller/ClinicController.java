@@ -75,6 +75,10 @@ public class ClinicController {
 
         staffResponseList = mapstructMapper.mapAccountListToAccountDTOList(staffList);
 
+        if (staffResponseList == null || staffResponseList.size() == 0) {
+            throw new NotFoundException();
+        }
+
         return staffResponseList;
     }
 }
