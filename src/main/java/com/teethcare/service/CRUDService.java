@@ -9,8 +9,8 @@ public interface CRUDService<T> {
 
     Optional<T> findById(Integer id);
 
-    T save(T item);
+    void save(T item);
 
-    T delete(Integer id);
+    void delete(Integer id);
 
 }

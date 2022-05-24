@@ -1,6 +1,6 @@
 package com.teethcare.service;
 
-import com.teethcare.config.model.entity.Role;
+import com.teethcare.model.entity.Role;
 import com.teethcare.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

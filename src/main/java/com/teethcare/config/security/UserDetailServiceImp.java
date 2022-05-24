@@ -1,7 +1,7 @@
 package com.teethcare.config.security;
 
 import com.teethcare.common.Status;
-import com.teethcare.config.model.entity.Account;
+import com.teethcare.model.entity.Account;
 import com.teethcare.exception.AccountNotFoundException;
 import com.teethcare.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;

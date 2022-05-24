@@ -1,6 +1,6 @@
 package com.teethcare.service;
 
-import com.teethcare.config.model.entity.Account;
+import com.teethcare.model.entity.Account;
 
 
 public interface AccountService extends CRUDService<Account> {

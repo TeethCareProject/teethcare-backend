@@ -1,7 +1,7 @@
 package com.teethcare.config.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.teethcare.config.model.entity.Account;
+import com.teethcare.model.entity.Account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

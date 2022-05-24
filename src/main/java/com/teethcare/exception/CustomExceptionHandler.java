@@ -1,6 +1,6 @@
 package com.teethcare.exception;
 
-import com.teethcare.config.model.response.CustomErrorResponse;
+import com.teethcare.model.response.CustomErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

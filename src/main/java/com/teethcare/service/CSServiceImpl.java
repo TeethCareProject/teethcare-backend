@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.config.model.entity.CustomerService;
+import com.teethcare.model.entity.CustomerService;
 import com.teethcare.repository.CustomerServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,18 +30,15 @@ public class CSServiceImpl implements CRUDService<CustomerService> {
     }
 
     @Override
-    public CustomerService save(CustomerService customerService) {
-        return customerServiceRepository.save(customerService);
+    public void save(CustomerService customerService) {
+        customerServiceRepository.save(customerService);
     }
 
     @Override
-    public CustomerService delete(Integer id) {
+    public void delete(Integer id) {
         Optional<CustomerService> CSData = customerServiceRepository.findById(id);
-        if (CSData.isPresent()) {
-            CustomerService customerService = CSData.get();
-            customerService.setStatus(Status.INACTIVE.name());
-            return customerServiceRepository.save(customerService);
-        }
-        return null;
+        CustomerService customerService = CSData.get();
+        customerService.setStatus(Status.INACTIVE.name());
+        customerServiceRepository.save(customerService);
     }
 }

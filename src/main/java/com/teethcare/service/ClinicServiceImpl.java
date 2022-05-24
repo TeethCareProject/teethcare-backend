@@ -1,8 +1,8 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.config.model.entity.Clinic;
-import com.teethcare.config.model.entity.Manager;
+import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.ClinicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,19 +38,16 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public Clinic save(Clinic clinic) {
-        return clinicRepository.save(clinic);
+    public void save(Clinic clinic) {
+         clinicRepository.save(clinic);
     }
 
     @Override
-    public Clinic delete(Integer id) {
+    public void delete(Integer id) {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
-        if (clinicData.isPresent()) {
-            Clinic clinic = clinicData.get();
-            clinic.setStatus(Status.INACTIVE.name());
-            return clinicRepository.save(clinic);
-        }
-        return null;
+        Clinic clinic = clinicData.get();
+        clinic.setStatus(Status.INACTIVE.name());
+        clinicRepository.save(clinic);
     }
 
 }

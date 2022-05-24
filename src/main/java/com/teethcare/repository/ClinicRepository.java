@@ -1,7 +1,7 @@
 package com.teethcare.repository;
 
-import com.teethcare.config.model.entity.Clinic;
-import com.teethcare.config.model.entity.Manager;
+import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

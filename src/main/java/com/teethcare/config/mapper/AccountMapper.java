@@ -1,13 +1,13 @@
 package com.teethcare.config.mapper;
 
-import com.teethcare.config.model.entity.Account;
-import com.teethcare.config.model.entity.Manager;
-import com.teethcare.config.model.entity.Patient;
-import com.teethcare.config.model.entity.Role;
-import com.teethcare.config.model.request.ManagerRegisterRequest;
-import com.teethcare.config.model.request.PatientRegisterRequest;
-import com.teethcare.config.model.response.AccountResponse;
-import com.teethcare.config.model.response.PatientResponse;
+import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Manager;
+import com.teethcare.model.entity.Patient;
+import com.teethcare.model.entity.Role;
+import com.teethcare.model.request.ManagerRegisterRequest;
+import com.teethcare.model.request.PatientRegisterRequest;
+import com.teethcare.model.response.AccountResponse;
+import com.teethcare.model.response.PatientResponse;
 import org.mapstruct.*;
 
 import java.util.List;

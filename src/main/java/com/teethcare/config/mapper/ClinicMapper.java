@@ -1,10 +1,10 @@
 package com.teethcare.config.mapper;
 
-import com.teethcare.config.model.entity.Clinic;
-import com.teethcare.config.model.entity.Role;
-import com.teethcare.config.model.request.ManagerRegisterRequest;
-import com.teethcare.config.model.response.ClinicInfoResponse;
-import com.teethcare.config.model.response.ClinicResponse;
+import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Role;
+import com.teethcare.model.request.ManagerRegisterRequest;
+import com.teethcare.model.response.ClinicInfoResponse;
+import com.teethcare.model.response.ClinicResponse;
 import org.mapstruct.*;
 
 import java.util.List;

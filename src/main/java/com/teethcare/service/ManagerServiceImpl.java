@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.config.model.entity.Manager;
+import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +38,16 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Manager save(Manager manager) {
-        return managerRepository.save(manager);
+    public void save(Manager manager) {
+        managerRepository.save(manager);
     }
 
     @Override
-    public Manager delete(Integer id) {
+    public void delete(Integer id) {
         Optional<Manager> managerData = managerRepository.findById(id);
-        if (managerData.isPresent()) {
-            Manager manager = managerData.get();
-            manager.setStatus(Status.INACTIVE.name());
-            return manager;
-        }
-        return null;
+        Manager manager = managerData.get();
+        manager.setStatus(Status.INACTIVE.name());
+        managerRepository.save(manager);
     }
 
     @Override
