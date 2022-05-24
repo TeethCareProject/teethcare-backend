@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.model.entity.Patient;
+import com.teethcare.config.model.entity.Patient;
 import com.teethcare.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

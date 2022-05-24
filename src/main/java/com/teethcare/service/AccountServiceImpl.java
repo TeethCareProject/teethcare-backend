@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.model.entity.Account;
+import com.teethcare.config.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean isDuplicated(String username, String status) {
-        return accountRepository.getAccountByUsernameAndStatusIsNot(username, status) != null;
+    public boolean isDuplicated(String username) {
+        return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name()) != null;
     }
 }

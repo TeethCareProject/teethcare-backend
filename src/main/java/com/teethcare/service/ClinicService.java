@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Manager;
+import com.teethcare.config.model.entity.Clinic;
+import com.teethcare.config.model.entity.Manager;
 
 import java.util.List;
 

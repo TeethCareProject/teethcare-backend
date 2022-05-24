@@ -1,6 +1,6 @@
 package com.teethcare.repository;
 
-import com.teethcare.model.entity.Account;
+import com.teethcare.config.model.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

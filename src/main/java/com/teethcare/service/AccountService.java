@@ -1,6 +1,6 @@
 package com.teethcare.service;
 
-import com.teethcare.model.entity.Account;
+import com.teethcare.config.model.entity.Account;
 
 
 public interface AccountService extends CRUDService<Account> {
@@ -8,6 +8,6 @@ public interface AccountService extends CRUDService<Account> {
 
     Account getActiveAccountByUsername(String username);
 
-    boolean isDuplicated(String username, String status);
+    boolean isDuplicated(String username);
 
 }

@@ -1,14 +1,12 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Manager;
-import com.teethcare.model.entity.Patient;
+import com.teethcare.config.model.entity.Clinic;
+import com.teethcare.config.model.entity.Manager;
 import com.teethcare.repository.ClinicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

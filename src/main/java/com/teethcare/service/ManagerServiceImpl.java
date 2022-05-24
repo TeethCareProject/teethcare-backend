@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.model.entity.Manager;
+import com.teethcare.config.model.entity.Manager;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ManagerServiceImpl implements CRUDService<Manager> {
+public class ManagerServiceImpl implements ManagerService {
 
     private ManagerRepository managerRepository;
 
@@ -51,5 +51,10 @@ public class ManagerServiceImpl implements CRUDService<Manager> {
             return manager;
         }
         return null;
+    }
+
+    @Override
+    public Manager getActiveManager(int id) {
+        return managerRepository.getManagerByIdAndStatusIsNot(id, Status.INACTIVE.name());
     }
 }

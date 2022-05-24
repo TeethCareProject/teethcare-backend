@@ -1,7 +1,7 @@
 package com.teethcare.config.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.teethcare.model.entity.Account;
+import com.teethcare.config.model.entity.Account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -10,7 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor

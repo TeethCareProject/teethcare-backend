@@ -1,9 +1,9 @@
 package com.teethcare.service;
 
-import com.teethcare.model.entity.District;
-import com.teethcare.model.entity.Location;
-import com.teethcare.model.entity.Province;
-import com.teethcare.model.entity.Ward;
+import com.teethcare.config.model.entity.District;
+import com.teethcare.config.model.entity.Location;
+import com.teethcare.config.model.entity.Province;
+import com.teethcare.config.model.entity.Ward;
 import com.teethcare.repository.DistrictRepository;
 import com.teethcare.repository.LocationRepository;
 import com.teethcare.repository.ProvinceRepository;
