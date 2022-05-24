@@ -9,24 +9,37 @@ import lombok.Setter;
 public class AccountResponse {
     @JsonProperty
     private String id;
+
     @JsonProperty
     private String username;
+
     @JsonProperty
     private int roleId;
+
+    @JsonProperty
+    private String roleName;
+
     @JsonProperty
     private String fistName;
+
     @JsonProperty
     private String lastName;
+
     @JsonProperty
     private String avatarImage;
+
     @JsonProperty
     private String phone;
+
     @JsonProperty
     private String email;
+
     @JsonProperty
     private String gender;
+
     @JsonProperty
     private String dateOfBirth;
+
     @JsonProperty
     private String status;
 }

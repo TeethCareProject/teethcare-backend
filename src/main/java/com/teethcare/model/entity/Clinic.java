@@ -63,4 +63,9 @@ public class Clinic {
             mappedBy = "clinic")
     @JsonBackReference
     private List<CustomerService> customerServices;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "clinic")
+    @JsonBackReference
+    private List<ServiceOfClinic> serviceOfClinic;
 }

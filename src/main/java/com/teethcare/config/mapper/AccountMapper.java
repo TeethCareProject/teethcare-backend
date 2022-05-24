@@ -14,6 +14,8 @@ import java.util.List;
 public interface AccountMapper {
 //    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")
+    @Mapping(source = "role.id", target = "roleId")
+    @Mapping(source = "role.name", target = "roleName")
     AccountResponse mapAccountToAccountDTO(Account account);
 
     //    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")

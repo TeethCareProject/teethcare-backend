@@ -1,5 +1,6 @@
 package com.teethcare.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +29,10 @@ public class Account {
     @NotEmpty
     private String password;
 
-    @Column(name = "role_id", nullable = false)
-    private int roleId;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    @JsonManagedReference
+    private Role role;
 
     @NotEmpty
     @Column(name = "first_name",length = 40, nullable = false)

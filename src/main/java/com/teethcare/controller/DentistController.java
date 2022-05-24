@@ -1,10 +1,12 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Message;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.config.mapper.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;
+import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,7 +52,7 @@ public class DentistController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> updateAccountStatus(@PathVariable("id") int id) {
+    public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") int id) {
         if (id < 1) {
             throw new NotFoundException();
         }
@@ -66,6 +68,7 @@ public class DentistController {
 
         dentistService.save(dentist);
 
-        return new ResponseEntity<>("Delete successfully", HttpStatus.OK);
+        MessageResponse messageResponse = new MessageResponse(Message.SUCCESS_FUNCTION.name());
+        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 }

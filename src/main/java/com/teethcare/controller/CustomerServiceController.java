@@ -6,6 +6,7 @@ import com.teethcare.config.mapper.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.response.CustomerServiceResponse;
+import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,6 @@ public class CustomerServiceController {
         this.CSService = CSService;
     }
 
-    @GetMapping()
-    public List<CustomerService> findAll() {
-        return CSService.findAll();
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<CustomerServiceResponse> getCSById(@PathVariable int id) {
 
@@ -55,7 +51,7 @@ public class CustomerServiceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> updateAccountStatus(@PathVariable("id") int id) {
+    public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") int id) {
         if (id < 1) {
             throw new NotFoundException();
         }
@@ -71,6 +67,7 @@ public class CustomerServiceController {
 
         CSService.save(customerService);
 
-        return new ResponseEntity<>(Message.SUCCESS_FUNCTION.name(), HttpStatus.OK);
+        MessageResponse messageResponse = new MessageResponse(Message.SUCCESS_FUNCTION.name());
+        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 }
