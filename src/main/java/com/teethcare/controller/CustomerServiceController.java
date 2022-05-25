@@ -7,6 +7,7 @@ import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CRUDService;
+import com.teethcare.service.CSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -22,11 +23,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/customer-services")
 public class CustomerServiceController {
 
-    private CRUDService<CustomerService> CSService;
+    private CSService CSService;
     private AccountMapper accountMapper;
 
     @Autowired
-    public CustomerServiceController (@Qualifier("CSServiceImpl") CRUDService<CustomerService> CSService,
+    public CustomerServiceController (CSService CSService,
                                       AccountMapper accountMapper) {
         this.accountMapper = accountMapper;
         this.CSService = CSService;

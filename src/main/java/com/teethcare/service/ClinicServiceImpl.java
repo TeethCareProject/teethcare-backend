@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ClinicServiceImpl implements CRUDService<Clinic>{
+public class ClinicServiceImpl implements ClinicService{
 
     private ClinicRepository clinicRepository;
 

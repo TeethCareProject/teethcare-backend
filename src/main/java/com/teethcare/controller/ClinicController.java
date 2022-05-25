@@ -11,11 +11,10 @@ import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.MessageResponse;
-import com.teethcare.service.CRUDService;
 import com.teethcare.service.CSService;
+import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,14 +29,14 @@ import java.util.List;
 @RequestMapping("/api/clinics")
 public class ClinicController {
 
-    private CRUDService<Clinic> clinicService;
+    private ClinicService clinicService;
     private DentistService dentistService;
     private CSService CSService;
     private ClinicMapper clinicMapper;
     private AccountMapper accountMapper;
 
     @Autowired
-    public ClinicController (@Qualifier("clinicServiceImpl") CRUDService<Clinic> clinicService,
+    public ClinicController (ClinicService clinicService,
                              DentistService dentistService,
                              CSService CSService,
                              ClinicMapper clinicMapper,
@@ -58,17 +57,6 @@ public class ClinicController {
         clinicService.save(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
-
-//    @GetMapping("/{id}")
-//    public Clinic getClinicById(@PathVariable int id) {
-//        Clinic clinic = clinicService.findById(id);
-//
-//        if (clinic == null) {
-//            throw new NotFoundException();
-//        }
-//
-//        return clinic;
-//    }
 
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable int id) {
