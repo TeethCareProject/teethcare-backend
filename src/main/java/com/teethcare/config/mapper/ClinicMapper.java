@@ -12,7 +12,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ClinicMapper {
 
-    @Mapping(source = "manager.role", target = "manager.role", qualifiedByName = "mapRoleToString")
+    @Mapping(source = "manager.role.id", target = "manager.roleId")
+    @Mapping(source = "manager.role.name", target = "manager.roleName")
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 
     List<ClinicResponse> mapClinicListToClinicResponseList(List<Clinic> clinics);
@@ -23,8 +24,4 @@ public interface ClinicMapper {
     @Mapping(source = "clinicTaxCode", target = "taxCode")
     Clinic mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
 
-    @Named("mapRoleToString")
-    static String mapRoleToString(Role role) {
-        return role.getName();
-    }
 }

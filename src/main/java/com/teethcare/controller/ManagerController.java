@@ -57,7 +57,7 @@ public class ManagerController {
             Clinic clinic = clinicService.getClinicByManager(manager);
             if (clinic != null) {
                 ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(),
+                managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
                         manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
                         manager.getStatus(), clinicInfoResponse));
             }
@@ -72,7 +72,7 @@ public class ManagerController {
         Clinic clinic = clinicService.getClinicByManager(manager);
         if (clinic != null) {
             ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-            ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(),
+            ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
                     manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
                     manager.getStatus(), clinicInfoResponse);
 
@@ -107,9 +107,9 @@ public class ManagerController {
                     managerService.save(manager);
                     clinicService.save(clinic);
                     ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                    ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(),
-                            manager.getRole().getName(), manager.getFirstName(), manager.getLastName(), manager.getGender(),
-                            manager.getEmail(), manager.getPhone(), manager.getStatus(), clinicInfoResponse);
+                    ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
+                            manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
+                            manager.getStatus(), clinicInfoResponse);
                     return new ResponseEntity<>(managerResponse, HttpStatus.OK);
                 }
             } else

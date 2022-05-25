@@ -12,7 +12,8 @@ import lombok.Setter;
 public class ManagerResponse {
     private int id;
     private String username;
-    private String role;
+    private int roleId;
+    private String roleName;
     private String firstName;
     private String lastName;
     private String gender;

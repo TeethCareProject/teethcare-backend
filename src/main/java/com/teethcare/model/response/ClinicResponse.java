@@ -12,14 +12,14 @@ import lombok.Setter;
 @Setter
 public class ClinicResponse {
 
-    private Integer id;
+    private int id;
     private AccountResponse manager;
     private Location location;
     private String name;
     private String description;
     private String imageUrl;
     private String taxCode;
-    private Float avgRatingScore;
+    private float avgRatingScore;
     private String status;
 
 }

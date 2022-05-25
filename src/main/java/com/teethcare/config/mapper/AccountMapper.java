@@ -15,15 +15,15 @@ import java.util.List;
 @Mapper(componentModel = "spring", imports = Role.class)
 public interface AccountMapper {
     //    Account
-    @Mapping(source = "role", target = "role", qualifiedByName = "mapRoleToString")
+    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "dd/MM/yyyy")
+    @Mapping(source = "role.id", target = "roleId")
+    @Mapping(source = "role.name", target = "roleName")
     AccountResponse mapAccountToAccountResponse(Account account);
 
-    @Mapping(source = "role", target = "role", qualifiedByName = "mapRoleToString")
-    List<AccountResponse> mapAccountListToAccountResponseList(List<Account> accounts);
+    List<AccountResponse> mapAccountListToAccountResponseList(List<Account> account);
 
     //    Patient
     @InheritConfiguration(name = "mapAccountToAccountResponse")
-    @Mapping(source = "role", target = "role", qualifiedByName = "mapRoleToString")
     PatientResponse mapPatientToPatientResponse(Patient patient);
 
     @InheritConfiguration(name = "mapAccountListToAccountResponseList")
@@ -48,17 +48,6 @@ public interface AccountMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
-
-    //    Methods
-    @Named("mapRoleToString")
-    static String mapRoleToString(Role role) {
-        return role.getName();
-    }
-
-    @Named("mapStringToRole")
-    static Role mapStringToRole(String role) {
-        return new Role(3, role);
-    }
 
 
 }

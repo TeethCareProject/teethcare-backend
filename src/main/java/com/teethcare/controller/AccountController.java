@@ -38,9 +38,11 @@ public class AccountController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity<AccountResponse> getAccountById(@PathVariable("id") Integer id) {
+    public ResponseEntity getAccountById(@PathVariable("id") Integer id) {
         Optional<Account> account = accountService.findById(id);
-        AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account.get());
-        return new ResponseEntity<>(accountResponse, HttpStatus.OK);
+        if (account.isPresent()) {
+            AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account.get());
+            return new ResponseEntity<>(accountResponse, HttpStatus.OK);
+        } else return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }
