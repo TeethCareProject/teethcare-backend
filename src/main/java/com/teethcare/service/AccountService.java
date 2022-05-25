@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.Account;
-
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 
@@ -12,7 +12,7 @@ public interface AccountService extends CRUDService<Account> {
 
     boolean isDuplicated(String username);
 
-     List<Account> findByRoleId(int id);
+    List<Account> findByRoleId(int id);
 
-
+    List<Account> findAllAccounts(Pageable pageable);
 }

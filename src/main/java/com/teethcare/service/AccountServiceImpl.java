@@ -4,9 +4,8 @@ import com.teethcare.common.Status;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +19,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<Account> findAll() {
         return accountRepository.findAll();
+    }
+
+    @Override
+    public List<Account> findAllAccounts(Pageable pageable) {
+        return accountRepository.findAllByStatusIsNotNull(pageable);
     }
 
     @Override
