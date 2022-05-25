@@ -5,6 +5,7 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.LoginRequest;
 import com.teethcare.model.request.RefreshTokenRequest;
 import com.teethcare.model.response.CustomErrorResponse;
+import com.teethcare.model.response.LoginResponse;
 import com.teethcare.model.response.RefreshTokeResponse;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailsImpl;
@@ -37,7 +38,7 @@ public class AuthController {
     private final AccountService accountService;
 
     @PostMapping(path = EndpointConstant.Authentication.LOGIN_ENDPOINT)
-    public ResponseEntity<CustomErrorResponse.LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authentication = authManager.authenticate(authenticationToken);
@@ -51,7 +52,7 @@ public class AuthController {
 
             String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining());
 
-            CustomErrorResponse.LoginResponse response = new CustomErrorResponse.LoginResponse(
+            LoginResponse response = new LoginResponse(
                     userDetails.getUsername(),
                     role,
                     userDetails.getFirstName(),
