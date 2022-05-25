@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class District  {
     @Id
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
     @Column(name = "name")
     private String name;

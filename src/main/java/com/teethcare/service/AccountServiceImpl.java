@@ -3,6 +3,7 @@ package com.teethcare.service;
 import com.teethcare.common.Status;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +12,10 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
-    private AccountRepository accountRepository;
-
-    @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+    private final AccountRepository accountRepository;
 
     @Override
     public List<Account> findAll() {
@@ -26,8 +23,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<Account> findById(Integer id) {
-        return accountRepository.findById(id);
+    public Account findById(int id) {
+        Optional<Account> account = accountRepository.findById(id);
+        if (account.isPresent()) {
+            return account.get();
+        }
+        return null;
     }
 
     @Override
@@ -36,7 +37,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(int id) {
         Optional<Account> accountData = accountRepository.findById(id);
         Account account = accountData.get();
         account.setStatus(Status.INACTIVE.name());
@@ -58,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> findByRoleId(int id) {
         return accountRepository.findByRoleId(id);
     }
-}
+
     @Override
     public boolean isDuplicated(String username) {
         return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name()) != null;

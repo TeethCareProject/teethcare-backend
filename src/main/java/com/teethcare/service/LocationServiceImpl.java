@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +44,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Optional<Location> findById(Integer id) {
-        return Optional.empty();
+    public Location findById(int id) {
+        return null;
     }
 
     @Override
@@ -55,6 +54,6 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(int id) {
     }
 }

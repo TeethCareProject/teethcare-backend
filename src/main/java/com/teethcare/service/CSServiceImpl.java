@@ -1,26 +1,21 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.model.entity.CustomerService;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.CustomerServiceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CSServiceImpl implements CSService{
+@RequiredArgsConstructor
+public class CSServiceImpl implements CSService {
 
-    private CustomerServiceRepository customerServiceRepository;
+    private final CustomerServiceRepository customerServiceRepository;
 
-    @Autowired
-    public CSServiceImpl(CustomerServiceRepository customerServiceRepository) {
-        this.customerServiceRepository = customerServiceRepository;
-    }
 
     @Override
     public List<CustomerService> findAll() {
@@ -46,7 +41,7 @@ public class CSServiceImpl implements CSService{
     }
 
     @Override
-    public void deleteById(int theId) {
+    public void delete(int theId) {
         customerServiceRepository.deleteById(theId);
     }
 
@@ -64,12 +59,11 @@ public class CSServiceImpl implements CSService{
     @Override
     public List<CustomerService> findByClinicIdAndStatus(int theId, String status) {
         List<CustomerService> customerServiceList = customerServiceRepository.findByClinicIdAndStatus(theId, status);
-
-//        System.out.println(customerServiceList);
-//        if (customerServiceList == null || customerServiceList.size() == 0) {
-//            throw new NotFoundException();
-//        }
-
         return customerServiceList;
+    }
+
+    @Override
+    public CustomerService findActiveCS(int id) {
+        return customerServiceRepository.findCustomerServiceByIdAndStatus(id, Status.ACTIVE.name());
     }
 }

@@ -1,11 +1,14 @@
 package com.teethcare.config.mapper;
 
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Role;
+import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
 import com.teethcare.model.response.ClinicResponse;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
@@ -25,8 +28,8 @@ public interface ClinicMapper {
     Clinic mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "managerId", ignore = true)
-    @Mapping(target = "locationId", ignore = true)
+    @Mapping(target = "manager", ignore = true)
+    @Mapping(target = "location", ignore = true)
     @Mapping(target = "avgRatingScore", ignore = true)
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)

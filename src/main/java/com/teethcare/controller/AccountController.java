@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @EnableSwagger2
@@ -38,10 +37,10 @@ public class AccountController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity getAccountById(@PathVariable("id") Integer id) {
-        Optional<Account> account = accountService.findById(id);
-        if (account.isPresent()) {
-            AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account.get());
+    public ResponseEntity getAccountById(@PathVariable("id") int id) {
+        Account account = accountService.findById(id);
+        if (account != null) {
+            AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account);
             return new ResponseEntity<>(accountResponse, HttpStatus.OK);
         } else return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }

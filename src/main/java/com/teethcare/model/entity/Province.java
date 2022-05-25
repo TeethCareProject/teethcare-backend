@@ -17,7 +17,7 @@ import javax.persistence.Id;
 public class Province {
     @Id
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
     @Column(name = "name")
     private String name;

@@ -30,7 +30,6 @@ import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @EnableSwagger2
@@ -45,7 +44,6 @@ public class ManagerController {
     private final AccountMapper accountMapper;
     private final LocationService locationService;
     private final PasswordEncoder passwordEncoder;
-
     private final RoleService roleService;
 
     @GetMapping
@@ -120,11 +118,11 @@ public class ManagerController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delManager(@PathVariable("id") Integer id) {
-        Optional<Manager> manager = managerService.findById(id);
-        if (manager.isPresent()) {
+    public ResponseEntity delManager(@PathVariable("id") int id) {
+        Manager manager = managerService.findById(id);
+        if (manager != null) {
             managerService.delete(id);
-            Clinic clinic = clinicService.getClinicByManager(manager.get());
+            Clinic clinic = clinicService.getClinicByManager(manager);
             clinicService.delete(clinic.getId());
             return new ResponseEntity(HttpStatus.OK);
         }

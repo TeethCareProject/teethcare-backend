@@ -4,6 +4,7 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.repository.ServiceRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,18 +12,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ServiceOfClinicServiceImpl implements ServiceOfClinicService{
-    private ServiceRepository serviceRepository;
+    private final ServiceRepository serviceRepository;
 
-    @Autowired
-    public ServiceOfClinicServiceImpl(ServiceRepository serviceRepository) {
-        this.serviceRepository = serviceRepository;
-    }
 
     @Override
     public List<ServiceOfClinic> findAll() {
         return null;
     }
+
 
     @Override
     public ServiceOfClinic findById(int theId) {
@@ -31,12 +30,10 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService{
 
     @Override
     public void save(ServiceOfClinic theEntity) {
-
     }
 
     @Override
-    public void deleteById(int theId) {
-
+    public void delete(int theId) {
     }
 
     @Override

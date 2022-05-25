@@ -6,31 +6,25 @@ import com.teethcare.config.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.ServiceOfClinicService;
-import com.teethcare.service.ServiceOfClinicServiceImpl;
 import com.teethcare.utils.PaginationAndSort;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@EnableSwagger2
+@RequiredArgsConstructor
 @RequestMapping("/api/services")
 public class ServiceOfClinicController {
-    private ServiceOfClinicService serviceOfClinicService;
-    private ServiceOfClinicMapper serviceOfClinicMapper;
+    private final ServiceOfClinicService serviceOfClinicService;
+    private final ServiceOfClinicMapper serviceOfClinicMapper;
 
-    @Autowired
-    public ServiceOfClinicController(ServiceOfClinicService serviceOfClinicService,
-                                     ServiceOfClinicMapper serviceOfClinicMapper) {
-        this.serviceOfClinicService = serviceOfClinicService;
-        this.serviceOfClinicMapper = serviceOfClinicMapper;
-    }
     @GetMapping("/clinics/{id}")
     ResponseEntity<List<ServiceOfClinicResponse>> serviceOfClinicResponses(@PathVariable int id,
                                                                            @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,

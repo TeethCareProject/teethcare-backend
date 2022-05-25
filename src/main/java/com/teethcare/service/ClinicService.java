@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ClinicService extends CRUDService<Clinic> {
     List<Clinic> findAllActive();
+
     Clinic getClinicByManager(Manager manager);
 
+    Clinic findById(int theId);
 }

@@ -1,9 +1,11 @@
 package com.teethcare.service;
 
+import com.teethcare.common.Role;
+import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
-import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.DentistRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DentistServiceImpl implements DentistService {
-    private DentistRepository dentistRepository;
-
-    @Autowired
-    public DentistServiceImpl(DentistRepository dentistRepository) {
-        this.dentistRepository = dentistRepository;
-    }
+    private final DentistRepository dentistRepository;
 
     @Override
     public Dentist findById(int theId) {
@@ -40,13 +38,14 @@ public class DentistServiceImpl implements DentistService {
         return dentistRepository.findAll();
     }
 
+
     @Override
     public void save(Dentist theDentist) {
         dentistRepository.save(theDentist);
     }
 
     @Override
-    public void deleteById(int theId) {
+    public void delete(int theId) {
 
     }
 
@@ -64,11 +63,12 @@ public class DentistServiceImpl implements DentistService {
     @Override
     public List<Dentist> findByClinicIdAndStatus(int theId, String status) {
         List<Dentist> dentistList = dentistRepository.findByClinicIdAndStatus(theId, status);
-
-//        if (dentistList == null || dentistList.size() == 0) {
-//            throw new NotFoundException();
-//        }
-
         return dentistList;
     }
+
+    @Override
+    public Dentist findActiveDentist(int id) {
+        return dentistRepository.findDentistByIdAndStatus(id, Status.ACTIVE.name());
+    }
+
 }

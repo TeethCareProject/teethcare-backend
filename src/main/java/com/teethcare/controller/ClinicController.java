@@ -1,28 +1,24 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Status;
-import com.teethcare.config.mapper.ClinicMapper;
 import com.teethcare.common.Message;
+import com.teethcare.common.Status;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.config.mapper.ClinicMapper;
+import com.teethcare.exception.ClinicNotFoundException;
 import com.teethcare.exception.NotFoundException;
-import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.response.ClinicResponse;
-import com.teethcare.exception.ClinicNotFoundException;
-import com.teethcare.service.ClinicService;
-import lombok.RequiredArgsConstructor;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
+import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.response.AccountResponse;
+import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.MessageResponse;
-import com.teethcare.service.CRUDService;
 import com.teethcare.service.CSService;
+import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +28,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @EnableSwagger2
@@ -42,6 +37,9 @@ public class ClinicController {
 
     private final ClinicService clinicService;
     private final ClinicMapper clinicMapper;
+    private final CSService csService;
+    private final DentistService dentistService;
+    private final AccountMapper accountMapper;
 
 
     @GetMapping
@@ -55,9 +53,9 @@ public class ClinicController {
     @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") int id) {
-        Optional<Clinic> clinicTmp = clinicService.findById(id);
-        if (clinicTmp.isPresent()) {
-            ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinicTmp.get());
+        Clinic clinic = clinicService.findById(id);
+        if (clinic != null) {
+            ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
             return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
         } else {
             throw new ClinicNotFoundException("Clinic id " + id + " not found");
@@ -67,11 +65,10 @@ public class ClinicController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity delClinic(@PathVariable("id") int id) {
-        Optional<Clinic> clinicData = clinicService.findById(id);
-        if (clinicData.isPresent()) {
-            Clinic clinic = clinicData.get();
+        Clinic clinic = clinicService.findById(id);
+        if (clinic != null) {
             clinic.setStatus(Status.INACTIVE.name());
-            return new ResponseEntity( HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
         } else {
             throw new ClinicNotFoundException("Clinic id " + id + " not found");
         }
@@ -103,7 +100,7 @@ public class ClinicController {
         List<AccountResponse> staffResponseList = new ArrayList<>();
 
         List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(id, "ACTIVE");
-        List<CustomerService> customerServiceList = CSService.findByClinicIdAndStatus(id, "ACTIVE");
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(id, "ACTIVE");
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);

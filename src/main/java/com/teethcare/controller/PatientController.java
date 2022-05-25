@@ -4,14 +4,15 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.mapper.AccountMapper;
+import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.model.response.PatientResponse;
-import com.teethcare.exception.IdNotFoundException;
-import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.CRUDService;
+import com.teethcare.service.PatientService;
 import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,6 @@ import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @EnableSwagger2
@@ -35,9 +35,8 @@ import java.util.Optional;
 @RequestMapping(path = EndpointConstant.Patient.PATIENT_ENDPOINT)
 public class PatientController {
 
-
     private final PasswordEncoder passwordEncoder;
-    private final CRUDService<Patient> patientService;
+    private final PatientService patientService;
     private final AccountService accountService;
     private final AccountMapper accountMapper;
     private final RoleService roleService;
@@ -53,10 +52,10 @@ public class PatientController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
             "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity getPatient(@PathVariable("id") Integer id) {
-        Optional<Patient> patient = patientService.findById(id);
-        if (patient.isPresent()) {
-            PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient.get());
+    public ResponseEntity getPatient(@PathVariable("id") int id) {
+        Patient patient = patientService.findById(id);
+        if (patient != null) {
+            PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
             return new ResponseEntity<>(patientResponse, HttpStatus.OK);
         }
         throw new IdNotFoundException("Patient id " + id + " not found");
@@ -86,9 +85,9 @@ public class PatientController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delPatient(@PathVariable("id") Integer id) {
-        Optional<Patient> patient = patientService.findById(id);
-        if(patient.isPresent()) {
+    public ResponseEntity delPatient(@PathVariable("id") int id) {
+        Patient patient = patientService.findById(id);
+        if(patient != null) {
             patientService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }

@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.exception.NotFoundException;
@@ -7,30 +8,28 @@ import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CRUDService;
+import com.teethcare.service.CSService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-//import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @RestController
-//@EnableSwagger2
-@PreAuthorize("hasAuthority('MANAGER')")
-@RequestMapping("/api/customer-services")
+@EnableSwagger2
+@RequiredArgsConstructor
+@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
+@RequestMapping(path = EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT)
 public class CustomerServiceController {
 
-    private CRUDService<CustomerService> CSService;
-    private AccountMapper accountMapper;
+    private final CSService CSService;
+    private final AccountMapper accountMapper;
 
-    @Autowired
-    public CustomerServiceController (@Qualifier("CSServiceImpl") CRUDService<CustomerService> CSService,
-                                      AccountMapper accountMapper) {
-        this.accountMapper = accountMapper;
-        this.CSService = CSService;
-    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerServiceResponse> getCSById(@PathVariable int id) {
@@ -41,8 +40,7 @@ public class CustomerServiceController {
             throw new NotFoundException();
         }
 
-        CustomerServiceResponse customerServiceResponse = new CustomerServiceResponse();
-        customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
+        CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
 
         return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
     }

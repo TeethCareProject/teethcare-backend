@@ -33,8 +33,12 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Optional<Manager> findById(Integer id) {
-        return managerRepository.findById(id);
+    public Manager findById(int id) {
+        Optional<Manager> manager = managerRepository.findById(id);
+        if(manager.isPresent()) {
+            return manager.get();
+        }
+        return null;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(int id) {
         Optional<Manager> managerData = managerRepository.findById(id);
         Manager manager = managerData.get();
         manager.setStatus(Status.INACTIVE.name());

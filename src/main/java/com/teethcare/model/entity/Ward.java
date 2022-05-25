@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class Ward {
     @Id
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
     @Column(name = "name")
     private String name;

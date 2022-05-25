@@ -1,12 +1,11 @@
 package com.teethcare.config.mapper;
 
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Manager;
-import com.teethcare.model.entity.Patient;
-import com.teethcare.model.entity.Role;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.AccountResponse;
+import com.teethcare.model.response.CustomerServiceResponse;
+import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.PatientResponse;
 import org.mapstruct.*;
 
@@ -50,8 +49,6 @@ public interface AccountMapper {
     Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
 
 
-    //    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")
-    List<AccountResponse> mapAccountListToAccountResponseList(List<Account> account);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")
     @Mapping(source = "clinic.id", target = "clinicId")

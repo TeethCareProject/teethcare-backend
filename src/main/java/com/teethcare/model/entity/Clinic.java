@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Getter
@@ -47,20 +48,15 @@ public class Clinic {
     @Column(name = "status")
     private String status;
 
-    private String status;
-
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
-    @JsonBackReference
     private List<Dentist> dentists;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
-    @JsonBackReference
     private List<CustomerService> customerServices;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
-    @JsonBackReference
     private List<ServiceOfClinic> serviceOfClinic;
 }

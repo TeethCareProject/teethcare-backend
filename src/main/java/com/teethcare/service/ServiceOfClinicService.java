@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ServiceOfClinicService extends CRUDService<ServiceOfClinic>{
     List<ServiceOfClinic> findByClinicIdAndStatus(int theClinicId, String status, Pageable pageable);
+    ServiceOfClinic findById(int theId);
 }
