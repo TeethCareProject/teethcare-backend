@@ -7,6 +7,7 @@ import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CRUDService;
+import com.teethcare.service.DentistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,11 @@ import java.util.List;
 @PreAuthorize("hasAuthority('MANAGER')")
 @RequestMapping("/api/dentists")
 public class DentistController {
-    private CRUDService<Dentist> dentistService;
+    private DentistService dentistService;
     private AccountMapper accountMapper;
 
     @Autowired
-    public DentistController (@Qualifier("dentistServiceImpl") CRUDService<Dentist> dentistService,
+    public DentistController (DentistService dentistService,
                               AccountMapper accountMapper) {
         this.accountMapper = accountMapper;
         this.dentistService = dentistService;
