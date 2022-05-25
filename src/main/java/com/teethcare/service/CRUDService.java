@@ -9,8 +9,7 @@ public interface CRUDService<T> {
 
     Optional<T> findById(Integer id);
 
-    void save(T item);
+    void save(T theEntity);
 
-    void delete(Integer id);
-
+    void deleteById(int theId);
 }

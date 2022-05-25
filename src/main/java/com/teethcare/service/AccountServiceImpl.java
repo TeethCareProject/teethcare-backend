@@ -55,6 +55,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public List<Account> findByRoleId(int id) {
+        return accountRepository.findByRoleId(id);
+    }
+}
+    @Override
     public boolean isDuplicated(String username) {
         return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name()) != null;
     }

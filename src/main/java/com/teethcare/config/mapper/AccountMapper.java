@@ -12,9 +12,9 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = Role.class)
+@Mapper(componentModel = "spring")
 public interface AccountMapper {
-    //    Account
+//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "dd/MM/yyyy")
     @Mapping(source = "role.id", target = "roleId")
     @Mapping(source = "role.name", target = "roleName")
@@ -50,4 +50,16 @@ public interface AccountMapper {
     Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
 
 
+    //    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")
+    List<AccountResponse> mapAccountListToAccountResponseList(List<Account> account);
+
+    @InheritConfiguration(name = "mapAccountToAccountResponse")
+    @Mapping(source = "clinic.id", target = "clinicId")
+    @Mapping(source = "clinic.name", target = "clinicName")
+    DentistResponse mapDentistToDentistResponse(Dentist dentist);
+
+    @InheritConfiguration(name = "mapAccountToAccountResponse")
+    @Mapping(source = "clinic.id", target = "clinicId")
+    @Mapping(source = "clinic.name", target = "clinicName")
+    CustomerServiceResponse mapCustomerServiceToCustomerServiceResponse(CustomerService customerService);
 }

@@ -24,4 +24,11 @@ public interface ClinicMapper {
     @Mapping(source = "clinicTaxCode", target = "taxCode")
     Clinic mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "managerId", ignore = true)
+    @Mapping(target = "locationId", ignore = true)
+    @Mapping(target = "avgRatingScore", ignore = true)
+    @Mapping(target = "taxCode", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    Clinic mapClinicRequestToClinic(ClinicRequest dto);
 }

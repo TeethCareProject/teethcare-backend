@@ -19,7 +19,7 @@ public class Clinic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
     @OneToOne
     @JoinColumn(name = "manager_id", referencedColumnName = "id")
@@ -47,5 +47,20 @@ public class Clinic {
     @Column(name = "status")
     private String status;
 
+    private String status;
 
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "clinic")
+    @JsonBackReference
+    private List<Dentist> dentists;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "clinic")
+    @JsonBackReference
+    private List<CustomerService> customerServices;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "clinic")
+    @JsonBackReference
+    private List<ServiceOfClinic> serviceOfClinic;
 }
