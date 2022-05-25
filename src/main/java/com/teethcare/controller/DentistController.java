@@ -2,7 +2,6 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Message;
 import com.teethcare.config.mapper.AccountMapper;
-import com.teethcare.config.mapper.MapStructMapper;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;

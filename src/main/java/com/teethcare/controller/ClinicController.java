@@ -54,7 +54,7 @@ public class ClinicController {
 
         clinicRequest.setId(id);
         Clinic clinic = clinicService.findById(id);
-        clinicMapper.updateClinicFromDTO(clinicRequest, clinic);
+        clinicMapper.mapClinicRequestToClinic(clinicRequest);
         clinicService.save(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
@@ -81,7 +81,7 @@ public class ClinicController {
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);
 
-        staffResponseList = accountMapper.mapAccountListToAccountDTOList(staffList);
+        staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
 
         if (staffResponseList == null || staffResponseList.size() == 0) {
             throw new NotFoundException();

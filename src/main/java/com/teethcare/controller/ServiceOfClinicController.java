@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Constant;
 import com.teethcare.common.Status;
 import com.teethcare.config.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.ServiceOfClinic;
@@ -32,10 +33,10 @@ public class ServiceOfClinicController {
     }
     @GetMapping("/clinics/{id}")
     ResponseEntity<List<ServiceOfClinicResponse>> serviceOfClinicResponses(@PathVariable int id,
-                                                                           @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-                                                                           @RequestParam(name = "size", required = false, defaultValue = "5") Integer size,
-                                                                           @RequestParam(name = "sortBy", required = false, defaultValue = "id") String field,
-                                                                           @RequestParam(name = "sortDir", required = false, defaultValue = "ASC") String direction) {
+                                                                           @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                           @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                           @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                           @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
 
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
 

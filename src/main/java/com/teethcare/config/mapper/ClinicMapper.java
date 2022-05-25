@@ -12,5 +12,5 @@ public interface ClinicMapper {
     @Mapping(target = "avgRatingScore", ignore = true)
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
-    void updateClinicFromDTO(ClinicRequest dto, @MappingTarget Clinic entity);
+    Clinic mapClinicRequestToClinic(ClinicRequest dto);
 }

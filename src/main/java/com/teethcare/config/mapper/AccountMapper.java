@@ -13,20 +13,20 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
 //    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")
+    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "dd/MM/yyyy")
     @Mapping(source = "role.id", target = "roleId")
     @Mapping(source = "role.name", target = "roleName")
-    AccountResponse mapAccountToAccountDTO(Account account);
+    AccountResponse mapAccountToAccountResponse(Account account);
 
     //    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")
-    List<AccountResponse> mapAccountListToAccountDTOList(List<Account> account);
+    List<AccountResponse> mapAccountListToAccountResponseList(List<Account> account);
 
-    @InheritConfiguration(name = "mapAccountToAccountDTO")
+    @InheritConfiguration(name = "mapAccountToAccountResponse")
     @Mapping(source = "clinic.id", target = "clinicId")
     @Mapping(source = "clinic.name", target = "clinicName")
     DentistResponse mapDentistToDentistResponse(Dentist dentist);
 
-    @InheritConfiguration(name = "mapAccountToAccountDTO")
+    @InheritConfiguration(name = "mapAccountToAccountResponse")
     @Mapping(source = "clinic.id", target = "clinicId")
     @Mapping(source = "clinic.name", target = "clinicName")
     CustomerServiceResponse mapCustomerServiceToCustomerServiceResponse(CustomerService customerService);
