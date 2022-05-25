@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.exception.NotFoundException;
@@ -22,8 +23,8 @@ import java.util.List;
 @RestController
 @EnableSwagger2
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
-@RequestMapping("/api/dentists")
+//@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
+@RequestMapping(path = EndpointConstant.Dentist.DENTIST_ENDPOINT)
 public class DentistController {
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
