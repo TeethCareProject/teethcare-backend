@@ -49,7 +49,7 @@ public class ManagerController {
     private final RoleService roleService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<ManagerResponse>> getAllManagers() {
         List<Manager> managers = managerService.findAll();
         List<ManagerResponse> managerResponses = new ArrayList<>();
@@ -66,7 +66,7 @@ public class ManagerController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
+    //@PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity getActiveManager(@PathVariable("id") String id) {
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){
@@ -89,7 +89,7 @@ public class ManagerController {
 
     @PostMapping
     @Transactional
-    @PreAuthorize("permitAll()")
+    //@PreAuthorize("permitAll()")
     public ResponseEntity addManager(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
         if (!isDuplicated) {
@@ -124,7 +124,7 @@ public class ManagerController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity delManager(@PathVariable("id") String id) {
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){

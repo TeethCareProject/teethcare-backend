@@ -20,7 +20,6 @@ import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,7 +72,7 @@ public class ClinicController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity delClinic(@PathVariable("id") String id) {
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){

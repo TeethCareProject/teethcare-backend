@@ -33,7 +33,7 @@ public class AccountController {
     private final AccountMapper accountMapper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+   // @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<AccountResponse>> getAllAccounts(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                 @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
@@ -45,7 +45,7 @@ public class AccountController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity getAccountById(@PathVariable("id") int id) {
         Account account = accountService.findById(id);
         if (account != null) {

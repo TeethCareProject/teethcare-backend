@@ -44,7 +44,7 @@ public class PatientController {
     private final RoleService roleService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<PatientResponse>> getAllPatients() {
         List<Patient> patients = patientService.findAll();
         List<PatientResponse> patientResponses = accountMapper.mapPatientListToPatientResponseList(patients);
@@ -52,8 +52,8 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
-            "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    //@PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
+    //        "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity getPatient(@PathVariable("id") String  id) {
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){
@@ -70,7 +70,7 @@ public class PatientController {
     }
 
     @PostMapping
-    @PreAuthorize("permitAll()")
+    //@PreAuthorize("permitAll()")
     public ResponseEntity addPatient(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
         if (!isDuplicated) {
@@ -91,7 +91,7 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity delPatient(@PathVariable("id") String id) {
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){

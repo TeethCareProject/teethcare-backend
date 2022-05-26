@@ -47,12 +47,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(EndpointConstant.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Clinic.CLINIC_ENDPOINT + "/**").permitAll();
-        http.authorizeRequests().antMatchers(EndpointConstant.Account.ACCOUNT_ENDPOINT + "/**");
-        http.authorizeRequests().antMatchers(EndpointConstant.Manager.MANAGER_ENDPOINT + "/**");
-        http.authorizeRequests().antMatchers(EndpointConstant.Dentist.DENTIST_ENDPOINT + "**");
-        http.authorizeRequests().antMatchers(EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT + "/**");
-        http.authorizeRequests().antMatchers(EndpointConstant.Patient.PATIENT_ENDPOINT + "/**");
-        http.authorizeRequests().antMatchers(EndpointConstant.Service.SERVICE_ENDPOINT + "/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Account.ACCOUNT_ENDPOINT + "/**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.Manager.MANAGER_ENDPOINT + "/**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.Dentist.DENTIST_ENDPOINT + "**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT + "/**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.Patient.PATIENT_ENDPOINT + "/**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.Service.SERVICE_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.headers().contentSecurityPolicy("script-src 'self'");
         http.logout().logoutUrl("/api/logout").invalidateHttpSession(true);
