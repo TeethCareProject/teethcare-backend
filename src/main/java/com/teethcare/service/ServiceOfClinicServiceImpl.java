@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService{
                 serviceRepository.findByClinicIdAndStatus(theClinicId, Status.ACTIVE.name(), pageable);
 
         if (serviceOfClinicList == null || serviceOfClinicList.size() == 0) {
-            throw new NotFoundException();
+            throw new IdNotFoundException("ID not found");
         }
         return serviceOfClinicList;
     }

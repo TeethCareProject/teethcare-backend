@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.repository.CustomerServiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class CSServiceImpl implements CSService {
         List<CustomerService> customerServiceList = customerServiceRepository.findByClinicId(theId);
 
         if (customerServiceList == null || customerServiceList.size() == 0) {
-            throw new NotFoundException();
+            throw new IdNotFoundException("ID not found");
         }
 
         return customerServiceList;
