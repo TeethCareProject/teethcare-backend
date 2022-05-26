@@ -50,7 +50,6 @@ public class ClinicController {
 
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority((T(com.teethcare.common.Role).ADMIN), T(com.teethcare.common.Role).PATIENT, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<List<ClinicResponse>> getAllActiveClinics() {
         List<Clinic> list = clinicService.findAllActive();
         List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
@@ -58,7 +57,6 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") String id) {
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){
