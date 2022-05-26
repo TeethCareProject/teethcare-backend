@@ -8,6 +8,11 @@ public final class EndpointConstant {
     private static final String ROOT_ENDPOINT = "/api";
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class Booking {
+        public static final String BOOKING_ENDPOINT = ROOT_ENDPOINT + "/bookings";
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Authentication {
         public static final String AUTHENTICATION_ENDPOINT = ROOT_ENDPOINT + "/auth";
         public static final String LOGIN_ENDPOINT = AUTHENTICATION_ENDPOINT + "/login";

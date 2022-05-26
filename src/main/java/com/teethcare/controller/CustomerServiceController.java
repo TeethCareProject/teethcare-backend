@@ -27,12 +27,11 @@ public class CustomerServiceController {
     private final CSService CSService;
     private final AccountMapper accountMapper;
 
-
-
     @GetMapping("/{id}")
     public ResponseEntity<CustomerServiceResponse> getCSById(@PathVariable String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -44,14 +43,12 @@ public class CustomerServiceController {
         }
 
         CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
-
         return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") String id) {
         int theID = 0;
-
         if(!NumberUtils.isCreatable(id)){
             throw new IdInvalidException("Id " + id + " invalid");
         }

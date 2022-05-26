@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ClinicInfoResponse {
+
     private int id;
     private Location location;
     private String name;

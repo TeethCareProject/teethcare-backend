@@ -39,18 +39,25 @@ public class AccountController {
                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                 @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+
         List<Account> accounts = accountService.findAllAccounts(pageable);
+
         List<AccountResponse> accountResponses = accountMapper.mapAccountListToAccountResponseList(accounts);
+
         return new ResponseEntity<>(accountResponses, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity getAccountById(@PathVariable("id") int id) {
+    public ResponseEntity<AccountResponse> getAccountById(@PathVariable("id") int id) {
         Account account = accountService.findById(id);
+
         if (account != null) {
             AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account);
+
             return new ResponseEntity<>(accountResponse, HttpStatus.OK);
-        } else throw new IdNotFoundException("Account id " + id + " not found!");
+        } else {
+            throw new IdNotFoundException("Account id " + id + " not found!");
+        }
     }
 }
