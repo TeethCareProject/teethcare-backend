@@ -4,8 +4,9 @@ import com.teethcare.common.Status;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -64,5 +65,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public boolean isDuplicated(String username) {
         return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name()) != null;
+    }
+
+    @Override
+    public List<Account> searchAccountsByFullName(String search, Pageable pageable) {
+        return accountRepository.searchAccountsByFullName(search, pageable);
     }
 }

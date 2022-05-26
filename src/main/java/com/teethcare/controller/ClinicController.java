@@ -1,8 +1,6 @@
 package com.teethcare.controller;
 
-import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Message;
-import com.teethcare.common.Status;
+import com.teethcare.common.*;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.config.mapper.ClinicMapper;
 import com.teethcare.exception.ClinicNotFoundException;
@@ -20,21 +18,22 @@ import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
-import io.swagger.models.auth.In;
+import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @EnableSwagger2
@@ -50,8 +49,13 @@ public class ClinicController {
 
 
     @GetMapping
-    public ResponseEntity<List<ClinicResponse>> getAllActiveClinics() {
-        List<Clinic> list = clinicService.findAllActive();
+    public ResponseEntity<List<ClinicResponse>> getAllActiveClinics(@RequestParam(name = "search", required = false) String search,
+                                                                    @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                    @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                    @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                    @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        List<Clinic> list = clinicService.findAllActive(pageable);
         List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }
@@ -59,7 +63,7 @@ public class ClinicController {
     @GetMapping("/{id}")
     public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -76,7 +80,7 @@ public class ClinicController {
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity delClinic(@PathVariable("id") String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -92,7 +96,7 @@ public class ClinicController {
     @PutMapping("/{id}")
     public ResponseEntity<MessageResponse> update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -106,7 +110,7 @@ public class ClinicController {
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -122,7 +126,7 @@ public class ClinicController {
         staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
 
         if (staffResponseList == null || staffResponseList.size() == 0) {
-            throw new IdNotFoundException("With id "+ id + ", the list of hospital staff could not be found.");
+            throw new IdNotFoundException("With id " + id + ", the list of hospital staff could not be found.");
         }
 
         return new ResponseEntity<>(staffResponseList, HttpStatus.OK);

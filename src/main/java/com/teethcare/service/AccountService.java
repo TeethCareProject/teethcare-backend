@@ -15,4 +15,5 @@ public interface AccountService extends CRUDService<Account> {
     List<Account> findByRoleId(int id);
 
     List<Account> findAllAccounts(Pageable pageable);
+    List<Account> searchAccountsByFullName(String search, Pageable pageable);
 }

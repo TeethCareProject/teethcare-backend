@@ -6,9 +6,8 @@ import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.ClinicRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +23,8 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
 
-    public List<Clinic> findAllActive() {
-        return clinicRepository.getClinicByStatus(Status.ACTIVE.name());
+    public List<Clinic> findAllActive(Pageable pageable) {
+        return clinicRepository.getClinicByStatus(Status.ACTIVE.name(), pageable);
     }
 
     public Clinic getClinicByManager(Manager manager) {
