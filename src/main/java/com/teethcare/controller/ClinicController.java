@@ -47,7 +47,6 @@ public class ClinicController {
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
 
-
     @GetMapping
     public ResponseEntity<List<ClinicResponse>> getAllActiveClinics() {
         List<Clinic> list = clinicService.findAllActive();
@@ -96,8 +95,11 @@ public class ClinicController {
         }
         theID = Integer.parseInt(id);
         clinicRequest.setId(theID);
+
         Clinic clinic = clinicService.findById(theID);
+
         clinicMapper.mapClinicRequestToClinic(clinicRequest);
+
         clinicService.save(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
@@ -109,6 +111,7 @@ public class ClinicController {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
+
         List<Account> staffList = new ArrayList<>();
         List<AccountResponse> staffResponseList = new ArrayList<>();
 

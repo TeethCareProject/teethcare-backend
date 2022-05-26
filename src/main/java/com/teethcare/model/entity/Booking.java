@@ -1,5 +1,7 @@
 package com.teethcare.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,16 +26,26 @@ public class Booking {
     @Column(name = "id")
     private int id;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "preBooking")
+    @JsonBackReference
+    private Booking mappedPreBooking;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "postBooking")
+    @JsonBackReference
+    private Booking mappedPostBooking;
+
     @OneToOne
     @JoinColumn(name = "pre_booking_id", referencedColumnName = "id")
+    @JsonManagedReference
     private Booking preBooking;
 
     @OneToOne
     @JoinColumn(name = "post_booking_id", referencedColumnName = "id")
+    @JsonManagedReference
     private Booking postBooking;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", referencedColumnName = "account_id")
+    @JoinColumn(name = "patient_id", referencedColumnName = "account_id")
     private Patient patient;
 
     @Column(name = "total_price")
@@ -84,4 +97,10 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "customer_service_id", referencedColumnName = "account_id")
     private CustomerService customerService;
+
+    @ManyToMany
+    @JoinTable(name = "booking_detail",
+            joinColumns = @JoinColumn(name = "booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id"))
+    private List<Service> services;
 }

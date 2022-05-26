@@ -16,7 +16,6 @@ public class CSServiceImpl implements CSService {
 
     private final CustomerServiceRepository customerServiceRepository;
 
-
     @Override
     public List<CustomerService> findAll() {
         return customerServiceRepository.findAll();
@@ -58,8 +57,7 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public List<CustomerService> findByClinicIdAndStatus(int theId, String status) {
-        List<CustomerService> customerServiceList = customerServiceRepository.findByClinicIdAndStatus(theId, status);
-        return customerServiceList;
+        return customerServiceRepository.findByClinicIdAndStatus(theId, status);
     }
 
     @Override

@@ -15,7 +15,6 @@ import java.util.List;
 public class ServiceOfClinicServiceImpl implements ServiceOfClinicService{
     private final ServiceRepository serviceRepository;
 
-
     @Override
     public List<ServiceOfClinic> findAll() {
         return null;

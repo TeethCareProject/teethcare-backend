@@ -31,8 +31,6 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicRepository.getClinicByManager(manager);
     }
 
-    ;
-
     @Override
     public Clinic findById(int theId) {
         Optional<Clinic> result = clinicRepository.findById(theId);

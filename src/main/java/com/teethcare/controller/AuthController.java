@@ -104,7 +104,6 @@ public class AuthController {
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.toString(),
                 errors
-
         );
         return new ResponseEntity<>(customErrorResponse, HttpStatus.BAD_REQUEST);
 
