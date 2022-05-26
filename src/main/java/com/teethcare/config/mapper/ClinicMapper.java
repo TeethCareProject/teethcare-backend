@@ -20,6 +20,7 @@ public interface ClinicMapper {
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 
     List<ClinicResponse> mapClinicListToClinicResponseList(List<Clinic> clinics);
+
     ClinicInfoResponse mapClinicListToClinicInfoResponse(Clinic clinic);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

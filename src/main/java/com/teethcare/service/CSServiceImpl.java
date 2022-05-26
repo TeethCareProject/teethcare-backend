@@ -1,7 +1,6 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.repository.CustomerServiceRepository;
 import lombok.RequiredArgsConstructor;

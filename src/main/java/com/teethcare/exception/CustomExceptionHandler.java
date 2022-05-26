@@ -68,4 +68,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 
     }
+    @ExceptionHandler
+    public ResponseEntity<CustomErrorResponse> handleException(IdInvalidException ex) {
+        List errors = new ArrayList<String>();
+        errors.add(ex.getMessage());
+        CustomErrorResponse error = new CustomErrorResponse(
+                new Timestamp(System.currentTimeMillis()),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.toString(),
+                errors
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+    }
 }

@@ -1,12 +1,9 @@
 package com.teethcare.service;
 
-import com.teethcare.common.Role;
 import com.teethcare.common.Status;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.DentistRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

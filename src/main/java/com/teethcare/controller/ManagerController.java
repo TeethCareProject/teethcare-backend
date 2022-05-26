@@ -5,6 +5,7 @@ import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.config.mapper.ClinicMapper;
+import com.teethcare.exception.IdInvalidException;
 import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.model.entity.Clinic;
@@ -16,6 +17,7 @@ import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.service.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,8 +67,13 @@ public class ManagerController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
-    public ResponseEntity getActiveManager(@PathVariable("id") int id) {
-        Manager manager = managerService.getActiveManager(id);
+    public ResponseEntity getActiveManager(@PathVariable("id") String id) {
+        int theID = 0;
+        if(!NumberUtils.isCreatable(id)){
+            throw new IdInvalidException("Id " + id + " invalid");
+        }
+        theID = Integer.parseInt(id);
+        Manager manager = managerService.getActiveManager(theID);
         Clinic clinic = clinicService.getClinicByManager(manager);
         if (clinic != null) {
             ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
@@ -118,10 +125,15 @@ public class ManagerController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delManager(@PathVariable("id") int id) {
-        Manager manager = managerService.findById(id);
+    public ResponseEntity delManager(@PathVariable("id") String id) {
+        int theID = 0;
+        if(!NumberUtils.isCreatable(id)){
+            throw new IdInvalidException("Id " + id + " invalid");
+        }
+        theID = Integer.parseInt(id);
+        Manager manager = managerService.findById(theID);
         if (manager != null) {
-            managerService.delete(id);
+            managerService.delete(theID);
             Clinic clinic = clinicService.getClinicByManager(manager);
             clinicService.delete(clinic.getId());
             return new ResponseEntity(HttpStatus.OK);

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
-//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    //    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "dd/MM/yyyy")
     @Mapping(source = "role.id", target = "roleId")
     @Mapping(source = "role.name", target = "roleName")
@@ -33,22 +33,10 @@ public interface AccountMapper {
     @Mapping(source = "phoneNumber", target = "phone")
     Patient mapPatientRegisterRequestToPatient(PatientRegisterRequest patientRegisterRequest);
 
-
-    //    Manager
-//    @InheritConfiguration(name = "mapAccountToAccountResponse")
-//    @Mapping(source = "role", target = "role", qualifiedByName = "mapRoleToString")
-//    ManagerResponse mapManagerToManagerResponse(Manager manager);
-
-//    @InheritConfiguration(name = "mapAccountListToAccountResponseList")
-//    @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicInfoResponse")
-//    List<ManagerResponse> mapManagerListToManagerResponseList(List<Manager> managers);
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
-
-
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")
     @Mapping(source = "clinic.id", target = "clinicId")

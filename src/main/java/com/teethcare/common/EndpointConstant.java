@@ -26,6 +26,11 @@ public final class EndpointConstant {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class Service {
+        public static final String SERVICE_ENDPOINT = ROOT_ENDPOINT + "/services";
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Manager {
         public static final String MANAGER_ENDPOINT = ROOT_ENDPOINT + "/managers";
     }

@@ -4,6 +4,7 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.mapper.AccountMapper;
+import com.teethcare.exception.IdInvalidException;
 import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.model.entity.Patient;
@@ -15,6 +16,7 @@ import com.teethcare.service.CRUDService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,8 +54,13 @@ public class PatientController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
             "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity getPatient(@PathVariable("id") int id) {
-        Patient patient = patientService.findById(id);
+    public ResponseEntity getPatient(@PathVariable("id") String  id) {
+        int theID = 0;
+        if(!NumberUtils.isCreatable(id)){
+            throw new IdInvalidException("Id " + id + " invalid");
+        }
+        theID = Integer.parseInt(id);
+        Patient patient = patientService.findById(theID);
         if (patient != null) {
             PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
             return new ResponseEntity<>(patientResponse, HttpStatus.OK);
@@ -85,10 +92,15 @@ public class PatientController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delPatient(@PathVariable("id") int id) {
-        Patient patient = patientService.findById(id);
+    public ResponseEntity delPatient(@PathVariable("id") String id) {
+        int theID = 0;
+        if(!NumberUtils.isCreatable(id)){
+            throw new IdInvalidException("Id " + id + " invalid");
+        }
+        theID = Integer.parseInt(id);
+        Patient patient = patientService.findById(theID);
         if(patient != null) {
-            patientService.delete(id);
+            patientService.delete(theID);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         throw new IdNotFoundException("Patient id " + id + " not found");
