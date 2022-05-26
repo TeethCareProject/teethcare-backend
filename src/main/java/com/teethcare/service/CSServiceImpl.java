@@ -25,14 +25,10 @@ public class CSServiceImpl implements CSService {
     @Override
     public CustomerService findById(int theId) {
         Optional<CustomerService> result = customerServiceRepository.findById(theId);
-
-        CustomerService theCustomerService = null;
-
-        if (result.isPresent()) {
-            theCustomerService = result.get();
+        if (result.isEmpty()) {
+            throw new IdNotFoundException();
         }
-
-        return theCustomerService;
+        return result.get();
     }
 
     @Override

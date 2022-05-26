@@ -14,6 +14,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "province")
+
 public class Province {
     @Id
     @Column(name = "id")
@@ -21,5 +22,4 @@ public class Province {
 
     @Column(name = "name")
     private String name;
-
 }

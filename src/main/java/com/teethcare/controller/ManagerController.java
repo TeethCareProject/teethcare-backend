@@ -45,6 +45,7 @@ public class ManagerController {
     private final ClinicMapper clinicMapper;
     private final AccountMapper accountMapper;
     private final LocationService locationService;
+    private final WardService wardService;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
@@ -103,7 +104,7 @@ public class ManagerController {
                 Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
                 clinic.setManager(manager);
                 Location location = new Location();
-                location.setWard(locationService.getWardById(managerRegisterRequest.getWardId()));
+                location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
                 location.setAddressString(managerRegisterRequest.getClinicAddress());
                 if (location != null) {
                     locationService.save(location);

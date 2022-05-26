@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ManagerRepository;
@@ -35,10 +36,10 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public Manager findById(int id) {
         Optional<Manager> manager = managerRepository.findById(id);
-        if(manager.isPresent()) {
-            return manager.get();
+        if (manager.isEmpty()) {
+            throw new IdNotFoundException();
         }
-        return null;
+        return manager.get();
     }
 
     @Override

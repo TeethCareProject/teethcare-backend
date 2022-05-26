@@ -29,10 +29,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account findById(int id) {
         Optional<Account> account = accountRepository.findById(id);
-        if (account.isPresent()) {
-            return account.get();
-        }
-        return null;
+        return account.orElse(null);
     }
 
     @Override

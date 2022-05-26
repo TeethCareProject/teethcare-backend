@@ -17,26 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
 
-    private final ProvinceRepository provinceRepository;
-    private final DistrictRepository districtRepository;
-    private final WardRepository wardRepository;
     private final LocationRepository locationRepository;
 
-
-    @Override
-    public Ward getWardById(int id) {
-        return wardRepository.getWardById(id);
-    }
-
-    @Override
-    public Province getProvinceById(int id) {
-        return provinceRepository.getProvinceById(id);
-    }
-
-    @Override
-    public District getDistrictById(int id) {
-        return districtRepository.getDistrictById(id);
-    }
 
     @Override
     public List<Location> findAll() {

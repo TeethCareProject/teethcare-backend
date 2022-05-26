@@ -47,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(EndpointConstant.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Clinic.CLINIC_ENDPOINT + "/**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.Province.PROVINCE_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Account.ACCOUNT_ENDPOINT + "/**");
         http.authorizeRequests().antMatchers(EndpointConstant.Manager.MANAGER_ENDPOINT + "/**");
         http.authorizeRequests().antMatchers(EndpointConstant.Dentist.DENTIST_ENDPOINT + "**");

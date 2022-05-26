@@ -18,17 +18,10 @@ public class DentistServiceImpl implements DentistService {
     @Override
     public Dentist findById(int theId) {
         Optional<Dentist> result = dentistRepository.findById(theId);
-
-        Dentist theDentist = null;
-
-        if (result.isPresent()) {
-            theDentist = result.get();
-        }
-        else {
+        if (result.isEmpty()) {
             throw new IdNotFoundException();
         }
-
-        return theDentist;
+        return result.get();
     }
 
     @Override

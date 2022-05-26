@@ -53,4 +53,5 @@ public class AccountController {
             return new ResponseEntity<>(accountResponse, HttpStatus.OK);
         } else throw new IdNotFoundException("Account id " + id + " not found!");
     }
+
 }

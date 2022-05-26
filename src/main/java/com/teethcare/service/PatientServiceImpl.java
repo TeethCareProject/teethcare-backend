@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,10 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Patient findById(int id) {
         Optional<Patient> patient = patientRepository.findById(id);
-        if (patient.isPresent()) {
-            return patient.get();
+        if (patient.isEmpty()) {
+            throw new IdNotFoundException();
         }
-        return null;
+        return patient.get();
     }
 
     @Override
