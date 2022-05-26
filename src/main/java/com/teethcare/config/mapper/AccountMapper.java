@@ -12,13 +12,13 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
-//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+
     @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "dd/MM/yyyy")
     @Mapping(source = "role.id", target = "roleId")
     @Mapping(source = "role.name", target = "roleName")
     AccountResponse mapAccountToAccountResponse(Account account);
 
-    //    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "MM/dd/yyyy")
+
     List<AccountResponse> mapAccountListToAccountResponseList(List<Account> account);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")

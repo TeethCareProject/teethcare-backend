@@ -1,2 +1,12 @@
-package com.teethcare.model.entity;public class BookingDetail {
+package com.teethcare.model.entity;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "booking")
+public class BookingDetail {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 }

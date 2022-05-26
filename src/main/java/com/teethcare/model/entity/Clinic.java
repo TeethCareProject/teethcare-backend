@@ -26,11 +26,11 @@ public class Clinic {
 
     @Column(name = "manager_id", length = 72, nullable = false)
     @NotEmpty
-    private String managerId;
+    private int managerId;
 
     @Column(name = "location_id", nullable = false)
     @NotEmpty
-    private String locationId;
+    private int locationId;
 
     @NotEmpty
     @Column(name = "name", length = 100, nullable = false)
