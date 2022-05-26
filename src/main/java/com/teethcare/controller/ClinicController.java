@@ -1,6 +1,9 @@
 package com.teethcare.controller;
 
-import com.teethcare.common.*;
+import com.teethcare.common.Constant;
+import com.teethcare.common.EndpointConstant;
+import com.teethcare.common.Message;
+import com.teethcare.common.Status;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.config.mapper.ClinicMapper;
 import com.teethcare.exception.ClinicNotFoundException;
@@ -29,11 +32,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.data.domain.Pageable;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @RestController
 @EnableSwagger2
@@ -50,12 +55,32 @@ public class ClinicController {
 
     @GetMapping
     public ResponseEntity<List<ClinicResponse>> getAllActiveClinics(@RequestParam(name = "search", required = false) String search,
+                                                                    @RequestParam(name = "provinceId", required = false) Integer provinceId,
+                                                                    @RequestParam(name = "districtId", required = false) Integer districtId,
+                                                                    @RequestParam(name = "wardId", required = false) Integer wardId,
                                                                     @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                     @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                     @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                     @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        List<Clinic> list = clinicService.findAllActive(pageable);
+        List<Clinic> list;
+        if (search == null) {
+            list = clinicService.findAllActive(pageable);
+        } else {
+            list = clinicService.searchAllActiveByName(search, pageable);
+        }
+        Predicate<Clinic> byProvinceId = (clinic) -> clinic.getLocation().getWard().getDistrict().getProvince().getId() == provinceId;
+        Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == districtId;
+        Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == wardId;
+        if (provinceId != null) {
+            list = list.stream().filter(byProvinceId).collect(Collectors.toList());
+        }
+        if (districtId != null) {
+            list = list.stream().filter(byDistrictId).collect(Collectors.toList());
+        }
+        if (wardId != null) {
+            list = list.stream().filter(byWardId).collect(Collectors.toList());
+        }
         List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }

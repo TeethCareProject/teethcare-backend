@@ -15,7 +15,6 @@ public interface ClinicMapper {
 
     @Mapping(source = "manager.role.id", target = "manager.roleId")
     @Mapping(source = "manager.role.name", target = "manager.roleName")
-    @Mapping(source = "location", target = "location", qualifiedByName = "mapLocationToString")
     @Mapping(source = "manager.dateOfBirth", target = "manager.dateOfBirth", dateFormat = "dd/MM/yyyy")
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 
@@ -37,10 +36,5 @@ public interface ClinicMapper {
     @Mapping(target = "status", ignore = true)
     Clinic mapClinicRequestToClinic(ClinicRequest dto);
 
-    @Named("mapLocationToString")
-    default String mapLocationToString(Location location) {
-        return location.getAddressString() + ", " + location.getWard().getName()
-                + ", " + location.getWard().getDistrict().getName()
-                + ", " + location.getWard().getDistrict().getProvince().getName();
-    }
+
 }

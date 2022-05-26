@@ -43,6 +43,11 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    public List<Clinic> searchAllActiveByName(String search, Pageable pageable) {
+        return clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(search, Status.ACTIVE.name(), pageable);
+    }
+
+    @Override
     public void save(Clinic clinic) {
         clinicRepository.save(clinic);
     }
