@@ -18,12 +18,12 @@ public interface ClinicMapper {
     @Mapping(source = "manager.role.id", target = "manager.roleId")
     @Mapping(source = "manager.role.name", target = "manager.roleName")
     @Mapping(source = "manager.dateOfBirth", target = "manager.dateOfBirth", dateFormat = "dd/MM/yyyy")
-//    @InheritConfiguration(name = "mapLocationToLocationResponse")
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 
-    //    @Mapping(source = "ward", target = "ward")
-//    @Mapping(target = "wardString", source ="ward", qualifiedByName = "getAddressString")
-    @Mapping( target = "address", expression = "java(location.getAddressString() + \" \" + location.getWard().getName() + \", \" + location.getWard().getDistrict().getName() + \", \" + location.getWard().getDistrict().getProvince().getName())")
+    @Mapping( target = "address",
+            expression = "java(location.getAddressString() + \", \" + location.getWard().getName() + \", \" " +
+                    "+ location.getWard().getDistrict().getName() + \", \" " +
+                    "+ location.getWard().getDistrict().getProvince().getName())")
     LocationResponse mapLocationToLocationResponse(Location location);
 
     List<ClinicResponse> mapClinicListToClinicResponseList(List<Clinic> clinics);
@@ -36,7 +36,6 @@ public interface ClinicMapper {
     @Mapping(source = "clinicTaxCode", target = "taxCode")
     Clinic mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
 
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "manager", ignore = true)
     @Mapping(target = "location", ignore = true)
@@ -44,11 +43,4 @@ public interface ClinicMapper {
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
     Clinic mapClinicRequestToClinic(ClinicRequest dto);
-
-    @Named(value = "getDistrict")
-    default String getDistrict(Ward ward) {
-       return ward.getName() + ", "
-               + ward.getDistrict().getName() + ", "
-               + ward.getDistrict().getProvince().getName();
-    }
 }
