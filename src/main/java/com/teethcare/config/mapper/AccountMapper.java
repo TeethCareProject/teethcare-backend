@@ -23,6 +23,8 @@ public interface AccountMapper {
 
     //    Patient
     @InheritConfiguration(name = "mapAccountToAccountResponse")
+    @Mapping(source = "role.id", target = "roleId")
+    @Mapping(source = "role.name", target = "roleName")
     PatientResponse mapPatientToPatientResponse(Patient patient);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")
