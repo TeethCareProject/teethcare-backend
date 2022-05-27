@@ -26,31 +26,36 @@ import java.util.List;
 @RestController
 @EnableSwagger2
 @RequiredArgsConstructor
-@RequestMapping(path = EndpointConstant.Province.PROVINCE_ENDPOINT)
+//@RequestMapping(path = EndpointConstant.Province.PROVINCE_ENDPOINT)
 public class LocationController {
     private final ProvinceService provinceService;
     private final DistrictService districtService;
     private final WardService wardService;
     private final LocationMapper locationMapper;
 
-    @GetMapping
+    @GetMapping(path = "/api/locationmetadata")
     public ResponseEntity<List<ProvinceResponse>> getAllProvinces() {
         List<Province> provinces = provinceService.findAll();
         return new ResponseEntity<>(locationMapper.mapProvinceListToProvinceResponseList(provinces), HttpStatus.OK);
     }
 
-
-    @GetMapping(path = "/{provinceId}/districts")
-    public ResponseEntity<List<DistrictResponse>> getAllDistrictsByProvinceId(@PathVariable("provinceId") int id) {
-        List<District> districts = districtService.findAllByProvinceId(id);
-        return new ResponseEntity<>(locationMapper.mapDistrictListToDistrictResponseList(districts), HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/{provinceId}/districts/{districtId}/wards")
-    public ResponseEntity<List<WardResponse>> getAllWardsByDistrictId(@PathVariable("provinceId") int provinceId,
-                                                                      @PathVariable("districtId") int districtId) {
-        List<Ward> wards = wardService.findAllByDistrictIdAndDistrictProvinceId(districtId, provinceId);
-        return new ResponseEntity<>(locationMapper.mapWardListToWardResponseList(wards), HttpStatus.OK);
-    }
+//
+//    @GetMapping(path = "/{provinceId}/districts")
+//    public ResponseEntity<List<DistrictResponse>> getAllDistrictsByProvinceId(@PathVariable("provinceId") int id) {
+//        List<District> districts = districtService.findAllByProvinceId(id);
+//        return new ResponseEntity<>(locationMapper.mapDistrictListToDistrictResponseList(districts), HttpStatus.OK);
+//    }
+//
+//    @GetMapping(path = "/{provinceId}/districts/{districtId}/wards")
+//    public ResponseEntity<List<WardResponse>> getAllWardsByDistrictId(@PathVariable("provinceId") int provinceId,
+//                                                                      @PathVariable("districtId") int districtId) {
+//        List<Ward> wards = wardService.findAllByDistrictIdAndDistrictProvinceId(districtId, provinceId);
+//        return new ResponseEntity<>(locationMapper.mapWardListToWardResponseList(wards), HttpStatus.OK);
+//    }
+//
+//    @GetMapping(path = "/locations")
+//    public ResponseEntity<List<Province>> getAllPro() {
+//        return new ResponseEntity<>(provinceService.findAll(), HttpStatus.OK);
+//    }
 }
 

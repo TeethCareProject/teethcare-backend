@@ -11,15 +11,18 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface LocationMapper {
+    @Mapping(source = "districts", target = "districtList")
+    @InheritConfiguration(name = "mapDistrictToDistrictResponse")
     ProvinceResponse mapProvinceToProvinceResponse(Province province);
     @InheritConfiguration(name = "mapProvinceToProvinceResponse")
     List<ProvinceResponse> mapProvinceListToProvinceResponseList(List<Province> provinces);
-
+    @Mapping(source = "wards", target = "wardList")
+    @InheritConfiguration(name = "mapWardToWardResponse")
     DistrictResponse mapDistrictToDistrictResponse(District province);
-    @InheritConfiguration(name = "mapProvinceToProvinceResponse")
+    @InheritConfiguration(name = "mapDistrictToDistrictResponse")
     List<DistrictResponse> mapDistrictListToDistrictResponseList(List<District> provinces);
 
     WardResponse mapWardToWardResponse(Ward ward);
-    @InheritConfiguration(name = "mapProvinceToProvinceResponse")
+    @InheritConfiguration(name = "mapWardToWardResponse")
     List<WardResponse> mapWardListToWardResponseList(List<Ward> wards);
 }

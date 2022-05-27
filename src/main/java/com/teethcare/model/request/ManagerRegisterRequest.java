@@ -45,9 +45,5 @@ public class ManagerRegisterRequest {
     @NotBlank
     private String clinicAddress;
 
-    private int provinceId;
-
-    private int districtId;
-
     private int wardId;
 }

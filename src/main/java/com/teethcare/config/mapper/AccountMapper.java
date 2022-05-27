@@ -49,4 +49,7 @@ public interface AccountMapper {
     @Mapping(source = "clinic.id", target = "clinicId")
     @Mapping(source = "clinic.name", target = "clinicName")
     CustomerServiceResponse mapCustomerServiceToCustomerServiceResponse(CustomerService customerService);
+
+
+
 }

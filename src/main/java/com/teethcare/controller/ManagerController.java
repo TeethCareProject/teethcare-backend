@@ -58,7 +58,7 @@ public class ManagerController {
             Clinic clinic = clinicService.getClinicByManager(manager);
             if (clinic != null) {
                 ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
+                managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getRole().getName(),
                         manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
                         manager.getStatus(), clinicInfoResponse));
             }
@@ -78,7 +78,7 @@ public class ManagerController {
         Clinic clinic = clinicService.getClinicByManager(manager);
         if (clinic != null) {
             ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-            ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
+            ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getRole().getName(),
                     manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
                     manager.getStatus(), clinicInfoResponse);
 
@@ -96,7 +96,7 @@ public class ManagerController {
         if (!isDuplicated) {
             if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
                 Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
-                manager.setRole(roleService.getRoleByName(Role.PATIENT.name()));
+                manager.setRole(roleService.getRoleByName(Role.MANAGER.name()));
 
                 manager.setStatus(Status.PENDING.name());
                 manager.setPassword(passwordEncoder.encode(manager.getPassword()));
@@ -113,7 +113,7 @@ public class ManagerController {
                     managerService.save(manager);
                     clinicService.save(clinic);
                     ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                    ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
+                    ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getName(), manager.getRole().getName(),
                             manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
                             manager.getStatus(), clinicInfoResponse);
                     return new ResponseEntity<>(managerResponse, HttpStatus.OK);

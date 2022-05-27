@@ -28,4 +28,9 @@ public class WardServiceImpl implements WardService {
         }
         return ward.get();
     }
+
+    @Override
+    public List<Ward> findAll() {
+        return wardRepository.findAll();
+    }
 }

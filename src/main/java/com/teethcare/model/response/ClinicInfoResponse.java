@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class ClinicInfoResponse {
     private int id;
-    private Location location;
+    private LocationResponse location;
     private String name;
     private String description;
     private String imageUrl;
