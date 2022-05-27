@@ -1,11 +1,13 @@
 package com.teethcare.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,6 +21,12 @@ public class CustomerService extends Account {
             cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "clinic_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Clinic clinic;
+
+    @OneToMany(mappedBy = "customerService", fetch = FetchType.LAZY)
+    @Column(nullable = true)
+    @JsonBackReference
+    private List<Booking> bookingList;
+
 }

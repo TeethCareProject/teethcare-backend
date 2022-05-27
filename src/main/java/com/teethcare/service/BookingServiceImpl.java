@@ -25,7 +25,7 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public void save(Booking theEntity) {
-
+        bookingRepository.save(theEntity);
     }
 
     @Override
@@ -36,5 +36,14 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public List<Booking> findBookingByPatientId(int theId) {
         return bookingRepository.findBookingByPatientId(theId);
+    }
+
+    @Override
+    public Booking saveBooking(Booking booking) {
+        return bookingRepository.save(booking);
+    }
+    @Override
+    public List<Booking> findBookingByPatientIdAndStatus(int theId, String status) {
+        return bookingRepository.findBookingByPatientIdAndStatus(theId, status);
     }
 }

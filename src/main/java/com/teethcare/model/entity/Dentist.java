@@ -1,11 +1,13 @@
 package com.teethcare.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -23,6 +25,11 @@ public class Dentist extends Account {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clinic_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Clinic clinic;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dentist")
+    @Column(nullable = true)
+    @JsonBackReference
+    private List<Booking> bookingList;
 }

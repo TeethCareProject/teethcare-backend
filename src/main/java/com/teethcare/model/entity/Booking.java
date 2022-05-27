@@ -30,26 +30,27 @@ public class Booking {
     @JsonBackReference
     private Booking mappedPreBooking;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "postBooking")
+   /* @OneToOne(fetch = FetchType.LAZY, mappedBy = "postBooking")
     @JsonBackReference
-    private Booking mappedPostBooking;
+    private Booking mappedPostBooking;*/
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pre_booking_id", referencedColumnName = "id")
     @JsonManagedReference
     private Booking preBooking;
 
-    @OneToOne
+    /*@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_booking_id", referencedColumnName = "id")
     @JsonManagedReference
-    private Booking postBooking;
+    private Booking postBooking; */
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", referencedColumnName = "account_id")
+    @JoinColumn(name = "patient_id")
+    @JsonManagedReference
     private Patient patient;
 
     @Column(name = "total_price")
-    private BigDecimal totalPrice;
+    private Integer totalPrice;
 
     @Column(name = "create_booking_date")
     private Date createBookingDate;
@@ -69,38 +70,27 @@ public class Booking {
     @Column(name = "status")
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "dentist_id", referencedColumnName = "account_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dentist_id")
+    @JsonManagedReference
     private Dentist dentist;
-
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    @Column(name = "phone")
-    private String phone;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "date_of_birth")
-    private Date dateOfBirth;
 
     @Column(name = "note")
     private String note;
 
-    @Column(name = "desiredCheckingTime")
+    @Column(name = "desired_checking_time")
     private String desiredCheckingTime;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_service_id", referencedColumnName = "account_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_service_id")
+    @JsonManagedReference
     private CustomerService customerService;
 
     @ManyToMany
     @JoinTable(name = "booking_detail",
             joinColumns = @JoinColumn(name = "booking_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
-    private List<Service> services;
+    @JsonManagedReference
+    private List<ServiceOfClinic> serviceOfClinics;
+
 }

@@ -1,18 +1,21 @@
 package com.teethcare.model.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookingRequest {
-    @NotEmpty
-    private String firstName;
 
-    @NotEmpty
-    private String lastName;
+    private int serviceId;
 
+    private int patientId;
+
+    private String description;
+
+    private Timestamp desiredCheckingTime;
 
 }

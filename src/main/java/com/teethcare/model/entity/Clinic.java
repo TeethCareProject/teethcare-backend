@@ -1,5 +1,6 @@
 package com.teethcare.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,13 +51,16 @@ public class Clinic {
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
+    @JsonBackReference
     private List<Dentist> dentists;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
+    @JsonBackReference
     private List<CustomerService> customerServices;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
+    @JsonBackReference
     private List<ServiceOfClinic> serviceOfClinic;
 }
