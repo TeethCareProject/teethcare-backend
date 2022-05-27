@@ -1,6 +1,5 @@
 package com.teethcare.model.response;
 
-import com.teethcare.model.entity.Location;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

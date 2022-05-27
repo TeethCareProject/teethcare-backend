@@ -1,10 +1,7 @@
 package com.teethcare.service;
 
-import com.teethcare.config.mapper.LocationMapper;
 import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.model.entity.Province;
-import com.teethcare.model.entity.Ward;
-import com.teethcare.model.response.ProvinceResponse;
 import com.teethcare.repository.ProvinceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

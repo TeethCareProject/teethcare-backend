@@ -69,18 +69,18 @@ public class ClinicController {
         } else {
             list = clinicService.searchAllActiveByName(search, pageable);
         }
-//        Predicate<Clinic> byProvinceId = (clinic) -> clinic.getLocation().getWard().getDistrict().getProvince().getId() == provinceId;
-//        Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == districtId;
-//        Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == wardId;
-//        if (provinceId != null) {
-//            list = list.stream().filter(byProvinceId).collect(Collectors.toList());
-//        }
-//        if (districtId != null) {
-//            list = list.stream().filter(byDistrictId).collect(Collectors.toList());
-//        }
-//        if (wardId != null) {
-//            list = list.stream().filter(byWardId).collect(Collectors.toList());
-//        }
+        Predicate<Clinic> byProvinceId = (clinic) -> clinic.getLocation().getWard().getDistrict().getProvince().getId() == provinceId;
+        Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == districtId;
+        Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == wardId;
+        if (provinceId != null) {
+            list = list.stream().filter(byProvinceId).collect(Collectors.toList());
+        }
+        if (districtId != null) {
+            list = list.stream().filter(byDistrictId).collect(Collectors.toList());
+        }
+        if (wardId != null) {
+            list = list.stream().filter(byWardId).collect(Collectors.toList());
+        }
         List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }

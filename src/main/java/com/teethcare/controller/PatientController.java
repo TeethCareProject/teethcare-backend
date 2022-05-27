@@ -12,7 +12,6 @@ import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.model.response.PatientResponse;
 import com.teethcare.service.AccountService;
-import com.teethcare.service.CRUDService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;

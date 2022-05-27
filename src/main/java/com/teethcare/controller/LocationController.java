@@ -1,23 +1,15 @@
 package com.teethcare.controller;
 
-import com.teethcare.common.EndpointConstant;
 import com.teethcare.config.mapper.LocationMapper;
-import com.teethcare.model.entity.District;
 import com.teethcare.model.entity.Province;
-import com.teethcare.model.entity.Ward;
-import com.teethcare.model.response.DistrictResponse;
 import com.teethcare.model.response.ProvinceResponse;
-import com.teethcare.model.response.WardResponse;
 import com.teethcare.service.DistrictService;
 import com.teethcare.service.ProvinceService;
 import com.teethcare.service.WardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -38,7 +30,6 @@ public class LocationController {
         List<Province> provinces = provinceService.findAll();
         return new ResponseEntity<>(locationMapper.mapProvinceListToProvinceResponseList(provinces), HttpStatus.OK);
     }
-
 //
 //    @GetMapping(path = "/{provinceId}/districts")
 //    public ResponseEntity<List<DistrictResponse>> getAllDistrictsByProvinceId(@PathVariable("provinceId") int id) {

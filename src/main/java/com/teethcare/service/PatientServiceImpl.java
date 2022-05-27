@@ -5,7 +5,6 @@ import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.teethcare.config.mapper;
 
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.District;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Ward;
 import com.teethcare.model.request.ClinicRequest;

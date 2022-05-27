@@ -1,11 +1,14 @@
 package com.teethcare.config.mapper;
 
-import com.teethcare.model.entity.*;
-import com.teethcare.model.request.ManagerRegisterRequest;
-import com.teethcare.model.request.PatientRegisterRequest;
-import com.teethcare.model.response.*;
-import org.mapstruct.*;
-import org.springframework.security.core.parameters.P;
+import com.teethcare.model.entity.District;
+import com.teethcare.model.entity.Province;
+import com.teethcare.model.entity.Ward;
+import com.teethcare.model.response.DistrictResponse;
+import com.teethcare.model.response.ProvinceResponse;
+import com.teethcare.model.response.WardResponse;
+import org.mapstruct.InheritConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
