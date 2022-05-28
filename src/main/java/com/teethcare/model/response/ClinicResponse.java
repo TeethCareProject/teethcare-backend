@@ -1,9 +1,12 @@
 package com.teethcare.model.response;
 
+import com.teethcare.model.entity.ServiceOfClinic;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,4 +22,5 @@ public class ClinicResponse {
     private LocationResponse location;
     private AccountResponse manager;
     private String status;
+    private List<ServiceOfClinicResponse> serviceOfClinicResponses;
 }

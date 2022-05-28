@@ -17,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "province")
-
 public class Province {
     @Id
     @Column(name = "id")
