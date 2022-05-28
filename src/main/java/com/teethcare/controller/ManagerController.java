@@ -78,7 +78,6 @@ public class ManagerController {
     }
 
     @PostMapping
-    @Transactional
     @PreAuthorize("permitAll()")
     public ResponseEntity<ManagerResponse> add(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
