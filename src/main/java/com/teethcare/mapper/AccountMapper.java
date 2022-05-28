@@ -1,4 +1,4 @@
-package com.teethcare.config.mapper;
+package com.teethcare.mapper;
 
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;

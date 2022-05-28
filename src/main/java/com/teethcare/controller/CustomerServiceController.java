@@ -3,9 +3,9 @@ package com.teethcare.controller;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
-import com.teethcare.config.mapper.AccountMapper;
-import com.teethcare.exception.IdInvalidException;
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.NotFoundException;
+import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.model.response.MessageResponse;
@@ -32,14 +32,14 @@ public class CustomerServiceController {
         int theID = 0;
 
         if (!NumberUtils.isCreatable(id)) {
-            throw new IdInvalidException("Id " + id + " invalid");
+            throw new BadRequestException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
 
         CustomerService customerService = CSService.findById(theID);
 
         if (customerService == null) {
-            throw new IdNotFoundException("Customer service id " + id + "not found");
+            throw new NotFoundException("Customer service id " + id + "not found");
         }
 
         CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
@@ -50,14 +50,14 @@ public class CustomerServiceController {
     public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") String id) {
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){
-            throw new IdInvalidException("Id " + id + " invalid");
+            throw new BadRequestException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
 
         CustomerService customerService = CSService.findById(theID);
 
         if (customerService == null) {
-            throw new IdNotFoundException("Customer service id " + id + "not found");
+            throw new NotFoundException("Customer service id " + id + "not found");
         }
 
         customerService.setId(theID);

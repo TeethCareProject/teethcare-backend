@@ -3,8 +3,8 @@ package com.teethcare.controller;
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
-import com.teethcare.config.mapper.ServiceOfClinicMapper;
-import com.teethcare.exception.IdInvalidException;
+import com.teethcare.exception.BadRequestException;
+import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.ServiceOfClinicService;
@@ -39,7 +39,7 @@ public class ServiceOfClinicController {
 
         int theID = 0;
         if(!NumberUtils.isCreatable(id)){
-            throw new IdInvalidException("Id " + id + " invalid");
+            throw new BadRequestException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
 

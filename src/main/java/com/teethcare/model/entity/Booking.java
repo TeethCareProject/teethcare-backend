@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class Booking {
     private Timestamp appointmentDate;
 
     @Column(name = "expire_appointment_date")
-    private Date expireAppointmentDate;
+    private Timestamp expireAppointmentDate;
 
     @Column(name = "status")
     private String status;
@@ -79,7 +80,7 @@ public class Booking {
     private String note;
 
     @Column(name = "desired_checking_time")
-    private String desiredCheckingTime;
+    private Timestamp desiredCheckingTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_service_id")

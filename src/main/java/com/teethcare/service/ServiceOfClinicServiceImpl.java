@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,10 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService{
 
     @Override
     public ServiceOfClinic findById(int theId) {
+        Optional<ServiceOfClinic> service = serviceRepository.findById(theId);
+        if(service.isPresent()){
+            return service.get();
+        }
         return null;
     }
 
@@ -40,7 +45,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService{
                 serviceRepository.findByClinicIdAndStatus(theClinicId, Status.ACTIVE.name(), pageable);
 
         if (serviceOfClinicList == null || serviceOfClinicList.size() == 0) {
-            throw new IdNotFoundException("ID not found");
+            throw new NotFoundException("ID not found");
         }
         return serviceOfClinicList;
     }

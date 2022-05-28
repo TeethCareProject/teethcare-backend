@@ -6,7 +6,6 @@ import com.teethcare.config.security.UserDetailsImpl;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.LoginRequest;
 import com.teethcare.model.request.RefreshTokenRequest;
-import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.model.response.LoginResponse;
 import com.teethcare.model.response.RefreshTokeResponse;
 import com.teethcare.service.AccountService;
@@ -18,14 +17,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.stream.Collectors;
 
 @RestController
@@ -86,26 +81,6 @@ public class AuthController {
         String newRefreshToken = jwtTokenUtil.generateRefreshToken(account.getUsername());
         RefreshTokeResponse response = new RefreshTokeResponse(newToken, newRefreshToken);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        List errors = new ArrayList<String>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.add(fieldName + " " + errorMessage);
-        });
-        CustomErrorResponse customErrorResponse = new CustomErrorResponse(
-                new Timestamp(System.currentTimeMillis()),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.toString(),
-                errors
-        );
-        return new ResponseEntity<>(customErrorResponse, HttpStatus.BAD_REQUEST);
 
     }
 

@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.DentistRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class DentistServiceImpl implements DentistService {
             theDentist = result.get();
         }
         else {
-            throw new IdNotFoundException();
+            throw new NotFoundException();
         }
 
         return theDentist;
@@ -52,7 +52,7 @@ public class DentistServiceImpl implements DentistService {
         List<Dentist> dentistList = dentistRepository.findByClinicId(theId);
 
         if (dentistList == null || dentistList.size() == 0) {
-            throw new IdNotFoundException("ID not found");
+            throw new NotFoundException("ID not found");
         }
 
         return dentistList;
