@@ -24,7 +24,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     public Province findById(int id) {
         Optional<Province> province = provinceRepository.findById(id);
         if (province.isEmpty()) {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Province id " + id + " not found!");
         }
         return province.get();
     }

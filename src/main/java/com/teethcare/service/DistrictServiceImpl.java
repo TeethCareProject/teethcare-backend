@@ -18,7 +18,7 @@ public class DistrictServiceImpl implements DistrictService {
     public District findById(int id) {
         Optional<District> district = districtRepository.findById(id);
         if (district.isEmpty()) {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("District id " + id + " not found!");
         }
         return district.get();
     }

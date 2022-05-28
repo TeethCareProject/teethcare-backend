@@ -30,7 +30,7 @@ public class ManagerServiceImpl implements ManagerService {
     public Manager findById(int id) {
         Optional<Manager> manager = managerRepository.findById(id);
         if (manager.isEmpty()) {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Manager id " + id + " not found!");
         }
         return manager.get();
     }
@@ -52,7 +52,7 @@ public class ManagerServiceImpl implements ManagerService {
             manager.setStatus(Status.INACTIVE.name());
             managerRepository.save(manager);
         } else {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Manager id " + id + " not found!");
         }
     }
 

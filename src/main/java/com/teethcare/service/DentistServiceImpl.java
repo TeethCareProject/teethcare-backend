@@ -19,7 +19,7 @@ public class DentistServiceImpl implements DentistService {
     public Dentist findById(int theId) {
         Optional<Dentist> result = dentistRepository.findById(theId);
         if (result.isEmpty()) {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Dentist id " + theId + " not found!");
         }
         return result.get();
     }

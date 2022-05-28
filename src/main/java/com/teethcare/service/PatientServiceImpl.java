@@ -28,7 +28,7 @@ public class PatientServiceImpl implements PatientService {
     public Patient findById(int id) {
         Optional<Patient> patient = patientRepository.findById(id);
         if (patient.isEmpty()) {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Patient id " + id + " not found!");
         }
         return patient.get();
     }
@@ -49,7 +49,7 @@ public class PatientServiceImpl implements PatientService {
             patient.setStatus(Status.INACTIVE.name());
             patientRepository.save(patient);
         } else {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Patient id " + id + " not found!");
         }
     }
 }

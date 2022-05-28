@@ -40,7 +40,7 @@ public class ClinicServiceImpl implements ClinicService {
     public Clinic findById(int theId) {
         Optional<Clinic> result = clinicRepository.findById(theId);
         if (result.isEmpty()) {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Clinic id " + theId + " not found!");
         }
         return result.get();
     }

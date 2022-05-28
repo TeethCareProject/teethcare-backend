@@ -24,7 +24,7 @@ public class WardServiceImpl implements WardService {
     public Ward findById(int id) {
         Optional<Ward> ward = wardRepository.findById(id);
         if (ward.isEmpty()) {
-            throw new IdNotFoundException();
+            throw new IdNotFoundException("Ward id " + id + " not found!");
         }
         return ward.get();
     }
