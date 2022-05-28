@@ -32,7 +32,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
 import java.sql.Timestamp;
@@ -43,7 +42,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController
-@EnableSwagger2
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Clinic.CLINIC_ENDPOINT)
 public class ClinicController {
@@ -56,16 +54,16 @@ public class ClinicController {
 
 
     @GetMapping
-    public ResponseEntity<List<ClinicResponse>> getAllActiveClinics(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
-                                                                    @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                                    @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                                    @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                                    @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<List<ClinicResponse>> getAllActive(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
+                                                             @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                             @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                             @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                             @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
         List<Clinic> list = clinicService.findAllActive(pageable);
         if (clinicFilterRequest.isPresent()) {
             ClinicFilterRequest filter = clinicFilterRequest.get();
-            if(filter.getSearchKey() != null) {
+            if (filter.getSearchKey() != null) {
                 list = clinicService.searchAllActiveByName(filter.getSearchKey(), pageable);
             }
             if (filter.getProvinceId() != null) {
@@ -86,7 +84,7 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") String id) {
+    public ResponseEntity<ClinicResponse> get(@PathVariable("id") String id) {
         int theID = 0;
         if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
@@ -103,7 +101,7 @@ public class ClinicController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delClinic(@PathVariable("id") String id) {
+    public ResponseEntity<String> delete(@PathVariable("id") String id) {
         int theID = 0;
         if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
@@ -112,7 +110,7 @@ public class ClinicController {
         Clinic clinic = clinicService.findById(theID);
         if (clinic != null) {
             clinic.setStatus(Status.INACTIVE.name());
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             throw new ClinicNotFoundException("Clinic id " + id + " not found");
         }
@@ -133,22 +131,21 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}/staffs")
-    public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable String id) {
+    public ResponseEntity<List<AccountResponse>> getAllStaffs(@PathVariable String id) {
         int theID = 0;
         if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
         List<Account> staffList = new ArrayList<>();
-        List<AccountResponse> staffResponseList = new ArrayList<>();
 
-        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, "ACTIVE");
-        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, "ACTIVE");
+        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);
 
-        staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
+        List<AccountResponse> staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
 
         if (staffResponseList == null || staffResponseList.size() == 0) {
             throw new IdNotFoundException("With id " + id + ", the list of hospital staff could not be found.");
@@ -161,7 +158,7 @@ public class ClinicController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        List errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();

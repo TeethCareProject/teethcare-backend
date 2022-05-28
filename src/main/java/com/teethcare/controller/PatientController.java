@@ -1,8 +1,6 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Role;
-import com.teethcare.common.Status;
 import com.teethcare.config.mapper.AccountMapper;
 import com.teethcare.exception.IdInvalidException;
 import com.teethcare.exception.IdNotFoundException;
@@ -23,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
 import java.sql.Timestamp;
@@ -31,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@EnableSwagger2
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Patient.PATIENT_ENDPOINT)
 public class PatientController {
@@ -44,7 +40,7 @@ public class PatientController {
 
     @GetMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity<List<PatientResponse>> getAllPatients() {
+    public ResponseEntity<List<PatientResponse>> getAll() {
         List<Patient> patients = patientService.findAll();
         List<PatientResponse> patientResponses = accountMapper.mapPatientListToPatientResponseList(patients);
         return new ResponseEntity<>(patientResponses, HttpStatus.OK);
@@ -53,9 +49,9 @@ public class PatientController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
             "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity getPatient(@PathVariable("id") String  id) {
+    public ResponseEntity<PatientResponse> getById(@PathVariable("id") String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -70,17 +66,12 @@ public class PatientController {
 
     @PostMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity addPatient(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
+    public ResponseEntity<PatientResponse> add(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (patientRegisterRequest.getPassword().equals(patientRegisterRequest.getConfirmPassword())) {
                 Patient patient = accountMapper.mapPatientRegisterRequestToPatient(patientRegisterRequest);
-
-                patient.setStatus(Status.ACTIVE.name());
-                patient.setRole(roleService.getRoleByName(Role.PATIENT.name()));
-                patient.setPassword(passwordEncoder.encode(patient.getPassword()));
                 patientService.save(patient);
-
                 PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
                 return new ResponseEntity<>(patientResponse, HttpStatus.OK);
             } else
@@ -91,14 +82,14 @@ public class PatientController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delPatient(@PathVariable("id") String id) {
+    public ResponseEntity<String> delete(@PathVariable("id") String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
         Patient patient = patientService.findById(theID);
-        if(patient != null) {
+        if (patient != null) {
             patientService.delete(theID);
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -109,7 +100,7 @@ public class PatientController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        List errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
@@ -120,7 +111,6 @@ public class PatientController {
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.toString(),
                 errors
-
         );
         return new ResponseEntity<>(customErrorResponse, HttpStatus.BAD_REQUEST);
 

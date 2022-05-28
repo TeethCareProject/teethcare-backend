@@ -1,6 +1,6 @@
 package com.teethcare.exception;
 
-public class RegisterAccountException extends RuntimeException{
+public class RegisterAccountException extends RuntimeException {
     public RegisterAccountException() {
     }
 

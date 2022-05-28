@@ -1,6 +1,6 @@
 package com.teethcare.exception;
 
-public class ClinicNotFoundException extends RuntimeException{
+public class ClinicNotFoundException extends RuntimeException {
     public ClinicNotFoundException() {
     }
 

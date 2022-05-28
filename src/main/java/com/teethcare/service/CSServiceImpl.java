@@ -16,7 +16,6 @@ public class CSServiceImpl implements CSService {
 
     private final CustomerServiceRepository customerServiceRepository;
 
-
     @Override
     public List<CustomerService> findAll() {
         return customerServiceRepository.findAll();

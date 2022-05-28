@@ -9,5 +9,6 @@ public interface WardService {
     Ward findById(int id);
 
     List<Ward> findAll();
+
     List<Ward> findAllByDistrictIdAndDistrictProvinceId(int districtId, int provinceId);
 }

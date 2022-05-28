@@ -13,7 +13,6 @@ public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
 
-
     @Override
     public List<Location> findAll() {
         return null;

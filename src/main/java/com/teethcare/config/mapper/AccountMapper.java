@@ -3,10 +3,7 @@ package com.teethcare.config.mapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
-import com.teethcare.model.response.AccountResponse;
-import com.teethcare.model.response.CustomerServiceResponse;
-import com.teethcare.model.response.DentistResponse;
-import com.teethcare.model.response.PatientResponse;
+import com.teethcare.model.response.*;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -30,6 +27,18 @@ public interface AccountMapper {
     @InheritConfiguration(name = "mapAccountToAccountResponse")
     List<PatientResponse> mapPatientListToPatientResponseList(List<Patient> patients);
 
+    @InheritConfiguration(name = "mapAccountToAccountResponse")
+    @Mapping(source = "manager.id", target = "id")
+    @Mapping(source = "manager.status", target = "status")
+    @Mapping(source = "manager.phone", target = "phone")
+    @Mapping(source = "manager.role.id", target = "roleId")
+    @Mapping(source = "manager.role.name", target = "roleName")
+    @Mapping(target = "clinic", expression = "java(clinicInfoResponse)")
+    ManagerResponse mapManagerToManagerResponse(Manager manager, ClinicInfoResponse clinicInfoResponse);
+
+    @InheritConfiguration(name = "mapAccountToAccountResponse")
+    List<ManagerResponse> mapManagerListToManagerResponseList(List<Manager> managers);
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
@@ -39,6 +48,7 @@ public interface AccountMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
+    @Mapping(source = "email", target = "email")
     @InheritConfiguration(name = "mapAccountToAccountResponse")
     Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
 
@@ -51,7 +61,6 @@ public interface AccountMapper {
     @Mapping(source = "clinic.id", target = "clinicId")
     @Mapping(source = "clinic.name", target = "clinicName")
     CustomerServiceResponse mapCustomerServiceToCustomerServiceResponse(CustomerService customerService);
-
 
 
 }

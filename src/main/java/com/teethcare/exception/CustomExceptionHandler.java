@@ -55,6 +55,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 
     }
+
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(IdNotFoundException ex) {
         List errors = new ArrayList<String>();
@@ -68,6 +69,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 
     }
+
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(IdInvalidException ex) {
         List errors = new ArrayList<String>();

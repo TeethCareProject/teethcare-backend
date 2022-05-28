@@ -15,24 +15,19 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @RestController
-@EnableSwagger2
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT)
 public class CustomerServiceController {
-
     private final CSService CSService;
     private final AccountMapper accountMapper;
 
-
-
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerServiceResponse> getCSById(@PathVariable String id) {
+    public ResponseEntity<CustomerServiceResponse> getById(@PathVariable String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -49,10 +44,10 @@ public class CustomerServiceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") String id) {
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
         int theID = 0;
 
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);

@@ -7,7 +7,10 @@ import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
 import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.LocationResponse;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
@@ -19,7 +22,7 @@ public interface ClinicMapper {
     @Mapping(source = "manager.dateOfBirth", target = "manager.dateOfBirth", dateFormat = "dd/MM/yyyy")
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 
-    @Mapping( target = "address",
+    @Mapping(target = "address",
             expression = "java(location.getAddressString() + \", \" + location.getWard().getName() + \", \" " +
                     "+ location.getWard().getDistrict().getName() + \", \" " +
                     "+ location.getWard().getDistrict().getProvince().getName())")

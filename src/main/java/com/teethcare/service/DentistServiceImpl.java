@@ -29,7 +29,6 @@ public class DentistServiceImpl implements DentistService {
         return dentistRepository.findAll();
     }
 
-
     @Override
     public void save(Dentist theDentist) {
         dentistRepository.save(theDentist);

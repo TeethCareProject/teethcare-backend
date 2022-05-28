@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ClinicRepository extends JpaRepository<Clinic, Integer> {
     List<Clinic> getClinicByStatus(String Status, Pageable pageable);
+
     Clinic getClinicByManager(Manager manager);
 
     List<Clinic> findAllByNameContainingIgnoreCaseAndStatus(String search, String status, Pageable pageable);

@@ -2,7 +2,7 @@ package com.teethcare.model.dto;
 
 import java.util.Date;
 
-public class DentistDTO extends AccountDTO{
+public class DentistDTO extends AccountDTO {
     private String specialization;
 
     private String description;

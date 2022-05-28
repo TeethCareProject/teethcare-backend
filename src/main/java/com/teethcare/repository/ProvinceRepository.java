@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ProvinceRepository extends JpaRepository<Province, Integer> {
     Province getProvinceById(int id);
+
     List<Province> getAllByIdGreaterThan(int min);
 }

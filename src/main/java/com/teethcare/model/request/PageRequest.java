@@ -3,7 +3,7 @@ package com.teethcare.model.request;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public class PageRequest implements Pageable{
+public class PageRequest implements Pageable {
 
     @Override
     public int getPageNumber() {

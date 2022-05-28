@@ -1,6 +1,6 @@
 package com.teethcare.exception;
 
-public class IdNotFoundException extends RuntimeException{
+public class IdNotFoundException extends RuntimeException {
     public IdNotFoundException() {
     }
 

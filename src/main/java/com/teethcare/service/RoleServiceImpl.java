@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RoleServiceImpl implements RoleService{
+public class RoleServiceImpl implements RoleService {
     final RoleRepository roleRepository;
+
     @Override
     public Role getRoleByName(String name) {
         return roleRepository.getRoleByName(name);

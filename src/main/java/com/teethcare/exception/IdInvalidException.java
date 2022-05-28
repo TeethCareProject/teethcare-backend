@@ -1,6 +1,6 @@
 package com.teethcare.exception;
 
-public class IdInvalidException extends RuntimeException{
+public class IdInvalidException extends RuntimeException {
     public IdInvalidException() {
     }
 

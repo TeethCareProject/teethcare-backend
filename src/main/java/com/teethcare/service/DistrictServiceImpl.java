@@ -6,7 +6,6 @@ import com.teethcare.repository.DistrictRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,11 +13,6 @@ import java.util.Optional;
 public class DistrictServiceImpl implements DistrictService {
 
     private final DistrictRepository districtRepository;
-
-    @Override
-    public List<District> findAllByProvinceId(int id) {
-        return districtRepository.findAllByProvinceId(id);
-    }
 
     @Override
     public District findById(int id) {

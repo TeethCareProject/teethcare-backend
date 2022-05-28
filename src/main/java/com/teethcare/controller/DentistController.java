@@ -15,12 +15,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
 @RestController
-@EnableSwagger2
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Dentist.DENTIST_ENDPOINT)
 public class DentistController {
@@ -28,14 +26,14 @@ public class DentistController {
     private final AccountMapper accountMapper;
 
     @GetMapping()
-    public List<Dentist> findAll() {
+    public List<Dentist> getAll() {
         return dentistService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DentistResponse> getDentist(@PathVariable String id) {
+    public ResponseEntity<DentistResponse> get(@PathVariable String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
@@ -44,15 +42,14 @@ public class DentistController {
         if (theDentist == null) {
             throw new IdNotFoundException("Dentist id " + id + "not found");
         }
-        DentistResponse dentistResponse = new DentistResponse();
-        dentistResponse = accountMapper.mapDentistToDentistResponse(theDentist);
+        DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(theDentist);
         return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") String id) {
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);

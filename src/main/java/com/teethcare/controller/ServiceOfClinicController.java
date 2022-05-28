@@ -15,13 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@EnableSwagger2
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Service.SERVICE_ENDPOINT)
 public class ServiceOfClinicController {
@@ -38,16 +35,14 @@ public class ServiceOfClinicController {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
 
         int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
+        if (!NumberUtils.isCreatable(id)) {
             throw new IdInvalidException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
 
         List<ServiceOfClinic> serviceList = serviceOfClinicService.findByClinicIdAndStatus(theID, Status.ACTIVE.name(), pageable);
 
-        List<ServiceOfClinicResponse> serviceResponseList = new ArrayList<>();
-
-        serviceResponseList = serviceOfClinicMapper.mapServiceListToServiceResponseList(serviceList);
+        List<ServiceOfClinicResponse> serviceResponseList = serviceOfClinicMapper.mapServiceListToServiceResponseList(serviceList);
 
         return new ResponseEntity<>(serviceResponseList, HttpStatus.OK);
     }
