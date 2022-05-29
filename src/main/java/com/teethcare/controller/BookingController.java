@@ -2,7 +2,9 @@ package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
+import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.BookingMapper;
+import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.entity.ServiceOfClinic;
@@ -15,12 +17,16 @@ import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @RestController
@@ -31,11 +37,15 @@ public class BookingController {
     private final BookingMapper bookingMapper;
     private final PatientService patientService;
     private final ServiceOfClinicService serviceOfClinicService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping
-    public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest){
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
+                                                                 HttpServletRequest request){
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
-
+        String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
+        Account account = jwtTokenUtil.getAccountFromJwt(token);
         //get milisecond
         long milisecond = bookingRequest.getDesiredCheckingTime();
 
@@ -51,8 +61,7 @@ public class BookingController {
         bookingTmp.setServiceOfClinics(serviceOfClinicList);
 
         //get patient by id
-        int patientID = bookingRequest.getPatientId();
-        Patient patient = patientService.findById(patientID);
+        Patient patient = patientService.findById(account.getId());
 
         //set patient to booking
         bookingTmp.setPatient(patient);
@@ -64,6 +73,7 @@ public class BookingController {
             Booking booking = bookingService.saveBooking(bookingTmp);
             patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
             patientBookingResponse.setServiceName(serviceOfClinicService.findById(serviceID).getName());
+            patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
         }
         return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
     }
