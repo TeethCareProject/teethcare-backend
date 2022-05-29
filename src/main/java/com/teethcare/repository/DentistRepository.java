@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface DentistRepository extends JpaRepository<Dentist, Integer> {
     List<Dentist> findByClinicId(int id);
+
     List<Dentist> findByClinicIdAndStatus(int id, String status);
 
     Dentist findDentistByIdAndStatus(int id, String status);

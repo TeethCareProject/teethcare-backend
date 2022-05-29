@@ -1,11 +1,10 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Role;
-import com.teethcare.common.Status;
-import com.teethcare.exception.BadRequestException;
-import com.teethcare.exception.NotFoundException;
-import com.teethcare.mapper.AccountMapper;
+import com.teethcare.config.mapper.AccountMapper;
+import com.teethcare.exception.IdInvalidException;
+import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.PatientResponse;
@@ -19,13 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@EnableSwagger2
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Patient.PATIENT_ENDPOINT)
 public class PatientController {
@@ -37,17 +34,17 @@ public class PatientController {
     private final RoleService roleService;
 
     @GetMapping
-    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity<List<PatientResponse>> getAllPatients() {
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    public ResponseEntity<List<PatientResponse>> getAll() {
         List<Patient> patients = patientService.findAll();
         List<PatientResponse> patientResponses = accountMapper.mapPatientListToPatientResponseList(patients);
         return new ResponseEntity<>(patientResponses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    //@PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
-    //        "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity getPatient(@PathVariable("id") String  id) {
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
+            "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<PatientResponse> getById(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Patient patient = patientService.findById(theID);
         if (patient != null) {
@@ -59,18 +56,13 @@ public class PatientController {
     }
 
     @PostMapping
-    //@PreAuthorize("permitAll()")
-    public ResponseEntity addPatient(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<PatientResponse> add(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (patientRegisterRequest.getPassword().equals(patientRegisterRequest.getConfirmPassword())) {
                 Patient patient = accountMapper.mapPatientRegisterRequestToPatient(patientRegisterRequest);
-
-                patient.setStatus(Status.ACTIVE.name());
-                patient.setRole(roleService.getRoleByName(Role.PATIENT.name()));
-                patient.setPassword(passwordEncoder.encode(patient.getPassword()));
                 patientService.save(patient);
-
                 PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
                 return new ResponseEntity<>(patientResponse, HttpStatus.OK);
             } else
@@ -80,15 +72,34 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
-    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delPatient(@PathVariable("id") String id) {
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    public ResponseEntity<String> delete(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Patient patient = patientService.findById(theID);
-        if(patient != null) {
+        if (patient != null) {
             patientService.delete(theID);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         throw new NotFoundException("Patient id " + id + " not found");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        List<String> errors = new ArrayList<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.add(fieldName + " " + errorMessage);
+        });
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(
+                new Timestamp(System.currentTimeMillis()),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.toString(),
+                errors
+        );
+        return new ResponseEntity<>(customErrorResponse, HttpStatus.BAD_REQUEST);
+
+    }
 }

@@ -28,25 +28,24 @@ public class DentistController {
     private final AccountMapper accountMapper;
 
     @GetMapping()
-    public List<Dentist> findAll() {
+    public List<Dentist> getAll() {
         return dentistService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DentistResponse> getDentist(@PathVariable String id) {
+    public ResponseEntity<DentistResponse> get(@PathVariable String id) {
         int theID = ConvertUtils.covertID(id);
 
         Dentist theDentist = dentistService.findActiveDentist(theID);
         if (theDentist == null) {
             throw new NotFoundException("Dentist id " + id + "not found");
         }
-        DentistResponse dentistResponse = new DentistResponse();
-        dentistResponse = accountMapper.mapDentistToDentistResponse(theDentist);
+        DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(theDentist);
         return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") String id) {
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Dentist dentist = dentistService.findById(theID);
 

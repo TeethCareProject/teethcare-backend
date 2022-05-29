@@ -12,13 +12,13 @@ import lombok.Setter;
 public class ManagerResponse {
     private int id;
     private String username;
-    private int roleId;
+    private String roleId;
     private String roleName;
     private String firstName;
     private String lastName;
     private String gender;
     private String email;
-    private String phoneNumber;
+    private String phone;
     private String status;
     private ClinicInfoResponse clinic;
 }

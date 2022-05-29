@@ -2,6 +2,7 @@ package com.teethcare.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "service")
+@Entity(name = "service")
 public class ServiceOfClinic {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -33,7 +32,7 @@ public class ServiceOfClinic {
     private BigDecimal money;
 
     @Column(name = "duration")
-    private int duration;
+    private Integer duration;
 
     @Column(name = "image_url")
     private String imageUrl;

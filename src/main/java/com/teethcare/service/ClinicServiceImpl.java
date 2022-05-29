@@ -1,13 +1,16 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.IdNotFoundException;
 import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.ClinicRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +26,8 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
 
-    public List<Clinic> findAllActive() {
-        return clinicRepository.getClinicByStatus(Status.ACTIVE.name());
+    public List<Clinic> findAllActive(Pageable pageable) {
+        return clinicRepository.getClinicByStatus(Status.ACTIVE.name(), pageable);
     }
 
     public Clinic getClinicByManager(Manager manager) {
@@ -34,14 +37,15 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     public Clinic findById(int theId) {
         Optional<Clinic> result = clinicRepository.findById(theId);
-
-        Clinic theClinic = null;
-
-        if (result.isPresent()) {
-            theClinic = result.get();
+        if (result.isEmpty()) {
+            throw new IdNotFoundException("Clinic id " + theId + " not found!");
         }
+        return result.get();
+    }
 
-        return theClinic;
+    @Override
+    public List<Clinic> searchAllActiveByName(String search, Pageable pageable) {
+        return clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(search, Status.ACTIVE.name(), pageable);
     }
 
     @Override
@@ -51,6 +55,16 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public void save(Clinic clinic) {
+        clinic.setStatus(Status.PENDING.name());
+        clinicRepository.save(clinic);
+    }
+
+    @Override
+    @Transactional
+    public void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location) {
+        clinic.setManager(manager);
+        clinic.setLocation(location);
+        clinic.setStatus(Status.PENDING.name());
         clinicRepository.save(clinic);
     }
 

@@ -7,11 +7,17 @@ import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
+import com.teethcare.config.mapper.AccountMapper;
+import com.teethcare.config.mapper.ClinicMapper;
+import com.teethcare.exception.IdInvalidException;
+import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
+import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
@@ -20,6 +26,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -38,90 +47,73 @@ public class ManagerController {
     private final ClinicMapper clinicMapper;
     private final AccountMapper accountMapper;
     private final LocationService locationService;
-    private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
+    private final WardService wardService;
+
 
     @GetMapping
-    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity<List<ManagerResponse>> getAllManagers() {
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    public ResponseEntity<List<ManagerResponse>> getAll() {
         List<Manager> managers = managerService.findAll();
         List<ManagerResponse> managerResponses = new ArrayList<>();
         for (Manager manager : managers) {
             Clinic clinic = clinicService.getClinicByManager(manager);
             if (clinic != null) {
                 ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                managerResponses.add(new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
-                        manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
-                        manager.getStatus(), clinicInfoResponse));
+                managerResponses.add(accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse));
             }
         }
         return new ResponseEntity<>(managerResponses, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
-    //@PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
-    public ResponseEntity getActiveManager(@PathVariable("id") String id) {
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
+    public ResponseEntity<ManagerResponse> getActive(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Manager manager = managerService.getActiveManager(theID);
         Clinic clinic = clinicService.getClinicByManager(manager);
         if (clinic != null) {
             ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-            ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
-                    manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
-                    manager.getStatus(), clinicInfoResponse);
-
+            ManagerResponse managerResponse = accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);
             return new ResponseEntity<>(managerResponse, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Manager not found!", HttpStatus.BAD_REQUEST);
+            throw new NotFoundException("Account id " + id + " not found!");
         }
     }
 
     @PostMapping
-    @Transactional
-    //@PreAuthorize("permitAll()")
-    public ResponseEntity addManager(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<ManagerResponse> add(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
                 Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
-                manager.setRole(roleService.getRoleByName(Role.PATIENT.name()));
-
-                manager.setStatus(Status.PENDING.name());
-                manager.setPassword(passwordEncoder.encode(manager.getPassword()));
-
                 Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
-                clinic.setManager(manager);
                 Location location = new Location();
-                location.setWard(locationService.getWardById(managerRegisterRequest.getWardId()));
+                location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
                 location.setAddressString(managerRegisterRequest.getClinicAddress());
-                if (location != null) {
-                    locationService.save(location);
-                    clinic.setLocation(location);
-                    clinic.setStatus(Status.PENDING.name());
-                    managerService.save(manager);
-                    clinicService.save(clinic);
-                    ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                    ManagerResponse managerResponse = new ManagerResponse(manager.getId(), manager.getUsername(), manager.getRole().getId(), manager.getRole().getName(),
-                            manager.getFirstName(), manager.getLastName(), manager.getGender(), manager.getEmail(), manager.getPhone(),
-                            manager.getStatus(), clinicInfoResponse);
-                    return new ResponseEntity<>(managerResponse, HttpStatus.OK);
-                }
-            } else
-                throw new BadRequestException("confirm Password is not match with password");
+                locationService.save(location);
+                managerService.save(manager);
+                clinicService.saveWithManagerAndLocation(clinic, manager, location);
+                ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
+                ManagerResponse managerResponse = accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);
+                return new ResponseEntity<>(managerResponse, HttpStatus.OK);
+            } else {
+                throw new RegisterAccountException("confirm Password is not match with password");
+            }
         }
         throw new BadRequestException("User existed!");
     }
 
     @DeleteMapping("/{id}")
-    //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity delManager(@PathVariable("id") String id) {
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    public ResponseEntity<String> delete(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Manager manager = managerService.findById(theID);
         if (manager != null) {
             managerService.delete(theID);
             Clinic clinic = clinicService.getClinicByManager(manager);
             clinicService.delete(clinic.getId());
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         throw new NotFoundException("Manager id " + id + " not found!");
     }

@@ -1,6 +1,5 @@
 package com.teethcare.model.response;
 
-import com.teethcare.model.entity.Location;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.Setter;
 public class ClinicInfoResponse {
 
     private int id;
-    private Location location;
+    private LocationResponse location;
     private String name;
     private String description;
     private String imageUrl;

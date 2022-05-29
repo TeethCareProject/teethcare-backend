@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ServiceOfClinicServiceImpl implements ServiceOfClinicService{
+public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     private final ServiceRepository serviceRepository;
 
     @Override

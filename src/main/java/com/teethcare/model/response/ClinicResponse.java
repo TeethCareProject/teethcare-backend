@@ -1,25 +1,26 @@
 package com.teethcare.model.response;
 
-import com.teethcare.model.entity.Location;
+import com.teethcare.model.entity.ServiceOfClinic;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class ClinicResponse {
-
     private int id;
-    private AccountResponse manager;
-    private Location location;
     private String name;
     private String description;
     private String imageUrl;
     private String taxCode;
     private float avgRatingScore;
+    private LocationResponse location;
+    private AccountResponse manager;
     private String status;
-
+    private List<ServiceOfClinicResponse> serviceOfClinicResponses;
 }

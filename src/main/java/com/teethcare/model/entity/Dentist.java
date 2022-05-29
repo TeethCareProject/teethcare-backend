@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "dentist")
-@PrimaryKeyJoinColumn(name="account_id")
+@PrimaryKeyJoinColumn(name = "account_id")
 public class Dentist extends Account {
 
     @Column(name = "specialization")

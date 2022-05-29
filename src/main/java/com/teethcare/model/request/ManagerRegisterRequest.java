@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
@@ -36,18 +37,20 @@ public class ManagerRegisterRequest {
     @Pattern(regexp = "(0)+(\\d){9}")
     private String phoneNumber;
 
+    @Email
+    private String email;
+
     @NotBlank
     private String clinicName;
 
     @NotBlank
     private String clinicTaxCode;
 
+    @Email
+    private String clinicEmail;
+
     @NotBlank
     private String clinicAddress;
-
-    private int provinceId;
-
-    private int districtId;
 
     private int wardId;
 }
