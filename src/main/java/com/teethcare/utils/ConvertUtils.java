@@ -21,7 +21,7 @@ public class ConvertUtils {
     public static Timestamp getTimestamp(long timestampInString) {
             Date date = new Date(timestampInString);
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
             String formatted = format.format(date);
             Timestamp timeStamp = Timestamp.valueOf(formatted);
             return timeStamp;

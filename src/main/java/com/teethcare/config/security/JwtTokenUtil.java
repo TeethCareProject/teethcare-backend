@@ -1,6 +1,9 @@
 package com.teethcare.config.security;
 
+import com.teethcare.model.entity.Account;
+import com.teethcare.service.AccountService;
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -11,6 +14,7 @@ import java.util.Date;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenUtil implements Serializable {
     @Value("${jwt.secret}")
     private String secret;
@@ -21,10 +25,16 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.refresh-expiration}")
     private long refreshExpiration;
 
+    private final AccountService accountService;
+
     public String getUsernameFromJwt(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
+    public Account getAccountFromJwt(String token){
+        String username = getUsernameFromJwt(token);
+        return accountService.getAccountByUsername(username);
+    }
     public String generateToken(Authentication authen) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000 * 24 * 60);

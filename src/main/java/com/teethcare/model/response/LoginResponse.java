@@ -12,6 +12,7 @@ import java.sql.Date;
 @Getter
 @Setter
 public class LoginResponse {
+    private int id;
     private String username;
     private String roleName;
     private String firstName;
@@ -22,6 +23,7 @@ public class LoginResponse {
     private String phone;
     private String gender;
     private String status;
+    private ClinicLoginResponse clinic;
     private String token;
     private String refreshToken;
 }

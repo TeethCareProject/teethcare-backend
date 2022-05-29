@@ -147,16 +147,5 @@ public class ClinicController {
         return new ResponseEntity<>(staffResponseList, HttpStatus.OK);
     }
 
-    @GetMapping("/pending")
-    public ResponseEntity<List<Clinic>> getAllPending(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                      @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                      @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                      @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction){
-
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        List<Clinic> clinicList = clinicService.findAllPendingClinic(pageable);
-        return new ResponseEntity<>(clinicList, HttpStatus.OK);
-    }
-
 
 }

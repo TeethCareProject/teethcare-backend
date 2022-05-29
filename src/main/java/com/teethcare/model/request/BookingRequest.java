@@ -15,9 +15,6 @@ public class BookingRequest {
     @NotNull
     private int serviceId;
 
-    @NotNull
-    private int patientId;
-
     private String description;
 
     @NotNull

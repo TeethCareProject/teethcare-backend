@@ -19,5 +19,5 @@ public class PatientBookingResponse {
     private String phoneNumber;
     private String serviceName;
     private String description;
-    private Timestamp desiredCheckingTime;
+    private long desiredCheckingTime;
 }

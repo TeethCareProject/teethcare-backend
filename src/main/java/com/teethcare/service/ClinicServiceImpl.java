@@ -58,11 +58,6 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public List<Clinic> findAllPendingClinic(Pageable pageable) {
-        return clinicRepository.getClinicByStatus(Status.PENDING.name(), pageable );
-    }
-
-    @Override
     public void save(Clinic clinic) {
         clinic.setStatus(Status.PENDING.name());
         clinicRepository.save(clinic);

@@ -5,10 +5,7 @@ import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.request.ManagerRegisterRequest;
-import com.teethcare.model.response.ClinicInfoResponse;
-import com.teethcare.model.response.ClinicResponse;
-import com.teethcare.model.response.LocationResponse;
-import com.teethcare.model.response.ServiceOfClinicResponse;
+import com.teethcare.model.response.*;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -50,4 +47,7 @@ public interface ClinicMapper {
     Clinic mapClinicRequestToClinic(ClinicRequest dto);
 
     ServiceOfClinicResponse mapServiceToServiceResponse(ServiceOfClinic serviceOfClinic);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    ClinicLoginResponse mapClinicToClinicLoginResponse(Clinic clinic);
 }

@@ -21,5 +21,4 @@ public interface ClinicService extends CRUDService<Clinic> {
 
     void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location);
 
-    List<Clinic> findAllPendingClinic(Pageable pageable);
 }

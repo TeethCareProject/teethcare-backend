@@ -17,7 +17,7 @@ public interface BookingMapper {
     @Mapping(source = "patient.phone", target = "phoneNumber")
     @Mapping(source = "patient.gender", target = "gender")
     @Mapping(source = "patient.email", target = "email")
-    @Mapping(source = "desiredCheckingTime", target = "desiredCheckingTime")
+    @Mapping(target = "desiredCheckingTime", ignore = true)
     @Mapping(source = "description", target = "description")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
 }
