@@ -25,6 +25,15 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicRepository.findAll();
     }
 
+    @Override
+    public List<Clinic> findAll(Pageable pageable) {
+        return clinicRepository.findAllByStatusIsNotNull(pageable);
+    }
+
+    @Override
+    public List<Clinic> findAllByStatus(String status, Pageable pageable) {
+        return clinicRepository.findAllByStatus(status, pageable);
+    }
 
     public List<Clinic> findAllActive(Pageable pageable) {
         return clinicRepository.getClinicByStatus(Status.ACTIVE.name(), pageable);

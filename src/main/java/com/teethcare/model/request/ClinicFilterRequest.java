@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ClinicFilterRequest {
-    String searchKey;
+    String name;
     Integer wardId;
     Integer districtId;
     Integer provinceId;

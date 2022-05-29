@@ -54,17 +54,24 @@ public class ClinicController {
 
 
     @GetMapping
-    public ResponseEntity<List<ClinicResponse>> getAllActive(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
-                                                             @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                             @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                             @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                             @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<List<ClinicResponse>> getAll(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
+                                                       @RequestParam(name = "status", required = false) String status,
+                                                       @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                       @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                       @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                       @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        List<Clinic> list = clinicService.findAllActive(pageable);
+        List<Clinic> list;
+        if (status != null) {
+            list = clinicService.findAllByStatus(status, pageable);
+        } else {
+            list = clinicService.findAll(pageable);
+        }
+        System.out.println(status);
         if (clinicFilterRequest.isPresent()) {
             ClinicFilterRequest filter = clinicFilterRequest.get();
-            if (filter.getSearchKey() != null) {
-                list = clinicService.searchAllActiveByName(filter.getSearchKey(), pageable);
+            if (filter.getName() != null) {
+                list = clinicService.searchAllActiveByName(filter.getName(), pageable);
             }
             if (filter.getProvinceId() != null) {
                 Predicate<Clinic> byProvinceId = (clinic) -> clinic.getLocation().getWard().getDistrict().getProvince().getId() == filter.getProvinceId();
