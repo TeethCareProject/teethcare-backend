@@ -8,7 +8,10 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ClinicService extends CRUDService<Clinic> {
-    List<Clinic> findAllActive(Pageable pageable);
+
+    List<Clinic> findAllByStatus(String status, Pageable pageable);
+
+    List<Clinic> findAll(Pageable pageable);
 
     Clinic getClinicByManager(Manager manager);
 
