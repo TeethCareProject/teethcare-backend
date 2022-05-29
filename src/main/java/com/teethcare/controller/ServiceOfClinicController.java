@@ -8,6 +8,7 @@ import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -37,17 +38,12 @@ public class ServiceOfClinicController {
 
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
 
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
 
         List<ServiceOfClinic> serviceList = serviceOfClinicService.findByClinicIdAndStatus(theID, Status.ACTIVE.name(), pageable);
 
-        List<ServiceOfClinicResponse> serviceResponseList = new ArrayList<>();
-
-        serviceResponseList = serviceOfClinicMapper.mapServiceListToServiceResponseList(serviceList);
+        List<ServiceOfClinicResponse> serviceResponseList =
+                serviceOfClinicMapper.mapServiceListToServiceResponseList(serviceList);
 
         return new ResponseEntity<>(serviceResponseList, HttpStatus.OK);
     }

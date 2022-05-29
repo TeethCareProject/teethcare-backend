@@ -12,6 +12,7 @@ import com.teethcare.model.response.PatientResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.RoleService;
+import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
@@ -47,11 +48,7 @@ public class PatientController {
     //@PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT," +
     //        "T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity getPatient(@PathVariable("id") String  id) {
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
         Patient patient = patientService.findById(theID);
         if (patient != null) {
             PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
@@ -85,11 +82,7 @@ public class PatientController {
     @DeleteMapping("/{id}")
     //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity delPatient(@PathVariable("id") String id) {
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
         Patient patient = patientService.findById(theID);
         if(patient != null) {
             patientService.delete(theID);

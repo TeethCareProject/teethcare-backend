@@ -45,6 +45,11 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    public List<Clinic> findAllPendingClinic() {
+        return clinicRepository.getClinicByStatus(Status.PENDING.name());
+    }
+
+    @Override
     public void save(Clinic clinic) {
         clinicRepository.save(clinic);
     }

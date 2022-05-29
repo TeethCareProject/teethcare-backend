@@ -11,4 +11,6 @@ public interface ClinicService extends CRUDService<Clinic> {
     Clinic getClinicByManager(Manager manager);
 
     Clinic findById(int theId);
+
+    List<Clinic> findAllPendingClinic();
 }

@@ -3,15 +3,14 @@ package com.teethcare.controller;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
-import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CSService;
+import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +28,7 @@ public class CustomerServiceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerServiceResponse> getCSById(@PathVariable String id) {
-        int theID = 0;
-
-        if (!NumberUtils.isCreatable(id)) {
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
 
         CustomerService customerService = CSService.findById(theID);
 
@@ -48,11 +42,7 @@ public class CustomerServiceController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") String id) {
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
 
         CustomerService customerService = CSService.findById(theID);
 

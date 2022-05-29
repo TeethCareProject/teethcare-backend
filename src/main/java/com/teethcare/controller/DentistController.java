@@ -10,6 +10,7 @@ import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.DentistService;
+import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
@@ -33,11 +34,7 @@ public class DentistController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DentistResponse> getDentist(@PathVariable String id) {
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
 
         Dentist theDentist = dentistService.findActiveDentist(theID);
         if (theDentist == null) {
@@ -50,11 +47,7 @@ public class DentistController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> updateAccountStatus(@PathVariable("id") String id) {
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
         Dentist dentist = dentistService.findById(theID);
 
         if (dentist == null) {

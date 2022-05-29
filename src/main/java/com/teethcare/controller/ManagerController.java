@@ -14,6 +14,7 @@ import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
 import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.service.*;
+import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
@@ -60,11 +61,7 @@ public class ManagerController {
     @GetMapping(path = "/{id}")
     //@PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity getActiveManager(@PathVariable("id") String id) {
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
         Manager manager = managerService.getActiveManager(theID);
         Clinic clinic = clinicService.getClinicByManager(manager);
         if (clinic != null) {
@@ -118,11 +115,7 @@ public class ManagerController {
     @DeleteMapping("/{id}")
     //@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity delManager(@PathVariable("id") String id) {
-        int theID = 0;
-        if(!NumberUtils.isCreatable(id)){
-            throw new BadRequestException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
         Manager manager = managerService.findById(theID);
         if (manager != null) {
             managerService.delete(theID);
