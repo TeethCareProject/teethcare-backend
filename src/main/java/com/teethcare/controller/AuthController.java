@@ -3,6 +3,7 @@ package com.teethcare.controller;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailsImpl;
+import com.teethcare.mapper.LoginMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.LoginRequest;
 import com.teethcare.model.request.RefreshTokenRequest;
@@ -32,6 +33,8 @@ public class AuthController {
 
     private final AccountService accountService;
 
+    private final LoginMapper loginMapper;
+
     @PostMapping(path = EndpointConstant.Authentication.LOGIN_ENDPOINT)
     public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken
@@ -47,20 +50,10 @@ public class AuthController {
 
             String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining());
 
-            LoginResponse response = new LoginResponse(
-                    userDetails.getUsername(),
-                    role,
-                    userDetails.getFirstName(),
-                    userDetails.getLastName(),
-                    userDetails.getAvatarImage(),
-                    userDetails.getDateOfBirth(),
-                    userDetails.getEmail(),
-                    userDetails.getPhone(),
-                    userDetails.getGender(),
-                    userDetails.getStatus(),
-                    jwt,
-                    refreshToken
-            );
+            LoginResponse response = loginMapper.mapUserDetailsImplToLoginResponse(userDetails);
+            response.setRoleName(role);
+            response.setToken(jwt);
+            response.setRefreshToken(refreshToken);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);

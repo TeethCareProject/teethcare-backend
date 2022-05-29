@@ -2,7 +2,7 @@ package com.teethcare.service;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class ManagerServiceImpl implements ManagerService {
     public Manager findById(int id) {
         Optional<Manager> manager = managerRepository.findById(id);
         if (manager.isEmpty()) {
-            throw new IdNotFoundException("Manager id " + id + " not found!");
+            throw new NotFoundException("Manager id " + id + " not found!");
         }
         return manager.get();
     }
@@ -52,7 +52,7 @@ public class ManagerServiceImpl implements ManagerService {
             manager.setStatus(Status.INACTIVE.name());
             managerRepository.save(manager);
         } else {
-            throw new IdNotFoundException("Manager id " + id + " not found!");
+            throw new NotFoundException("Manager id " + id + " not found!");
         }
     }
 

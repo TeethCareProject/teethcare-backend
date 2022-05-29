@@ -1,6 +1,6 @@
 package com.teethcare.service;
 
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.District;
 import com.teethcare.repository.DistrictRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class DistrictServiceImpl implements DistrictService {
     public District findById(int id) {
         Optional<District> district = districtRepository.findById(id);
         if (district.isEmpty()) {
-            throw new IdNotFoundException("District id " + id + " not found!");
+            throw new NotFoundException("District id " + id + " not found!");
         }
         return district.get();
     }

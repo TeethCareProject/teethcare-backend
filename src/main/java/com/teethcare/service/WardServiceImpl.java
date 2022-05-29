@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
-import com.teethcare.exception.IdNotFoundException;
+
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Ward;
 import com.teethcare.repository.WardRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class WardServiceImpl implements WardService {
     public Ward findById(int id) {
         Optional<Ward> ward = wardRepository.findById(id);
         if (ward.isEmpty()) {
-            throw new IdNotFoundException("Ward id " + id + " not found!");
+            throw new NotFoundException("Ward id " + id + " not found!");
         }
         return ward.get();
     }

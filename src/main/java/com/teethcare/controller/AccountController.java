@@ -6,7 +6,6 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.response.AccountResponse;
-import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ public class AccountController {
     private final AccountMapper accountMapper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<AccountResponse>> getAll(@RequestParam(name = "search", required = false) String search, @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page, @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size, @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field, @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
         List<Account> accounts;
@@ -42,7 +40,6 @@ public class AccountController {
     }
 
     @GetMapping(path = "/{id}")
-   // @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<AccountResponse> getById(@PathVariable("id") int id) {
         Account account = accountService.findById(id);
         if (account != null) {

@@ -1,37 +1,25 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
-import com.teethcare.config.mapper.AccountMapper;
-import com.teethcare.config.mapper.ClinicMapper;
-import com.teethcare.exception.IdInvalidException;
-import com.teethcare.exception.IdNotFoundException;
-import com.teethcare.exception.RegisterAccountException;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
-import com.teethcare.model.response.CustomErrorResponse;
 import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +39,6 @@ public class ManagerController {
 
 
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<List<ManagerResponse>> getAll() {
         List<Manager> managers = managerService.findAll();
         List<ManagerResponse> managerResponses = new ArrayList<>();
@@ -66,7 +53,6 @@ public class ManagerController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<ManagerResponse> getActive(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Manager manager = managerService.getActiveManager(theID);
@@ -81,7 +67,6 @@ public class ManagerController {
     }
 
     @PostMapping
-    @PreAuthorize("permitAll()")
     public ResponseEntity<ManagerResponse> add(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
         if (!isDuplicated) {
@@ -98,14 +83,13 @@ public class ManagerController {
                 ManagerResponse managerResponse = accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);
                 return new ResponseEntity<>(managerResponse, HttpStatus.OK);
             } else {
-                throw new RegisterAccountException("confirm Password is not match with password");
+                throw new BadRequestException("confirm Password is not match with password");
             }
         }
         throw new BadRequestException("User existed!");
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Manager manager = managerService.findById(theID);

@@ -2,7 +2,7 @@ package com.teethcare.service;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class PatientServiceImpl implements PatientService {
     public Patient findById(int id) {
         Optional<Patient> patient = patientRepository.findById(id);
         if (patient.isEmpty()) {
-            throw new IdNotFoundException("Patient id " + id + " not found!");
+            throw new NotFoundException("Patient id " + id + " not found!");
         }
         return patient.get();
     }
@@ -49,7 +49,7 @@ public class PatientServiceImpl implements PatientService {
             patient.setStatus(Status.INACTIVE.name());
             patientRepository.save(patient);
         } else {
-            throw new IdNotFoundException("Patient id " + id + " not found!");
+            throw new NotFoundException("Patient id " + id + " not found!");
         }
     }
 }

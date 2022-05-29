@@ -25,7 +25,7 @@ public class CSServiceImpl implements CSService {
     public CustomerService findById(int theId) {
         Optional<CustomerService> result = customerServiceRepository.findById(theId);
         if (result.isEmpty()) {
-            throw new IdNotFoundException("CustomerService id " + theId + " not found!");
+            throw new NotFoundException("CustomerService id " + theId + " not found!");
         }
         return result.get();
     }

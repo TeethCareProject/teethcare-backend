@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
@@ -38,7 +38,7 @@ public class ClinicServiceImpl implements ClinicService {
     public Clinic findById(int theId) {
         Optional<Clinic> result = clinicRepository.findById(theId);
         if (result.isEmpty()) {
-            throw new IdNotFoundException("Clinic id " + theId + " not found!");
+            throw new NotFoundException("Clinic id " + theId + " not found!");
         }
         return result.get();
     }
@@ -49,8 +49,8 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public List<Clinic> findAllPendingClinic() {
-        return clinicRepository.getClinicByStatus(Status.PENDING.name());
+    public List<Clinic> findAllPendingClinic(Pageable pageable) {
+        return clinicRepository.getClinicByStatus(Status.PENDING.name(), pageable );
     }
 
     @Override

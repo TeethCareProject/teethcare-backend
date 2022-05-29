@@ -8,7 +8,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "desiredCheckingTime", target = "desiredCheckingTime")
+    @Mapping(target = "desiredCheckingTime", ignore = true)
     Booking mapBookingRequestToBooking (BookingRequest bookingRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

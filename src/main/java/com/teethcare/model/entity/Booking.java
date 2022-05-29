@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -31,19 +29,12 @@ public class Booking {
     @JsonBackReference
     private Booking mappedPreBooking;
 
-   /* @OneToOne(fetch = FetchType.LAZY, mappedBy = "postBooking")
-    @JsonBackReference
-    private Booking mappedPostBooking;*/
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pre_booking_id", referencedColumnName = "id")
     @JsonManagedReference
     private Booking preBooking;
 
-    /*@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_booking_id", referencedColumnName = "id")
-    @JsonManagedReference
-    private Booking postBooking; */
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")

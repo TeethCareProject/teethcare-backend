@@ -1,6 +1,6 @@
 package com.teethcare.service;
 
-import com.teethcare.exception.IdNotFoundException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Province;
 import com.teethcare.repository.ProvinceRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     public Province findById(int id) {
         Optional<Province> province = provinceRepository.findById(id);
         if (province.isEmpty()) {
-            throw new IdNotFoundException("Province id " + id + " not found!");
+            throw new NotFoundException("Province id " + id + " not found!");
         }
         return province.get();
     }

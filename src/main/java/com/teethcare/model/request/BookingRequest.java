@@ -3,6 +3,7 @@ package com.teethcare.model.request;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 @Getter
@@ -11,15 +12,15 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class BookingRequest {
 
-    @NotEmpty
+    @NotNull
     private int serviceId;
 
-    @NotEmpty
+    @NotNull
     private int patientId;
 
     private String description;
 
-    @NotEmpty
-    private Timestamp desiredCheckingTime;
+    @NotNull
+    private long desiredCheckingTime;
 
 }

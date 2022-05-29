@@ -11,12 +11,14 @@ import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,12 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest){
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
+
+        //get milisecond
+        long milisecond = bookingRequest.getDesiredCheckingTime();
+
+        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(milisecond);
+        bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
 
         //get service by id
         int serviceID = bookingRequest.getServiceId();
