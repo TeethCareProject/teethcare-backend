@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,13 +21,18 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Account.ACCOUNT_ENDPOINT)
+@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
 public class AccountController {
 
     private final AccountService accountService;
     private final AccountMapper accountMapper;
 
     @GetMapping
-    public ResponseEntity<List<AccountResponse>> getAll(@RequestParam(name = "search", required = false) String search, @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page, @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size, @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field, @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<List<AccountResponse>> getAll(@RequestParam(name = "search", required = false) String search,
+                                                        @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
         List<Account> accounts;
         if (search != null) {
@@ -42,23 +48,17 @@ public class AccountController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<AccountResponse> getById(@PathVariable("id") int id) {
         Account account = accountService.findById(id);
-        if (account != null) {
-            AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account);
-            return new ResponseEntity<>(accountResponse, HttpStatus.OK);
-        } else {
-            throw new NotFoundException("Account id " + id + " not found!");
-        }
+        AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account);
+        return new ResponseEntity<>(accountResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id){
+    public ResponseEntity<String> delete(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Account account = accountService.findById(theID);
-        if (account != null) {
-            accountService.delete(theID);
-            return new ResponseEntity<>("Delete successfuly.",HttpStatus.OK);
-        }
-        throw new NotFoundException("Account id " + id + " was not found!");
+        accountService.delete(theID);
+        return new ResponseEntity<>("Delete successfully.", HttpStatus.OK);
+
     }
 
 }

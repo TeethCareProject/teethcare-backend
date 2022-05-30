@@ -30,8 +30,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account findById(int id) {
-        Optional<Account> account = accountRepository.findById(id);
-        return account.orElse(null);
+        Account account = accountRepository.getById(id);
+        return account;
     }
 
     @Override
@@ -41,14 +41,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void delete(int id) {
-        Optional<Account> accountData = accountRepository.findById(id);
-        if (accountData.isPresent()) {
-            Account account = accountData.get();
-            account.setStatus(Status.INACTIVE.name());
-            accountRepository.save(account);
-        }else{
-            throw new NotFoundException("Account id " + id + "was not found");
-        }
+        Account account = findById(id);
+        account.setStatus(Status.INACTIVE.name());
+        accountRepository.save(account);
     }
 
     @Override
