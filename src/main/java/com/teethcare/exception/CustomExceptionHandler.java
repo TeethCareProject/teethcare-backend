@@ -21,7 +21,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(AccountNotFoundException ex) {
-        List errors = new ArrayList<String>();
+        List<String> errors = new ArrayList();
         errors.add(ex.getMessage());
         CustomErrorResponse error = new CustomErrorResponse(
                 new Timestamp(System.currentTimeMillis()),
@@ -35,7 +35,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(NotFoundException ex) {
-        List errors = new ArrayList<String>();
+        List<String> errors = new ArrayList();
         errors.add(ex.getMessage());
         CustomErrorResponse error = new CustomErrorResponse(
                 new Timestamp(System.currentTimeMillis()),
@@ -49,7 +49,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(BadRequestException ex) {
-        List errors = new ArrayList<String>();
+        List<String> errors = new ArrayList();
         errors.add(ex.getMessage());
         CustomErrorResponse error = new CustomErrorResponse(
                 new Timestamp(System.currentTimeMillis()),
@@ -63,7 +63,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(MethodArgumentNotValidException ex) {
-        List errors = new ArrayList<String>();
+        List<String> errors = new ArrayList();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();

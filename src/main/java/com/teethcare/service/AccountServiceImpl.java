@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +42,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void delete(int id) {
         Optional<Account> accountData = accountRepository.findById(id);
-        Account account = accountData.get();
-        account.setStatus(Status.INACTIVE.name());
-        accountRepository.save(account);
+        if (accountData.isPresent()) {
+            Account account = accountData.get();
+            account.setStatus(Status.INACTIVE.name());
+            accountRepository.save(account);
+        }else{
+            throw new NotFoundException("Account id " + id + "was not found");
+        }
     }
 
     @Override

@@ -97,9 +97,9 @@ public class ManagerController {
             managerService.delete(theID);
             Clinic clinic = clinicService.getClinicByManager(manager);
             clinicService.delete(clinic.getId());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Delete successfuly.",HttpStatus.OK);
         }
-        throw new NotFoundException("Manager id " + id + " not found!");
+        throw new NotFoundException("Manager id " + id + " was not found!");
     }
 
 }

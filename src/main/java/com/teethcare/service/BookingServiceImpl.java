@@ -20,7 +20,7 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public Booking findById(int id) {
-        return null;
+        return bookingRepository.getById(id);
     }
 
     @Override

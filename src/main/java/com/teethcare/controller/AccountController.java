@@ -7,12 +7,12 @@ import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.service.AccountService;
+import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +48,17 @@ public class AccountController {
         } else {
             throw new NotFoundException("Account id " + id + " not found!");
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") String id){
+        int theID = ConvertUtils.covertID(id);
+        Account account = accountService.findById(theID);
+        if (account != null) {
+            accountService.delete(theID);
+            return new ResponseEntity<>("Delete successfuly.",HttpStatus.OK);
+        }
+        throw new NotFoundException("Account id " + id + " was not found!");
     }
 
 }
