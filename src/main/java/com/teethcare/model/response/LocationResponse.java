@@ -1,5 +1,6 @@
 package com.teethcare.model.response;
 
+import com.teethcare.model.entity.Ward;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,4 +15,5 @@ public class LocationResponse {
     private Float latitude;
     private Float longitude;
     private String address;
+    private Ward ward;
 }

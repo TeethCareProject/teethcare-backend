@@ -78,7 +78,7 @@ public class ClinicController {
             }
             if (filter.getWardId() != null) {
                 Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == filter.getWardId();
-                list = list.stream().filter(byWardId).collect(Collectors.toList());
+                    list = list.stream().filter(byWardId).collect(Collectors.toList());
             }
         }
         List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);

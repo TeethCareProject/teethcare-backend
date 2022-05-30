@@ -22,12 +22,14 @@ public interface ClinicMapper {
     @Mapping(source = "serviceOfClinic", target = "serviceOfClinicResponses")
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 
+
+
+    @Mapping(target = "ward", source = "ward")
     @Mapping(target = "address",
             expression = "java(location.getAddressString() + \", \" + location.getWard().getName() + \", \" " +
                     "+ location.getWard().getDistrict().getName() + \", \" " +
                     "+ location.getWard().getDistrict().getProvince().getName())")
     LocationResponse mapLocationToLocationResponse(Location location);
-
     List<ClinicResponse> mapClinicListToClinicResponseList(List<Clinic> clinics);
 
     @Mapping(source = "location", target = "location")
