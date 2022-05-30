@@ -18,17 +18,24 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
 
     @Override
     public List<ServiceOfClinic> findAll() {
-        return null;
+        return serviceRepository.findAll();
     }
 
 
     @Override
     public ServiceOfClinic findById(int theId) {
-        Optional<ServiceOfClinic> service = serviceRepository.findById(theId);
-        if(service.isPresent()){
-            return service.get();
-        }
-        return null;
+        ServiceOfClinic service = serviceRepository.getById(theId);
+        return service;
+    }
+
+    @Override
+    public List<ServiceOfClinic> findAll(Pageable pageable) {
+        return serviceRepository.findAllByStatusIsNotNull(pageable);
+    }
+
+    @Override
+    public List<ServiceOfClinic> findByStatus(Pageable pageable, String status) {
+        return serviceRepository.findAllByStatus(pageable, status);
     }
 
     @Override

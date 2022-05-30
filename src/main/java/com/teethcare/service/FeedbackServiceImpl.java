@@ -22,7 +22,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback findById(int id) {
-        return feedbackRepository.getById(id);
+        Feedback feedback = feedbackRepository.getById(id);
+        return feedback;
     }
 
     @Override
@@ -33,12 +34,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public void delete(int theId) {
         Feedback feedback = findById(theId);
-        if(feedback != null){
-            feedback.setStatus(Status.INACTIVE.name());
-            feedbackRepository.save(feedback);
-        }else{
-            throw new NotFoundException("Feedback id "+ theId + " was not found");
-        }
+        feedback.setStatus(Status.INACTIVE.name());
+        feedbackRepository.save(feedback);
     }
 
     @Override

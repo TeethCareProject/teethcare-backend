@@ -1,5 +1,7 @@
 package com.teethcare.service;
 
+import com.teethcare.common.Status;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,8 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public Booking findById(int id) {
-        return bookingRepository.getById(id);
+        Booking booking = bookingRepository.getById(id);
+        return booking;
     }
 
     @Override
@@ -30,7 +33,9 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public void delete(int theId) {
-
+        Booking booking = findById(theId);
+        booking.setStatus(Status.INACTIVE.name());
+        save(booking);
     }
 
     @Override

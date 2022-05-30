@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,8 +25,25 @@ public class ServiceOfClinicController {
     private final ServiceOfClinicService serviceOfClinicService;
     private final ServiceOfClinicMapper serviceOfClinicMapper;
 
+    @GetMapping
+    public ResponseEntity<List<ServiceOfClinicResponse>> getAll(@RequestParam(name = "status", required = false) String status,
+                                                        @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        List<ServiceOfClinic> list = new ArrayList<>();
+        if (status != null) {
+            list = serviceOfClinicService.findByStatus(pageable, status);
+        } else {
+            list = serviceOfClinicService.findAll(pageable);
+        }
+        List<ServiceOfClinicResponse> responses = serviceOfClinicMapper.mapServiceListToServiceResponseList(list);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     @GetMapping("/clinics/{id}")
-    ResponseEntity<List<ServiceOfClinicResponse>> serviceOfClinicResponses(@PathVariable String id,
+    public ResponseEntity<List<ServiceOfClinicResponse>> serviceOfClinicResponses(@PathVariable String id,
                                                                            @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                            @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                            @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,

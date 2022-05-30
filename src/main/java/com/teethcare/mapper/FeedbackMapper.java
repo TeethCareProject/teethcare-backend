@@ -1,12 +1,12 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Feedback;
+import com.teethcare.model.entity.Report;
 import com.teethcare.model.request.FeedbackRequest;
+import com.teethcare.model.request.ReportRequest;
 import com.teethcare.model.response.FeedbackResponse;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import com.teethcare.model.response.ReportResponse;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -27,4 +27,11 @@ public interface FeedbackMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     List<FeedbackResponse> mapFeedbackListToFeedbackResponseList(List<Feedback> feedbacks);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    ReportResponse mapReportToReportResponse(Report report);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Report mapReportRequestToReport(ReportRequest reportRequest);
+
 }
