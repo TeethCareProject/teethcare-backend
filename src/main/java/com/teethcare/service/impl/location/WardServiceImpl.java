@@ -1,9 +1,10 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.location;
 
 
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Ward;
 import com.teethcare.repository.WardRepository;
+import com.teethcare.service.WardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

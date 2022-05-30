@@ -62,7 +62,6 @@ public class ClinicController {
         } else {
             list = clinicService.findAll(pageable);
         }
-        System.out.println(status);
         if (clinicFilterRequest.isPresent()) {
             ClinicFilterRequest filter = clinicFilterRequest.get();
             if (filter.getName() != null) {
@@ -141,7 +140,7 @@ public class ClinicController {
         List<AccountResponse> staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
 
         if (staffResponseList == null || staffResponseList.size() == 0) {
-            throw new NotFoundException("With id "+ id + ", the list of hospital staff could not be found.");
+            throw new NotFoundException("With id " + id + ", the list of hospital staff could not be found.");
         }
 
         return new ResponseEntity<>(staffResponseList, HttpStatus.OK);

@@ -1,10 +1,12 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.account;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.repository.ManagerRepository;
+import com.teethcare.service.ManagerService;
+import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

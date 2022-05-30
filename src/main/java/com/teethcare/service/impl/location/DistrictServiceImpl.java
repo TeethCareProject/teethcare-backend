@@ -1,8 +1,9 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.location;
 
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.District;
 import com.teethcare.repository.DistrictRepository;
+import com.teethcare.service.DistrictService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

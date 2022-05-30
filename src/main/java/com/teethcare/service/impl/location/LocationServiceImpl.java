@@ -1,7 +1,8 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.location;
 
 import com.teethcare.model.entity.Location;
 import com.teethcare.repository.LocationRepository;
+import com.teethcare.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

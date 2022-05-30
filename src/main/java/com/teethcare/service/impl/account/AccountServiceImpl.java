@@ -1,9 +1,10 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.account;
 
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
+import com.teethcare.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

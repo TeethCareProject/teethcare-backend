@@ -1,9 +1,12 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Booking;
+import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.repository.BookingRepository;
+import com.teethcare.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
 
@@ -50,5 +53,10 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public List<Booking> findBookingByPatientIdAndStatus(int theId, String status) {
         return bookingRepository.findBookingByPatientIdAndStatus(theId, status);
+    }
+
+    @Override
+    public List<Booking> findAllByCustomerService(CustomerService customerService) {
+        return bookingRepository.findAllByCustomerService(customerService);
     }
 }

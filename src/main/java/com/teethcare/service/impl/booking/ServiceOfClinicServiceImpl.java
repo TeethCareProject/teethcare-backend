@@ -1,9 +1,10 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.repository.ServiceRepository;
+import com.teethcare.service.ServiceOfClinicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

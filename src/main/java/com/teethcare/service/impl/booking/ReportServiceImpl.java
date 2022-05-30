@@ -1,9 +1,10 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Report;
 import com.teethcare.repository.ReportRepository;
+import com.teethcare.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReportServiceImpl implements ReportService{
+public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
 
     @Override
