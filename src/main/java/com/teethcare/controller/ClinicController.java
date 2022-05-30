@@ -7,10 +7,7 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.Dentist;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.response.AccountResponse;
@@ -19,14 +16,14 @@ import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
+import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -47,6 +44,7 @@ public class ClinicController {
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
 
+    private final ServiceOfClinicService serviceOfClinicService;
 
     @GetMapping
     public ResponseEntity<List<ClinicResponse>> getAll(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
@@ -78,7 +76,14 @@ public class ClinicController {
             }
             if (filter.getWardId() != null) {
                 Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == filter.getWardId();
-                    list = list.stream().filter(byWardId).collect(Collectors.toList());
+                list = list.stream().filter(byWardId).collect(Collectors.toList());
+            }
+            if (filter.getServiceList() != null || filter.getServiceList().size() != 0) {
+                for (int clinicId : filter.getServiceList()) {
+                    ServiceOfClinic serviceOfClinic = serviceOfClinicService.findById(clinicId);
+                    Predicate<Clinic> byServiceId = (clinic) -> clinic.getServiceOfClinic().contains(serviceOfClinic);
+                    list = list.stream().filter(byServiceId).collect(Collectors.toList());
+                }
             }
         }
         List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
@@ -141,7 +146,7 @@ public class ClinicController {
         List<AccountResponse> staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
 
         if (staffResponseList == null || staffResponseList.size() == 0) {
-            throw new NotFoundException("With id "+ id + ", the list of hospital staff could not be found.");
+            throw new NotFoundException("With id " + id + ", the list of hospital staff could not be found.");
         }
 
         return new ResponseEntity<>(staffResponseList, HttpStatus.OK);
