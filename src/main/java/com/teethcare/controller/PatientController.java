@@ -9,12 +9,10 @@ import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.PatientResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.PatientService;
-import com.teethcare.service.RoleService;
 import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

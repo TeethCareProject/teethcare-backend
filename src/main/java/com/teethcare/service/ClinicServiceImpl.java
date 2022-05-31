@@ -9,10 +9,13 @@ import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.repository.ClinicRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -23,7 +26,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
-
     private final ServiceOfClinicService serviceOfClinicService;
 
     @Override
@@ -37,17 +39,18 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicRepository.findAllByStatusIsNotNull(pageable);
     }
 
+
     @Override
-    public List<Clinic> findAllWithFilter(ClinicFilterRequest filter, String status, Pageable pageable) {
-        List<Clinic> list = null;
+    public Page<Clinic> findAllWithFilter(ClinicFilterRequest filter, Pageable pageable) {
+        List<Clinic> list = new ArrayList<>();
         if (filter != null) {
             if (filter.getName() != null) {
                 list = clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(filter.getName(), Status.ACTIVE.name(), pageable);
             } else {
                 list = clinicRepository.findAllByStatusIsNotNull(pageable);
             }
-            if (status != null) {
-                Predicate<Clinic> byStatus = (clinic) -> clinic.getStatus().equals(status);
+            if (filter.getStatus() != null) {
+                Predicate<Clinic> byStatus = (clinic) -> clinic.getStatus().equals(filter.getStatus());
                 list = list.stream().filter(byStatus).collect(Collectors.toList());
             }
             if (filter.getProvinceId() != null) {
@@ -70,11 +73,9 @@ public class ClinicServiceImpl implements ClinicService {
                 }
             }
         }
-
-        return list;
+        return new PageImpl<>(list);
     }
-
-
+    @Override
     public Clinic getClinicByManager(Manager manager) {
         return clinicRepository.getClinicByManager(manager);
     }
@@ -87,8 +88,6 @@ public class ClinicServiceImpl implements ClinicService {
         }
         return result.get();
     }
-
-
 
     @Override
     public void save(Clinic clinic) {

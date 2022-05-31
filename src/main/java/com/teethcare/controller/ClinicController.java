@@ -24,6 +24,7 @@ import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,20 +47,16 @@ public class ClinicController {
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
 
-    private final ServiceOfClinicService serviceOfClinicService;
 
     @GetMapping
-    public ResponseEntity<List<ClinicResponse>> getAllWithFilter(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
-                                                                 @RequestParam(name = "status", required = false) String status,
+    public ResponseEntity<Page<ClinicResponse>> getAllWithFilter(ClinicFilterRequest clinicFilterRequest,
                                                                  @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                  @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                  @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                  @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        ClinicFilterRequest filter = clinicFilterRequest.orElse(null);
-            List<Clinic> list = clinicService.findAllWithFilter(filter, status, pageable);
-
-        List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
+        Page<Clinic> list = clinicService.findAllWithFilter(clinicFilterRequest, pageable);
+        Page<ClinicResponse> clinicResponses = list.map(clinicMapper::mapClinicToClinicResponse);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }
 

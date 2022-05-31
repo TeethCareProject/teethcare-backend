@@ -4,16 +4,13 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Role;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailsImpl;
-import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.mapper.LoginMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.LoginRequest;
 import com.teethcare.model.request.RefreshTokenRequest;
 import com.teethcare.model.response.ClinicLoginResponse;
-import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.LoginResponse;
 import com.teethcare.model.response.RefreshTokeResponse;
 import com.teethcare.service.*;
@@ -25,10 +22,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-
 import java.util.stream.Collectors;
 
 @RestController
