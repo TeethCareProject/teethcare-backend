@@ -73,6 +73,10 @@ public class Booking {
     @Column(name = "desired_checking_time")
     private Timestamp desiredCheckingTime;
 
+    @OneToOne
+    @JoinColumn(name = "clinic_id", referencedColumnName = "id")
+    private Clinic clinic;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_service_id")
     @JsonManagedReference

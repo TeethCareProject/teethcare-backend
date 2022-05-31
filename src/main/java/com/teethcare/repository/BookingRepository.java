@@ -17,7 +17,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     //    List<Booking> findBookingByPatientId(int id, Pageable pageable);
     List<Booking> findBookingByDentistId(int id, Pageable pageable);
     Page<Booking> findBookingByPatientIdAndDentistClinicNameLike(int patientId, String clinicName, Pageable pageable);
+    Page<Booking> findBookingByPatientIdAndServicesId(int patientId, Integer servicesId, Pageable pageable);
 //    Page<Booking> findBookingByPatientIdAndDentistClinicNameLike(String clinicName, int patientId, Pageable pageable);
+    Page<Booking> findBookingByPatientIdAndClinicNameLike(int patient_id, String clinic_name, Pageable pageable);
     List<Booking> findBookingByStatusNotLike(String status);
     Page<Booking> findBookingByPatientId(int id, Pageable pageable);
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);

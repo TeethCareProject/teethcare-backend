@@ -2,12 +2,10 @@ package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
-import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.Patient;
-import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.repository.BookingRepository;
+import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.BookingService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +23,7 @@ public class BookingServiceImpl implements BookingService {
 
     private final PatientRepository patientRepository;
     private final BookingRepository bookingRepository;
+    private final ClinicRepository clinicRepository;
 
     @Override
     public List<Booking> findAll() {
@@ -89,25 +88,44 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<Booking> findAll(String role, int id, String clinicName, Specification<Booking> bookingSpecification, Pageable pageable) {
-        Page<Booking> bookingList = null;
+    public Page<Booking> findBookingByPatientIdAndClinicNameLike(int patientId, String clinicName, Pageable pageable) {
+        Page<Booking> bookingPage = bookingRepository.findBookingByPatientIdAndClinicNameLike(
+                patientId, "%" + clinicName + "%", pageable);
+        if (bookingPage == null || !bookingPage.hasContent()) {
+            throw new NotFoundException();
+        }
+        return bookingPage;
+    }
+
+    @Override
+    public Page<Booking> findAll(String role, int accountId,
+                                 String clinicName,
+                                 Specification<Booking> bookingSpecification,
+                                 Pageable pageable) {
+        Page<Booking> bookingPage = null;
         switch (role) {
             case "CUSTOMER_SERVICE":
-                bookingList = bookingRepository.findAll(bookingSpecification, pageable);
+                bookingPage = bookingRepository.findAll(bookingSpecification, pageable);
                 break;
             case "PATIENT":
                 if (clinicName == null || clinicName.isBlank()) {
-                    bookingList = bookingRepository.findBookingByPatientId(id, pageable);
+                    bookingPage = bookingRepository.findBookingByPatientId(accountId, pageable);
                 } else {
-                    bookingList = bookingRepository.findBookingByPatientIdAndDentistClinicNameLike(
-                            id, "%" + clinicName + "%", pageable);
+                    bookingPage =
+                            bookingRepository.findBookingByPatientIdAndClinicNameLike
+                                    (accountId, "%" + clinicName + "%", pageable);
                 }
                 break;
             case "DENTIST":
 //                bookingList = bookingRepository.findBookingByDentistId(id, pageable);
                 break;
         }
-        return bookingList;
+
+        if (bookingPage == null || !bookingPage.hasContent()) {
+            throw new NotFoundException();
+        }
+
+        return bookingPage;
     }
 
 //    @Override
