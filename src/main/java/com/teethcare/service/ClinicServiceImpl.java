@@ -5,6 +5,8 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
+import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.repository.ClinicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -20,10 +24,13 @@ import java.util.Optional;
 public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
 
+    private final ServiceOfClinicService serviceOfClinicService;
+
     @Override
     public List<Clinic> findAll() {
         return clinicRepository.findAll();
     }
+
 
     @Override
     public List<Clinic> findAll(Pageable pageable) {
@@ -31,13 +38,42 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public List<Clinic> findAllByStatus(String status, Pageable pageable) {
-        return clinicRepository.findAllByStatus(status, pageable);
+    public List<Clinic> findAllWithFilter(ClinicFilterRequest filter, String status, Pageable pageable) {
+        List<Clinic> list = null;
+        if (filter != null) {
+            if (filter.getName() != null) {
+                list = clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(filter.getName(), Status.ACTIVE.name(), pageable);
+            } else {
+                list = clinicRepository.findAllByStatusIsNotNull(pageable);
+            }
+            if (status != null) {
+                Predicate<Clinic> byStatus = (clinic) -> clinic.getStatus().equals(status);
+                list = list.stream().filter(byStatus).collect(Collectors.toList());
+            }
+            if (filter.getProvinceId() != null) {
+                Predicate<Clinic> byProvinceId = (clinic) -> clinic.getLocation().getWard().getDistrict().getProvince().getId() == filter.getProvinceId();
+                list = list.stream().filter(byProvinceId).collect(Collectors.toList());
+            }
+            if (filter.getDistrictId() != null) {
+                Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == filter.getDistrictId();
+                list = list.stream().filter(byDistrictId).collect(Collectors.toList());
+            }
+            if (filter.getWardId() != null) {
+                Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == filter.getWardId();
+                list = list.stream().filter(byWardId).collect(Collectors.toList());
+            }
+            if (filter.getServiceList() != null) {
+                for (int clinicId : filter.getServiceList()) {
+                    ServiceOfClinic serviceOfClinic = serviceOfClinicService.findById(clinicId);
+                    Predicate<Clinic> byServiceId = (clinic) -> clinic.getServiceOfClinic().contains(serviceOfClinic);
+                    list = list.stream().filter(byServiceId).collect(Collectors.toList());
+                }
+            }
+        }
+
+        return list;
     }
 
-    public List<Clinic> findAllActive(Pageable pageable) {
-        return clinicRepository.getClinicByStatus(Status.ACTIVE.name(), pageable);
-    }
 
     public Clinic getClinicByManager(Manager manager) {
         return clinicRepository.getClinicByManager(manager);
@@ -52,10 +88,7 @@ public class ClinicServiceImpl implements ClinicService {
         return result.get();
     }
 
-    @Override
-    public List<Clinic> searchAllActiveByName(String search, Pageable pageable) {
-        return clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(search, Status.ACTIVE.name(), pageable);
-    }
+
 
     @Override
     public void save(Clinic clinic) {

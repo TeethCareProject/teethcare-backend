@@ -7,7 +7,10 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
-import com.teethcare.model.entity.*;
+import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.response.AccountResponse;
@@ -30,8 +33,6 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,45 +48,16 @@ public class ClinicController {
     private final ServiceOfClinicService serviceOfClinicService;
 
     @GetMapping
-    public ResponseEntity<List<ClinicResponse>> getAll(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
-                                                       @RequestParam(name = "status", required = false) String status,
-                                                       @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                       @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                       @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                       @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<List<ClinicResponse>> getAllWithFilter(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
+                                                                 @RequestParam(name = "status", required = false) String status,
+                                                                 @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                 @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                 @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        List<Clinic> list;
-        if (status != null) {
-            list = clinicService.findAllByStatus(status, pageable);
-        } else {
-            list = clinicService.findAll(pageable);
-        }
-        System.out.println(status);
-        if (clinicFilterRequest.isPresent()) {
-            ClinicFilterRequest filter = clinicFilterRequest.get();
-            if (filter.getName() != null) {
-                list = clinicService.searchAllActiveByName(filter.getName(), pageable);
-            }
-            if (filter.getProvinceId() != null) {
-                Predicate<Clinic> byProvinceId = (clinic) -> clinic.getLocation().getWard().getDistrict().getProvince().getId() == filter.getProvinceId();
-                list = list.stream().filter(byProvinceId).collect(Collectors.toList());
-            }
-            if (filter.getDistrictId() != null) {
-                Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == filter.getWardId();
-                list = list.stream().filter(byDistrictId).collect(Collectors.toList());
-            }
-            if (filter.getWardId() != null) {
-                Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == filter.getWardId();
-                list = list.stream().filter(byWardId).collect(Collectors.toList());
-            }
-            if (filter.getServiceList() != null || filter.getServiceList().size() != 0) {
-                for (int clinicId : filter.getServiceList()) {
-                    ServiceOfClinic serviceOfClinic = serviceOfClinicService.findById(clinicId);
-                    Predicate<Clinic> byServiceId = (clinic) -> clinic.getServiceOfClinic().contains(serviceOfClinic);
-                    list = list.stream().filter(byServiceId).collect(Collectors.toList());
-                }
-            }
-        }
+        ClinicFilterRequest filter = clinicFilterRequest.orElse(null);
+            List<Clinic> list = clinicService.findAllWithFilter(filter, status, pageable);
+
         List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }
