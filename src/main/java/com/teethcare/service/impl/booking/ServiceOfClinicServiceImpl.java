@@ -1,10 +1,13 @@
 package com.teethcare.service.impl.booking;
 
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
+import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.repository.ServiceRepository;
+import com.teethcare.service.CSService;
 import com.teethcare.service.ServiceOfClinicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     private final ServiceRepository serviceRepository;
+    private final CSService csService;
 
     @Override
     public List<ServiceOfClinic> findAll() {
@@ -35,10 +39,22 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     }
 
     @Override
-    public Page<ServiceOfClinic> findAllWithFilter(ServiceFilterRequest request, Pageable pageable) {
-        List<ServiceOfClinic> serviceOfClinics = serviceRepository.findAll();
+    public Page<ServiceOfClinic> findAllWithFilter(ServiceFilterRequest request, Pageable pageable, Account account) {
+        List<ServiceOfClinic> serviceOfClinics = null;
+        if (account == null || !account.getRole().getName().equals(Role.CUSTOMER_SERVICE.name())) {
+            serviceOfClinics = serviceRepository.findAllByStatus(pageable, Status.ACTIVE.name());
+        } else {
+            serviceOfClinics = serviceRepository.findAll();
+            for (int i = 0; i < serviceOfClinics.size(); i++) {
+                if (serviceOfClinics.get(i).getClinic().getId() != csService.findById(account.getId()).getClinic().getId() &&
+                        serviceOfClinics.get(i).getStatus().equals(Status.INACTIVE.name())) {
+                    serviceOfClinics.remove(serviceOfClinics.get(i));
+                }
+            }
+        }
         if (request.getName() != null) {
-            serviceOfClinics = serviceRepository.findAllByNameContainingIgnoreCase(request.getName(), pageable);
+            Predicate<ServiceOfClinic> byName = (service) -> service.getName().toLowerCase().contains(request.getName().toLowerCase());
+            serviceOfClinics = serviceOfClinics.stream().filter(byName).collect(Collectors.toList());
         }
         if (request.getClinicID() != null) {
             Predicate<ServiceOfClinic> byClinicID = (service) -> service.getClinic().getId() == request.getClinicID();
@@ -70,10 +86,5 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     @Override
     public void delete(int theId) {
 
-    }
-
-    @Override
-    public Page<ServiceOfClinic> findByClinicIdAndStatus(int theClinicId, String status, Pageable pageable) {
-        return null;
     }
 }

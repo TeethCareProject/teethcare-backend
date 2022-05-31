@@ -11,5 +11,4 @@ import java.util.List;
 public interface ServiceRepository extends JpaRepository<ServiceOfClinic, Integer> {
     List<ServiceOfClinic> findByClinicIdAndStatus(int id, String status, Pageable pageable);
     List<ServiceOfClinic> findAllByStatus(Pageable pageable, String status);
-    List<ServiceOfClinic> findAllByNameContainingIgnoreCase(String key, Pageable pageable);
 }
