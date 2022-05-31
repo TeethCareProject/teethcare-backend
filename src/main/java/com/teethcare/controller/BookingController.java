@@ -104,9 +104,15 @@ public class BookingController {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
 
         Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), clinicName, specification, pageable);
-
         Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
 
         return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookingResponse> getById(@PathVariable("id") int id) {
+        Booking booking = bookingService.findBookingById(id);
+        BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);
+        return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
     }
 }

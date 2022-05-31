@@ -13,9 +13,8 @@ public class CustomizedBuilder<T> {
         params = new ArrayList<SearchCriteria>();
     }
 
-    public CustomizedBuilder<T> with(String key, String operation, Object value) {
+    public void with(String key, String operation, Object value) {
         params.add(new SearchCriteria(key, operation, value));
-        return this;
     }
 
     public Specification<T> build() {

@@ -28,7 +28,7 @@ public class ServiceOfClinic {
     private String description;
 
     @Column(name = "price")
-    private BigDecimal money;
+    private BigDecimal price;
 
     @Column(name = "duration")
     private Integer duration;
