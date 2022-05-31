@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ServiceOfClinicMapper {
 
-    ServiceOfClinicResponse mapServiceToServiceResponse(ServiceOfClinic serviceOfClinic);
+    ServiceOfClinicResponse mapServiceOfClinicToServiceOfClinicResponse(ServiceOfClinic serviceOfClinic);
 
-    List<ServiceOfClinicResponse> mapServiceListToServiceResponseList(List<ServiceOfClinic> serviceOfClinicList);
+    List<ServiceOfClinicResponse> mapServiceOfClinicListToServiceOfClinicResponseList(List<ServiceOfClinic> serviceOfClinicList);
 }
