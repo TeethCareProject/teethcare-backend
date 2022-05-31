@@ -111,7 +111,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public boolean isDuplicated(String username) {
-        return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name()) != null;
+        return accountRepository.getAccountByUsername(username) != null;
     }
 
     @Override

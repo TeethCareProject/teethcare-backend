@@ -13,6 +13,7 @@ import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -46,6 +47,7 @@ public class PatientController {
 
     }
 
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
     @PostMapping
     public ResponseEntity<PatientResponse> add(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
@@ -55,10 +57,13 @@ public class PatientController {
                 patientService.save(patient);
                 PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
                 return new ResponseEntity<>(patientResponse, HttpStatus.OK);
-            } else
+            } else {
                 throw new BadRequestException("confirm Password is not match with password");
+            }
+        } {
+            throw new BadRequestException("User existed!");
+
         }
-        throw new BadRequestException("User existed!");
     }
 
     @DeleteMapping("/{id}")

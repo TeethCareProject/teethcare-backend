@@ -9,16 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ManagerResponse {
-    private int id;
-    private String username;
-    private String roleId;
-    private String roleName;
-    private String firstName;
-    private String lastName;
-    private String gender;
-    private String email;
-    private String phone;
-    private String status;
+public class ManagerResponse extends AccountResponse {
     private ClinicInfoResponse clinic;
 }

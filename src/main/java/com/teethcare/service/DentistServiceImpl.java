@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DentistServiceImpl implements DentistService {
     private final DentistRepository dentistRepository;
-
+    private final RoleService roleService;
     @Override
     public Dentist findById(int theId) {
         Optional<Dentist> result = dentistRepository.findById(theId);
@@ -39,6 +40,8 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public void save(Dentist theDentist) {
+        theDentist.setStatus(Status.ACTIVE.name());
+        theDentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
         dentistRepository.save(theDentist);
     }
 

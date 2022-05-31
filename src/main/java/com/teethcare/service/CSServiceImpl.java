@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class CSServiceImpl implements CSService {
 
     private final CustomerServiceRepository customerServiceRepository;
+    private final RoleService roleService;
 
     @Override
     public List<CustomerService> findAll() {
@@ -32,6 +34,9 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public void save(CustomerService theCustomerService) {
+
+        theCustomerService.setStatus(Status.ACTIVE.name());
+        theCustomerService.setRole(roleService.getRoleByName(Role.CUSTOMER_SERVICE.name()));
         customerServiceRepository.save(theCustomerService);
     }
 

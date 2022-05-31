@@ -8,6 +8,5 @@ import lombok.Setter;
 public class DentistResponse extends AccountResponse {
     private String specialization;
     private String description;
-    private String clinicId;
-    private String clinicName;
+    private ClinicInfoResponse clinic;
 }
