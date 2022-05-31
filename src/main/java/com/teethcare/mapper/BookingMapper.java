@@ -12,6 +12,7 @@ public interface BookingMapper {
     Booking mapBookingRequestToBooking (BookingRequest bookingRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "id", target = "bookingID")
     @Mapping(source = "patient.firstName", target = "firstName")
     @Mapping(source = "patient.lastName", target = "lastName")
     @Mapping(source = "patient.phone", target = "phoneNumber")
