@@ -16,5 +16,5 @@ public interface ClinicRepository extends JpaRepository<Clinic, Integer> {
 
     List<Clinic> findAllByStatus(String status, Pageable pageable);
 
-    List<Clinic> findAllByNameContainingIgnoreCaseAndStatus(String search, String status, Pageable pageable);
+    List<Clinic> findAllByNameContainingIgnoreCase(String search, Pageable pageable);
 }

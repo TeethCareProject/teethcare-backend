@@ -45,7 +45,7 @@ public class ClinicServiceImpl implements ClinicService {
         List<Clinic> list = new ArrayList<>();
         if (filter != null) {
             if (filter.getName() != null) {
-                list = clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(filter.getName(), Status.ACTIVE.name(), pageable);
+                list = clinicRepository.findAllByNameContainingIgnoreCase(filter.getName().replaceAll("\\s\\s+", " ").trim(), pageable);
             } else {
                 list = clinicRepository.findAllByStatusIsNotNull(pageable);
             }

@@ -2,13 +2,18 @@ package com.teethcare.service;
 
 import com.teethcare.common.Status;
 import com.teethcare.model.entity.Account;
+import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,6 +31,43 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> findAllAccounts(Pageable pageable) {
         return accountRepository.findAllByStatusIsNotNull(pageable);
     }
+
+    @Override
+    public Page<Account> findAllByFilter(AccountFilterRequest filter, Pageable pageable) {
+        List<Account> accounts = accountRepository.findAll();
+        if (filter.getFullName() != null) {
+            Predicate<Account> byFullName = (account) -> (account.getLastName() + " " + account.getFirstName()).toUpperCase()
+                    .contains(filter.getFullName().replaceAll("\\s\\s+", " ").trim().toUpperCase());
+            accounts = accounts.stream().filter(byFullName).collect(Collectors.toList());
+        }
+        if (filter.getUsername() != null) {
+            Predicate<Account> byUsername = (account) -> (account.getUsername().toUpperCase()
+                    .contains(filter.getUsername().replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+            accounts = accounts.stream().filter(byUsername).collect(Collectors.toList());
+        }
+        if (filter.getStatus() != null) {
+            Predicate<Account> byStatus = (account) -> (account.getStatus()
+                    .equalsIgnoreCase(filter.getStatus().replaceAll("\\s\\s+", " ").trim()));
+            accounts = accounts.stream().filter(byStatus).collect(Collectors.toList());
+        }
+        if (filter.getEmail() != null) {
+            Predicate<Account> byEmail = (account) -> (account.getEmail() != null && account.getEmail().toUpperCase()
+                    .contains(filter.getEmail().replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+            accounts = accounts.stream().filter(byEmail).collect(Collectors.toList());
+        }
+        if (filter.getPhone() != null) {
+            Predicate<Account> byPhone = (account) -> (account.getPhone() != null && account.getPhone()
+                    .contains(filter.getPhone().trim()));
+            accounts = accounts.stream().filter(byPhone).collect(Collectors.toList());
+        }
+        if (filter.getRole() != null) {
+            Predicate<Account> byRole = (account) -> (account.getRole().getName()
+                    .equalsIgnoreCase(filter.getRole().replaceAll("\\s\\s+", " ").trim()));
+            accounts = accounts.stream().filter(byRole).collect(Collectors.toList());
+        }
+        return new PageImpl<>(accounts);
+    }
+
 
     @Override
     public Account findById(int id) {
