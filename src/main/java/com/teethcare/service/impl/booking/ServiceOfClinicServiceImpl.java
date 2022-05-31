@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -36,6 +36,25 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     public ServiceOfClinic findById(int theId) {
         ServiceOfClinic service = serviceRepository.getById(theId);
         return service;
+    }
+
+    @Override
+    public ServiceOfClinic findById(int theId, Account account) {
+        ServiceOfClinic serviceOfClinic = null;
+        if (account == null || !account.getRole().getName().equals(Role.CUSTOMER_SERVICE.name())) {
+            serviceOfClinic = serviceRepository.findByIdAndStatus(theId, Status.ACTIVE.name());
+        } else {
+            serviceOfClinic = serviceRepository.getById(theId);
+            if (serviceOfClinic.getClinic().getId() != csService.findById(account.getId()).getClinic().getId() &&
+                    serviceOfClinic.getStatus().equals(Status.INACTIVE.name())) {
+                serviceOfClinic = null;
+
+            }
+        }
+        if (serviceOfClinic == null) {
+            throw new EntityNotFoundException("Service was not found");
+        }
+        return serviceOfClinic;
     }
 
     @Override

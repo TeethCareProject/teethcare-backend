@@ -50,4 +50,7 @@ public interface ClinicMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ClinicLoginResponse mapClinicToClinicLoginResponse(Clinic clinic);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    ClinicInfoResponse mapClinicToClinicInfoResponse(Clinic clinic);
 }
