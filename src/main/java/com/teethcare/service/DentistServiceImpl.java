@@ -48,6 +48,11 @@ public class DentistServiceImpl implements DentistService {
     }
 
     @Override
+    public void update(Dentist theEntity) {
+        dentistRepository.save(theEntity);
+    }
+
+    @Override
     public List<Dentist> findByClinicId(int theId) {
         List<Dentist> dentistList = dentistRepository.findByClinicId(theId);
 

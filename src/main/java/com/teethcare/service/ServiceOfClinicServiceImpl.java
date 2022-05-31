@@ -40,6 +40,12 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     }
 
     @Override
+    public void update(ServiceOfClinic theEntity) {
+
+
+    }
+
+    @Override
     public List<ServiceOfClinic> findByClinicIdAndStatus(int theClinicId, String status, Pageable pageable) {
         List<ServiceOfClinic> serviceOfClinicList =
                 serviceRepository.findByClinicIdAndStatus(theClinicId, Status.ACTIVE.name(), pageable);

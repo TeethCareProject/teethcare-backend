@@ -75,6 +75,7 @@ public class ClinicServiceImpl implements ClinicService {
         }
         return new PageImpl<>(list);
     }
+
     @Override
     public Clinic getClinicByManager(Manager manager) {
         return clinicRepository.getClinicByManager(manager);
@@ -107,9 +108,17 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     public void delete(int id) {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
-        Clinic clinic = clinicData.get();
-        clinic.setStatus(Status.INACTIVE.name());
-        clinicRepository.save(clinic);
+        if (clinicData.isPresent()) {
+            Clinic clinic = clinicData.get();
+            clinic.setStatus(Status.INACTIVE.name());
+            clinicRepository.save(clinic);
+        } else {
+            throw new NotFoundException("ID not found");
+        }
+    }
+    @Override
+    public void update(Clinic theEntity) {
+        clinicRepository.save(theEntity);
     }
 
 }

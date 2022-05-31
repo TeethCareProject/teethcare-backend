@@ -41,6 +41,11 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
+    public void update(CustomerService theEntity) {
+        customerServiceRepository.save(theEntity);
+    }
+
+    @Override
     public List<CustomerService> findByClinicId(int theId) {
         List<CustomerService> customerServiceList = customerServiceRepository.findByClinicId(theId);
 

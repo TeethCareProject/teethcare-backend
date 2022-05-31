@@ -47,6 +47,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void update(Account theEntity) {
+        accountRepository.save(theEntity);
+    }
+
+    @Override
     public Account getAccountByUsername(String username) {
         return accountRepository.findAccountByUsername(username);
     }

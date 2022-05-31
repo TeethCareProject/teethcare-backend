@@ -34,6 +34,11 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    public void update(Booking theEntity) {
+        bookingRepository.save(theEntity);
+    }
+
+    @Override
     public List<Booking> findBookingByPatientId(int theId) {
         return bookingRepository.findBookingByPatientId(theId);
     }

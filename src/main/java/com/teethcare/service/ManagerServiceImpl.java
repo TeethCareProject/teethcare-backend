@@ -57,6 +57,11 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    public void update(Manager theEntity) {
+
+    }
+
+    @Override
     public Manager getActiveManager(int id) {
         return managerRepository.getManagerByIdAndStatusIsNot(id, Status.INACTIVE.name());
     }

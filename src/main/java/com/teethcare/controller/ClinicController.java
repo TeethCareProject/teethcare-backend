@@ -19,7 +19,6 @@ import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
-import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
@@ -82,6 +79,7 @@ public class ClinicController {
         Clinic clinic = clinicService.findById(theID);
         if (clinic != null) {
             clinic.setStatus(Status.INACTIVE.name());
+            clinicService.save(clinic);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             throw new NotFoundException("Clinic id " + id + " not found");
@@ -97,8 +95,23 @@ public class ClinicController {
 
         clinicMapper.mapClinicRequestToClinic(clinicRequest);
 
-        clinicService.save(clinic);
+        clinicService.update(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/{status}")
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable String status, @PathVariable String id) {
+        for (Status eStatus : Status.values()) {
+            if (eStatus.name().equals(status.toUpperCase())) {
+                int theID = ConvertUtils.covertID(id);
+                Clinic clinic = clinicService.findById(theID);
+                clinic.setStatus(status.toUpperCase());
+                clinicService.update(clinic);
+                System.out.printf(clinicService.findById(theID).getStatus());
+                return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(new MessageResponse(Message.INVALID_STATUS.name()), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/{id}/staffs")
