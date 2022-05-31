@@ -81,11 +81,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<Booking> findBookingByDentistClinicNameAndPatientId(String clinicName, String patientId, Pageable pageable) {
-        return null;
-    }
-
-    @Override
     public Page<Booking> findAll(String role, int id, String clinicName, Specification<Booking> bookingSpecification, Pageable pageable) {
         Page<Booking> bookingList = null;
         switch (role) {
@@ -96,9 +91,9 @@ public class BookingServiceImpl implements BookingService {
                 if (clinicName == null || clinicName.isBlank()) {
                     bookingList = bookingRepository.findBookingByPatientId(id, pageable);
                 } else {
-                    bookingList = bookingRepository.findBookingByDentistClinicNameAndPatientId(clinicName, id, pageable);
+                    bookingList = bookingRepository.findBookingByPatientIdAndDentistClinicNameLike(
+                            id, "%" + clinicName + "%", pageable);
                 }
-
                 break;
             case "DENTIST":
 //                bookingList = bookingRepository.findBookingByDentistId(id, pageable);

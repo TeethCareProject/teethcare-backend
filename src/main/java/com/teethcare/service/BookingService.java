@@ -21,7 +21,6 @@ public interface BookingService extends CRUDService<Booking>{
     List<Booking> findBookingByStatusNotLike(String status);
     List<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
     Page<Booking> findBookingByPatientId(int id, Pageable pageable);
-    Page<Booking> findBookingByDentistClinicNameAndPatientId(String clinicName, String patientId, Pageable pageable);
 
     Page<Booking> findAll(String role, int id, String clinicName, Specification<Booking> bookingSpecification, Pageable pageable);
 }
