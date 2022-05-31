@@ -85,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
         Page<Booking> bookingList = null;
         switch (role) {
             case "CUSTOMER_SERVICE":
-//                bookingList = findAll(bookingSpecification, pageable);
+                bookingList = bookingRepository.findAll(bookingSpecification, pageable);
                 break;
             case "PATIENT":
                 if (clinicName == null || clinicName.isBlank()) {
