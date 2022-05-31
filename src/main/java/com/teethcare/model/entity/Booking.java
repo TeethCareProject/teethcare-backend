@@ -45,7 +45,7 @@ public class Booking {
     private Integer totalPrice;
 
     @Column(name = "create_booking_date")
-    private Date createBookingDate;
+    private Timestamp createBookingDate;
 
     @Column(name = "examination_time")
     private Timestamp examinationTime;
@@ -83,6 +83,6 @@ public class Booking {
             joinColumns = @JoinColumn(name = "booking_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonManagedReference
-    private List<ServiceOfClinic> serviceOfClinics;
+    private List<ServiceOfClinic> services;
 
 }

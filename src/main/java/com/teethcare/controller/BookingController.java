@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
@@ -9,12 +10,19 @@ import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.BookingRequest;
+import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.specification.SpecificationFactory;
 import com.teethcare.utils.ConvertUtils;
+import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,9 +50,9 @@ public class BookingController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
-                                                                 HttpServletRequest request){
+                                                                 @RequestHeader(AUTHORIZATION) String token){
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
-        String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
+        token = token.substring("Bearer ".length());
         Account account = jwtTokenUtil.getAccountFromJwt(token);
         //get milisecond
         long milisecond = bookingRequest.getDesiredCheckingTime();
@@ -58,7 +66,7 @@ public class BookingController {
         serviceOfClinicList.add(serviceOfClinicService.findById(serviceID));
 
         //set service to booking
-        bookingTmp.setServiceOfClinics(serviceOfClinicList);
+        bookingTmp.setServices(serviceOfClinicList);
 
         //get patient by id
         Patient patient = patientService.findById(account.getId());
@@ -76,5 +84,29 @@ public class BookingController {
             patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
         }
         return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).PATIENT, " +
+            "T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<Page<BookingResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction,
+                                                        @RequestParam(value = "search", required = false) String search,
+                                                        @RequestParam(value = "clinicName", required = false) String clinicName,
+                                                        @RequestHeader(AUTHORIZATION) String header) {
+        String token = header.substring("Bearer ".length());
+        Account account = jwtTokenUtil.getAccountFromJwt(token);
+
+        SpecificationFactory<Booking> bookingSpecificationFactory = new SpecificationFactory<>();
+        Specification<Booking> specification = bookingSpecificationFactory.getSpecification(search);
+        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+
+        Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), clinicName, specification, pageable);
+
+        Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
+
+        return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
     }
 }
