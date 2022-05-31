@@ -71,14 +71,14 @@ public class ClinicController {
                 list = list.stream().filter(byProvinceId).collect(Collectors.toList());
             }
             if (filter.getDistrictId() != null) {
-                Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == filter.getDistrictId();
+                Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == filter.getWardId();
                 list = list.stream().filter(byDistrictId).collect(Collectors.toList());
             }
             if (filter.getWardId() != null) {
                 Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == filter.getWardId();
                 list = list.stream().filter(byWardId).collect(Collectors.toList());
             }
-            if (filter.getServiceList() != null) {
+            if (filter.getServiceList() != null || filter.getServiceList().size() != 0) {
                 for (int clinicId : filter.getServiceList()) {
                     ServiceOfClinic serviceOfClinic = serviceOfClinicService.findById(clinicId);
                     Predicate<Clinic> byServiceId = (clinic) -> clinic.getServiceOfClinic().contains(serviceOfClinic);
