@@ -5,6 +5,7 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.Report;
+import com.teethcare.model.request.EvaluateRequest;
 import com.teethcare.model.request.ReportFilterRequest;
 import com.teethcare.model.request.ReportRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
@@ -22,8 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
 @RestController
@@ -80,6 +79,23 @@ public class ReportController {
         Report report = feedbackMapper.mapReportRequestToReport(reportRequest);
         report.setFeedback(feedbackService.findById(reportRequest.getFeedbackID()));
         reportService.save(report);
+
+        ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
+
+        FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(report.getFeedback());
+        ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicToClinicInfoResponse(report.getFeedback().getBooking().getClinic());
+        feedbackResponse.setClinicInfoResponse(clinicInfoResponse);
+
+        response.setFeedbackResponse(feedbackResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    public ResponseEntity<ReportResponse> update(@RequestBody EvaluateRequest request,
+                                                 @PathVariable("id") String id){
+        int theID = ConvertUtils.covertID(id);
+        Report report = reportService.evaluate(theID, request.getStatus());
 
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
 

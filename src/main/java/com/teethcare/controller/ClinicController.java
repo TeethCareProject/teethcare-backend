@@ -111,7 +111,7 @@ public class ClinicController {
         theID = Integer.parseInt(id);
         Clinic clinic = clinicService.findById(theID);
         if (clinic != null) {
-            clinic.setStatus(Status.INACTIVE.name());
+            clinic.setStatus(Status.Clinic.INACTIVE.name());
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             throw new NotFoundException("Clinic id " + id + " not found");
@@ -137,8 +137,8 @@ public class ClinicController {
 
         List<Account> staffList = new ArrayList<>();
 
-        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
-        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
+        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.Clinic.ACTIVE.name());
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.Clinic.ACTIVE.name());
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);

@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void delete(int id) {
         Account account = findById(id);
-        account.setStatus(Status.INACTIVE.name());
+        account.setStatus(Status.Account.INACTIVE.name());
         accountRepository.save(account);
     }
 
@@ -55,7 +55,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getActiveAccountByUsername(String username) {
-        return accountRepository.findAccountByUsernameAndStatus(username, Status.ACTIVE.name());
+        return accountRepository.findAccountByUsernameAndStatus(username, Status.Account.INACTIVE.name());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public boolean isDuplicated(String username) {
-        return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.INACTIVE.name()) != null;
+        return accountRepository.getAccountByUsernameAndStatusIsNot(username, Status.Account.INACTIVE.name()) != null;
     }
 
     @Override

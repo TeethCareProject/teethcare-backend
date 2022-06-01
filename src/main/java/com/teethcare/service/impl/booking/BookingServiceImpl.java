@@ -37,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void delete(int theId) {
         Booking booking = findById(theId);
-        booking.setStatus(Status.INACTIVE.name());
+        booking.setStatus(Status.Booking.REJECTED.name());
         save(booking);
     }
 

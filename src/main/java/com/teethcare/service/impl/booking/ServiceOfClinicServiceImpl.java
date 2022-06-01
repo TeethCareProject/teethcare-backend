@@ -41,11 +41,11 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     public ServiceOfClinic findById(int theId, Account account) {
         ServiceOfClinic serviceOfClinic = null;
         if (account == null || !account.getRole().getName().equals(Role.CUSTOMER_SERVICE.name())) {
-            serviceOfClinic = serviceRepository.findByIdAndStatus(theId, Status.ACTIVE.name());
+            serviceOfClinic = serviceRepository.findByIdAndStatus(theId, Status.Service.ACTIVE.name());
         } else {
             serviceOfClinic = serviceRepository.getById(theId);
             if (serviceOfClinic.getClinic().getId() != csService.findById(account.getId()).getClinic().getId() &&
-                    serviceOfClinic.getStatus().equals(Status.INACTIVE.name())) {
+                    serviceOfClinic.getStatus().equals(Status.Service.INACTIVE.name())) {
                 serviceOfClinic = null;
 
             }
@@ -60,12 +60,12 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     public Page<ServiceOfClinic> findAllWithFilter(ServiceFilterRequest request, Pageable pageable, Account account) {
         List<ServiceOfClinic> serviceOfClinics = null;
         if (account == null || !account.getRole().getName().equals(Role.CUSTOMER_SERVICE.name())) {
-            serviceOfClinics = serviceRepository.findAllByStatus(pageable, Status.ACTIVE.name());
+            serviceOfClinics = serviceRepository.findAllByStatus(pageable, Status.Service.ACTIVE.name());
         } else {
             serviceOfClinics = serviceRepository.findAll();
             for (int i = 0; i < serviceOfClinics.size(); i++) {
                 if (serviceOfClinics.get(i).getClinic().getId() != csService.findById(account.getId()).getClinic().getId() &&
-                        serviceOfClinics.get(i).getStatus().equals(Status.INACTIVE.name())) {
+                        serviceOfClinics.get(i).getStatus().equals(Status.Service.INACTIVE.name())) {
                     serviceOfClinics.remove(serviceOfClinics.get(i));
                 }
             }
