@@ -21,7 +21,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public List<Patient> findAll() {
-        return patientRepository.getPatientByStatus(Status.ACTIVE.name());
+        return patientRepository.getPatientByStatus(Status.Account.ACTIVE.name());
     }
 
     @Override
@@ -35,7 +35,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void save(Patient patient) {
-        patient.setStatus(Status.ACTIVE.name());
+        patient.setStatus(Status.Account.ACTIVE.name());
         patient.setRole(roleService.getRoleByName(Role.PATIENT.name()));
         patient.setPassword(passwordEncoder.encode(patient.getPassword()));
         patientRepository.save(patient);
@@ -46,7 +46,7 @@ public class PatientServiceImpl implements PatientService {
         Optional<Patient> patientData = patientRepository.findById(id);
         if (patientData.isPresent()) {
             Patient patient = patientData.get();
-            patient.setStatus(Status.INACTIVE.name());
+            patient.setStatus(Status.Account.INACTIVE.name());
             patientRepository.save(patient);
         } else {
             throw new NotFoundException("Patient id " + id + " not found!");

@@ -68,7 +68,7 @@ public class BookingController {
 
         //set patient to booking
         bookingTmp.setPatient(patient);
-        bookingTmp.setStatus(Status.PENDING.name());
+        bookingTmp.setStatus(Status.Booking.PENDING.name());
         PatientBookingResponse patientBookingResponse = null;
 
         //map booking to booking response

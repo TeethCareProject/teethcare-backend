@@ -103,7 +103,7 @@ public class CustomerServiceController {
         }
 
         customerService.setId(theID);
-        customerService.setStatus(Status.INACTIVE.name());
+        customerService.setStatus(Status.Account.INACTIVE.name());
 
         CSService.save(customerService);
 

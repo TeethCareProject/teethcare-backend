@@ -78,7 +78,7 @@ public class ClinicController {
         theID = Integer.parseInt(id);
         Clinic clinic = clinicService.findById(theID);
         if (clinic != null) {
-            clinic.setStatus(Status.INACTIVE.name());
+            clinic.setStatus(Status.Clinic.INACTIVE.name());
             clinicService.save(clinic);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
@@ -101,7 +101,7 @@ public class ClinicController {
 
     @PatchMapping("/{id}/{status}")
     public ResponseEntity<MessageResponse> updateStatus(@PathVariable String status, @PathVariable String id) {
-        for (Status eStatus : Status.values()) {
+        for (Status.Clinic eStatus : Status.Clinic.values()) {
             if (eStatus.name().equals(status.toUpperCase())) {
                 int theID = ConvertUtils.covertID(id);
                 Clinic clinic = clinicService.findById(theID);
@@ -120,8 +120,8 @@ public class ClinicController {
 
         List<Account> staffList = new ArrayList<>();
 
-        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
-        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
+        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);

@@ -43,7 +43,7 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public void save(Dentist theDentist) {
-        theDentist.setStatus(Status.ACTIVE.name());
+        theDentist.setStatus(Status.Account.ACTIVE.name());
         theDentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
         dentistRepository.save(theDentist);
     }
@@ -86,7 +86,7 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public Dentist findActiveDentist(int id) {
-        return dentistRepository.findDentistByIdAndStatus(id, Status.ACTIVE.name());
+        return dentistRepository.findDentistByIdAndStatus(id, Status.Account.ACTIVE.name());
     }
 
 }

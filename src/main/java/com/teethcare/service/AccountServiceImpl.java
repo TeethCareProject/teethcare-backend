@@ -93,7 +93,7 @@ public class AccountServiceImpl implements AccountService {
     public void delete(int id) {
         Optional<Account> accountData = accountRepository.findById(id);
         Account account = accountData.get();
-        account.setStatus(Status.INACTIVE.name());
+        account.setStatus(Status.Account.INACTIVE.name());
         accountRepository.save(account);
     }
 
@@ -110,7 +110,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getActiveAccountByUsername(String username) {
-        return accountRepository.findAccountByUsernameAndStatus(username, Status.ACTIVE.name());
+        return accountRepository.findAccountByUsernameAndStatus(username, Status.Account.ACTIVE.name());
     }
 
     @Override

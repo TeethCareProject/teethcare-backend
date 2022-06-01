@@ -35,7 +35,7 @@ public class ServiceOfClinicController {
 
         int theID = ConvertUtils.covertID(id);
 
-        List<ServiceOfClinic> serviceList = serviceOfClinicService.findByClinicIdAndStatus(theID, Status.ACTIVE.name(), pageable);
+        List<ServiceOfClinic> serviceList = serviceOfClinicService.findByClinicIdAndStatus(theID, Status.Clinic.ACTIVE.name(), pageable);
 
         List<ServiceOfClinicResponse> serviceResponseList =
                 serviceOfClinicMapper.mapServiceListToServiceResponseList(serviceList);

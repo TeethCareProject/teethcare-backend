@@ -129,7 +129,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public void save(Clinic clinic) {
-        clinic.setStatus(Status.PENDING.name());
+        clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
     }
 
@@ -138,7 +138,7 @@ public class ClinicServiceImpl implements ClinicService {
     public void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location) {
         clinic.setManager(manager);
         clinic.setLocation(location);
-        clinic.setStatus(Status.PENDING.name());
+        clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
     }
 
@@ -147,7 +147,7 @@ public class ClinicServiceImpl implements ClinicService {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
         if (clinicData.isPresent()) {
             Clinic clinic = clinicData.get();
-            clinic.setStatus(Status.INACTIVE.name());
+            clinic.setStatus(Status.Clinic.INACTIVE.name());
             clinicRepository.save(clinic);
         } else {
             throw new NotFoundException("ID not found");
