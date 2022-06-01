@@ -30,6 +30,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public void save(Feedback theEntity) {
+        theEntity.setStatus(Status.Feedback.ACTIVE.name());
         feedbackRepository.save(theEntity);
     }
 
@@ -38,6 +39,11 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback feedback = findById(theId);
         feedback.setStatus(Status.Feedback.INACTIVE.name());
         feedbackRepository.save(feedback);
+    }
+
+    @Override
+    public void update(Feedback theEntity) {
+
     }
 
     @Override

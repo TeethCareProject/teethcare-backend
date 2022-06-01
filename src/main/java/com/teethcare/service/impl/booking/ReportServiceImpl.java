@@ -51,6 +51,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public void update(Report theEntity) {
+
+    }
+
+    @Override
     public List<Report> findAll(Pageable pageable) {
         return reportRepository.findAllByStatusIsNotNull(pageable);
     }

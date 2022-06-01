@@ -89,7 +89,6 @@ public class FeedbackController {
         Feedback feedback = feedbackMapper.mapFeedbackRequestToFeedback(feedbackRequest);
         Booking booking = bookingService.findById(feedbackRequest.getBookingID());
         feedback.setBooking(booking);
-        feedback.setStatus(Status.Feedback.ACTIVE.name());
         feedbackService.save(feedback);
         FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
         return new ResponseEntity<>(feedbackResponse, HttpStatus.OK);

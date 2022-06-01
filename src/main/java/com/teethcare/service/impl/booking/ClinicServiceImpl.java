@@ -9,6 +9,7 @@ import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.service.ClinicService;
+import com.teethcare.service.ServiceOfClinicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -113,13 +114,8 @@ public class ClinicServiceImpl implements ClinicService {
         return new PageImpl<>(list);
     }
 
-    @Override
-    public List<Clinic> findAllByStatus(String status, Pageable pageable) {
-        return clinicRepository.findAllByStatus(status, pageable);
-    }
-
     public List<Clinic> findAllActive(Pageable pageable) {
-        return clinicRepository.getClinicByStatus(Status.Clinic.ACTIVE.name(), pageable);
+        return clinicRepository.findAllByStatus(Status.Clinic.ACTIVE.name(), pageable);
     }
 
     public Clinic getClinicByManager(Manager manager) {
@@ -133,11 +129,6 @@ public class ClinicServiceImpl implements ClinicService {
             throw new NotFoundException("Clinic id " + theId + " not found!");
         }
         return result.get();
-    }
-
-    @Override
-    public List<Clinic> searchAllActiveByName(String search, Pageable pageable) {
-        return clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(search, Status.Clinic.ACTIVE.name(), pageable);
     }
 
     @Override

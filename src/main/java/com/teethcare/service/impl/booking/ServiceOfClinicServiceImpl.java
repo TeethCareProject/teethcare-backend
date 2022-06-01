@@ -121,4 +121,9 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     public void delete(int theId) {
 
     }
+
+    @Override
+    public void update(ServiceOfClinic theEntity) {
+
+    }
 }

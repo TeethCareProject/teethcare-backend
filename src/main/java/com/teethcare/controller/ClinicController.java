@@ -49,6 +49,9 @@ public class ClinicController {
     private final CSService csService;
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final ServiceOfClinicService serviceOfClinicService;
+    private final ServiceOfClinicMapper serviceOfClinicMapper;
 
 
     @GetMapping
