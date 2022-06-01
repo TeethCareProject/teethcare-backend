@@ -23,7 +23,7 @@ public class DentistServiceImpl implements DentistService {
     public Dentist findById(int theId) {
         Optional<Dentist> result = dentistRepository.findById(theId);
 
-        Dentist theDentist = null;
+        Dentist theDentist;
 
         if (result.isPresent()) {
             theDentist = result.get();
@@ -71,16 +71,12 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public List<Dentist> findByClinicIdAndStatus(int theId, String status) {
-        List<Dentist> dentistList = dentistRepository.findByClinicIdAndStatus(theId, status);
-        return dentistList;
+        return dentistRepository.findByClinicIdAndStatus(theId, status);
     }
 
     @Override
     public Page<Dentist> findAllWithPaging(Pageable pageable) {
         List<Dentist> dentistList = dentistRepository.findAllByStatusIsNotNull(pageable);
-        if (dentistList.size() == 0) {
-            throw new NotFoundException("Empty List");
-        }
         return new PageImpl<>(dentistList);
     }
 

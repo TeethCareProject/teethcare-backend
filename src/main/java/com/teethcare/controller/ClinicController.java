@@ -71,7 +71,7 @@ public class ClinicController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        int theID = 0;
+        int theID;
         if (!NumberUtils.isCreatable(id)) {
             throw new NotFoundException("Id " + id + " invalid");
         }
@@ -99,20 +99,7 @@ public class ClinicController {
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/{status}")
-    public ResponseEntity<MessageResponse> updateStatus(@PathVariable String status, @PathVariable String id) {
-        for (Status.Clinic eStatus : Status.Clinic.values()) {
-            if (eStatus.name().equals(status.toUpperCase())) {
-                int theID = ConvertUtils.covertID(id);
-                Clinic clinic = clinicService.findById(theID);
-                clinic.setStatus(status.toUpperCase());
-                clinicService.update(clinic);
-                System.out.printf(clinicService.findById(theID).getStatus());
-                return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
-            }
-        }
-        return new ResponseEntity<>(new MessageResponse(Message.INVALID_STATUS.name()), HttpStatus.BAD_REQUEST);
-    }
+
 
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable String id) {

@@ -72,9 +72,6 @@ public class CSServiceImpl implements CSService {
     @Override
     public Page<CustomerService> findAllWithPaging(Pageable pageable) {
         List<CustomerService> customerServices = customerServiceRepository.findAllByStatusIsNotNull(pageable);
-        if (customerServices.size() == 0) {
-            throw new NotFoundException("Empty List");
-        }
         return new PageImpl<>(customerServices);
     }
 
