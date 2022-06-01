@@ -11,7 +11,8 @@ import org.mapstruct.*;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = ServiceOfClinicMapper.class)
+@Mapper(componentModel = "spring", uses = {ServiceOfClinicMapper.class, AccountMapper.class,
+                                            UserInforMapper.class, ClinicMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)
@@ -35,19 +36,14 @@ public interface BookingMapper {
         }
 
     }
-    @Named(value = "mapPatientToPatientResponse")
-    PatientResponse mapPatientToPatientResponse(Patient patient);
 
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",
             qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
-    @Mapping(source = "dentist.id", target = "dentistId")
-    @Mapping(source = "dentist.firstName", target = "dentistName")
-    @Mapping(source = "customerService.id", target = "customerServiceId")
-    @Mapping(source = "customerService.firstName", target = "customerServiceName")
-    @Mapping(source = "clinic.id", target = "clinicId")
-    @Mapping(source = "clinic.name", target = "clinicName")
-    @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponse")
+    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
+    @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
     BookingResponse mapBookingToBookingResponse(Booking booking);
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponse")
@@ -55,6 +51,8 @@ public interface BookingMapper {
 
     @Named(value = "mapBookingToBookingResponseWithoutService")
     @Mapping(source = "services", target = "services", ignore = true)
+    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     BookingResponse mapBookingToBookingResponseWithoutService(Booking booking);
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponseWithoutService")

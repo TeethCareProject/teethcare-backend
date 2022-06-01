@@ -88,5 +88,4 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonManagedReference
     private List<ServiceOfClinic> services;
-
 }

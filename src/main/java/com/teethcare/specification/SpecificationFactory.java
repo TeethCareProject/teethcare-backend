@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.regex.Matcher;
 
 public class SpecificationFactory {
-    public Specification<Booking> getSpecification(String searchParams) {
+    public Specification<Booking> getBookingSpecification(String searchParams) {
         BookingBuilder builder = new BookingBuilder();
         Matcher matcher = PatternMatcher.get(searchParams);
         while (matcher.find()) {

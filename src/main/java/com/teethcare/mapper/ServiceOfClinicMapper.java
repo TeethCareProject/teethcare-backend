@@ -21,7 +21,6 @@ public interface ServiceOfClinicMapper {
     List<ServiceOfClinicResponse> mapServiceListToServiceResponseListWithoutFields(List<ServiceOfClinic> serviceOfClinicList);
 
     @Named("mapServiceToServiceResponseWithoutFields")
-    @Mapping(target = "price", ignore = true)
     @Mapping(target = "description", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "status", ignore = true)

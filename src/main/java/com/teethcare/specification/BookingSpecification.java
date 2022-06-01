@@ -22,11 +22,13 @@ public class BookingSpecification implements Specification<Booking> {
         Join<Booking, CustomerService> customerServiceJoin = root.join("customerService");
         switch(criteria.getKey()){
             case "bookingId":
-                System.out.println(criteria.getValue());
-                System.out.println("Hello");
                 return builder.equal((root.get("id")), criteria.getValue());
             case "patientName":
-                return builder.like((patientJoin. get("firstName")), "%" + criteria.getValue().toString() + "%");
+                Predicate firstNamePredicate =
+                        builder.like((patientJoin. get("firstName")), "%" + criteria.getValue().toString() + "%");
+                Predicate lastNamePredicate =
+                        builder.like((patientJoin. get("lastName")), "%" + criteria.getValue().toString() + "%");
+                return builder.or(firstNamePredicate, lastNamePredicate);
             case "patientPhone":
                 return builder.equal(patientJoin. get("phone"), criteria.getValue().toString());
             case "dentistId":
@@ -35,23 +37,6 @@ public class BookingSpecification implements Specification<Booking> {
                 return builder.equal((customerServiceJoin.get("id")), criteria.getValue());
             default:
                 throw new BadRequestException();
-
-//        if (criteria.getOperation().equalsIgnoreCase(">")) {
-//            return builder.greaterThanOrEqualTo(
-//                    root.get(criteria.getKey()), criteria.getValue().toString());
-//        }
-//        else if (criteria.getOperation().equalsIgnoreCase("<")) {
-//            return builder.lessThanOrEqualTo(
-//                    root.get(criteria.getKey()), criteria.getValue().toString());
-//        }
-//        else if (criteria.getOperation().equalsIgnoreCase(":")) {
-//            if (root.get(criteria.getKey()).getJavaType() == String.class) {
-//                return builder.like(
-//                        root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
-//            } else {
-//                return builder.equal(root.get(criteria.getKey()), criteria.getValue());
-//            }
         }
-//        return null;
     }
 }

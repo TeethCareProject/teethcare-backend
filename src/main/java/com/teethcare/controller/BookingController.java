@@ -15,6 +15,7 @@ import com.teethcare.service.BookingService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.specification.BookingBuilder;
 import com.teethcare.specification.SpecificationFactory;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
@@ -97,16 +98,35 @@ public class BookingController {
                                                         @RequestParam(value = "search", required = false) String search,
                                                         @RequestParam(value = "clinicName", required = false) String clinicName,
                                                         @RequestParam(value = "bookingId", required = false, defaultValue = "-1") int bookingId,
+                                                        @RequestParam(value = "dentistId", required = false, defaultValue = "-1") int dentistId,
+                                                        @RequestParam(value = "customerServiceId", required = false, defaultValue = "-1") int customerServiceId,
+                                                        @RequestParam(value = "patientPhone", required = false) String patientPhone,
+                                                        @RequestParam(value = "patientName", required = false) String patientName,
                                                         @RequestHeader(AUTHORIZATION) String header) {
         String token = header.substring("Bearer ".length());
         Account account = jwtTokenUtil.getAccountFromJwt(token);
 
-        System.out.println("In booking controller");
-        SpecificationFactory bookingSpecificationFactory = new SpecificationFactory();
-        Specification<Booking> specification = bookingSpecificationFactory.getSpecification(search);
+        BookingBuilder bookingBuilder = new BookingBuilder();
+        if (bookingId != -1) {
+            bookingBuilder.with("bookingId", ":",bookingId);
+        }
+        if (patientName != null && !patientName.isBlank()) {
+            bookingBuilder.with("patientName", ":", patientName);
+        }
+        if (patientPhone != null && !patientPhone.isBlank()) {
+            bookingBuilder.with("patientPhone", ":", patientPhone);
+        }
+        if (customerServiceId != -1) {
+            bookingBuilder.with("customerServiceId", ":",customerServiceId);
+        }
+        if (dentistId != -1) {
+            bookingBuilder.with("dentistId", ":",dentistId);
+        }
+        Specification<Booking> bookingSpecification = bookingBuilder.build();
+
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
 
-        Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), clinicName, bookingId, specification, pageable);
+        Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), clinicName, bookingId, bookingSpecification, pageable);
         System.out.println("In booking controller, after find");
         Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
 

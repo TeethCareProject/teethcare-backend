@@ -121,13 +121,13 @@ public class BookingServiceImpl implements BookingService {
                                 bookingRepository.findBookingByPatientIdAndClinicNameLike(
                                         accountId, "%" + clinicName + "%", pageable);
                     } else {
-//                        if (clinicName == null || clinicName.isBlank()) {
-//                            bookingPage = bookingRepository.findBookingByIdAndPatientId(bookingId, accountId, pageable);
-//                        } else {
-//                            bookingPage = bookingRepository.findBookingByIdAndPatientIdAndDentistClinicNameLike(
-//                                    bookingId, accountId, "%" + clinicName + "%", pageable);
-//                        }
-                        bookingPage = bookingRepository.findBookingByIdAndPatientId(bookingId, accountId, pageable);
+                        if (clinicName == null || clinicName.isBlank()) {
+                            bookingPage = bookingRepository.findBookingByIdAndPatientId(bookingId, accountId, pageable);
+                        } else {
+                            bookingPage = bookingRepository.findBookingByIdAndPatientIdAndDentistClinicNameLike(
+                                    bookingId, accountId, "%" + clinicName + "%", pageable);
+                        }
+//                        bookingPage = bookingRepository.findBookingByIdAndPatientId(bookingId, accountId, pageable);
                     }
 
                 }

@@ -4,6 +4,7 @@ import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.*;
+import jdk.jfr.Name;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -20,11 +21,19 @@ public interface AccountMapper {
 
     //    Patient
     @InheritConfiguration(name = "mapAccountToAccountResponse")
-    @Mapping(source = "role.id", target = "roleId")
-    @Mapping(source = "role.name", target = "roleName")
+    @Named(value = "mapPatientToPatientResponse")
     PatientResponse mapPatientToPatientResponse(Patient patient);
 
+    @Named(value = "mapPatientToPatientResponseForBooking")
     @InheritConfiguration(name = "mapAccountToAccountResponse")
+    @Mapping(source = "status", target = "status", ignore = true)
+    @Mapping(source = "username", target = "username", ignore = true)
+    @Mapping(source = "avatarImage", target = "avatarImage", ignore = true)
+    @Mapping(source = "role.id", target = "roleId", ignore = true)
+    @Mapping(source = "role.name", target = "roleName", ignore = true)
+    PatientResponse mapPatientToPatientResponseForBooking(Patient patient);
+
+    @IterableMapping(qualifiedByName = "mapPatientToPatientResponse")
     List<PatientResponse> mapPatientListToPatientResponseList(List<Patient> patients);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")

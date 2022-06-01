@@ -44,15 +44,12 @@ public class BookingResponse {
     private Long appointmentDate;
     private Long expireAppointmentDate;
     private String status;
-    private int dentistId;
-    private String dentistName;
+    private UserInforResponse dentist;
     private String note;
     private Long desiredCheckingTime;
-    private int customerServiceId;
-    private String customerServiceName;
+    private UserInforResponse customerService;
     private String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ServiceOfClinicResponse> services;
-    private String clinicName;
-    private int clinicId;
+    private ClinicSimpleResponse clinic;
 }
