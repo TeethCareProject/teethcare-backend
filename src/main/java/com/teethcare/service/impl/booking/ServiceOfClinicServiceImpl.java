@@ -71,26 +71,42 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
                 }
             }
         }
+        if (request.getId() != null) {
+            Predicate<ServiceOfClinic> byID = service -> service.getId().toString().contains(request.getId().toString());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byID)
+                    .collect(Collectors.toList());
+        }
         if (request.getName() != null) {
             Predicate<ServiceOfClinic> byName = (service) -> service.getName().toLowerCase().contains(request.getName().toLowerCase());
-            serviceOfClinics = serviceOfClinics.stream().filter(byName).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byName)
+                    .collect(Collectors.toList());
         }
         if (request.getClinicID() != null) {
             Predicate<ServiceOfClinic> byClinicID = (service) -> service.getClinic().getId() == request.getClinicID();
-            serviceOfClinics = serviceOfClinics.stream().filter(byClinicID).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byClinicID)
+                    .collect(Collectors.toList());
         }
         if (request.getLowerPrice() != null && request.getUpperPrice() != null) {
             Predicate<ServiceOfClinic> byRangePrice = (service) -> service.getMoney().compareTo(request.getLowerPrice()) >= 0
                     && service.getMoney().compareTo(request.getUpperPrice()) <= 0;
-            serviceOfClinics = serviceOfClinics.stream().filter(byRangePrice).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byRangePrice)
+                    .collect(Collectors.toList());
         }
         if (request.getLowerPrice() != null && request.getUpperPrice() == null) {
             Predicate<ServiceOfClinic> byLowerPrice = (service) -> service.getMoney().compareTo(request.getLowerPrice()) >= 0;
-            serviceOfClinics = serviceOfClinics.stream().filter(byLowerPrice).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byLowerPrice)
+                    .collect(Collectors.toList());
         }
         if (request.getLowerPrice() == null && request.getUpperPrice() != null) {
             Predicate<ServiceOfClinic> byUpperPrice = (service) -> service.getMoney().compareTo(request.getUpperPrice()) <= 0;
-            serviceOfClinics = serviceOfClinics.stream().filter(byUpperPrice).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byUpperPrice)
+                    .collect(Collectors.toList());
         }
         Page<ServiceOfClinic> lists = new PageImpl<>(serviceOfClinics);
         return lists;

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceFilterRequest {
+    private Integer id;
     private String name;
     private Integer clinicID;
     private BigDecimal lowerPrice;
