@@ -58,7 +58,6 @@ public class FeedbackController {
                 }
             }
         } else if (status != null) {
-            System.out.println("Hellu");
             list = feedbackService.findByStatus(pageable, status);
         } else {
             list = feedbackService.findAll(pageable);

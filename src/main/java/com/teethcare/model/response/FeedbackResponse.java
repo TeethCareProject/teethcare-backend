@@ -19,5 +19,5 @@ public class FeedbackResponse {
     private String detail;
     private int ratingScore;
     private String status;
-
+    private ClinicInfoResponse clinicInfoResponse;
 }
