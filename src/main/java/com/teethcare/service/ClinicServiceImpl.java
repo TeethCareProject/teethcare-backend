@@ -116,6 +116,7 @@ public class ClinicServiceImpl implements ClinicService {
             throw new NotFoundException("ID not found");
         }
     }
+
     @Override
     public void update(Clinic theEntity) {
         clinicRepository.save(theEntity);
