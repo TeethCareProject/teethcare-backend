@@ -4,35 +4,38 @@ import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
+import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.Dentist;
+import com.teethcare.mapper.ServiceOfClinicMapper;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
+import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.MessageResponse;
+import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
+import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,9 @@ public class ClinicController {
     private final CSService csService;
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
+    private final ServiceOfClinicService serviceOfClinicService;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final ServiceOfClinicMapper serviceOfClinicMapper;
 
 
     @GetMapping
@@ -144,6 +150,38 @@ public class ClinicController {
         }
 
         return new ResponseEntity<>(staffResponseList, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/services")
+    public ResponseEntity<Page<ServiceOfClinicResponse>> getService(ServiceFilterRequest serviceFilterRequest,
+                                                                    @RequestHeader(value = "AUTHORIZATION", required = false) String token,
+                                                                    @PathVariable("id") String id,
+                                                                    @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                    @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                    @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                    @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+
+        int theID = ConvertUtils.covertID(id);
+
+        serviceFilterRequest.setClinicID(theID);
+
+        Account account = null;
+        if (token != null) {
+            token = token.substring("Bearer ".length());
+            account = jwtTokenUtil.getAccountFromJwt(token);
+        }
+
+        Page<ServiceOfClinic> list = serviceOfClinicService.findAllWithFilter(serviceFilterRequest, pageable, account);
+
+        Page<ServiceOfClinicResponse> responses = list.map(new Function<ServiceOfClinic, ServiceOfClinicResponse>() {
+            @Override
+            public ServiceOfClinicResponse apply(ServiceOfClinic service) {
+                return serviceOfClinicMapper.mapServiceOfClinicToServiceOfClinicResponse(service);
+            }
+        });
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+
     }
 
 

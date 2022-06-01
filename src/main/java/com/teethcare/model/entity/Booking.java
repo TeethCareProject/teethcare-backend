@@ -85,4 +85,8 @@ public class Booking {
     @JsonManagedReference
     private List<ServiceOfClinic> serviceOfClinics;
 
+    @ManyToOne
+    @JoinColumn(name = "clinic_id", referencedColumnName = "id")
+    private Clinic clinic;
+
 }

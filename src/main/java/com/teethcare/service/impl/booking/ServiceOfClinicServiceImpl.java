@@ -2,7 +2,6 @@ package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
@@ -73,24 +72,34 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
         }
         if (request.getName() != null) {
             Predicate<ServiceOfClinic> byName = (service) -> service.getName().toLowerCase().contains(request.getName().toLowerCase());
-            serviceOfClinics = serviceOfClinics.stream().filter(byName).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byName)
+                    .collect(Collectors.toList());
         }
         if (request.getClinicID() != null) {
             Predicate<ServiceOfClinic> byClinicID = (service) -> service.getClinic().getId() == request.getClinicID();
-            serviceOfClinics = serviceOfClinics.stream().filter(byClinicID).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byClinicID)
+                    .collect(Collectors.toList());
         }
         if (request.getLowerPrice() != null && request.getUpperPrice() != null) {
             Predicate<ServiceOfClinic> byRangePrice = (service) -> service.getMoney().compareTo(request.getLowerPrice()) >= 0
                     && service.getMoney().compareTo(request.getUpperPrice()) <= 0;
-            serviceOfClinics = serviceOfClinics.stream().filter(byRangePrice).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byRangePrice)
+                    .collect(Collectors.toList());
         }
         if (request.getLowerPrice() != null && request.getUpperPrice() == null) {
             Predicate<ServiceOfClinic> byLowerPrice = (service) -> service.getMoney().compareTo(request.getLowerPrice()) >= 0;
-            serviceOfClinics = serviceOfClinics.stream().filter(byLowerPrice).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byLowerPrice)
+                    .collect(Collectors.toList());
         }
         if (request.getLowerPrice() == null && request.getUpperPrice() != null) {
             Predicate<ServiceOfClinic> byUpperPrice = (service) -> service.getMoney().compareTo(request.getUpperPrice()) <= 0;
-            serviceOfClinics = serviceOfClinics.stream().filter(byUpperPrice).collect(Collectors.toList());
+            serviceOfClinics = serviceOfClinics.stream()
+                    .filter(byUpperPrice)
+                    .collect(Collectors.toList());
         }
         Page<ServiceOfClinic> lists = new PageImpl<>(serviceOfClinics);
         return lists;

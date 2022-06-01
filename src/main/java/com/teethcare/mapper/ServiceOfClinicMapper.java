@@ -5,8 +5,6 @@ import com.teethcare.model.response.ServiceDetailResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import org.mapstruct.*;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface ServiceOfClinicMapper {
 
