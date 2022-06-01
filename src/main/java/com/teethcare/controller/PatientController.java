@@ -50,7 +50,6 @@ public class PatientController {
 
     }
 
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
     @PostMapping
     public ResponseEntity<PatientResponse> add(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
