@@ -107,9 +107,6 @@ public class ClinicServiceImpl implements ClinicService {
                 }
                 list = tmpList;
             }
-            if (list.size() == 0) {
-                throw new NotFoundException("Empty List");
-            }
         }
         return new PageImpl<>(list);
     }

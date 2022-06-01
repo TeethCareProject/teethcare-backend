@@ -2,11 +2,16 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
+import com.teethcare.common.Message;
+import com.teethcare.common.Status;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
+import com.teethcare.model.request.AccountUpdateStatusRequest;
 import com.teethcare.model.response.AccountResponse;
+import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
@@ -54,6 +59,24 @@ public class AccountController {
         accountService.delete(theID);
         return new ResponseEntity<>("Delete successfully.", HttpStatus.OK);
 
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MessageResponse> updateStatus(@RequestBody AccountUpdateStatusRequest accountUpdateStatusRequest, @PathVariable int id) {
+        String status = accountUpdateStatusRequest.getStatus();
+        if (status != null
+                && (status.toUpperCase().trim().equals(Status.Account.INACTIVE.name())
+                || status.toUpperCase().trim().equals(Status.Account.ACTIVE.name()))) {
+            Account account = accountService.findById(id);
+            if (account != null) {
+                account.setStatus(status.toUpperCase().trim());
+                accountService.update(account);
+                return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+            } else {
+                throw new NotFoundException("Account not found!");
+            }
+        }
+        throw new BadRequestException(Message.INVALID_STATUS.name());
     }
 
 }

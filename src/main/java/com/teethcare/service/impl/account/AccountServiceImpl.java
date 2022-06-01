@@ -71,12 +71,8 @@ public class AccountServiceImpl implements AccountService {
                     .contains(filter.getId().trim().toUpperCase()));
             accounts = accounts.stream().filter(byId).collect(Collectors.toList());
         }
-        if (accounts.size() == 0) {
-            throw new NotFoundException("Empty List");
-        }
         return new PageImpl<>(accounts);
     }
-
 
     @Override
     public Account findById(int id) {
