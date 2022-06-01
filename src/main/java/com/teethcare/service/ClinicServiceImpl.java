@@ -65,14 +65,19 @@ public class ClinicServiceImpl implements ClinicService {
                 Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == filter.getWardId();
                 list = list.stream().filter(byWardId).collect(Collectors.toList());
             }
+            if (filter.getId() != null) {
+                Predicate<Clinic> byClinicId = (clinic) -> clinic.getId().toString().toUpperCase()
+                        .contains(filter.getId().trim().toUpperCase());
+                list = list.stream().filter(byClinicId).collect(Collectors.toList());
+            }
             if (filter.getServiceId() != null) {
                 List<Clinic> tmpList = new ArrayList<>();
                 for (Clinic clinic : list) {
                     boolean check = false;
                     List<ServiceOfClinic> serviceOfClinicList = clinic.getServiceOfClinic();
                     for (ServiceOfClinic service : serviceOfClinicList) {
-                        if (service.getId().toString().toUpperCase().contains(filter.getServiceId()
-                                .replaceAll("\\s\\s+", " ").trim().toUpperCase())) {
+                        if (service.getId().toString().toUpperCase()
+                                .contains(filter.getServiceId().trim().toUpperCase())) {
                             check = true;
                             break;
                         }

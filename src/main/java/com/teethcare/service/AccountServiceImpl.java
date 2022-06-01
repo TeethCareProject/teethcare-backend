@@ -43,17 +43,17 @@ public class AccountServiceImpl implements AccountService {
         }
         if (filter.getUsername() != null) {
             Predicate<Account> byUsername = (account) -> (account.getUsername().toUpperCase()
-                    .contains(filter.getUsername().replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+                    .contains(filter.getUsername().trim().toUpperCase()));
             accounts = accounts.stream().filter(byUsername).collect(Collectors.toList());
         }
         if (filter.getStatus() != null) {
             Predicate<Account> byStatus = (account) -> (account.getStatus()
-                    .equalsIgnoreCase(filter.getStatus().replaceAll("\\s\\s+", " ").trim()));
+                    .equalsIgnoreCase(filter.getStatus().trim()));
             accounts = accounts.stream().filter(byStatus).collect(Collectors.toList());
         }
         if (filter.getEmail() != null) {
             Predicate<Account> byEmail = (account) -> (account.getEmail() != null && account.getEmail().toUpperCase()
-                    .contains(filter.getEmail().replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+                    .contains(filter.getEmail().trim().toUpperCase()));
             accounts = accounts.stream().filter(byEmail).collect(Collectors.toList());
         }
         if (filter.getPhone() != null) {
@@ -63,12 +63,12 @@ public class AccountServiceImpl implements AccountService {
         }
         if (filter.getRole() != null) {
             Predicate<Account> byRole = (account) -> (account.getRole().getName()
-                    .equalsIgnoreCase(filter.getRole().replaceAll("\\s\\s+", " ").trim()));
+                    .equalsIgnoreCase(filter.getRole().trim()));
             accounts = accounts.stream().filter(byRole).collect(Collectors.toList());
         }
         if (filter.getId() != null) {
             Predicate<Account> byId = (account) -> (account.getId().toString().toUpperCase()
-                    .contains(filter.getId().replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+                    .contains(filter.getId().trim().toUpperCase()));
             accounts = accounts.stream().filter(byId).collect(Collectors.toList());
         }
         if (accounts.size() == 0) {

@@ -21,7 +21,7 @@ public class Clinic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @OneToOne
     @JoinColumn(name = "manager_id", referencedColumnName = "id")

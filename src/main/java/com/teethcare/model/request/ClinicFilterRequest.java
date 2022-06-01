@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ClinicFilterRequest {
+    String id;
     String name;
     Integer wardId;
     Integer districtId;
