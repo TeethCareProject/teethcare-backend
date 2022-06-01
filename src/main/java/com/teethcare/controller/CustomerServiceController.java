@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
@@ -10,26 +11,25 @@ import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.CSRegisterRequest;
-import com.teethcare.model.request.DentistRegisterRequest;
+import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.CustomerServiceResponse;
-import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.ManagerService;
 import com.teethcare.utils.ConvertUtils;
+import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.engine.jdbc.env.spi.IdentifierCaseStrategy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -45,6 +45,7 @@ public class CustomerServiceController {
     private final ManagerService managerService;
     private final ClinicService clinicService;
     private final JwtTokenUtil jwtTokenUtil;
+
     @GetMapping("/{id}")
     public ResponseEntity<CustomerServiceResponse> getById(@PathVariable String id) {
         int theID = ConvertUtils.covertID(id);
@@ -58,16 +59,21 @@ public class CustomerServiceController {
         CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
         return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
     }
+
     @GetMapping
-    public ResponseEntity<List<CustomerServiceResponse>> getAll() {
-        List<CustomerService> customerServices = CSService.findAll();
-        List<CustomerServiceResponse> customerServiceResponses = accountMapper.mapCustomerServiceListToCustomerServiceResponseList(customerServices);
+    public ResponseEntity<Page<CustomerServiceResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Page<CustomerService> customerServices = CSService.findAllWithPaging(pageable);
+        Page<CustomerServiceResponse> customerServiceResponses = customerServices.map(accountMapper::mapCustomerServiceToCustomerServiceResponse);
         return new ResponseEntity<>(customerServiceResponses, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<CustomerServiceResponse> add(@Valid @RequestBody CSRegisterRequest csRegisterRequest,
-                                               HttpServletRequest request) {
+                                                       HttpServletRequest request) {
         boolean isDuplicated = accountService.isDuplicated(csRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {
@@ -87,6 +93,7 @@ public class CustomerServiceController {
             throw new BadRequestException("User existed!");
         }
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);

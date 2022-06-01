@@ -6,6 +6,9 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.repository.CustomerServiceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,7 +70,10 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public CustomerService findActiveCS(int id) {
-        return customerServiceRepository.findCustomerServiceByIdAndStatus(id, Status.ACTIVE.name());
+    public Page<CustomerService> findAllWithPaging(Pageable pageable) {
+        List<CustomerService> customerServices = customerServiceRepository.findAllByStatusIsNotNull(pageable);
+        return new PageImpl<>(customerServices);
     }
+
+
 }

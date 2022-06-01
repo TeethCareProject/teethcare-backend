@@ -6,6 +6,9 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.DentistRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,6 +73,12 @@ public class DentistServiceImpl implements DentistService {
     public List<Dentist> findByClinicIdAndStatus(int theId, String status) {
         List<Dentist> dentistList = dentistRepository.findByClinicIdAndStatus(theId, status);
         return dentistList;
+    }
+
+    @Override
+    public Page<Dentist> findAllWithPaging(Pageable pageable) {
+        List<Dentist> dentistList = dentistRepository.findAllByStatusIsNotNull(pageable);
+        return new PageImpl<>(dentistList);
     }
 
     @Override
