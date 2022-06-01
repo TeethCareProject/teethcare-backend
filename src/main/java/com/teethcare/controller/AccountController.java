@@ -7,7 +7,6 @@ import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.response.AccountResponse;
-import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

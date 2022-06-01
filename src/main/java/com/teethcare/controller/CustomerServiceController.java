@@ -12,7 +12,6 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.CSRegisterRequest;
-import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.AccountService;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
