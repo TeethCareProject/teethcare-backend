@@ -32,6 +32,9 @@ public class PatientController {
     public ResponseEntity<List<PatientResponse>> getAll() {
         List<Patient> patients = patientService.findAll();
         List<PatientResponse> patientResponses = accountMapper.mapPatientListToPatientResponseList(patients);
+        if (patientResponses.size() == 0) {
+            throw new NotFoundException("Empty List");
+        }
         return new ResponseEntity<>(patientResponses, HttpStatus.OK);
     }
 

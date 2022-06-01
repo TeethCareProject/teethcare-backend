@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.repository.AccountRepository;
@@ -64,6 +65,14 @@ public class AccountServiceImpl implements AccountService {
             Predicate<Account> byRole = (account) -> (account.getRole().getName()
                     .equalsIgnoreCase(filter.getRole().replaceAll("\\s\\s+", " ").trim()));
             accounts = accounts.stream().filter(byRole).collect(Collectors.toList());
+        }
+        if (filter.getId() != null) {
+            Predicate<Account> byId = (account) -> (account.getId().toString().toUpperCase()
+                    .contains(filter.getId().replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+            accounts = accounts.stream().filter(byId).collect(Collectors.toList());
+        }
+        if (accounts.size() == 0) {
+            throw new NotFoundException("Empty List");
         }
         return new PageImpl<>(accounts);
     }

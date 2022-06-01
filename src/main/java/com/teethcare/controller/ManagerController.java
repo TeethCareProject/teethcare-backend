@@ -47,6 +47,9 @@ public class ManagerController {
                 managerResponses.add(accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse));
             }
         }
+        if (managerResponses.size() == 0) {
+            throw new NotFoundException("Empty List");
+        }
         return new ResponseEntity<>(managerResponses, HttpStatus.OK);
     }
 

@@ -78,6 +78,9 @@ public class DentistServiceImpl implements DentistService {
     @Override
     public Page<Dentist> findAllWithPaging(Pageable pageable) {
         List<Dentist> dentistList = dentistRepository.findAllByStatusIsNotNull(pageable);
+        if (dentistList.size() == 0) {
+            throw new NotFoundException("Empty List");
+        }
         return new PageImpl<>(dentistList);
     }
 

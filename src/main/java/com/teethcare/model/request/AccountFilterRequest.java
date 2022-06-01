@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AccountFilterRequest {
+    String id;
     String fullName;
     String username;
     String role;

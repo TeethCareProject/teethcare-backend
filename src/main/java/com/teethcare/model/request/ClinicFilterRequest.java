@@ -14,6 +14,7 @@ public class ClinicFilterRequest {
     Integer wardId;
     Integer districtId;
     Integer provinceId;
-    List<Integer> serviceList;
+    String serviceId;
+    String serviceName;
     String status;
 }
