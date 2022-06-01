@@ -54,4 +54,9 @@ public class PatientServiceImpl implements PatientService {
             throw new NotFoundException("Patient id " + id + " not found!");
         }
     }
+
+    @Override
+    public void update(Patient theEntity) {
+
+    }
 }

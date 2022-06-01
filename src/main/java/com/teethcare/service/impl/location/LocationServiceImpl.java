@@ -32,4 +32,8 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void delete(int id) {
     }
+
+    @Override
+    public void update(Location theEntity) {
+    }
 }

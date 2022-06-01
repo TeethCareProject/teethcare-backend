@@ -1,7 +1,6 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
@@ -17,7 +16,6 @@ import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,6 +46,9 @@ public class ManagerController {
                 ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
                 managerResponses.add(accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse));
             }
+        }
+        if (managerResponses.size() == 0) {
+            throw new NotFoundException("Empty List");
         }
         return new ResponseEntity<>(managerResponses, HttpStatus.OK);
     }

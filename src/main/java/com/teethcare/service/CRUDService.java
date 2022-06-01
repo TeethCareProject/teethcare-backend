@@ -10,4 +10,5 @@ public interface CRUDService<T> {
     void save(T theEntity);
 
     void delete(int theId);
+    void update(T theEntity);
 }

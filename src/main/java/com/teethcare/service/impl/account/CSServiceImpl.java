@@ -1,11 +1,15 @@
 package com.teethcare.service.impl.account;
 
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.repository.CustomerServiceRepository;
 import com.teethcare.service.CSService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +20,7 @@ import java.util.Optional;
 public class CSServiceImpl implements CSService {
 
     private final CustomerServiceRepository customerServiceRepository;
+    private final RoleService roleService;
 
     @Override
     public List<CustomerService> findAll() {
@@ -33,12 +38,20 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public void save(CustomerService theCustomerService) {
+
+        theCustomerService.setStatus(Status.Account.ACTIVE.name());
+        theCustomerService.setRole(roleService.getRoleByName(Role.CUSTOMER_SERVICE.name()));
         customerServiceRepository.save(theCustomerService);
     }
 
     @Override
     public void delete(int theId) {
         customerServiceRepository.deleteById(theId);
+    }
+
+    @Override
+    public void update(CustomerService theEntity) {
+        customerServiceRepository.save(theEntity);
     }
 
     @Override
@@ -58,7 +71,13 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public CustomerService findActiveCS(int id) {
-        return customerServiceRepository.findCustomerServiceByIdAndStatus(id, Status.Account.ACTIVE.name());
+    public Page<CustomerService> findAllWithPaging(Pageable pageable) {
+        List<CustomerService> customerServices = customerServiceRepository.findAllByStatusIsNotNull(pageable);
+        if (customerServices.size() == 0) {
+            throw new NotFoundException("Empty List");
+        }
+        return new PageImpl<>(customerServices);
     }
+
+
 }

@@ -1,11 +1,15 @@
 package com.teethcare.service.impl.account;
 
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.repository.DentistRepository;
 import com.teethcare.service.DentistService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DentistServiceImpl implements DentistService {
     private final DentistRepository dentistRepository;
-
+    private final RoleService roleService;
     @Override
     public Dentist findById(int theId) {
         Optional<Dentist> result = dentistRepository.findById(theId);
@@ -40,12 +44,19 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public void save(Dentist theDentist) {
+        theDentist.setStatus(Status.Account.ACTIVE.name());
+        theDentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
         dentistRepository.save(theDentist);
     }
 
     @Override
     public void delete(int theId) {
 
+    }
+
+    @Override
+    public void update(Dentist theEntity) {
+        dentistRepository.save(theEntity);
     }
 
     @Override
@@ -63,6 +74,15 @@ public class DentistServiceImpl implements DentistService {
     public List<Dentist> findByClinicIdAndStatus(int theId, String status) {
         List<Dentist> dentistList = dentistRepository.findByClinicIdAndStatus(theId, status);
         return dentistList;
+    }
+
+    @Override
+    public Page<Dentist> findAllWithPaging(Pageable pageable) {
+        List<Dentist> dentistList = dentistRepository.findAllByStatusIsNotNull(pageable);
+        if (dentistList.size() == 0) {
+            throw new NotFoundException("Empty List");
+        }
+        return new PageImpl<>(dentistList);
     }
 
     @Override

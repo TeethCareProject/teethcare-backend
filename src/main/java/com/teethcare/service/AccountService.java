@@ -1,6 +1,8 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.Account;
+import com.teethcare.model.request.AccountFilterRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -18,4 +20,7 @@ public interface AccountService extends CRUDService<Account> {
     List<Account> findAllAccounts(Pageable pageable);
 
     List<Account> searchAccountsByFullName(String search, Pageable pageable);
+
+    Page<Account> findAllByFilter(AccountFilterRequest filter, Pageable pageable);
+
 }

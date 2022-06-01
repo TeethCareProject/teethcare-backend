@@ -5,20 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingRequest {
+@Getter
+@Setter
+public class DentistRegisterRequest extends PatientRegisterRequest {
 
-    @NotNull
-    private int serviceId;
+    private String specialization;
 
     private String description;
-
-    @NotNull
-    private long desiredCheckingTime;
 
 }

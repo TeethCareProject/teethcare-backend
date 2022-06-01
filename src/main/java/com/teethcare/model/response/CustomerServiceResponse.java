@@ -6,6 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomerServiceResponse extends AccountResponse {
-    private String clinicId;
-    private String clinicName;
+    private ClinicInfoResponse clinic;
 }

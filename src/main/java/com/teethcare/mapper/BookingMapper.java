@@ -3,7 +3,10 @@ package com.teethcare.mapper;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.PatientBookingResponse;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface BookingMapper {

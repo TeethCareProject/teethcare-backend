@@ -49,44 +49,17 @@ public class ClinicController {
     private final CSService csService;
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
-    private final ServiceOfClinicService serviceOfClinicService;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final ServiceOfClinicMapper serviceOfClinicMapper;
 
 
     @GetMapping
-    public ResponseEntity<List<ClinicResponse>> getAll(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
-                                                       @RequestParam(name = "status", required = false) String status,
-                                                       @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                       @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                       @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                       @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<Page<ClinicResponse>> getAllWithFilter(ClinicFilterRequest clinicFilterRequest,
+                                                                 @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                 @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                 @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        List<Clinic> list;
-        if (status != null) {
-            list = clinicService.findAllByStatus(status, pageable);
-        } else {
-            list = clinicService.findAll(pageable);
-        }
-        if (clinicFilterRequest.isPresent()) {
-            ClinicFilterRequest filter = clinicFilterRequest.get();
-            if (filter.getName() != null) {
-                list = clinicService.searchAllActiveByName(filter.getName(), pageable);
-            }
-            if (filter.getProvinceId() != null) {
-                Predicate<Clinic> byProvinceId = (clinic) -> clinic.getLocation().getWard().getDistrict().getProvince().getId() == filter.getProvinceId();
-                list = list.stream().filter(byProvinceId).collect(Collectors.toList());
-            }
-            if (filter.getDistrictId() != null) {
-                Predicate<Clinic> byDistrictId = (clinic) -> clinic.getLocation().getWard().getDistrict().getId() == filter.getDistrictId();
-                list = list.stream().filter(byDistrictId).collect(Collectors.toList());
-            }
-            if (filter.getWardId() != null) {
-                Predicate<Clinic> byWardId = (clinic) -> clinic.getLocation().getWard().getId() == filter.getWardId();
-                list = list.stream().filter(byWardId).collect(Collectors.toList());
-            }
-        }
-        List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
+        Page<Clinic> list = clinicService.findAllWithFilter(clinicFilterRequest, pageable);
+        Page<ClinicResponse> clinicResponses = list.map(clinicMapper::mapClinicToClinicResponse);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }
 
@@ -112,6 +85,7 @@ public class ClinicController {
         Clinic clinic = clinicService.findById(theID);
         if (clinic != null) {
             clinic.setStatus(Status.Clinic.INACTIVE.name());
+            clinicService.save(clinic);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             throw new NotFoundException("Clinic id " + id + " not found");
@@ -127,8 +101,23 @@ public class ClinicController {
 
         clinicMapper.mapClinicRequestToClinic(clinicRequest);
 
-        clinicService.save(clinic);
+        clinicService.update(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/{status}")
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable String status, @PathVariable String id) {
+        for (Status.Clinic eStatus : Status.Clinic.values()) {
+            if (eStatus.name().equals(status.toUpperCase())) {
+                int theID = ConvertUtils.covertID(id);
+                Clinic clinic = clinicService.findById(theID);
+                clinic.setStatus(status.toUpperCase());
+                clinicService.update(clinic);
+                System.out.printf(clinicService.findById(theID).getStatus());
+                return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(new MessageResponse(Message.INVALID_STATUS.name()), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/{id}/staffs")
@@ -137,8 +126,8 @@ public class ClinicController {
 
         List<Account> staffList = new ArrayList<>();
 
-        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.Clinic.ACTIVE.name());
-        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.Clinic.ACTIVE.name());
+        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);
