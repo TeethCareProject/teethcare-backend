@@ -70,29 +70,19 @@ public class ClinicController {
     public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Clinic clinic = clinicService.findById(theID);
-        if (clinic != null) {
-            ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
-            return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
-        } else {
-            throw new NotFoundException("Clinic id " + id + " not found");
-        }
+        ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        int theID;
-        if (!NumberUtils.isCreatable(id)) {
-            throw new NotFoundException("Id " + id + " invalid");
-        }
-        theID = Integer.parseInt(id);
+        int theID = ConvertUtils.covertID(id);
         Clinic clinic = clinicService.findById(theID);
-        if (clinic != null) {
-            clinic.setStatus(Status.Clinic.INACTIVE.name());
-            clinicService.save(clinic);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            throw new NotFoundException("Clinic id " + id + " not found");
-        }
+        clinic.setStatus(Status.Clinic.INACTIVE.name());
+        clinicService.save(clinic);
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
     @PutMapping("/{id}")
