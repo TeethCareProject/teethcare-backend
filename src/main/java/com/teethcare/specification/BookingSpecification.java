@@ -1,6 +1,7 @@
 package com.teethcare.specification;
 
 
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.model.entity.*;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -32,7 +33,8 @@ public class BookingSpecification implements Specification<Booking> {
                 return builder.equal((dentistJoin.get("id")), criteria.getValue());
             case "customerServiceId":
                 return builder.equal((customerServiceJoin.get("id")), criteria.getValue());
-
+            default:
+                throw new BadRequestException();
 
 //        if (criteria.getOperation().equalsIgnoreCase(">")) {
 //            return builder.greaterThanOrEqualTo(
@@ -50,6 +52,6 @@ public class BookingSpecification implements Specification<Booking> {
 //                return builder.equal(root.get(criteria.getKey()), criteria.getValue());
 //            }
         }
-        return null;
+//        return null;
     }
 }
