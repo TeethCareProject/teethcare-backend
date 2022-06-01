@@ -1,9 +1,11 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Booking;
+import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
+import com.teethcare.model.response.PatientResponse;
 import org.mapstruct.*;
 
 import java.sql.Timestamp;
@@ -25,14 +27,16 @@ public interface BookingMapper {
     @Mapping(source = "description", target = "description")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
 
-    static long mapDateTimeToLong(Timestamp dateTime) {
+    static Long mapDateTimeToLong(Timestamp dateTime) {
         if (dateTime != null) {
             return  dateTime.getTime();
         } else {
-            return 0;
+            return null;
         }
 
     }
+    @Named(value = "mapPatientToPatientResponse")
+    PatientResponse mapPatientToPatientResponse(Patient patient);
 
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",
@@ -41,6 +45,9 @@ public interface BookingMapper {
     @Mapping(source = "dentist.firstName", target = "dentistName")
     @Mapping(source = "customerService.id", target = "customerServiceId")
     @Mapping(source = "customerService.firstName", target = "customerServiceName")
+    @Mapping(source = "clinic.id", target = "clinicId")
+    @Mapping(source = "clinic.name", target = "clinicName")
+    @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponse")
     BookingResponse mapBookingToBookingResponse(Booking booking);
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponse")

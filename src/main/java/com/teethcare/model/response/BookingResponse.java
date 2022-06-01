@@ -36,20 +36,23 @@ public class BookingResponse {
 //    private List<ServiceOfClinicResponse> serviceList;
 
     private int id;
+    private PatientResponse patient;
     private BigDecimal totalPrice;
-    private long createBookingDate;
-    private long examinationTime;
+    private Long createBookingDate;
+    private Long examinationTime;
     private String text;
-    private long appointmentDate;
-    private long expireAppointmentDate;
+    private Long appointmentDate;
+    private Long expireAppointmentDate;
     private String status;
     private int dentistId;
     private String dentistName;
     private String note;
-    private long desiredCheckingTime;
+    private Long desiredCheckingTime;
     private int customerServiceId;
     private String customerServiceName;
     private String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ServiceOfClinicResponse> services;
+    private String clinicName;
+    private int clinicId;
 }

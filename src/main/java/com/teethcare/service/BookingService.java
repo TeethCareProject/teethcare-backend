@@ -14,6 +14,7 @@ public interface BookingService extends CRUDService<Booking>{
     Booking saveBooking(Booking booking);
     List<Booking> findAllByCustomerService(CustomerService customerService);
     Booking findBookingById(int id);
+//    Page<Booking> find
 
 
     List<Booking> findBookingByPatientIdAndStatus(int id, String status);
@@ -25,5 +26,5 @@ public interface BookingService extends CRUDService<Booking>{
     Page<Booking> findBookingByPatientIdAndDentistClinicNameLike(int patientId, String clinicName, Pageable pageable);
     Page<Booking> findBookingByPatientIdAndClinicNameLike(int patientId, String clinicName, Pageable pageable);
 
-    Page<Booking> findAll(String role, int id, String clinicName, Specification<Booking> bookingSpecification, Pageable pageable);
+    Page<Booking> findAll(String role, int id, String clinicName, int bookingId, Specification<Booking> bookingSpecification, Pageable pageable);
 }

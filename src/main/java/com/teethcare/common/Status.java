@@ -3,5 +3,8 @@ package com.teethcare.common;
 public enum Status {
     INACTIVE,
     ACTIVE,
-    PENDING
+    PENDING,
+    UNAVAILABLE,
+    REQUEST,
+    REJECTED
 }

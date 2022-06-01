@@ -8,6 +8,7 @@ import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.BookingService;
+import com.teethcare.service.ClinicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,8 @@ public class BookingServiceImpl implements BookingService {
     private final PatientRepository patientRepository;
     private final BookingRepository bookingRepository;
     private final ClinicRepository clinicRepository;
+
+    private final ClinicService clinicService;
 
     @Override
     public List<Booking> findAll() {
@@ -100,29 +103,38 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Page<Booking> findAll(String role, int accountId,
                                  String clinicName,
+                                 int bookingId,
                                  Specification<Booking> bookingSpecification,
                                  Pageable pageable) {
+
         Page<Booking> bookingPage = null;
         switch (role) {
             case "CUSTOMER_SERVICE":
                 bookingPage = bookingRepository.findAll(bookingSpecification, pageable);
                 break;
             case "PATIENT":
-                if (clinicName == null || clinicName.isBlank()) {
+                if ((clinicName == null || clinicName.isBlank()) && (bookingId == -1)) {
                     bookingPage = bookingRepository.findBookingByPatientId(accountId, pageable);
                 } else {
-                    bookingPage =
-                            bookingRepository.findBookingByPatientIdAndClinicNameLike
-                                    (accountId, "%" + clinicName + "%", pageable);
+                    if (bookingId == -1) {
+                        bookingPage =
+                                bookingRepository.findBookingByPatientIdAndClinicNameLike(
+                                        accountId, "%" + clinicName + "%", pageable);
+                    } else {
+//                        if (clinicName == null || clinicName.isBlank()) {
+//                            bookingPage = bookingRepository.findBookingByIdAndPatientId(bookingId, accountId, pageable);
+//                        } else {
+//                            bookingPage = bookingRepository.findBookingByIdAndPatientIdAndDentistClinicNameLike(
+//                                    bookingId, accountId, "%" + clinicName + "%", pageable);
+//                        }
+                        bookingPage = bookingRepository.findBookingByIdAndPatientId(bookingId, accountId, pageable);
+                    }
+
                 }
                 break;
             case "DENTIST":
 //                bookingList = bookingRepository.findBookingByDentistId(id, pageable);
                 break;
-        }
-
-        if (bookingPage == null || !bookingPage.hasContent()) {
-            throw new NotFoundException();
         }
 
         return bookingPage;
@@ -141,7 +153,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findBookingById(int id) {
-        Booking booking = bookingRepository.findBookingById(id);
+        Booking booking = null;
+        if (id != -1) {
+            booking = bookingRepository.findBookingById(id);
+        }
+
         if (booking == null) {
             throw new NotFoundException();
         } else {

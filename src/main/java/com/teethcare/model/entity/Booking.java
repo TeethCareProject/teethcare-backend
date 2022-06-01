@@ -73,7 +73,7 @@ public class Booking {
     @Column(name = "desired_checking_time")
     private Timestamp desiredCheckingTime;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "clinic_id", referencedColumnName = "id")
     private Clinic clinic;
 
