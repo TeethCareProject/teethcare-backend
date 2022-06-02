@@ -145,7 +145,6 @@ public class BookingServiceImpl implements BookingService {
     public void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService) {
         Booking booking = findBookingById(bookingId);
 
-        booking.setId(bookingId);
         if (isAccepted) {
             booking.setStatus(Status.Booking.REQUEST.name());
         } else {
@@ -164,14 +163,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findBookingById(int id) {
-        Booking booking = null;
-
-        booking = bookingRepository.findBookingById(id);
-
-        if (booking == null) {
-            throw new NotFoundException();
-        } else {
-            return bookingRepository.findBookingById(id);
-        }
+        return bookingRepository.findBookingById(id);
     }
 }
