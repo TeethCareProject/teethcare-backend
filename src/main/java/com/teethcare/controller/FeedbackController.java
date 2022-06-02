@@ -8,6 +8,7 @@ import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.FeedbackRequest;
+import com.teethcare.model.response.FeedbackByClinicResponse;
 import com.teethcare.model.response.FeedbackResponse;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.FeedbackService;
@@ -34,13 +35,13 @@ public class FeedbackController {
     private final ClinicMapper clinicMapper;
 
     @GetMapping("/{clinicID}")
-    public ResponseEntity<Page<FeedbackResponse>> getAll(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
-                                                         @PathVariable("clinicID") String id,
-                                                         @RequestParam(name = "ratingScore", required = false) Integer ratingScore,
-                                                         @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                         @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                         @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<Page<FeedbackByClinicResponse>> getAll(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
+                                                                 @PathVariable("clinicID") String id,
+                                                                 @RequestParam(name = "ratingScore", required = false) Integer ratingScore,
+                                                                 @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                 @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                 @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
 
         Account account = null;
@@ -50,12 +51,11 @@ public class FeedbackController {
         }
         int clinicID = ConvertUtils.covertID(id);
         Page<Feedback> feedbacks = feedbackService.findAllByClinicID(pageable, clinicID, account, ratingScore);
-        Page<FeedbackResponse> responses = feedbacks.map(new Function<Feedback, FeedbackResponse>() {
+        Page<FeedbackByClinicResponse> responses = feedbacks.map(new Function<Feedback, FeedbackByClinicResponse>() {
             @Override
-            public FeedbackResponse apply(Feedback feedback) {
-                FeedbackResponse response = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
+            public FeedbackByClinicResponse apply(Feedback feedback) {
+                FeedbackByClinicResponse response = feedbackMapper.mapFeedbackToFeedbackByClinicResponse(feedback);
                 response.setPatientResponse(accountMapper.mapPatientToPatientResponse(feedback.getBooking().getPatient()));
-                response.setClinicInfoResponse(clinicMapper.mapClinicToClinicInfoResponse(feedback.getBooking().getClinic()));
 
                 return response;
             }
