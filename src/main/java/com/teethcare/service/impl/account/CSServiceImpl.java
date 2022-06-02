@@ -59,6 +59,6 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public CustomerService findActiveCS(int id) {
-        return customerServiceRepository.findCustomerServiceByIdAndStatus(id, Status.ACTIVE.name());
+        return customerServiceRepository.findCustomerServiceByIdAndStatus(id, Status.Account.ACTIVE.name());
     }
 }

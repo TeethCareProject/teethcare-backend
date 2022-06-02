@@ -20,21 +20,26 @@ public class BookingSpecification implements Specification<Booking> {
         Join<Booking, Patient> patientJoin = root.join("patient");
         Join<Booking, Dentist> dentistJoin = root.join("dentist");
         Join<Booking, CustomerService> customerServiceJoin = root.join("customerService");
+        Join<Booking, Clinic> clinicJoin = root.join("clinic");
         switch(criteria.getKey()){
             case "bookingId":
-                return builder.equal((root.get("id")), criteria.getValue());
+                return builder.equal(root.get("id"), criteria.getValue());
+            case "patientId":
+                return builder.equal(patientJoin.get("id"), criteria.getValue());
             case "patientName":
                 Predicate firstNamePredicate =
-                        builder.like((patientJoin. get("firstName")), "%" + criteria.getValue().toString() + "%");
+                        builder.like((patientJoin.get("firstName")), "%" + criteria.getValue().toString() + "%");
                 Predicate lastNamePredicate =
-                        builder.like((patientJoin. get("lastName")), "%" + criteria.getValue().toString() + "%");
+                        builder.like((patientJoin.get("lastName")), "%" + criteria.getValue().toString() + "%");
                 return builder.or(firstNamePredicate, lastNamePredicate);
             case "patientPhone":
-                return builder.equal(patientJoin. get("phone"), criteria.getValue().toString());
+                return builder.equal(patientJoin.get("phone"), criteria.getValue().toString());
             case "dentistId":
                 return builder.equal((dentistJoin.get("id")), criteria.getValue());
             case "customerServiceId":
                 return builder.equal((customerServiceJoin.get("id")), criteria.getValue());
+            case "clinicName":
+                return builder.like(clinicJoin.get("name"), "%" + criteria.getValue().toString() + "%");
             default:
                 throw new BadRequestException();
         }

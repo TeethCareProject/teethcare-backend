@@ -15,12 +15,10 @@ import com.teethcare.service.BookingService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
-import com.teethcare.specification.BookingBuilder;
-import com.teethcare.specification.SpecificationFactory;
+import com.teethcare.specification.builder.BookingBuilder;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,7 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -75,7 +72,7 @@ public class BookingController {
 
         //set patient to booking
         bookingTmp.setPatient(patient);
-        bookingTmp.setStatus(Status.PENDING.name());
+        bookingTmp.setStatus(Status.Booking.PENDING.name());
         PatientBookingResponse patientBookingResponse = null;
 
         //map booking to booking response
@@ -95,7 +92,6 @@ public class BookingController {
                                                         @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                         @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction,
-                                                        @RequestParam(value = "search", required = false) String search,
                                                         @RequestParam(value = "clinicName", required = false) String clinicName,
                                                         @RequestParam(value = "bookingId", required = false, defaultValue = "-1") int bookingId,
                                                         @RequestParam(value = "dentistId", required = false, defaultValue = "-1") int dentistId,
@@ -124,10 +120,10 @@ public class BookingController {
         }
         Specification<Booking> bookingSpecification = bookingBuilder.build();
 
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
 
         Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), clinicName, bookingId, bookingSpecification, pageable);
-        System.out.println("In booking controller, after find");
+
         Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
 
         return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
@@ -140,26 +136,17 @@ public class BookingController {
         return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/accept")
+    @PutMapping("/{id}/accept")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> isAccepted(@RequestParam(value = "isAccepted") boolean isAccepted,
-                                                      @RequestParam(value = "bookingId") int bookingId,
+                                                      @PathVariable(value = "id") int bookingId,
                                                       @RequestHeader(AUTHORIZATION) String header) {
         String token = header.substring("Bearer ".length());
         Account account = jwtTokenUtil.getAccountFromJwt(token);
 
-        Booking booking = bookingService.findBookingById(bookingId);
         CustomerService customerService = CSService.findById(account.getId());
 
-        booking.setId(bookingId);
-        if (isAccepted) {
-            booking.setStatus(Status.REQUEST.name());
-        } else {
-            booking.setStatus(Status.REJECTED.name());
-        }
-        booking.setCustomerService(customerService);
-
-        bookingService.save(booking);
+        bookingService.confirmBookingRequest(bookingId, isAccepted, customerService);
 
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }

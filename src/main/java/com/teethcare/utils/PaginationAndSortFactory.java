@@ -4,8 +4,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public class PaginationAndSort {
-    public static Pageable pagingAndSorting(int pageSize, int pageNo, String sortBy, String sortDirection) {
+public class PaginationAndSortFactory {
+    public static Pageable getPagable(int pageSize, int pageNo, String sortBy, String sortDirection) {
 
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())
                 ? Sort.by(sortBy).ascending()

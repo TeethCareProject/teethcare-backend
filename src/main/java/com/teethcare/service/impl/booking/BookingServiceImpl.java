@@ -3,19 +3,19 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.*;
-import com.teethcare.model.response.BookingResponse;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.ClinicService;
+import com.teethcare.specification.builder.BookingBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -47,57 +47,18 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void delete(int theId) {
         Booking booking = findById(theId);
-        booking.setStatus(Status.INACTIVE.name());
+        booking.setStatus(Status.Booking.UNAVAILABLE.name());
         save(booking);
-    }
-
-    @Override
-    public List<Booking> findBookingByPatientId(int theId) {
-        return bookingRepository.findBookingByPatientId(theId);
     }
 
     @Override
     public Booking saveBooking(Booking booking) {
         return bookingRepository.save(booking);
     }
-    @Override
-    public List<Booking> findBookingByPatientIdAndStatus(int theId, String status) {
-        return bookingRepository.findBookingByPatientIdAndStatus(theId, status);
-    }
-
-    @Override
-    public Page<Booking> findBookingByDentistId(int id, Pageable pageable) {
-        return bookingRepository.findBookingByPatientId(id, pageable);
-    }
-
-    @Override
-    public List<Booking> findBookingByStatusNotLike(String status) {
-        return null;
-    }
 
     @Override
     public Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable) {
         return bookingRepository.findAll(bookingSpecification, pageable);
-    }
-
-    @Override
-    public Page<Booking> findBookingByPatientId(int id, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public Page<Booking> findBookingByPatientIdAndDentistClinicNameLike(int patientId, String clinicName, Pageable pageable) {
-        return bookingRepository.findBookingByPatientIdAndDentistClinicNameLike(patientId, clinicName, pageable);
-    }
-
-    @Override
-    public Page<Booking> findBookingByPatientIdAndClinicNameLike(int patientId, String clinicName, Pageable pageable) {
-        Page<Booking> bookingPage = bookingRepository.findBookingByPatientIdAndClinicNameLike(
-                patientId, "%" + clinicName + "%", pageable);
-        if (bookingPage == null || !bookingPage.hasContent()) {
-            throw new NotFoundException();
-        }
-        return bookingPage;
     }
 
     @Override
@@ -108,6 +69,7 @@ public class BookingServiceImpl implements BookingService {
                                  Pageable pageable) {
 
         Page<Booking> bookingPage = null;
+
         switch (role) {
             case "CUSTOMER_SERVICE":
                 bookingPage = bookingRepository.findAll(bookingSpecification, pageable);
@@ -127,24 +89,33 @@ public class BookingServiceImpl implements BookingService {
                             bookingPage = bookingRepository.findBookingByIdAndPatientIdAndDentistClinicNameLike(
                                     bookingId, accountId, "%" + clinicName + "%", pageable);
                         }
-//                        bookingPage = bookingRepository.findBookingByIdAndPatientId(bookingId, accountId, pageable);
                     }
-
                 }
                 break;
             case "DENTIST":
-//                bookingList = bookingRepository.findBookingByDentistId(id, pageable);
+//                bookingPage = bookingRepository.findBookingByDentistId(id, pageable);
                 break;
         }
 
         return bookingPage;
     }
 
-//    @Override
-//    public Page<Booking> findBookingByPatientAndDentist(int patientId, String patientName, int dentistId) {
-////        Patient patient = patientRepository.
-//        return null;
-//    }
+    @Override
+    @Transactional
+    public void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService) {
+        Booking booking = findBookingById(bookingId);
+
+        booking.setId(bookingId);
+        if (isAccepted) {
+            booking.setStatus(Status.Booking.REQUEST.name());
+        } else {
+            booking.setStatus(Status.Booking.REJECTED.name());
+        }
+        booking.setCustomerService(customerService);
+
+        save(booking);
+
+    }
 
     @Override
     public List<Booking> findAllByCustomerService(CustomerService customerService) {
@@ -154,9 +125,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findBookingById(int id) {
         Booking booking = null;
-        if (id != -1) {
-            booking = bookingRepository.findBookingById(id);
-        }
+
+        booking = bookingRepository.findBookingById(id);
 
         if (booking == null) {
             throw new NotFoundException();

@@ -8,7 +8,7 @@ import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class ServiceOfClinicController {
                                                         @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                         @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         List<ServiceOfClinic> list = new ArrayList<>();
         if (status != null) {
             list = serviceOfClinicService.findByStatus(pageable, status);
@@ -49,11 +49,11 @@ public class ServiceOfClinicController {
                                                                            @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                            @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
 
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
 
         int theID = ConvertUtils.covertID(id);
 
-        List<ServiceOfClinic> serviceList = serviceOfClinicService.findByClinicIdAndStatus(theID, Status.ACTIVE.name(), pageable);
+        List<ServiceOfClinic> serviceList = serviceOfClinicService.findByClinicIdAndStatus(theID, Status.Service.ACTIVE.name(), pageable);
 
         List<ServiceOfClinicResponse> serviceResponseList =
                 serviceOfClinicMapper.mapServiceListToServiceResponseList(serviceList);

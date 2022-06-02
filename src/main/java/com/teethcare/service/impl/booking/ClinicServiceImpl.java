@@ -37,7 +37,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     public List<Clinic> findAllActive(Pageable pageable) {
-        return clinicRepository.getClinicByStatus(Status.ACTIVE.name(), pageable);
+        return clinicRepository.getClinicByStatus(Status.Clinic.ACTIVE.name(), pageable);
     }
 
     public Clinic getClinicByManager(Manager manager) {
@@ -58,12 +58,12 @@ public class ClinicServiceImpl implements ClinicService {
         if (search == null || search.isBlank()) {
             throw new NotFoundException();
         }
-        return clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(search, Status.ACTIVE.name(), pageable);
+        return clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(search, Status.Clinic.ACTIVE.name(), pageable);
     }
 
     @Override
     public void save(Clinic clinic) {
-        clinic.setStatus(Status.PENDING.name());
+        clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
     }
 
@@ -72,7 +72,7 @@ public class ClinicServiceImpl implements ClinicService {
     public void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location) {
         clinic.setManager(manager);
         clinic.setLocation(location);
-        clinic.setStatus(Status.PENDING.name());
+        clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
     }
 
@@ -80,7 +80,7 @@ public class ClinicServiceImpl implements ClinicService {
     public void delete(int id) {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
         Clinic clinic = clinicData.get();
-        clinic.setStatus(Status.INACTIVE.name());
+        clinic.setStatus(Status.Service.INACTIVE.name());
         clinicRepository.save(clinic);
     }
 

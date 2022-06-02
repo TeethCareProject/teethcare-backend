@@ -52,7 +52,7 @@ public class DentistController {
         }
 
         dentist.setId(theID);
-        dentist.setStatus(Status.INACTIVE.name());
+        dentist.setStatus(Status.Account.INACTIVE.name());
 
         dentistService.save(dentist);
 
