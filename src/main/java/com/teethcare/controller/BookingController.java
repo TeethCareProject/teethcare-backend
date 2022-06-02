@@ -95,7 +95,6 @@ public class BookingController {
                                                         @RequestParam(value = "clinicName", required = false) String clinicName,
                                                         @RequestParam(value = "bookingId", required = false, defaultValue = "-1") int bookingId,
                                                         @RequestParam(value = "dentistId", required = false, defaultValue = "-1") int dentistId,
-                                                        @RequestParam(value = "customerServiceId", required = false, defaultValue = "-1") int customerServiceId,
                                                         @RequestParam(value = "patientPhone", required = false) String patientPhone,
                                                         @RequestParam(value = "patientName", required = false) String patientName,
                                                         @RequestHeader(AUTHORIZATION) String header) {
@@ -111,9 +110,6 @@ public class BookingController {
         }
         if (patientPhone != null && !patientPhone.isBlank()) {
             bookingBuilder.with("patientPhone", ":", patientPhone);
-        }
-        if (customerServiceId != -1) {
-            bookingBuilder.with("customerServiceId", ":",customerServiceId);
         }
         if (dentistId != -1) {
             bookingBuilder.with("dentistId", ":",dentistId);
