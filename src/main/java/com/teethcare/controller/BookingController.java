@@ -7,6 +7,7 @@ import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
+import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.MessageResponse;
@@ -15,7 +16,6 @@ import com.teethcare.service.BookingService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
-import com.teethcare.specification.builder.BookingBuilder;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -92,37 +92,14 @@ public class BookingController {
                                                         @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                         @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction,
-                                                        @RequestParam(value = "clinicName", required = false) String clinicName,
-                                                        @RequestParam(value = "bookingId", required = false, defaultValue = "-1") int bookingId,
-                                                        @RequestParam(value = "dentistId", required = false, defaultValue = "-1") int dentistId,
-                                                        @RequestParam(value = "customerServiceId", required = false, defaultValue = "-1") int customerServiceId,
-                                                        @RequestParam(value = "patientPhone", required = false) String patientPhone,
-                                                        @RequestParam(value = "patientName", required = false) String patientName,
+                                                        BookingFilterRequest requestFilter,
                                                         @RequestHeader(AUTHORIZATION) String header) {
         String token = header.substring("Bearer ".length());
         Account account = jwtTokenUtil.getAccountFromJwt(token);
 
-        BookingBuilder bookingBuilder = new BookingBuilder();
-        if (bookingId != -1) {
-            bookingBuilder.with("bookingId", ":",bookingId);
-        }
-        if (patientName != null && !patientName.isBlank()) {
-            bookingBuilder.with("patientName", ":", patientName);
-        }
-        if (patientPhone != null && !patientPhone.isBlank()) {
-            bookingBuilder.with("patientPhone", ":", patientPhone);
-        }
-        if (dentistId != -1) {
-            bookingBuilder.with("dentistId", ":",dentistId);
-        }
-        if (customerServiceId != -1) {
-            bookingBuilder.with("dentistId", ":",customerServiceId);
-        }
-        Specification<Booking> bookingSpecification = bookingBuilder.build();
-
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
 
-        Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), clinicName, bookingId, bookingSpecification, pageable);
+        Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
         Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
 
