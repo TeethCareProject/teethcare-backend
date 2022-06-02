@@ -71,11 +71,11 @@ public class CustomerServiceController {
 
     @PostMapping
     public ResponseEntity<CustomerServiceResponse> add(@Valid @RequestBody CSRegisterRequest csRegisterRequest,
-                                                       HttpServletRequest request) {
+                                                       @RequestHeader(AUTHORIZATION) String token) {
         boolean isDuplicated = accountService.isDuplicated(csRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {
-                String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
+                token = token.substring("Bearer ".length());
                 Account account = jwtTokenUtil.getAccountFromJwt(token);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 

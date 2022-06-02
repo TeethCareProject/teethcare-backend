@@ -68,11 +68,11 @@ public class DentistController {
 
     @PostMapping
     public ResponseEntity<DentistResponse> add(@Valid @RequestBody DentistRegisterRequest dentistRegisterRequest,
-                                               HttpServletRequest request) {
+                                               @RequestHeader(AUTHORIZATION) String token) {
         boolean isDuplicated = accountService.isDuplicated(dentistRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
-                String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
+                token = token.substring("Bearer ".length());
                 Account account = jwtTokenUtil.getAccountFromJwt(token);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
