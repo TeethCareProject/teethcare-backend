@@ -17,8 +17,9 @@ public class BookingSpecification implements Specification<Booking> {
     @Override
     public Predicate toPredicate
             (Root<Booking> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-        Join<Booking, Patient> patientJoin = root.join("patient");
-        Join<Booking, Dentist> dentistJoin = root.join("dentist");
+        Join<Booking, Patient> patientJoin = root.join("patient", JoinType.LEFT);
+        Join<Booking, Dentist> dentistJoin = root.join("dentist", JoinType.LEFT);
+        Join<Booking, CustomerService> customerServiceJoin = root.join("customerService", JoinType.LEFT);
         switch(criteria.getKey()){
             case "bookingId":
                 return builder.equal(root.get("id"), criteria.getValue());
@@ -32,6 +33,8 @@ public class BookingSpecification implements Specification<Booking> {
                 return builder.equal(patientJoin.get("phone"), criteria.getValue().toString());
             case "dentistId":
                 return builder.equal((dentistJoin.get("id")), criteria.getValue());
+            case "customerServiceId":
+                return builder.equal((customerServiceJoin.get("id")), criteria.getValue());
             default:
                 throw new BadRequestException();
         }
