@@ -21,8 +21,6 @@ public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
     @Mapping(source = "booking.id", target = "bookingID")
-    @Mapping(source = "booking.patient.firstName", target = "firstName")
-    @Mapping(source = "booking.patient.lastName", target = "lastName")
     FeedbackResponse mapFeedbackToFeedbackResponse(Feedback feedback);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

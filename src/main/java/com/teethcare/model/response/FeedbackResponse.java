@@ -14,8 +14,7 @@ import java.util.List;
 public class FeedbackResponse {
     private int id;
     private int bookingID;
-    private String firstName;
-    private String lastName;
+    private PatientResponse patientResponse;
     private String detail;
     private int ratingScore;
     private String status;
