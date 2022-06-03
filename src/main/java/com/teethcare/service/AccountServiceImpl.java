@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     public Page<Account> findAllByFilter(AccountFilterRequest filter, Pageable pageable) {
         List<Account> accounts = accountRepository.findAll();
         accounts = accounts.stream().filter(filter.getPredicate()).collect(Collectors.toList());
-        return new PageImpl<>(accounts);
+        return new PageImpl<>(accounts, pageable, accounts.size());
     }
 
     @Override
