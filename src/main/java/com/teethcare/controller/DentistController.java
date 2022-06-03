@@ -18,7 +18,6 @@ import com.teethcare.service.AccountService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
 import com.teethcare.service.ManagerService;
-import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,10 +54,8 @@ public class DentistController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DentistResponse> get(@PathVariable String id) {
-        int theID = ConvertUtils.covertID(id);
-
-        Dentist theDentist = dentistService.findActiveDentist(theID);
+    public ResponseEntity<DentistResponse> get(@PathVariable int id) {
+        Dentist theDentist = dentistService.findActiveDentist(id);
         if (theDentist == null) {
             throw new NotFoundException("Dentist id " + id + "not found");
         }
@@ -73,7 +70,8 @@ public class DentistController {
         if (!isDuplicated) {
             if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
                 String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
-                Account account = jwtTokenUtil.getAccountFromJwt(token);
+                String username = jwtTokenUtil.getUsernameFromJwt(token);
+                Account account = accountService.getAccountByUsername(token);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
                 Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(dentistRegisterRequest);
@@ -91,15 +89,10 @@ public class DentistController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Dentist dentist = dentistService.findById(theID);
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") int id) {
+        Dentist dentist = dentistService.findById(id);
 
-        if (dentist == null) {
-            throw new NotFoundException("Dentist id " + id + "not found");
-        }
-
-        dentist.setId(theID);
+        dentist.setId(id);
         dentist.setStatus(Status.Account.INACTIVE.name());
 
         dentistService.save(dentist);

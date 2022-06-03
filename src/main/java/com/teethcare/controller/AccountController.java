@@ -53,10 +53,9 @@ public class AccountController {
         }
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Account account = accountService.findById(theID);
-        accountService.delete(theID);
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
+        Account account = accountService.findById(id);
+        accountService.delete(id);
         return new ResponseEntity<>("Delete successfully.", HttpStatus.OK);
 
     }

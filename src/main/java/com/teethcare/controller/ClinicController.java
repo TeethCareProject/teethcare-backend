@@ -17,10 +17,7 @@ import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
-import com.teethcare.service.CSService;
-import com.teethcare.service.ClinicService;
-import com.teethcare.service.DentistService;
-import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +38,7 @@ import java.util.function.Function;
 @RequestMapping(path = EndpointConstant.Clinic.CLINIC_ENDPOINT)
 public class ClinicController {
 
+    private final AccountService accountService;
     private final ClinicService clinicService;
     private final ClinicMapper clinicMapper;
     private final CSService csService;
@@ -64,18 +62,16 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Clinic clinic = clinicService.findById(theID);
+    public ResponseEntity<ClinicResponse> getClinic(@PathVariable("id") int id) {
+        Clinic clinic = clinicService.findById(id);
         ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
         return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Clinic clinic = clinicService.findById(theID);
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
+        Clinic clinic = clinicService.findById(id);
         clinic.setStatus(Status.Clinic.INACTIVE.name());
         clinicService.save(clinic);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -83,11 +79,10 @@ public class ClinicController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MessageResponse> update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable String id) {
-        int theID = ConvertUtils.covertID(id);
-        clinicRequest.setId(theID);
+    public ResponseEntity<MessageResponse> update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable int id) {
+        clinicRequest.setId(id);
 
-        Clinic clinic = clinicService.findById(theID);
+        Clinic clinic = clinicService.findById(id);
 
         clinicMapper.mapClinicRequestToClinic(clinicRequest);
 
@@ -98,13 +93,12 @@ public class ClinicController {
 
 
     @GetMapping("/{id}/staffs")
-    public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable String id) {
-        int theID = ConvertUtils.covertID(id);
+    public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable int id) {
 
         List<Account> staffList = new ArrayList<>();
 
-        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
-        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
+        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(id, Status.Account.ACTIVE.name());
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(id, Status.Account.ACTIVE.name());
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);
@@ -121,21 +115,21 @@ public class ClinicController {
     @GetMapping("/{id}/services")
     public ResponseEntity<Page<ServiceOfClinicResponse>> getService(ServiceFilterRequest serviceFilterRequest,
                                                                     @RequestHeader(value = "AUTHORIZATION", required = false) String token,
-                                                                    @PathVariable("id") String id,
+                                                                    @PathVariable("id") int id,
                                                                     @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                     @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                     @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                     @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
 
-        int theID = ConvertUtils.covertID(id);
 
-        serviceFilterRequest.setClinicID(theID);
+        serviceFilterRequest.setClinicID(id);
 
         Account account = null;
         if (token != null) {
             token = token.substring("Bearer ".length());
-            account = jwtTokenUtil.getAccountFromJwt(token);
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            account = accountService.getAccountByUsername(username);
         }
 
         Page<ServiceOfClinic> list = serviceOfClinicService.findAllWithFilter(serviceFilterRequest, pageable, account);

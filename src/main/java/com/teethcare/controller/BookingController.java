@@ -10,6 +10,7 @@ import com.teethcare.model.entity.Patient;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.PatientBookingResponse;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
@@ -18,10 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -41,14 +39,16 @@ public class BookingController {
     private final PatientService patientService;
     private final ServiceOfClinicService serviceOfClinicService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final AccountService accountService;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
-                                                                 HttpServletRequest request){
+                                                                 @RequestHeader("AUTHORIZATION") String request){
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
-        String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
-        Account account = jwtTokenUtil.getAccountFromJwt(token);
+        String token = request.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        Account account = accountService.getAccountByUsername(token);
         //get milisecond
         long milisecond = bookingRequest.getDesiredCheckingTime();
 

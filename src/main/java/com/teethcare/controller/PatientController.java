@@ -36,9 +36,8 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PatientResponse> getById(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Patient patient = patientService.findById(theID);
+    public ResponseEntity<PatientResponse> getById(@PathVariable("id") int id) {
+        Patient patient = patientService.findById(id);
         if (patient != null) {
             PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
             return new ResponseEntity<>(patientResponse, HttpStatus.OK);
@@ -66,11 +65,10 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Patient patient = patientService.findById(theID);
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
+        Patient patient = patientService.findById(id);
         if (patient != null) {
-            patientService.delete(theID);
+            patientService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         throw new NotFoundException("Patient id " + id + " not found");

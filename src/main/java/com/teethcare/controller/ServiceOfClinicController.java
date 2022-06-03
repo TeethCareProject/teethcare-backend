@@ -12,6 +12,7 @@ import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.ServiceDetailResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSort;
@@ -35,7 +36,7 @@ public class ServiceOfClinicController {
     private final ServiceOfClinicService serviceOfClinicService;
     private final ServiceOfClinicMapper serviceOfClinicMapper;
     private final JwtTokenUtil jwtTokenUtil;
-    private final ClinicMapper clinicMapper;
+    private final AccountService accountService;
 
     @GetMapping
     public ResponseEntity<Page<ServiceOfClinicResponse>> getAll(ServiceFilterRequest serviceFilterRequest,
@@ -49,40 +50,31 @@ public class ServiceOfClinicController {
         Account account = null;
         if (token != null) {
             token = token.substring("Bearer ".length());
-            account = jwtTokenUtil.getAccountFromJwt(token);
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            account = accountService.getAccountByUsername(token);
         }
-        Page<ServiceOfClinic> list = serviceOfClinicService.findAllWithFilter(serviceFilterRequest, pageable, account);
+        Page<ServiceOfClinic> listServiceOfClinics = serviceOfClinicService.findAllWithFilter(serviceFilterRequest, pageable, account);
 
-        Page<ServiceOfClinicResponse> responses = list.map(new Function<ServiceOfClinic, ServiceOfClinicResponse>() {
-            @Override
-            public ServiceOfClinicResponse apply(ServiceOfClinic service) {
-                return serviceOfClinicMapper.mapServiceOfClinicToServiceOfClinicResponse(service);
-            }
-        });
+        Page<ServiceOfClinicResponse> responses = listServiceOfClinics.map(serviceOfClinicMapper::mapServiceOfClinicToServiceOfClinicResponse);
+
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceDetailResponse> getById(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
-                                                         @PathVariable("id")String id,
-                                                         @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                         @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                         @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+                                                         @PathVariable("id") int id) {
 
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-
-        int theID = ConvertUtils.covertID(id);
 
         Account account = null;
         if (token != null) {
             token = token.substring("Bearer ".length());
-            account = jwtTokenUtil.getAccountFromJwt(token);
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            account = accountService.getAccountByUsername(token);
         }
 
-        ServiceOfClinic service = serviceOfClinicService.findById(theID, account);
+        ServiceOfClinic service = serviceOfClinicService.findById(id, account);
+
         ServiceDetailResponse response = serviceOfClinicMapper.mapServiceOfClinicToServiceDetailResponse(service);
-        response.setClinic(clinicMapper.mapClinicToClinicInfoResponse(service.getClinic()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

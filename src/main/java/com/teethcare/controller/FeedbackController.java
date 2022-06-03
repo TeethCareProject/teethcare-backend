@@ -10,6 +10,7 @@ import com.teethcare.model.entity.*;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.model.response.FeedbackByClinicResponse;
 import com.teethcare.model.response.FeedbackResponse;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.FeedbackService;
 import com.teethcare.utils.ConvertUtils;
@@ -33,10 +34,11 @@ public class FeedbackController {
     private final JwtTokenUtil jwtTokenUtil;
     private final AccountMapper accountMapper;
     private final ClinicMapper clinicMapper;
+    private final AccountService accountService;
 
     @GetMapping("/{clinicID}")
     public ResponseEntity<Page<FeedbackByClinicResponse>> getAll(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
-                                                                 @PathVariable("clinicID") String id,
+                                                                 @PathVariable("clinicID") int clinicId,
                                                                  @RequestParam(name = "ratingScore", required = false) Integer ratingScore,
                                                                  @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                  @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
@@ -47,10 +49,10 @@ public class FeedbackController {
         Account account = null;
         if (token != null) {
             token = token.substring("Bearer ".length());
-            account = jwtTokenUtil.getAccountFromJwt(token);
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            account = accountService.getAccountByUsername(token);
         }
-        int clinicID = ConvertUtils.covertID(id);
-        Page<Feedback> feedbacks = feedbackService.findAllByClinicID(pageable, clinicID, account, ratingScore);
+        Page<Feedback> feedbacks = feedbackService.findAllByClinicID(pageable, clinicId, account, ratingScore);
         Page<FeedbackByClinicResponse> responses = feedbacks.map(new Function<Feedback, FeedbackByClinicResponse>() {
             @Override
             public FeedbackByClinicResponse apply(Feedback feedback) {

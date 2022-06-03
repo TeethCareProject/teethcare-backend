@@ -58,57 +58,25 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
 
     @Override
     public Page<ServiceOfClinic> findAllWithFilter(ServiceFilterRequest request, Pageable pageable, Account account) {
+        List<ServiceOfClinic> serviceOfClinics = findAllByRole(account, pageable);
+        serviceOfClinics = serviceOfClinics.stream()
+                .filter(request.predicates().stream().reduce(serviceOfClinic -> true, Predicate::and))
+                .collect(Collectors.toList());
+        return new PageImpl<>(serviceOfClinics);
+    }
+
+    @Override
+    public List<ServiceOfClinic> findAllByRole(Account account, Pageable pageable) {
         List<ServiceOfClinic> serviceOfClinics = null;
         if (account == null || !account.getRole().getName().equals(Role.CUSTOMER_SERVICE.name())) {
             serviceOfClinics = serviceRepository.findAllByStatus(pageable, Status.Service.ACTIVE.name());
         } else {
             serviceOfClinics = serviceRepository.findAll();
-            for (int i = 0; i < serviceOfClinics.size(); i++) {
-                if (serviceOfClinics.get(i).getClinic().getId() != csService.findById(account.getId()).getClinic().getId() &&
-                        serviceOfClinics.get(i).getStatus().equals(Status.Service.INACTIVE.name())) {
-                    serviceOfClinics.remove(serviceOfClinics.get(i));
-                }
-            }
+            Predicate<ServiceOfClinic> condition = serviceOfClinic -> serviceOfClinic.getClinic().getId() != csService.findById(account.getId()).getClinic().getId() &&
+                    serviceOfClinic.getStatus().equals(Status.Service.INACTIVE.name());
+            serviceOfClinics.removeIf(condition);
         }
-        if (request.getId() != null) {
-            Predicate<ServiceOfClinic> byID = service -> service.getId().toString().contains(request.getId().toString());
-            serviceOfClinics = serviceOfClinics.stream()
-                    .filter(byID)
-                    .collect(Collectors.toList());
-        }
-        if (request.getName() != null) {
-            Predicate<ServiceOfClinic> byName = (service) -> service.getName().toLowerCase().contains(request.getName().toLowerCase());
-            serviceOfClinics = serviceOfClinics.stream()
-                    .filter(byName)
-                    .collect(Collectors.toList());
-        }
-        if (request.getClinicID() != null) {
-            Predicate<ServiceOfClinic> byClinicID = (service) -> service.getClinic().getId() == request.getClinicID();
-            serviceOfClinics = serviceOfClinics.stream()
-                    .filter(byClinicID)
-                    .collect(Collectors.toList());
-        }
-        if (request.getLowerPrice() != null && request.getUpperPrice() != null) {
-            Predicate<ServiceOfClinic> byRangePrice = (service) -> service.getMoney().compareTo(request.getLowerPrice()) >= 0
-                    && service.getMoney().compareTo(request.getUpperPrice()) <= 0;
-            serviceOfClinics = serviceOfClinics.stream()
-                    .filter(byRangePrice)
-                    .collect(Collectors.toList());
-        }
-        if (request.getLowerPrice() != null && request.getUpperPrice() == null) {
-            Predicate<ServiceOfClinic> byLowerPrice = (service) -> service.getMoney().compareTo(request.getLowerPrice()) >= 0;
-            serviceOfClinics = serviceOfClinics.stream()
-                    .filter(byLowerPrice)
-                    .collect(Collectors.toList());
-        }
-        if (request.getLowerPrice() == null && request.getUpperPrice() != null) {
-            Predicate<ServiceOfClinic> byUpperPrice = (service) -> service.getMoney().compareTo(request.getUpperPrice()) <= 0;
-            serviceOfClinics = serviceOfClinics.stream()
-                    .filter(byUpperPrice)
-                    .collect(Collectors.toList());
-        }
-        Page<ServiceOfClinic> lists = new PageImpl<>(serviceOfClinics);
-        return lists;
+        return  serviceOfClinics;
     }
 
 

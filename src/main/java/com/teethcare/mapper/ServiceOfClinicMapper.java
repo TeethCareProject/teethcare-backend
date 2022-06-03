@@ -8,9 +8,10 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface ServiceOfClinicMapper {
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ServiceOfClinicResponse mapServiceOfClinicToServiceOfClinicResponse(ServiceOfClinic serviceOfClinic);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "clinic", ignore = true)
+    @Mapping(source = "clinic", target = "clinic")
     ServiceDetailResponse mapServiceOfClinicToServiceDetailResponse(ServiceOfClinic serviceOfClinic);
 }

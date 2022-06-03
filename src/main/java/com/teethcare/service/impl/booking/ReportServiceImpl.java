@@ -2,7 +2,6 @@ package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Report;
 import com.teethcare.model.request.ReportFilterRequest;
 import com.teethcare.repository.ReportRepository;
@@ -46,7 +45,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void delete(int theId) {
         Report report = findById(theId);
-        report.setStatus(Status.Report.APPROVED.name());
+        report.setStatus(Status.Report.REJECTED.name());
         reportRepository.save(report);
     }
 
@@ -63,29 +62,9 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Page<Report> findByStatus(Pageable pageable, ReportFilterRequest request) {
         List<Report> list = findAll(pageable);
-        if (request.getId() != null) {
-            Predicate<Report> byID = report -> Integer.toString(report.getId()).contains(Integer.toString(request.getId()));
-            list = list.stream()
-                    .filter(byID)
-                    .collect(Collectors.toList());
-        }
-        if (request.getClinicID() != null) {
-            Predicate<Report> byClinicID = report -> report.getFeedback().getBooking().getClinic().getId() == request.getClinicID();
-            list = list.stream()
-                    .filter(byClinicID).collect(Collectors.toList());
-        }
-        if (request.getStatus() != null) {
-            Predicate<Report> byStatus = report -> report.getStatus().equalsIgnoreCase(request.getStatus());
-            list = list.stream()
-                    .filter(byStatus)
-                    .collect(Collectors.toList());
-        }
-        if (request.getClinicName() != null) {
-            Predicate<Report> byClinicName = report -> report.getFeedback().getBooking().getClinic().getName().toLowerCase().contains(request.getClinicName().toLowerCase());
-            list = list.stream()
-                    .filter(byClinicName)
-                    .collect(Collectors.toList());
-        }
+        list = list.stream()
+                .filter(request.requestPredicate().stream().reduce(report -> true, Predicate::and))
+                .collect(Collectors.toList());
         return new PageImpl<>(list);
     }
 

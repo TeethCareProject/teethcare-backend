@@ -45,10 +45,8 @@ public class CustomerServiceController {
     private final JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerServiceResponse> getById(@PathVariable String id) {
-        int theID = ConvertUtils.covertID(id);
-
-        CustomerService customerService = CSService.findById(theID);
+    public ResponseEntity<CustomerServiceResponse> getById(@PathVariable int id) {
+        CustomerService customerService = CSService.findById(id);
 
         if (customerService == null) {
             throw new NotFoundException("Customer service id " + id + "not found");
@@ -76,7 +74,8 @@ public class CustomerServiceController {
         if (!isDuplicated) {
             if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {
                 String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
-                Account account = jwtTokenUtil.getAccountFromJwt(token);
+                String username = jwtTokenUtil.getUsernameFromJwt(token);
+                Account account = accountService.getAccountByUsername(token);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
                 CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(csRegisterRequest);
@@ -93,16 +92,14 @@ public class CustomerServiceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-
-        CustomerService customerService = CSService.findById(theID);
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") int id) {
+        CustomerService customerService = CSService.findById(id);
 
         if (customerService == null) {
             throw new NotFoundException("Customer service id " + id + "not found");
         }
 
-        customerService.setId(theID);
+        customerService.setId(id);
         customerService.setStatus(Status.Account.INACTIVE.name());
 
         CSService.save(customerService);

@@ -1,6 +1,7 @@
 package com.teethcare.exception;
 
 import com.teethcare.model.response.CustomErrorResponse;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -102,6 +103,19 @@ public class CustomExceptionHandler {
                 errors
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+    @ExceptionHandler
+    public ResponseEntity<CustomErrorResponse> handleException(TypeMismatchException ex) {
+        List<String> errors = new ArrayList();
+        errors.add(ex.getMessage());
+        CustomErrorResponse error = new CustomErrorResponse(
+                new Timestamp(System.currentTimeMillis()),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.toString(),
+                errors
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 
     }
 }

@@ -32,7 +32,6 @@ public class ReportController {
     private final ReportService reportService;
     private final FeedbackMapper feedbackMapper;
     private final FeedbackService feedbackService;
-    private final ClinicMapper clinicMapper;
     @GetMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<Page<ReportResponse>> getAll(ReportFilterRequest request,
@@ -42,19 +41,7 @@ public class ReportController {
                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction){
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
         Page<Report> list = reportService.findByStatus(pageable, request);
-        Page<ReportResponse> responses = list.map(new Function<Report, ReportResponse>() {
-            @Override
-            public ReportResponse apply(Report report) {
-                ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
-
-                FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(report.getFeedback());
-                ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicToClinicInfoResponse(report.getFeedback().getBooking().getClinic());
-                feedbackResponse.setClinicInfoResponse(clinicInfoResponse);
-
-                response.setFeedbackResponse(feedbackResponse);
-                return response;
-            }
-        });
+        Page<ReportResponse> responses = list.map(feedbackMapper::mapReportToReportResponse);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
@@ -64,12 +51,6 @@ public class ReportController {
         int theId = ConvertUtils.covertID(id);
         Report report = reportService.findById(theId);
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
-
-        FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(report.getFeedback());
-        ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicToClinicInfoResponse(report.getFeedback().getBooking().getClinic());
-        feedbackResponse.setClinicInfoResponse(clinicInfoResponse);
-
-        response.setFeedbackResponse(feedbackResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -81,12 +62,6 @@ public class ReportController {
         reportService.save(report);
 
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
-
-        FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(report.getFeedback());
-        ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicToClinicInfoResponse(report.getFeedback().getBooking().getClinic());
-        feedbackResponse.setClinicInfoResponse(clinicInfoResponse);
-
-        response.setFeedbackResponse(feedbackResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -98,12 +73,6 @@ public class ReportController {
         Report report = reportService.evaluate(theID, request.getStatus());
 
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
-
-        FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(report.getFeedback());
-        ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicToClinicInfoResponse(report.getFeedback().getBooking().getClinic());
-        feedbackResponse.setClinicInfoResponse(clinicInfoResponse);
-
-        response.setFeedbackResponse(feedbackResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
