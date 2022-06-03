@@ -13,8 +13,4 @@ public interface ClinicRepository extends JpaRepository<Clinic, Integer> {
     Clinic getClinicByManager(Account manager);
 
     List<Clinic> findAllByStatusIsNotNull(Pageable pageable);
-
-    List<Clinic> findAllByStatus(String status, Pageable pageable);
-
-    List<Clinic> findAllByNameContainingIgnoreCase(String search, Pageable pageable);
 }

@@ -12,7 +12,7 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account findAccountByUsernameAndStatus(String username, String status);
 
-    Account findAccountByUsername(String username);
+    Account findByUsername(String username);
 
     Account getAccountByUsername(String username);
 

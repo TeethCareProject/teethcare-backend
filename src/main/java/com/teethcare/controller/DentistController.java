@@ -5,11 +5,8 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
-import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.DentistRegisterRequest;
 import com.teethcare.model.response.DentistResponse;
@@ -27,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -58,7 +54,7 @@ public class DentistController {
     public ResponseEntity<DentistResponse> get(@PathVariable String id) {
         int theID = ConvertUtils.covertID(id);
 
-        Dentist theDentist = dentistService.findActiveDentist(theID);
+        Dentist theDentist = dentistService.findActive(theID);
         if (theDentist == null) {
             throw new NotFoundException("Dentist id " + id + "not found");
         }
@@ -69,24 +65,9 @@ public class DentistController {
     @PostMapping
     public ResponseEntity<DentistResponse> add(@Valid @RequestBody DentistRegisterRequest dentistRegisterRequest,
                                                @RequestHeader(AUTHORIZATION) String token) {
-        boolean isDuplicated = accountService.isDuplicated(dentistRegisterRequest.getUsername());
-        if (!isDuplicated) {
-            if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
-                token = token.substring("Bearer ".length());
-                Account account = jwtTokenUtil.getAccountFromJwt(token);
-                Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
-
-                Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(dentistRegisterRequest);
-                dentist.setClinic(clinic);
-                dentistService.save(dentist);
-                DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(dentist);
-                return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
-        } else {
-            throw new BadRequestException("User existed!");
-        }
+        Dentist dentist = dentistService.addNew(dentistRegisterRequest, token.substring("Bearer ".length()));
+        DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(dentist);
+        return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
     }
 
 

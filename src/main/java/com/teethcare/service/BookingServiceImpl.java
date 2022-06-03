@@ -32,7 +32,6 @@ public class BookingServiceImpl implements BookingService{
     public void delete(int theId) {
 
     }
-
     @Override
     public void update(Booking theEntity) {
         bookingRepository.save(theEntity);

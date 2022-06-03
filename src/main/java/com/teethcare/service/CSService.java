@@ -1,6 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.request.CSRegisterRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,4 +13,5 @@ public interface CSService extends CRUDService<CustomerService> {
     List<CustomerService> findByClinicIdAndStatus(int id, String status);
 
     Page<CustomerService> findAllWithPaging(Pageable pageable);
+    CustomerService addNew(CSRegisterRequest csRegisterRequest, String token);
 }

@@ -5,11 +5,8 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
-import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.CSRegisterRequest;
 import com.teethcare.model.response.CustomerServiceResponse;
@@ -27,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -37,7 +33,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT)
 public class CustomerServiceController {
-    private final CSService CSService;
+    private final CSService csService;
     private final AccountService accountService;
     private final AccountMapper accountMapper;
     private final ManagerService managerService;
@@ -48,7 +44,7 @@ public class CustomerServiceController {
     public ResponseEntity<CustomerServiceResponse> getById(@PathVariable String id) {
         int theID = ConvertUtils.covertID(id);
 
-        CustomerService customerService = CSService.findById(theID);
+        CustomerService customerService = csService.findById(theID);
 
         if (customerService == null) {
             throw new NotFoundException("Customer service id " + id + "not found");
@@ -64,7 +60,7 @@ public class CustomerServiceController {
                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                 @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        Page<CustomerService> customerServices = CSService.findAllWithPaging(pageable);
+        Page<CustomerService> customerServices = csService.findAllWithPaging(pageable);
         Page<CustomerServiceResponse> customerServiceResponses = customerServices.map(accountMapper::mapCustomerServiceToCustomerServiceResponse);
         return new ResponseEntity<>(customerServiceResponses, HttpStatus.OK);
     }
@@ -72,31 +68,16 @@ public class CustomerServiceController {
     @PostMapping
     public ResponseEntity<CustomerServiceResponse> add(@Valid @RequestBody CSRegisterRequest csRegisterRequest,
                                                        @RequestHeader(AUTHORIZATION) String token) {
-        boolean isDuplicated = accountService.isDuplicated(csRegisterRequest.getUsername());
-        if (!isDuplicated) {
-            if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {
-                token = token.substring("Bearer ".length());
-                Account account = jwtTokenUtil.getAccountFromJwt(token);
-                Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
-
-                CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(csRegisterRequest);
-                customerService.setClinic(clinic);
-                CSService.save(customerService);
-                CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
-                return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
-        } else {
-            throw new BadRequestException("User existed!");
-        }
+        CustomerService customerService = csService.addNew(csRegisterRequest, token);
+        CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
+        return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
 
-        CustomerService customerService = CSService.findById(theID);
+        CustomerService customerService = csService.findById(theID);
 
         if (customerService == null) {
             throw new NotFoundException("Customer service id " + id + "not found");
@@ -105,7 +86,7 @@ public class CustomerServiceController {
         customerService.setId(theID);
         customerService.setStatus(Status.Account.INACTIVE.name());
 
-        CSService.save(customerService);
+        csService.save(customerService);
 
         MessageResponse messageResponse = new MessageResponse(Message.SUCCESS_FUNCTION.name());
         return new ResponseEntity<>(messageResponse, HttpStatus.OK);

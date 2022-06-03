@@ -2,8 +2,15 @@ package com.teethcare.service;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
+import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
+import com.teethcare.mapper.AccountMapper;
+import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.request.CSRegisterRequest;
+import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.repository.CustomerServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +27,11 @@ public class CSServiceImpl implements CSService {
 
     private final CustomerServiceRepository customerServiceRepository;
     private final RoleService roleService;
+    private final AccountService accountService;
+    private final ClinicService clinicService;
+    private final ManagerService managerService;
+    private final AccountMapper accountMapper;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Override
     public List<CustomerService> findAll() {
@@ -37,7 +49,6 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public void save(CustomerService theCustomerService) {
-
         theCustomerService.setStatus(Status.Account.ACTIVE.name());
         theCustomerService.setRole(roleService.getRoleByName(Role.CUSTOMER_SERVICE.name()));
         customerServiceRepository.save(theCustomerService);
@@ -75,5 +86,24 @@ public class CSServiceImpl implements CSService {
         return new PageImpl<>(customerServices);
     }
 
+    @Override
+    public CustomerService addNew(CSRegisterRequest csRegisterRequest, String token) {
+        boolean isDuplicated = accountService.isDuplicated(csRegisterRequest.getUsername());
+        if (!isDuplicated) {
+            if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {
+                token = token.substring("Bearer ".length());
+                Account account = jwtTokenUtil.getAccountFromJwt(token);
+                Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
+                CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(csRegisterRequest);
+                customerService.setClinic(clinic);
+                this.save(customerService);
+                return customerService;
+            } else {
+                throw new BadRequestException("confirm Password is not match with password");
+            }
+        } else {
+            throw new BadRequestException("User existed!");
+        }
+    }
 }
