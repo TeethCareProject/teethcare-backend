@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.booking;
 
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.*;
@@ -9,6 +10,7 @@ import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.ClinicService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,8 +40,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(int id) {
-        Booking booking = bookingRepository.getById(id);
-        return booking;
+        return bookingRepository.getById(id);
     }
 
     @Override
@@ -71,69 +72,28 @@ public class BookingServiceImpl implements BookingService {
 
         Page<Booking> bookingPage = null;
 
-        switch (role) {
-            case "CUSTOMER_SERVICE":
-                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByStatusNotLike(Status.Booking.UNAVAILABLE.name(), pageable);
+        switch (Role.valueOf(role)) {
+            case CUSTOMER_SERVICE:
+                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByStatusNotLike(Status.Booking.UNAVAILABLE.name());
 
-                if (filterRequest.getBookingId() != null) {
-                    Predicate<Booking> byBookingId = booking -> Integer.toString(booking.getId()).contains(Integer.toString(filterRequest.getBookingId()));
-                    bookingListForCustomerService = bookingListForCustomerService.stream()
-                            .filter(byBookingId)
-                            .collect(Collectors.toList());
+                bookingListForCustomerService = bookingListForCustomerService.stream()
+                        .filter(filterRequest.getPredicate())
+                        .collect(Collectors.toList());
+                for(Booking booking: bookingListForCustomerService) {
+                    System.out.println(booking.getId());
                 }
 
-                if (filterRequest.getCustomerServiceId() != null) {
-                    Predicate<Booking> rejectNullCustomerService = booking -> booking.getCustomerService() != null;
-                    Predicate<Booking> byCSId = booking -> booking.getCustomerService().getId() == filterRequest.getCustomerServiceId();
-                    bookingListForCustomerService = bookingListForCustomerService.stream()
-                            .filter(rejectNullCustomerService)
-                            .filter(byCSId)
-                            .collect(Collectors.toList());
-                }
+                return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
+            case PATIENT:
+                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId);
 
-                if (filterRequest.getDentistId() != null) {
-                    Predicate<Booking> rejectNullDentist = booking -> booking.getDentist() != null;
-                    Predicate<Booking> byDentistId = booking -> booking.getDentist().getId() == filterRequest.getDentistId();
-                    bookingListForCustomerService = bookingListForCustomerService.stream()
-                            .filter(rejectNullDentist)
-                            .filter(byDentistId)
-                            .collect(Collectors.toList());
-                }
+                bookingListForPatient = bookingListForPatient.stream()
+                        .filter(filterRequest.getPredicate())
+                        .collect(Collectors.toList());
 
-                if (filterRequest.getPatientName() != null) {
-                    Predicate<Booking> byPatientName = booking -> ((booking.getPatient().getFirstName() + booking.getPatient().getLastName()).contains(filterRequest.getPatientName()));
-                    bookingListForCustomerService = bookingListForCustomerService.stream()
-                            .filter(byPatientName)
-                            .collect(Collectors.toList());
-                }
-
-                if (filterRequest.getPatientPhone() != null) {
-                    Predicate<Booking> byPatientPhone = booking -> ((booking.getPatient().getPhone()).contains(filterRequest.getPatientPhone()));
-                    bookingListForCustomerService = bookingListForCustomerService.stream()
-                            .filter(byPatientPhone)
-                            .collect(Collectors.toList());
-                }
-
-                return new PageImpl<>(bookingListForCustomerService);
-            case "PATIENT":
-                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId, pageable);
-
-                if (filterRequest.getClinicName() != null) {
-                    Predicate<Booking> byClinicName = booking -> (booking.getClinic().getName().contains(filterRequest.getClinicName()));
-                    bookingListForPatient = bookingListForPatient.stream()
-                            .filter(byClinicName)
-                            .collect(Collectors.toList());
-                }
-
-                if (filterRequest.getBookingId() != null) {
-                    Predicate<Booking> byBookingId = booking -> Integer.toString(booking.getId()).contains(Integer.toString(filterRequest.getBookingId()));
-                    bookingListForPatient = bookingListForPatient.stream()
-                            .filter(byBookingId)
-                            .collect(Collectors.toList());
-                }
-              return new PageImpl<>(bookingListForPatient);
-            case "DENTIST":
-//                bookingPage = bookingRepository.findBookingByDentistId(id, pageable);
+              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+            case DENTIST:
+                bookingPage = bookingRepository.findBookingByDentistId(accountId, pageable);
                 break;
         }
 

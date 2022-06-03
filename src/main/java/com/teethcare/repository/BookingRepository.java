@@ -11,15 +11,11 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaSpecificationExecutor<Booking> {
 
-    List<Booking> findBookingByPatientIdAndStatus(int id, String status);
     List<Booking> findAllByCustomerService(CustomerService customerService);
-    List<Booking> findBookingByStatusNotLike(String status, Pageable pageable);
-    List<Booking> findBookingByPatientId(int id, Pageable pageable);
+    List<Booking> findBookingByStatusNotLike(String status);
+    List<Booking> findBookingByPatientId(int id);
 
-    Page<Booking> findBookingByIdAndPatientId(int bookingId, int patientId, Pageable pageable);
-    Page<Booking> findBookingByIdAndPatientIdAndDentistClinicNameLike(int bookingId, int patientId, String clinicName, Pageable pageable);
-    Page<Booking> findBookingByPatientIdAndClinicNameLike(int patient_id, String clinic_name, Pageable pageable);
-//    Page<Booking> findBookingByPatientId(int id, Pageable pageable);
+    Page<Booking> findBookingByDentistId(int id, Pageable pageable);
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
 
     Booking findBookingById(int id);
