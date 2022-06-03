@@ -100,7 +100,6 @@ public class ClinicController {
     }
 
 
-
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable String id) {
         int theID = ConvertUtils.covertID(id);

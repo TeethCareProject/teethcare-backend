@@ -10,7 +10,6 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.CSRegisterRequest;
-import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.repository.CustomerServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

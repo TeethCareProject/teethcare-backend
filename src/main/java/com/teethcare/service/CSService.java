@@ -13,5 +13,6 @@ public interface CSService extends CRUDService<CustomerService> {
     List<CustomerService> findByClinicIdAndStatus(int id, String status);
 
     Page<CustomerService> findAllWithPaging(Pageable pageable);
+
     CustomerService addNew(CSRegisterRequest csRegisterRequest, String token);
 }

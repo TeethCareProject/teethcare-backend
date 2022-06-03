@@ -101,7 +101,7 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public Dentist addNew(DentistRegisterRequest dentistRegisterRequest, String token) {
-        boolean isDuplicated =  accountRepository.findByUsername(dentistRegisterRequest.getUsername()) == null;
+        boolean isDuplicated = accountRepository.findByUsername(dentistRegisterRequest.getUsername()) == null;
         if (!isDuplicated) {
             if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
                 Account account = jwtTokenUtil.getAccountFromJwt(token);

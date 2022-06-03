@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
 
@@ -32,6 +32,7 @@ public class BookingServiceImpl implements BookingService{
     public void delete(int theId) {
 
     }
+
     @Override
     public void update(Booking theEntity) {
         bookingRepository.save(theEntity);
@@ -46,6 +47,7 @@ public class BookingServiceImpl implements BookingService{
     public Booking saveBooking(Booking booking) {
         return bookingRepository.save(booking);
     }
+
     @Override
     public List<Booking> findBookingByPatientIdAndStatus(int theId, String status) {
         return bookingRepository.findBookingByPatientIdAndStatus(theId, status);

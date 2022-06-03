@@ -60,7 +60,8 @@ public class PatientController {
             } else {
                 throw new BadRequestException("confirm Password is not match with password");
             }
-        } {
+        }
+        {
             throw new BadRequestException("User existed!");
 
         }

@@ -14,13 +14,10 @@ public class PaginationAndSortFactory {
         return PageRequest.of(pageNo, pageSize, sort);
     }
 
-    public static <T> Page<T> convertToPage( List<T> list, Pageable pageable) {
+    public static <T> Page<T> convertToPage(List<T> list, Pageable pageable) {
         Pageable paging = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         int start = Math.min((int) paging.getOffset(), list.size());
         int end = Math.min((start + paging.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
-
     }
-
-
 }

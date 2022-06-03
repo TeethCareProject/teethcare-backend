@@ -34,7 +34,7 @@ public class AccountController {
                                                         @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
-        Page<Account> accounts =  accountService.findAllByFilter(filter, pageable);
+        Page<Account> accounts = accountService.findAllByFilter(filter, pageable);
         Page<AccountResponse> clinicResponses = accounts.map(accountMapper::mapAccountToAccountResponse);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }

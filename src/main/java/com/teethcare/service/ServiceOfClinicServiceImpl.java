@@ -25,7 +25,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     @Override
     public ServiceOfClinic findById(int theId) {
         Optional<ServiceOfClinic> service = serviceRepository.findById(theId);
-        if(service.isPresent()){
+        if (service.isPresent()) {
             return service.get();
         }
         return null;
