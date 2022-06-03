@@ -8,6 +8,7 @@ import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -62,7 +63,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
         serviceOfClinics = serviceOfClinics.stream()
                 .filter(request.predicates().stream().reduce(serviceOfClinic -> true, Predicate::and))
                 .collect(Collectors.toList());
-        return new PageImpl<>(serviceOfClinics);
+        return PaginationAndSortFactory.convertToPage(serviceOfClinics, pageable);
     }
 
     @Override

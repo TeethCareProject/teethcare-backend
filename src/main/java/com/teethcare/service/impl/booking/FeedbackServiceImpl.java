@@ -12,6 +12,7 @@ import com.teethcare.repository.FeedbackRepository;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.FeedbackService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -72,7 +73,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                         .collect(Collectors.toList());
             }
         }
-        return new PageImpl<>(feedbacks);
+        return PaginationAndSortFactory.convertToPage(feedbacks, pageable);
 
     }
     public List<Feedback> getAllByBookingForAdmin(List<Booking> bookings){

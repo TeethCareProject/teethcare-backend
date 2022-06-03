@@ -2,32 +2,22 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
-import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.ServiceOfClinic;
-import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.ServiceDetailResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.ServiceOfClinicService;
-import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
-import io.swagger.annotations.ResponseHeader;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +35,7 @@ public class ServiceOfClinicController {
                                                                 @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                 @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
 
         Account account = null;
         if (token != null) {

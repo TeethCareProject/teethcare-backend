@@ -2,19 +2,16 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.Report;
 import com.teethcare.model.request.EvaluateRequest;
 import com.teethcare.model.request.ReportFilterRequest;
 import com.teethcare.model.request.ReportRequest;
-import com.teethcare.model.response.ClinicInfoResponse;
-import com.teethcare.model.response.FeedbackResponse;
 import com.teethcare.model.response.ReportResponse;
 import com.teethcare.service.FeedbackService;
 import com.teethcare.service.ReportService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,7 +34,7 @@ public class ReportController {
                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction){
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
         Page<Report> list = reportService.findByStatus(pageable, request);
         Page<ReportResponse> responses = list.map(feedbackMapper::mapReportToReportResponse);
         return new ResponseEntity<>(responses, HttpStatus.OK);

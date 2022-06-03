@@ -7,6 +7,7 @@ import com.teethcare.model.request.ReportFilterRequest;
 import com.teethcare.repository.ReportRepository;
 import com.teethcare.service.FeedbackService;
 import com.teethcare.service.ReportService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -65,7 +66,7 @@ public class ReportServiceImpl implements ReportService {
         list = list.stream()
                 .filter(request.requestPredicate().stream().reduce(report -> true, Predicate::and))
                 .collect(Collectors.toList());
-        return new PageImpl<>(list);
+        return PaginationAndSortFactory.convertToPage(list, pageable);
     }
 
     @Override
