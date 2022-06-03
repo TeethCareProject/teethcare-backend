@@ -21,25 +21,25 @@ public class AccountFilterRequest {
     public Predicate<Account> getPredicate() {
         Predicate<Account> predicate = account -> true;
         if (fullName != null) {
-            predicate = predicate.and(account -> StringUtils.ContainsIgnoreCase((account.getLastName() + " " + account.getFirstName()), fullName));
+            predicate = predicate.and(account -> StringUtils.containsIgnoreCase((account.getLastName() + " " + account.getFirstName()), fullName));
         }
         if (username != null) {
-            predicate = predicate.and(account -> StringUtils.ContainsIgnoreCase(account.getUsername(), username));
+            predicate = predicate.and(account -> StringUtils.containsIgnoreCase(account.getUsername(), username));
         }
         if (status != null) {
-            predicate = predicate.and(account -> StringUtils.EqualsIgnoreCase(account.getStatus(), status));
+            predicate = predicate.and(account -> StringUtils.equalsIgnoreCase(account.getStatus(), status));
         }
         if (email != null) {
-            predicate = predicate.and(account -> StringUtils.ContainsIgnoreCase(account.getEmail(), email));
+            predicate = predicate.and(account -> StringUtils.containsIgnoreCase(account.getEmail(), email));
         }
         if (phone != null) {
-            predicate = predicate.and(account -> StringUtils.ContainsIgnoreCase(account.getPhone(), phone));
+            predicate = predicate.and(account -> StringUtils.containsIgnoreCase(account.getPhone(), phone));
         }
         if (role != null) {
-            predicate = predicate.and(account -> StringUtils.EqualsIgnoreCase(account.getRole().getName(), role));
+            predicate = predicate.and(account -> StringUtils.equalsIgnoreCase(account.getRole().getName(), role));
         }
         if (id != null) {
-            predicate = predicate.and(account -> StringUtils.ContainsIgnoreCase(account.getId().toString(), id));
+            predicate = predicate.and(account -> StringUtils.containsIgnoreCase(account.getId().toString(), id));
         }
         return predicate;
     }

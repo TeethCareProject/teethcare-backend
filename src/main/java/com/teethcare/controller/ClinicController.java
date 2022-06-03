@@ -20,7 +20,7 @@ import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Page;
@@ -51,7 +51,7 @@ public class ClinicController {
                                                                  @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                  @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                  @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
         Page<Clinic> list = clinicService.findAllWithFilter(clinicFilterRequest, pageable);
         Page<ClinicResponse> clinicResponses = list.map(clinicMapper::mapClinicToClinicResponse);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);

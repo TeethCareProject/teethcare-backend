@@ -7,9 +7,9 @@ import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.repository.ClinicRepository;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class ClinicServiceImpl implements ClinicService {
     public Page<Clinic> findAllWithFilter(ClinicFilterRequest filter, Pageable pageable) {
         List<Clinic> list = clinicRepository.findAllByStatusIsNotNull(pageable);
         list = list.stream().filter(filter.getPredicate()).collect(Collectors.toList());
-        return new PageImpl<>(list, pageable, list.size());
+        return PaginationAndSortFactory.convertToPage(list, pageable);
     }
 
     @Override

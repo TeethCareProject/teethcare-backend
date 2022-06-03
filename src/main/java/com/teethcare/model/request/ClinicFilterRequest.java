@@ -26,13 +26,13 @@ public class ClinicFilterRequest {
     public Predicate<Clinic> getPredicate() {
         Predicate<Clinic> predicate = clinic -> true;
         if (id != null) {
-            predicate = predicate.and(clinic -> StringUtils.ContainsIgnoreCase(clinic.getId().toString(), id));
+            predicate = predicate.and(clinic -> StringUtils.containsIgnoreCase(clinic.getId().toString(), id));
         }
         if (name != null) {
-            predicate = predicate.and(clinic -> StringUtils.ContainsIgnoreCase(clinic.getName(), name));
+            predicate = predicate.and(clinic -> StringUtils.containsIgnoreCase(clinic.getName(), name));
         }
         if (status != null) {
-            predicate = predicate.and(clinic -> StringUtils.EqualsIgnoreCase(clinic.getStatus(), status));
+            predicate = predicate.and(clinic -> StringUtils.equalsIgnoreCase(clinic.getStatus(), status));
         }
         if (provinceId != null) {
             predicate = predicate.and(clinic -> clinic.getLocation()
@@ -48,14 +48,14 @@ public class ClinicFilterRequest {
             predicate = predicate.and(clinic -> {
                 List<ServiceOfClinic> serviceOfClinicList = clinic.getServiceOfClinic();
                 return serviceOfClinicList.stream()
-                        .anyMatch(service -> StringUtils.ContainsIgnoreCase(service.getId().toString(), serviceId));
+                        .anyMatch(service -> StringUtils.containsIgnoreCase(service.getId().toString(), serviceId));
             });
         }
         if (serviceName != null) {
             predicate = predicate.and(clinic -> {
                 List<ServiceOfClinic> serviceOfClinicList = clinic.getServiceOfClinic();
                 return serviceOfClinicList.stream()
-                        .anyMatch(service -> StringUtils.ContainsIgnoreCase(service.getName(), serviceName));
+                        .anyMatch(service -> StringUtils.containsIgnoreCase(service.getName(), serviceName));
             });
         }
         return predicate;

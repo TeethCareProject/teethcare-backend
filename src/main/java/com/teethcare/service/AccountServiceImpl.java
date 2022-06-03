@@ -8,9 +8,9 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
 import com.teethcare.repository.AccountRepository;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     public Page<Account> findAllByFilter(AccountFilterRequest filter, Pageable pageable) {
         List<Account> accounts = accountRepository.findAll();
         accounts = accounts.stream().filter(filter.getPredicate()).collect(Collectors.toList());
-        return new PageImpl<>(accounts, pageable, accounts.size());
+        return PaginationAndSortFactory.convertToPage(accounts, pageable);
     }
 
     @Override

@@ -16,7 +16,7 @@ import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.ManagerService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +59,7 @@ public class CustomerServiceController {
                                                                 @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                 @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                 @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
         Page<CustomerService> customerServices = csService.findAllWithPaging(pageable);
         Page<CustomerServiceResponse> customerServiceResponses = customerServices.map(accountMapper::mapCustomerServiceToCustomerServiceResponse);
         return new ResponseEntity<>(customerServiceResponses, HttpStatus.OK);
