@@ -2,6 +2,7 @@ package com.teethcare.model.request;
 
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.utils.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,39 +25,37 @@ public class ClinicFilterRequest {
 
     public Predicate<Clinic> getPredicate() {
         Predicate<Clinic> predicate = clinic -> true;
+        if (id != null) {
+            predicate = predicate.and(clinic -> StringUtils.ContainsIgnoreCase(clinic.getId().toString(), id));
+        }
         if (name != null) {
-            predicate = predicate.and((clinic) -> clinic.getName().toUpperCase().contains(name
-                    .replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+            predicate = predicate.and(clinic -> StringUtils.ContainsIgnoreCase(clinic.getName(), name));
         }
         if (status != null) {
-            predicate = predicate.and((clinic) -> clinic.getStatus().equalsIgnoreCase(status.trim()));
+            predicate = predicate.and(clinic -> StringUtils.EqualsIgnoreCase(clinic.getStatus(), status));
         }
         if (provinceId != null) {
-            predicate = predicate.and((clinic) -> clinic.getLocation()
+            predicate = predicate.and(clinic -> clinic.getLocation()
                     .getWard().getDistrict().getProvince().getId() == provinceId);
         }
         if (districtId != null) {
-            predicate = predicate.and((clinic) -> clinic.getLocation().getWard().getDistrict().getId() == districtId);
+            predicate = predicate.and(clinic -> clinic.getLocation().getWard().getDistrict().getId() == districtId);
         }
         if (wardId != null) {
-            predicate = predicate.and((clinic) -> clinic.getLocation().getWard().getId() == wardId);
-        }
-        if (id != null) {
-            predicate = predicate.and((clinic) -> clinic.getId().toString().toUpperCase()
-                    .contains(id.trim().toUpperCase()));
+            predicate = predicate.and(clinic -> clinic.getLocation().getWard().getId() == wardId);
         }
         if (serviceId != null) {
             predicate = predicate.and(clinic -> {
                 List<ServiceOfClinic> serviceOfClinicList = clinic.getServiceOfClinic();
-                return serviceOfClinicList.stream().anyMatch(service -> service.getId().toString().toUpperCase()
-                        .contains(serviceId.trim().toUpperCase()));
+                return serviceOfClinicList.stream()
+                        .anyMatch(service -> StringUtils.ContainsIgnoreCase(service.getId().toString(), serviceId));
             });
         }
         if (serviceName != null) {
             predicate = predicate.and(clinic -> {
                 List<ServiceOfClinic> serviceOfClinicList = clinic.getServiceOfClinic();
-                return serviceOfClinicList.stream().anyMatch(service -> service.getName().toUpperCase().contains(serviceName
-                        .replaceAll("\\s\\s+", " ").trim().toUpperCase()));
+                return serviceOfClinicList.stream()
+                        .anyMatch(service -> StringUtils.ContainsIgnoreCase(service.getName(), serviceName));
             });
         }
         return predicate;
