@@ -4,7 +4,6 @@ import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.*;
-import jdk.jfr.Name;
 import org.mapstruct.*;
 
 import java.util.List;
