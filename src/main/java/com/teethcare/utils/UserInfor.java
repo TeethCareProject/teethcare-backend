@@ -1,4 +1,4 @@
-package com.teethcare.helper;
+package com.teethcare.utils;
 
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.model.entity.Account;
@@ -7,8 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class UserInfor {
-    private final AccountService accountService;
-    public Account getFromToken(String token) {
+    public static Account getFromToken(String token, AccountService accountService) {
         token = token.substring("Bearer ".length());
 
         JwtTokenUtil tokenUtil = new JwtTokenUtil(accountService);

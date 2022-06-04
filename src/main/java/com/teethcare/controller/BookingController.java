@@ -3,7 +3,7 @@ package com.teethcare.controller;
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
-import com.teethcare.helper.UserInfor;
+import com.teethcare.utils.UserInfor;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
@@ -32,18 +32,17 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class BookingController {
     private final BookingService bookingService;
     private final BookingMapper bookingMapper;
-    private final PatientService patientService;
     private final ServiceOfClinicService serviceOfClinicService;
     private final CSService CSService;
     private final UserInfor userInfor;
-    private final ClinicService clinicService;
+    private final AccountService accountService;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
                                                                  @RequestHeader(AUTHORIZATION) String token) {
 
-        Account account = userInfor.getFromToken(token);
+        Account account = UserInfor.getFromToken(token, accountService);
 
         Booking booking = bookingService.saveBooking(bookingRequest, account);
         PatientBookingResponse patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
@@ -64,7 +63,7 @@ public class BookingController {
                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction,
                                                         BookingFilterRequest requestFilter,
                                                         @RequestHeader(AUTHORIZATION) String token) {
-        Account account = userInfor.getFromToken(token);
+        Account account = UserInfor.getFromToken(token, accountService);
 
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
 
@@ -87,7 +86,7 @@ public class BookingController {
     public ResponseEntity<MessageResponse> isAccepted(@RequestParam(value = "isAccepted") boolean isAccepted,
                                                       @RequestParam(value = "bookingId") int bookingId,
                                                       @RequestHeader(AUTHORIZATION) String token) {
-        Account account = userInfor.getFromToken(token);
+        Account account = UserInfor.getFromToken(token, accountService);
 
         CustomerService customerService = CSService.findById(account.getId());
 
