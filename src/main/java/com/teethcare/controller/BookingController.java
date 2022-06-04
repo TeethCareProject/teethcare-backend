@@ -34,7 +34,6 @@ public class BookingController {
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
     private final CSService CSService;
-    private final UserInfor userInfor;
     private final AccountService accountService;
 
     @PostMapping
