@@ -11,8 +11,9 @@ public class UserInfor {
         token = token.substring("Bearer ".length());
 
         JwtTokenUtil tokenUtil = new JwtTokenUtil(accountService);
+        System.out.println(token);
         String username = tokenUtil.getUsernameFromJwt(token);
-
+        System.out.println(username);
         return accountService.getAccountByUsername(username);
     }
 }
