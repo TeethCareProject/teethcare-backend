@@ -44,12 +44,11 @@ public class BookingController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
-                                                                 @RequestHeader("AUTHORIZATION") String request){
-                                                                 HttpServletRequest request) {
+                                                                 @RequestHeader("AUTHORIZATION") String request) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
         String token = request.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
-        Account account = accountService.getAccountByUsername(token);
+        Account account = accountService.getAccountByUsername(username);
         //get milisecond
         long milisecond = bookingRequest.getDesiredCheckingTime();
 

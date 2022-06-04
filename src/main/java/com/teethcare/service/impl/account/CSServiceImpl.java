@@ -11,8 +11,7 @@ import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.CSRegisterRequest;
 import com.teethcare.repository.CustomerServiceRepository;
-import com.teethcare.service.CSService;
-import com.teethcare.service.RoleService;
+import com.teethcare.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -93,7 +92,8 @@ public class CSServiceImpl implements CSService {
         if (!isDuplicated) {
             if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {
                 token = token.substring("Bearer ".length());
-                Account account = jwtTokenUtil.getAccountFromJwt(token);
+                String username = jwtTokenUtil.getUsernameFromJwt(token);
+                Account account = accountService.getAccountByUsername(username);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
                 CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(csRegisterRequest);

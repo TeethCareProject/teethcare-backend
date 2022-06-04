@@ -2,26 +2,22 @@ package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Feedback;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.FeedbackRepository;
-import com.teethcare.service.BookingService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.FeedbackService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service

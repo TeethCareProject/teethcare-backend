@@ -13,7 +13,9 @@ import com.teethcare.model.request.DentistRegisterRequest;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.DentistRepository;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.DentistService;
+import com.teethcare.service.ManagerService;
 import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,7 @@ public class DentistServiceImpl implements DentistService {
     private final ManagerService managerService;
     private final AccountMapper accountMapper;
     private final JwtTokenUtil jwtTokenUtil;
+    private final AccountService accountService;
 
 
     @Override
@@ -106,7 +109,8 @@ public class DentistServiceImpl implements DentistService {
         boolean isDuplicated = accountRepository.findByUsername(dentistRegisterRequest.getUsername()) == null;
         if (!isDuplicated) {
             if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
-                Account account = jwtTokenUtil.getAccountFromJwt(token);
+                String username = jwtTokenUtil.getUsernameFromJwt(token);
+                Account account =accountService.getAccountByUsername(username) ;
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
                 Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(dentistRegisterRequest);

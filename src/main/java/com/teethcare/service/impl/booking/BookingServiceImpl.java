@@ -1,10 +1,8 @@
 package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Status;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.service.BookingService;
 import lombok.RequiredArgsConstructor;

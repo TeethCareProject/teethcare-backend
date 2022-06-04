@@ -4,19 +4,13 @@ import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
-import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.DentistRegisterRequest;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.MessageResponse;
-import com.teethcare.service.AccountService;
-import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
-import com.teethcare.service.ManagerService;
-import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSortFactory;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -35,11 +28,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping(path = EndpointConstant.Dentist.DENTIST_ENDPOINT)
 public class DentistController {
     private final DentistService dentistService;
-    private final ClinicService clinicService;
-    private final ManagerService managerService;
     private final AccountMapper accountMapper;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final AccountService accountService;
 
     @GetMapping()
     public ResponseEntity<Page<DentistResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
@@ -54,7 +43,7 @@ public class DentistController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DentistResponse> get(@PathVariable int id) {
-        Dentist theDentist = dentistService.findActiveDentist(id);
+        Dentist theDentist = dentistService.findActive(id);
         if (theDentist == null) {
             throw new NotFoundException("Dentist id " + id + "not found");
         }

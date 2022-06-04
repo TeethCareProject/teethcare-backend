@@ -8,7 +8,6 @@ import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.service.ClinicService;
-import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,10 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
-    private final ServiceOfClinicService serviceOfClinicService;
 
     @Override
     public List<Clinic> findAll() {
@@ -46,10 +42,6 @@ public class ClinicServiceImpl implements ClinicService {
         List<Clinic> list = clinicRepository.findAllByStatusIsNotNull(pageable);
         list = list.stream().filter(filter.getPredicate()).collect(Collectors.toList());
         return PaginationAndSortFactory.convertToPage(list, pageable);
-    }
-
-    public List<Clinic> findAllActive(Pageable pageable) {
-        return clinicRepository.findAllByStatus(Status.Clinic.ACTIVE.name(), pageable);
     }
 
     public Clinic getClinicByManager(Manager manager) {

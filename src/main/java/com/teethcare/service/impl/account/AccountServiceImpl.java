@@ -1,4 +1,4 @@
-package com.teethcare.service;
+package com.teethcare.service.impl.account;
 
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
@@ -8,6 +8,7 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
 import com.teethcare.repository.AccountRepository;
+import com.teethcare.service.AccountService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
