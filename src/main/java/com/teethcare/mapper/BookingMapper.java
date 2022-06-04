@@ -26,6 +26,7 @@ public interface BookingMapper {
     @Mapping(source = "patient.email", target = "email")
     @Mapping(target = "desiredCheckingTime", ignore = true)
     @Mapping(source = "description", target = "description")
+    @Mapping(source = "clinic", target = "clinic")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
 
     static Long mapDateTimeToLong(Timestamp dateTime) {

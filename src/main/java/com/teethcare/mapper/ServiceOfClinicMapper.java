@@ -25,6 +25,5 @@ public interface ServiceOfClinicMapper {
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "duration", ignore = true)
-    @Mapping(target = "clinic", ignore = true)
     ServiceOfClinicResponse mapServiceToServiceResponseWithoutFields(ServiceOfClinic serviceOfClinic);
 }

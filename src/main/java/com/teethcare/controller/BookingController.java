@@ -12,10 +12,7 @@ import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientBookingResponse;
-import com.teethcare.service.BookingService;
-import com.teethcare.service.CSService;
-import com.teethcare.service.PatientService;
-import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -45,43 +42,23 @@ public class BookingController {
     private final ServiceOfClinicService serviceOfClinicService;
     private final CSService CSService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ClinicService clinicService;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
-                                                                 @RequestHeader(AUTHORIZATION) String token){
-        Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
+                                                                 @RequestHeader(AUTHORIZATION) String token) {
+
         token = token.substring("Bearer ".length());
         Account account = jwtTokenUtil.getAccountFromJwt(token);
-        //get milisecond
-        long milisecond = bookingRequest.getDesiredCheckingTime();
 
-        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(milisecond);
-        bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+        Booking booking = bookingService.saveBooking(bookingRequest, account);
+        PatientBookingResponse patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
+        patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
 
-        //get service by id
-        int serviceID = bookingRequest.getServiceId();
-        List<ServiceOfClinic> serviceOfClinicList = new ArrayList<>();
-        serviceOfClinicList.add(serviceOfClinicService.findById(serviceID));
+        ServiceOfClinic service = serviceOfClinicService.findById(bookingRequest.getServiceId());
+        patientBookingResponse.setServiceName(service.getName());
 
-        //set service to booking
-        bookingTmp.setServices(serviceOfClinicList);
-
-        //get patient by id
-        Patient patient = patientService.findById(account.getId());
-
-        //set patient to booking
-        bookingTmp.setPatient(patient);
-        bookingTmp.setStatus(Status.Booking.PENDING.name());
-        PatientBookingResponse patientBookingResponse = null;
-
-        //map booking to booking response
-        if (patient != null && !serviceOfClinicList.isEmpty() && serviceOfClinicService.findById(serviceID) != null){
-            Booking booking = bookingService.saveBooking(bookingTmp);
-            patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
-            patientBookingResponse.setServiceName(serviceOfClinicService.findById(serviceID).getName());
-            patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
-        }
         return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
     }
 
@@ -99,7 +76,7 @@ public class BookingController {
 
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
 
-        Page<Booking> bookingPage  = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
+        Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
         Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
 

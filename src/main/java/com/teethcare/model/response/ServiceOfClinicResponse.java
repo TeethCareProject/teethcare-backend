@@ -11,14 +11,6 @@ import java.math.BigDecimal;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServiceOfClinicResponse {
-//    private String id;
-//    private String name;
-//    private String description;
-//    private BigDecimal money;
-//    private int duration;
-//    private String imageUrl;
-//    private String status;
-
     private String id;
     private String name;
     private String description;
@@ -26,6 +18,5 @@ public class ServiceOfClinicResponse {
     private Integer duration;
     private String imageUrl;
     private String status;
-    private Clinic clinic;
 
 }
