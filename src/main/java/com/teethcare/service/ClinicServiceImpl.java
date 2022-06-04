@@ -38,7 +38,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public Page<Clinic> findAllWithFilter(ClinicFilterRequest filter, Pageable pageable) {
-        List<Clinic> list = clinicRepository.findAllByStatusIsNotNull(pageable);
+        List<Clinic> list = clinicRepository.findAll();
         list = list.stream().filter(filter.getPredicate()).collect(Collectors.toList());
         return PaginationAndSortFactory.convertToPage(list, pageable);
     }
