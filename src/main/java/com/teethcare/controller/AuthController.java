@@ -68,11 +68,11 @@ public class AuthController {
             response.setRoleName(role);
 
             Clinic clinic = null;
-            if((Role.DENTIST.name()).equals(role)){
+            if ((Role.DENTIST.name()).equals(role)) {
                 clinic = dentistService.findById(response.getId()).getClinic();
-            }else if((Role.CUSTOMER_SERVICE.name()).equals(role)){
+            } else if ((Role.CUSTOMER_SERVICE.name()).equals(role)) {
                 clinic = csService.findById(response.getId()).getClinic();
-            }else if((Role.MANAGER.name().equals(role))){
+            } else if ((Role.MANAGER.name().equals(role))) {
                 clinic = clinicService.getClinicByManager(managerService.findById(response.getId()));
             }
             ClinicLoginResponse clinicResponse = clinicMapper.mapClinicToClinicLoginResponse(clinic);

@@ -70,6 +70,7 @@ public interface AccountMapper {
 
     @InheritConfiguration(name = "mapDentistToDentistResponse")
     List<DentistResponse> mapDentistListToDentistResponseList(List<Dentist> dentistList);
+
     @InheritConfiguration(name = "mapAccountToAccountResponse")
     CustomerServiceResponse mapCustomerServiceToCustomerServiceResponse(CustomerService customerService);
 

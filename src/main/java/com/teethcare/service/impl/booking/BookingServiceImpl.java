@@ -55,6 +55,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking saveBooking(Booking booking) {
         return bookingRepository.save(booking);
     }
+
     @Override
     public List<Booking> findBookingByPatientIdAndStatus(int theId, String status) {
         return bookingRepository.findBookingByPatientIdAndStatus(theId, status);

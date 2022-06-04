@@ -45,6 +45,7 @@ public class BookingController {
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
                                                                  @RequestHeader("AUTHORIZATION") String request){
+                                                                 HttpServletRequest request) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
         String token = request.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
@@ -72,7 +73,7 @@ public class BookingController {
         PatientBookingResponse patientBookingResponse = null;
 
         //map booking to booking response
-        if (patient != null && !serviceOfClinicList.isEmpty() && serviceOfClinicService.findById(serviceID) != null){
+        if (patient != null && !serviceOfClinicList.isEmpty() && serviceOfClinicService.findById(serviceID) != null) {
             Booking booking = bookingService.saveBooking(bookingTmp);
             patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
             patientBookingResponse.setServiceName(serviceOfClinicService.findById(serviceID).getName());

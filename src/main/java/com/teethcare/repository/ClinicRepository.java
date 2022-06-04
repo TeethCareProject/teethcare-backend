@@ -2,7 +2,6 @@ package com.teethcare.repository;
 
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Manager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,8 +12,4 @@ public interface ClinicRepository extends JpaRepository<Clinic, Integer> {
     Clinic getClinicByManager(Account manager);
 
     List<Clinic> findAllByStatusIsNotNull(Pageable pageable);
-
-    List<Clinic> findAllByStatus(String status, Pageable pageable);
-
-    List<Clinic> findAllByNameContainingIgnoreCase(String search, Pageable pageable);
 }
