@@ -21,7 +21,7 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findAccountByUsernameAndStatus(username, Status.ACTIVE.name());
+        Account account = accountRepository.findAccountByUsernameAndStatus(username, Status.Account.ACTIVE.name());
         if (account != null) {
             return UserDetailsImpl.build(account);
         } else {

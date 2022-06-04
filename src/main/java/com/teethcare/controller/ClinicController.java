@@ -19,11 +19,11 @@ import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
-import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,20 +44,16 @@ public class ClinicController {
     private final DentistService dentistService;
     private final AccountMapper accountMapper;
 
-    private final ServiceOfClinicService serviceOfClinicService;
 
     @GetMapping
-    public ResponseEntity<List<ClinicResponse>> getAllWithFilter(@RequestBody Optional<ClinicFilterRequest> clinicFilterRequest,
-                                                                 @RequestParam(name = "status", required = false) String status,
+    public ResponseEntity<Page<ClinicResponse>> getAllWithFilter(ClinicFilterRequest clinicFilterRequest,
                                                                  @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                  @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                                  @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                  @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
-        ClinicFilterRequest filter = clinicFilterRequest.orElse(null);
-            List<Clinic> list = clinicService.findAllWithFilter(filter, status, pageable);
-
-        List<ClinicResponse> clinicResponses = clinicMapper.mapClinicListToClinicResponseList(list);
+        Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
+        Page<Clinic> list = clinicService.findAllWithFilter(clinicFilterRequest, pageable);
+        Page<ClinicResponse> clinicResponses = list.map(clinicMapper::mapClinicToClinicResponse);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
     }
 
@@ -76,14 +71,15 @@ public class ClinicController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        int theID = 0;
+        int theID;
         if (!NumberUtils.isCreatable(id)) {
             throw new NotFoundException("Id " + id + " invalid");
         }
         theID = Integer.parseInt(id);
         Clinic clinic = clinicService.findById(theID);
         if (clinic != null) {
-            clinic.setStatus(Status.INACTIVE.name());
+            clinic.setStatus(Status.Clinic.INACTIVE.name());
+            clinicService.save(clinic);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             throw new NotFoundException("Clinic id " + id + " not found");
@@ -99,9 +95,10 @@ public class ClinicController {
 
         clinicMapper.mapClinicRequestToClinic(clinicRequest);
 
-        clinicService.save(clinic);
+        clinicService.update(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
+
 
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable String id) {
@@ -109,8 +106,8 @@ public class ClinicController {
 
         List<Account> staffList = new ArrayList<>();
 
-        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
-        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
+        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);

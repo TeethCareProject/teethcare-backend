@@ -18,7 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -42,7 +45,7 @@ public class BookingController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
-                                                                 HttpServletRequest request){
+                                                                 HttpServletRequest request) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
         String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
         Account account = jwtTokenUtil.getAccountFromJwt(token);
@@ -65,11 +68,11 @@ public class BookingController {
 
         //set patient to booking
         bookingTmp.setPatient(patient);
-        bookingTmp.setStatus(Status.PENDING.name());
+        bookingTmp.setStatus(Status.Booking.PENDING.name());
         PatientBookingResponse patientBookingResponse = null;
 
         //map booking to booking response
-        if (patient != null && !serviceOfClinicList.isEmpty() && serviceOfClinicService.findById(serviceID) != null){
+        if (patient != null && !serviceOfClinicList.isEmpty() && serviceOfClinicService.findById(serviceID) != null) {
             Booking booking = bookingService.saveBooking(bookingTmp);
             patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
             patientBookingResponse.setServiceName(serviceOfClinicService.findById(serviceID).getName());

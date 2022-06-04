@@ -25,7 +25,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     @Override
     public ServiceOfClinic findById(int theId) {
         Optional<ServiceOfClinic> service = serviceRepository.findById(theId);
-        if(service.isPresent()){
+        if (service.isPresent()) {
             return service.get();
         }
         return null;
@@ -40,9 +40,15 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     }
 
     @Override
+    public void update(ServiceOfClinic theEntity) {
+
+
+    }
+
+    @Override
     public List<ServiceOfClinic> findByClinicIdAndStatus(int theClinicId, String status, Pageable pageable) {
         List<ServiceOfClinic> serviceOfClinicList =
-                serviceRepository.findByClinicIdAndStatus(theClinicId, Status.ACTIVE.name(), pageable);
+                serviceRepository.findByClinicIdAndStatus(theClinicId, Status.Service.ACTIVE.name(), pageable);
 
         if (serviceOfClinicList == null || serviceOfClinicList.size() == 0) {
             throw new NotFoundException("ID not found");

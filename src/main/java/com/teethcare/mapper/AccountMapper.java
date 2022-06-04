@@ -1,6 +1,8 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.*;
+import com.teethcare.model.request.CSRegisterRequest;
+import com.teethcare.model.request.DentistRegisterRequest;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.*;
@@ -49,18 +51,29 @@ public interface AccountMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
-    @InheritConfiguration(name = "mapAccountToAccountResponse")
     Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(source = "phoneNumber", target = "phone")
+    @Mapping(source = "email", target = "email")
+    Dentist mapDentistRegisterRequestToDentist(DentistRegisterRequest dentistRegisterRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(source = "phoneNumber", target = "phone")
+    @Mapping(source = "email", target = "email")
+    CustomerService mapCSRegisterRequestToCustomerService(CSRegisterRequest csRegisterRequest);
+
     @InheritConfiguration(name = "mapAccountToAccountResponse")
-    @Mapping(source = "clinic.id", target = "clinicId")
-    @Mapping(source = "clinic.name", target = "clinicName")
     DentistResponse mapDentistToDentistResponse(Dentist dentist);
 
+    @InheritConfiguration(name = "mapDentistToDentistResponse")
+    List<DentistResponse> mapDentistListToDentistResponseList(List<Dentist> dentistList);
+
     @InheritConfiguration(name = "mapAccountToAccountResponse")
-    @Mapping(source = "clinic.id", target = "clinicId")
-    @Mapping(source = "clinic.name", target = "clinicName")
     CustomerServiceResponse mapCustomerServiceToCustomerServiceResponse(CustomerService customerService);
 
-
+    @InheritConfiguration(name = "mapCustomerServiceToCustomerServiceResponse")
+    List<CustomerServiceResponse> mapCustomerServiceListToCustomerServiceResponseList(List<CustomerService> dentistList);
 }
