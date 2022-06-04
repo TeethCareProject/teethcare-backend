@@ -14,6 +14,7 @@ public interface BookingMapper {
     @Mapping(target = "desiredCheckingTime", ignore = true)
     Booking mapBookingRequestToBooking (BookingRequest bookingRequest);
 
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "patient.firstName", target = "firstName")
     @Mapping(source = "patient.lastName", target = "lastName")

@@ -3,8 +3,6 @@ package com.teethcare.controller;
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.config.security.JwtTokenUtil;
-import com.teethcare.mapper.AccountMapper;
-import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.FeedbackRequest;
@@ -21,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.function.Function;
-
 @RestController
 @RequestMapping(path = EndpointConstant.Feedback.FEEDBACK_ENDPOINT)
 @RequiredArgsConstructor
@@ -31,8 +27,6 @@ public class FeedbackController {
     private final FeedbackMapper feedbackMapper;
     private final BookingService bookingService;
     private final JwtTokenUtil jwtTokenUtil;
-    private final AccountMapper accountMapper;
-    private final ClinicMapper clinicMapper;
     private final AccountService accountService;
 
     @GetMapping("/{clinicID}")
@@ -52,15 +46,7 @@ public class FeedbackController {
             account = accountService.getAccountByUsername(username);
         }
         Page<Feedback> feedbacks = feedbackService.findAllByClinicID(pageable, clinicId, account, ratingScore);
-        Page<FeedbackByClinicResponse> responses = feedbacks.map(new Function<Feedback, FeedbackByClinicResponse>() {
-            @Override
-            public FeedbackByClinicResponse apply(Feedback feedback) {
-                FeedbackByClinicResponse response = feedbackMapper.mapFeedbackToFeedbackByClinicResponse(feedback);
-                response.setPatientResponse(accountMapper.mapPatientToPatientResponse(feedback.getBooking().getPatient()));
-
-                return response;
-            }
-        });
+        Page<FeedbackByClinicResponse> responses = feedbacks.map(feedbackMapper::mapFeedbackToFeedbackByClinicResponse);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
@@ -71,9 +57,6 @@ public class FeedbackController {
         feedback.setBooking(booking);
         feedbackService.save(feedback);
         FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
-        feedbackResponse.setPatientResponse(accountMapper.mapPatientToPatientResponse(booking.getPatient()));
-        feedbackResponse.setClinicInfoResponse(clinicMapper.mapClinicToClinicInfoResponse(booking.getClinic()));
-
         return new ResponseEntity<>(feedbackResponse, HttpStatus.OK);
     }
 }
