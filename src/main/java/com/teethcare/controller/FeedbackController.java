@@ -49,7 +49,7 @@ public class FeedbackController {
         if (token != null) {
             token = token.substring("Bearer ".length());
             String username = jwtTokenUtil.getUsernameFromJwt(token);
-            account = accountService.getAccountByUsername(token);
+            account = accountService.getAccountByUsername(username);
         }
         Page<Feedback> feedbacks = feedbackService.findAllByClinicID(pageable, clinicId, account, ratingScore);
         Page<FeedbackByClinicResponse> responses = feedbacks.map(new Function<Feedback, FeedbackByClinicResponse>() {

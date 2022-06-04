@@ -71,7 +71,7 @@ public class DentistController {
             if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
                 String token = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
                 String username = jwtTokenUtil.getUsernameFromJwt(token);
-                Account account = accountService.getAccountByUsername(token);
+                Account account = accountService.getAccountByUsername(username);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
                 Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(dentistRegisterRequest);

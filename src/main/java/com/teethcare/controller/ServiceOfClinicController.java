@@ -41,7 +41,7 @@ public class ServiceOfClinicController {
         if (token != null) {
             token = token.substring("Bearer ".length());
             String username = jwtTokenUtil.getUsernameFromJwt(token);
-            account = accountService.getAccountByUsername(token);
+            account = accountService.getAccountByUsername(username);
         }
         Page<ServiceOfClinic> listServiceOfClinics = serviceOfClinicService.findAllWithFilter(serviceFilterRequest, pageable, account);
 
@@ -59,7 +59,7 @@ public class ServiceOfClinicController {
         if (token != null) {
             token = token.substring("Bearer ".length());
             String username = jwtTokenUtil.getUsernameFromJwt(token);
-            account = accountService.getAccountByUsername(token);
+            account = accountService.getAccountByUsername(username);
         }
 
         ServiceOfClinic service = serviceOfClinicService.findById(id, account);
