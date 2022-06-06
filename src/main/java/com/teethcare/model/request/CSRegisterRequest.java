@@ -1,4 +1,6 @@
 package com.teethcare.model.request;
 
-public class CSRegisterRequest extends PatientRegisterRequest {
+import com.teethcare.utils.Trimmable;
+
+public class CSRegisterRequest extends PatientRegisterRequest implements Trimmable {
 }

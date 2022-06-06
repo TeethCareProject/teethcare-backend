@@ -1,18 +1,21 @@
 package com.teethcare.model.request;
 
+import com.teethcare.utils.Trimmable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ManagerRegisterRequest extends PatientRegisterRequest{
+public class ManagerRegisterRequest extends PatientRegisterRequest implements Trimmable {
 
     @NotBlank
     @Length(max = 100)

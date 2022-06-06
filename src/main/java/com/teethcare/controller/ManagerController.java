@@ -1,12 +1,10 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
@@ -62,25 +60,8 @@ public class ManagerController {
 
     @PostMapping
     public ResponseEntity<ManagerResponse> add(@Valid @RequestBody ManagerRegisterRequest managerRegisterRequest) {
-        boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
-        if (!isDuplicated) {
-            if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
-                Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
-                Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
-                Location location = new Location();
-                location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
-                location.setAddressString(managerRegisterRequest.getClinicAddress());
-                locationService.save(location);
-                managerService.save(manager);
-                clinicService.saveWithManagerAndLocation(clinic, manager, location);
-                ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                ManagerResponse managerResponse = accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);
-                return new ResponseEntity<>(managerResponse, HttpStatus.OK);
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
-        }
-        throw new BadRequestException("User existed!");
+        ManagerResponse managerResponse = managerService.addNew(managerRegisterRequest);
+        return new ResponseEntity<>(managerResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

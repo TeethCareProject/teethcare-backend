@@ -91,6 +91,7 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public CustomerService addNew(CSRegisterRequest csRegisterRequest, String token) {
+        csRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(csRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {

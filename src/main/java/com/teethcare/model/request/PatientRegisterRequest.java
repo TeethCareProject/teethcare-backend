@@ -1,5 +1,6 @@
 package com.teethcare.model.request;
 
+import com.teethcare.utils.Trimmable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PatientRegisterRequest {
+public class PatientRegisterRequest implements Trimmable {
     @NotBlank
     @Length(max = 72)
     private String username;
