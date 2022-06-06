@@ -126,6 +126,7 @@ public class BookingServiceImpl implements BookingService {
 
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
+                System.out.println(accountId);
                 List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId);
 
                 bookingListForPatient = bookingListForPatient.stream()
