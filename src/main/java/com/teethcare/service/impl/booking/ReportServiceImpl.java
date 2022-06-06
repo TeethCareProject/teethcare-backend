@@ -55,7 +55,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<Report> findAll(Pageable pageable) {
-        return reportRepository.findAllByStatusIsNotNull(pageable);
+        return reportRepository.findAll();
     }
 
     @Override
