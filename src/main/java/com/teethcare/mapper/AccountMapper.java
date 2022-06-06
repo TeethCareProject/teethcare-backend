@@ -1,10 +1,10 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.*;
-import com.teethcare.model.request.CSRegisterRequest;
-import com.teethcare.model.request.DentistRegisterRequest;
+
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
+import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.model.response.*;
 import org.mapstruct.*;
 
@@ -57,13 +57,13 @@ public interface AccountMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
-    Dentist mapDentistRegisterRequestToDentist(DentistRegisterRequest dentistRegisterRequest);
+    Dentist mapDentistRegisterRequestToDentist(StaffRegisterRequest dentistRegisterRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
-    CustomerService mapCSRegisterRequestToCustomerService(CSRegisterRequest csRegisterRequest);
+    CustomerService mapCSRegisterRequestToCustomerService(StaffRegisterRequest csRegisterRequest);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")
     DentistResponse mapDentistToDentistResponse(Dentist dentist);

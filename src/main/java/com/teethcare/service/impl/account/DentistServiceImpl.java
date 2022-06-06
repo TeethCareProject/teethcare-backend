@@ -9,8 +9,7 @@ import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Dentist;
-import com.teethcare.model.request.DentistRegisterRequest;
-import com.teethcare.repository.AccountRepository;
+import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.DentistRepository;
 import com.teethcare.service.AccountService;
@@ -107,16 +106,16 @@ public class DentistServiceImpl implements DentistService {
     }
 
     @Override
-    public Dentist addNew(DentistRegisterRequest dentistRegisterRequest, String token) {
-        dentistRegisterRequest.trim();
-        boolean isDuplicated = accountService.isDuplicated(dentistRegisterRequest.getUsername());
+    public Dentist addNew(StaffRegisterRequest staffRegisterRequest, String token) {
+        staffRegisterRequest.trim();
+        boolean isDuplicated = accountService.isDuplicated(staffRegisterRequest.getUsername());
         if (!isDuplicated) {
-            if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
+            if (staffRegisterRequest.getPassword().equals(staffRegisterRequest.getConfirmPassword())) {
                 String username = jwtTokenUtil.getUsernameFromJwt(token);
                 Account account = accountService.getAccountByUsername(username);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
-                Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(dentistRegisterRequest);
+                Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(staffRegisterRequest);
                 dentist.setClinic(clinic);
                 this.save(dentist);
                 return dentist;

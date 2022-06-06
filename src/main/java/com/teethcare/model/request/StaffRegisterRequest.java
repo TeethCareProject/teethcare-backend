@@ -10,10 +10,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class DentistRegisterRequest extends PatientRegisterRequest implements Trimmable {
+public class StaffRegisterRequest extends PatientRegisterRequest implements Trimmable {
 
     private String specialization;
 
     private String description;
+
+    private String role;
 
 }

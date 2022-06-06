@@ -9,7 +9,7 @@ import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.request.CSRegisterRequest;
+import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.repository.CustomerServiceRepository;
 import com.teethcare.service.*;
 import lombok.RequiredArgsConstructor;
@@ -90,17 +90,17 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public CustomerService addNew(CSRegisterRequest csRegisterRequest, String token) {
-        csRegisterRequest.trim();
-        boolean isDuplicated = accountService.isDuplicated(csRegisterRequest.getUsername());
+    public CustomerService addNew(StaffRegisterRequest staffRegisterRequest, String token) {
+        staffRegisterRequest.trim();
+        boolean isDuplicated = accountService.isDuplicated(staffRegisterRequest.getUsername());
         if (!isDuplicated) {
-            if (csRegisterRequest.getPassword().equals(csRegisterRequest.getConfirmPassword())) {
+            if (staffRegisterRequest.getPassword().equals(staffRegisterRequest.getConfirmPassword())) {
                 token = token.substring("Bearer ".length());
                 String username = jwtTokenUtil.getUsernameFromJwt(token);
                 Account account = accountService.getAccountByUsername(username);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
-                CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(csRegisterRequest);
+                CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(staffRegisterRequest);
                 customerService.setClinic(clinic);
                 this.save(customerService);
                 return customerService;

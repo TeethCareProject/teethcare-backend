@@ -1,7 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.Dentist;
-import com.teethcare.model.request.DentistRegisterRequest;
+import com.teethcare.model.request.StaffRegisterRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,5 +16,5 @@ public interface DentistService extends CRUDService<Dentist> {
 
     Page<Dentist> findAllWithPaging(Pageable pageable);
 
-    Dentist addNew(DentistRegisterRequest dentistRegisterRequest, String token);
+    Dentist addNew(StaffRegisterRequest staffRegisterRequest, String token);
 }

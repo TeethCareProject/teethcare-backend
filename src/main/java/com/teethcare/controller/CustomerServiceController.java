@@ -7,7 +7,6 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.request.CSRegisterRequest;
 import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.CSService;
@@ -52,14 +51,6 @@ public class CustomerServiceController {
         Page<CustomerService> customerServices = csService.findAllWithPaging(pageable);
         Page<CustomerServiceResponse> customerServiceResponses = customerServices.map(accountMapper::mapCustomerServiceToCustomerServiceResponse);
         return new ResponseEntity<>(customerServiceResponses, HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity<CustomerServiceResponse> add(@Valid @RequestBody CSRegisterRequest csRegisterRequest,
-                                                       @RequestHeader(AUTHORIZATION) String token) {
-        CustomerService customerService = csService.addNew(csRegisterRequest, token);
-        CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
-        return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

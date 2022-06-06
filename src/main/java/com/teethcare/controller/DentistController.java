@@ -7,7 +7,7 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Dentist;
-import com.teethcare.model.request.DentistRegisterRequest;
+import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.DentistService;
@@ -18,10 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,14 +44,6 @@ public class DentistController {
             throw new NotFoundException("Dentist id " + id + "not found");
         }
         DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(theDentist);
-        return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity<DentistResponse> add(@Valid @RequestBody DentistRegisterRequest dentistRegisterRequest,
-                                               @RequestHeader(AUTHORIZATION) String token) {
-        Dentist dentist = dentistService.addNew(dentistRegisterRequest, token.substring("Bearer ".length()));
-        DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(dentist);
         return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
     }
 
