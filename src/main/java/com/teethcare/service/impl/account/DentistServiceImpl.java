@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class DentistServiceImpl implements DentistService {
     private final AccountMapper accountMapper;
     private final JwtTokenUtil jwtTokenUtil;
     private final AccountService accountService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -63,6 +65,7 @@ public class DentistServiceImpl implements DentistService {
     @Override
     public void save(Dentist theDentist) {
         theDentist.setStatus(Status.Account.ACTIVE.name());
+        theDentist.setPassword(passwordEncoder.encode(theDentist.getPassword()));
         theDentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
         dentistRepository.save(theDentist);
     }

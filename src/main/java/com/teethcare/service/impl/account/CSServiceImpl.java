@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class CSServiceImpl implements CSService {
     private final ManagerService managerService;
     private final AccountMapper accountMapper;
     private final JwtTokenUtil jwtTokenUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<CustomerService> findAll() {
@@ -51,6 +53,7 @@ public class CSServiceImpl implements CSService {
     public void save(CustomerService theCustomerService) {
         theCustomerService.setStatus(Status.Account.ACTIVE.name());
         theCustomerService.setRole(roleService.getRoleByName(Role.CUSTOMER_SERVICE.name()));
+        theCustomerService.setPassword(passwordEncoder.encode(theCustomerService.getPassword()));
         customerServiceRepository.save(theCustomerService);
     }
 
