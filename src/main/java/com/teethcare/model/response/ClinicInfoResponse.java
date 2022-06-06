@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ClinicInfoResponse {
-
     private int id;
     private LocationResponse location;
     private String name;
