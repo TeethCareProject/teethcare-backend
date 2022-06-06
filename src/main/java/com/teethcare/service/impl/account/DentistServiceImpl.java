@@ -13,10 +13,15 @@ import com.teethcare.model.request.DentistRegisterRequest;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.DentistRepository;
+import com.teethcare.service.AccountService;
+import com.teethcare.service.DentistService;
+import com.teethcare.service.ManagerService;
+import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,12 +32,12 @@ import java.util.Optional;
 public class DentistServiceImpl implements DentistService {
     private final DentistRepository dentistRepository;
     private final RoleService roleService;
-    private final AccountRepository accountRepository;
     private final ClinicRepository clinicService;
     private final ManagerService managerService;
     private final AccountMapper accountMapper;
     private final AccountService accountService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -60,6 +65,7 @@ public class DentistServiceImpl implements DentistService {
     public void save(Dentist theDentist) {
         theDentist.setStatus(Status.Account.ACTIVE.name());
         theDentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
+        theDentist.setPassword(passwordEncoder.encode(theDentist.getPassword()));
         dentistRepository.save(theDentist);
     }
 
@@ -106,7 +112,8 @@ public class DentistServiceImpl implements DentistService {
         boolean isDuplicated = accountService.isDuplicated(dentistRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
-                Account account = jwtTokenUtil.getAccountFromJwt(token);
+                String username = jwtTokenUtil.getUsernameFromJwt(token);
+                Account account = accountService.getAccountByUsername(username);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
                 Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(dentistRegisterRequest);
