@@ -68,10 +68,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking saveBooking(BookingRequest bookingRequest, Account account) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
-        //get milisecond
-        long milisecond = bookingRequest.getDesiredCheckingTime();
+        //get millisecond
+        long millisecond = bookingRequest.getDesiredCheckingTime();
 
-        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(milisecond);
+        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
         Timestamp now = new Timestamp(System.currentTimeMillis());
         if (desiredCheckingTime.compareTo(now) < 0){
             throw new BadRequestException("Desired checking time invalid");
