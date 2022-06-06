@@ -25,7 +25,6 @@ import java.util.List;
 public class PatientController {
 
     private final PatientService patientService;
-    private final AccountService accountService;
     private final AccountMapper accountMapper;
 
     @GetMapping
@@ -47,24 +46,11 @@ public class PatientController {
 
     }
 
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
     @PostMapping
     public ResponseEntity<PatientResponse> add(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
-        boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
-        if (!isDuplicated) {
-            if (patientRegisterRequest.getPassword().equals(patientRegisterRequest.getConfirmPassword())) {
-                Patient patient = accountMapper.mapPatientRegisterRequestToPatient(patientRegisterRequest);
-                patientService.save(patient);
-                PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
-                return new ResponseEntity<>(patientResponse, HttpStatus.OK);
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
-        }
-        {
-            throw new BadRequestException("User existed!");
-
-        }
+        Patient patient = patientService.addNew(patientRegisterRequest);
+        PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
+        return new ResponseEntity<>(patientResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
