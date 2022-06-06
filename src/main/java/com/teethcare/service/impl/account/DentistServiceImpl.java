@@ -1,4 +1,4 @@
-package com.teethcare.service.impl.account;
+package com.teethcare.service;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
@@ -13,10 +13,6 @@ import com.teethcare.model.request.DentistRegisterRequest;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.DentistRepository;
-import com.teethcare.service.AccountService;
-import com.teethcare.service.DentistService;
-import com.teethcare.service.ManagerService;
-import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,8 +31,8 @@ public class DentistServiceImpl implements DentistService {
     private final ClinicRepository clinicService;
     private final ManagerService managerService;
     private final AccountMapper accountMapper;
-    private final JwtTokenUtil jwtTokenUtil;
     private final AccountService accountService;
+    private final JwtTokenUtil jwtTokenUtil;
 
 
     @Override
@@ -106,11 +102,11 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public Dentist addNew(DentistRegisterRequest dentistRegisterRequest, String token) {
-        boolean isDuplicated = accountRepository.findByUsername(dentistRegisterRequest.getUsername()) == null;
+        dentistRegisterRequest.trim();
+        boolean isDuplicated = accountService.isDuplicated(dentistRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (dentistRegisterRequest.getPassword().equals(dentistRegisterRequest.getConfirmPassword())) {
-                String username = jwtTokenUtil.getUsernameFromJwt(token);
-                Account account =accountService.getAccountByUsername(username) ;
+                Account account = jwtTokenUtil.getAccountFromJwt(token);
                 Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
                 Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(dentistRegisterRequest);
