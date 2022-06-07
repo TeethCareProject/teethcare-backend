@@ -46,7 +46,7 @@ public interface ClinicMapper {
     @Mapping(target = "avgRatingScore", ignore = true)
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
-    Clinic mapClinicRequestToClinic(ClinicRequest dto);
+    Clinic mapClinicRequestToClinic(ClinicRequest clinicRequest);
 
     ServiceOfClinicResponse mapServiceToServiceResponse(ServiceOfClinic serviceOfClinic);
 
@@ -55,4 +55,7 @@ public interface ClinicMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ClinicInfoResponse mapClinicToClinicInfoResponse(Clinic clinic);
+
+    @Named(value = "mapClinicToClinicSimpleResponse")
+    ClinicSimpleResponse mapClinicToClinicSimpleResponse(Clinic clinic);
 }

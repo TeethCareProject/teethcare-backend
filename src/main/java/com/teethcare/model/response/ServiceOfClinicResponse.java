@@ -1,22 +1,21 @@
 package com.teethcare.model.response;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.teethcare.model.entity.Clinic;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServiceOfClinicResponse {
     private String id;
     private String name;
     private String description;
-    private BigDecimal money;
-    private int duration;
+    private BigDecimal price;
+    private Integer duration;
     private String imageUrl;
     private String status;
 

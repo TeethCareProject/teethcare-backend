@@ -43,15 +43,7 @@ public class DentistServiceImpl implements DentistService {
     public Dentist findById(int theId) {
         Optional<Dentist> result = dentistRepository.findById(theId);
 
-        Dentist theDentist;
-
-        if (result.isPresent()) {
-            theDentist = result.get();
-        } else {
-            throw new NotFoundException();
-        }
-
-        return theDentist;
+        return result.get();
     }
 
     @Override

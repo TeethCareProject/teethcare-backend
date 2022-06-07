@@ -14,4 +14,16 @@ public interface ServiceOfClinicMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "clinic", target = "clinic")
     ServiceDetailResponse mapServiceOfClinicToServiceDetailResponse(ServiceOfClinic serviceOfClinic);
+    ServiceOfClinicResponse mapServiceToServiceResponse(ServiceOfClinic serviceOfClinic);
+
+    @Named("mapServiceListToServiceResponseListWithoutFields")
+    @IterableMapping(qualifiedByName = "mapServiceToServiceResponseWithoutFields")
+    List<ServiceOfClinicResponse> mapServiceListToServiceResponseListWithoutFields(List<ServiceOfClinic> serviceOfClinicList);
+
+    @Named("mapServiceToServiceResponseWithoutFields")
+    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "imageUrl", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "duration", ignore = true)
+    ServiceOfClinicResponse mapServiceToServiceResponseWithoutFields(ServiceOfClinic serviceOfClinic);
 }

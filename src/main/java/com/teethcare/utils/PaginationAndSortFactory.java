@@ -5,7 +5,7 @@ import org.springframework.data.domain.*;
 import java.util.List;
 
 public class PaginationAndSortFactory {
-    public static Pageable pagingAndSorting(int pageSize, int pageNo, String sortBy, String sortDirection) {
+    public static Pageable getPagable(int pageSize, int pageNo, String sortBy, String sortDirection) {
 
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())
                 ? Sort.by(sortBy).ascending()

@@ -1,15 +1,16 @@
 package com.teethcare.common;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Status {
+    private Status() {
+    }
+
+    ;
 
     public enum Report {
         PENDING,
         REJECTED,
         APPROVED,
+        INACTIVE
     }
 
     public enum Feedback {
@@ -26,10 +27,11 @@ public class Status {
 
     public enum Booking {
         PENDING,
-        REQUESTING,
-        TREATING,
+        REQUEST,
+        TREATMENT,
         DONE,
-        REJECTED
+        REJECTED,
+        UNAVAILABLE
     }
 
     public enum Service {
@@ -43,5 +45,3 @@ public class Status {
         INACTIVE,
         PENDING
     }
-
-}

@@ -45,7 +45,7 @@ public class Booking {
     private Integer totalPrice;
 
     @Column(name = "create_booking_date")
-    private Date createBookingDate;
+    private Timestamp createBookingDate;
 
     @Column(name = "examination_time")
     private Timestamp examinationTime;
@@ -73,6 +73,10 @@ public class Booking {
     @Column(name = "desired_checking_time")
     private Timestamp desiredCheckingTime;
 
+    @ManyToOne
+    @JoinColumn(name = "clinic_id", referencedColumnName = "id")
+    private Clinic clinic;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_service_id")
     @JsonManagedReference
@@ -83,10 +87,5 @@ public class Booking {
             joinColumns = @JoinColumn(name = "booking_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonManagedReference
-    private List<ServiceOfClinic> serviceOfClinics;
-
-    @ManyToOne
-    @JoinColumn(name = "clinic_id", referencedColumnName = "id")
-    private Clinic clinic;
-
+    private List<ServiceOfClinic> services;
 }
