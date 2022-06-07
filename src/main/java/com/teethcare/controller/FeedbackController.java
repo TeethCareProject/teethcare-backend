@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class FeedbackController {
     private final FeedbackService feedbackService;
     private final FeedbackMapper feedbackMapper;
-    private final BookingService bookingService;
     private final JwtTokenUtil jwtTokenUtil;
     private final AccountService accountService;
 
@@ -52,10 +51,7 @@ public class FeedbackController {
 
     @PostMapping
     public ResponseEntity<FeedbackResponse> add(@RequestBody FeedbackRequest feedbackRequest) {
-        Feedback feedback = feedbackMapper.mapFeedbackRequestToFeedback(feedbackRequest);
-        Booking booking = bookingService.findById(feedbackRequest.getBookingID());
-        feedback.setBooking(booking);
-        feedbackService.save(feedback);
+        Feedback feedback = feedbackService.addFeedback(feedbackRequest);
         FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
         return new ResponseEntity<>(feedbackResponse, HttpStatus.OK);
     }

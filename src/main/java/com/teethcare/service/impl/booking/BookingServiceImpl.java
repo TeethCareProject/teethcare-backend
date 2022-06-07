@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(int id) {
-        return bookingRepository.getById(id);
+        return bookingRepository.findBookingById(id);
     }
 
     @Override
@@ -125,9 +125,6 @@ public class BookingServiceImpl implements BookingService {
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
-                for(Booking booking: bookingListForCustomerService) {
-                    System.out.println(booking.getId());
-                }
 
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
@@ -160,6 +157,11 @@ public class BookingServiceImpl implements BookingService {
 
         save(booking);
 
+    }
+
+    @Override
+    public List<Booking> findBookingByClinic(Clinic clinic) {
+        return bookingRepository.findBookingByClinic(clinic);
     }
 
     @Override
