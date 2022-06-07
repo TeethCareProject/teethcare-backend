@@ -18,6 +18,7 @@ public class ConvertUtils {
         }
         return Integer.parseInt(inputId);
     }
+
     public static Timestamp getTimestamp(long timestampInString) {
             Date date = new Date(timestampInString);
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

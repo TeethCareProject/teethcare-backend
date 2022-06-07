@@ -41,7 +41,7 @@ public class ManagerServiceImpl implements ManagerService {
     @Transactional
     public void save(Manager manager) {
         manager.setRole(roleService.getRoleByName(Role.MANAGER.name()));
-        manager.setStatus(Status.PENDING.name());
+        manager.setStatus(Status.Account.PENDING.name());
         manager.setPassword(passwordEncoder.encode(manager.getPassword()));
         managerRepository.save(manager);
     }
@@ -51,7 +51,7 @@ public class ManagerServiceImpl implements ManagerService {
         Optional<Manager> managerData = managerRepository.findById(id);
         if (managerData.isPresent()) {
             Manager manager = managerData.get();
-            manager.setStatus(Status.INACTIVE.name());
+            manager.setStatus(Status.Account.INACTIVE.name());
             managerRepository.save(manager);
         } else {
             throw new NotFoundException("Manager id " + id + " not found!");
@@ -60,6 +60,6 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Manager getActiveManager(int id) {
-        return managerRepository.getManagerByIdAndStatusIsNot(id, Status.INACTIVE.name());
+        return managerRepository.getManagerByIdAndStatusIsNot(id, Status.Account.INACTIVE.name());
     }
 }

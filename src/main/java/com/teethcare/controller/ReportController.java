@@ -10,7 +10,7 @@ import com.teethcare.model.response.ReportResponse;
 import com.teethcare.service.FeedbackService;
 import com.teethcare.service.ReportService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class ReportController {
                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction){
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         List<Report> list = new ArrayList<>();
         if (status != null){
             list = reportService.findByStatus(pageable, status);
@@ -73,7 +73,7 @@ public class ReportController {
     public ResponseEntity<ReportResponse> add(@RequestBody ReportRequest reportRequest){
         Report report = feedbackMapper.mapReportRequestToReport(reportRequest);
         report.setFeedback(feedbackService.findById(reportRequest.getFeedbackID()));
-        report.setStatus(Status.PENDING.name());
+        report.setStatus(Status.Report.PENDING.name());
         reportService.save(report);
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
         response.setFeedbackResponse(feedbackMapper.mapFeedbackToFeedbackResponse(report.getFeedback()));

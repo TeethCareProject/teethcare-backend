@@ -3,20 +3,17 @@ package com.teethcare.controller;
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Feedback;
-import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.model.response.FeedbackResponse;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.FeedbackService;
-import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -42,7 +39,7 @@ public class FeedbackController {
                                                          @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                          @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                          @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         List<Feedback> list = new ArrayList<>();
         List<Booking> bookings = new ArrayList<>();
         if (clinicID != null) {
@@ -90,7 +87,7 @@ public class FeedbackController {
         Feedback feedback = feedbackMapper.mapFeedbackRequestToFeedback(feedbackRequest);
         Booking booking = bookingService.findById(feedbackRequest.getBookingID());
         feedback.setBooking(booking);
-        feedback.setStatus(Status.ACTIVE.name());
+        feedback.setStatus(Status.Feedback.ACTIVE.name());
         feedbackService.save(feedback);
         FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
         return new ResponseEntity<>(feedbackResponse, HttpStatus.OK);

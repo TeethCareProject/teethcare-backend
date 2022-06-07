@@ -36,7 +36,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void delete(int theId) {
         Report report = findById(theId);
-        report.setStatus(Status.INACTIVE.name());
+        report.setStatus(Status.Report.INACTIVE.name());
         reportRepository.save(report);
     }
 

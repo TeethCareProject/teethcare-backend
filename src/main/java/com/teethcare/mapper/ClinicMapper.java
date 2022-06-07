@@ -6,10 +6,7 @@ import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.*;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -44,10 +41,13 @@ public interface ClinicMapper {
     @Mapping(target = "avgRatingScore", ignore = true)
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
-    Clinic mapClinicRequestToClinic(ClinicRequest dto);
+    Clinic mapClinicRequestToClinic(ClinicRequest clinicRequest);
 
     ServiceOfClinicResponse mapServiceToServiceResponse(ServiceOfClinic serviceOfClinic);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ClinicLoginResponse mapClinicToClinicLoginResponse(Clinic clinic);
+
+    @Named(value = "mapClinicToClinicSimpleResponse")
+    ClinicSimpleResponse mapClinicToClinicSimpleResponse(Clinic clinic);
 }

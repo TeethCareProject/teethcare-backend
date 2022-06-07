@@ -50,7 +50,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     @Override
     public List<ServiceOfClinic> findByClinicIdAndStatus(int theClinicId, String status, Pageable pageable) {
         List<ServiceOfClinic> serviceOfClinicList =
-                serviceRepository.findByClinicIdAndStatus(theClinicId, Status.ACTIVE.name(), pageable);
+                serviceRepository.findByClinicIdAndStatus(theClinicId, Status.Service.ACTIVE.name(), pageable);
 
         if (serviceOfClinicList == null || serviceOfClinicList.size() == 0) {
             throw new NotFoundException("ID not found");

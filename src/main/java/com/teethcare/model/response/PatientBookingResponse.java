@@ -1,11 +1,12 @@
 package com.teethcare.model.response;
 
+import com.teethcare.model.entity.ServiceOfClinic;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,4 +22,5 @@ public class PatientBookingResponse {
     private String serviceName;
     private String description;
     private long desiredCheckingTime;
+    private ClinicSimpleResponse clinic;
 }

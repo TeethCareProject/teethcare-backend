@@ -20,13 +20,12 @@ import com.teethcare.service.CSService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.DentistService;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSort;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -55,7 +54,7 @@ public class ClinicController {
                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSort.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         List<Clinic> list;
         if (status != null) {
             list = clinicService.findAllByStatus(status, pageable);
@@ -105,7 +104,7 @@ public class ClinicController {
         theID = Integer.parseInt(id);
         Clinic clinic = clinicService.findById(theID);
         if (clinic != null) {
-            clinic.setStatus(Status.INACTIVE.name());
+            clinic.setStatus(Status.Clinic.INACTIVE.name());
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             throw new NotFoundException("Clinic id " + id + " not found");
@@ -131,8 +130,8 @@ public class ClinicController {
 
         List<Account> staffList = new ArrayList<>();
 
-        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
-        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.ACTIVE.name());
+        List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
+        List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(theID, Status.Account.ACTIVE.name());
 
         staffList.addAll(dentistList);
         staffList.addAll(customerServiceList);

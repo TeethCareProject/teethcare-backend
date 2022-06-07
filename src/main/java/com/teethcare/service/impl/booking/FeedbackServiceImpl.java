@@ -36,7 +36,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public void delete(int theId) {
         Feedback feedback = findById(theId);
-        feedback.setStatus(Status.INACTIVE.name());
+        feedback.setStatus(Status.Feedback.INACTIVE.name());
         feedbackRepository.save(feedback);
     }
 
