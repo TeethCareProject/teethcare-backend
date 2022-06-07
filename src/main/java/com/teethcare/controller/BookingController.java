@@ -40,7 +40,8 @@ public class BookingController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
-                                                                 @RequestHeader(AUTHORIZATION) String token) {
+                                                                 @RequestHeader(value = "AUTHORIZATION") String token){
+
 
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);

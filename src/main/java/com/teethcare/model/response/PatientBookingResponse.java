@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PatientBookingResponse {
+    private int bookingID;
     private String firstName;
     private String lastName;
     private String gender;
