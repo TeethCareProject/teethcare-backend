@@ -17,11 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Account.ACCOUNT_ENDPOINT)
+@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
 public class AccountController {
 
     private final AccountService accountService;
@@ -33,7 +35,7 @@ public class AccountController {
                                                         @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                         @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                         @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         Page<Account> accounts = accountService.findAllByFilter(filter, pageable);
         Page<AccountResponse> clinicResponses = accounts.map(accountMapper::mapAccountToAccountResponse);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);

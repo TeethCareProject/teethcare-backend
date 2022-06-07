@@ -34,7 +34,7 @@ public class ReportController {
                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction){
-        Pageable pageable = PaginationAndSortFactory.pagingAndSorting(size, page, field, direction);
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         Page<Report> list = reportService.findByStatus(pageable, request);
         Page<ReportResponse> responses = list.map(feedbackMapper::mapReportToReportResponse);
         return new ResponseEntity<>(responses, HttpStatus.OK);

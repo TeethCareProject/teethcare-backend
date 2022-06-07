@@ -35,14 +35,14 @@ public class ServiceFilterRequest {
             predicates.add(service -> service.getClinic().getId() == clinicID);
         }
         if (lowerPrice != null && upperPrice != null) {
-            predicates.add(service -> service.getMoney().compareTo(lowerPrice) >= 0
-                    && service.getMoney().compareTo(upperPrice) <= 0);
+            predicates.add(service -> service.getPrice().compareTo(lowerPrice) >= 0
+                    && service.getPrice().compareTo(upperPrice) <= 0);
         }
         if (lowerPrice != null && upperPrice == null) {
-            predicates.add((service) -> service.getMoney().compareTo(lowerPrice) >= 0);
+            predicates.add((service) -> service.getPrice().compareTo(lowerPrice) >= 0);
         }
         if (lowerPrice == null && upperPrice != null) {
-            predicates.add(service -> service.getMoney().compareTo(upperPrice) <= 0);
+            predicates.add(service -> service.getPrice().compareTo(upperPrice) <= 0);
         }
         return predicates;
     }
