@@ -94,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
         bookingTmp.setPatient(patient);
         bookingTmp.setStatus(Status.Booking.PENDING.name());
 
-        if (patient != null && !serviceOfClinicList.isEmpty() && service != null && clinic != null){
+        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null){
             return bookingRepository.save(bookingTmp);
         }
         return null;
@@ -126,7 +126,6 @@ public class BookingServiceImpl implements BookingService {
 
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
-                System.out.println(accountId);
                 List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId);
 
                 bookingListForPatient = bookingListForPatient.stream()
