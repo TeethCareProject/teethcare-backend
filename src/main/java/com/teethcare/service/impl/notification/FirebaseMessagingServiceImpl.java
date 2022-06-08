@@ -8,10 +8,9 @@ import com.teethcare.repository.NotificationRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.FirebaseMessagingService;
 import lombok.RequiredArgsConstructor;
-import com.teethcare.model.entity.Notification;
+import com.teethcare.model.entity.FCMTokenStore;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,11 +27,11 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
 
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
-        List<Notification> notifications = notificationRepository.findAllByAccount(account);
-        List<String> fcmTokens = notifications.stream().map(Notification::getFcmToken).collect(Collectors.toList());
+        List<FCMTokenStore> fcmTokenStores = notificationRepository.findAllByAccount(account);
+        List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
 
 
-        com.google.firebase.messaging.Notification notification = com.google.firebase.messaging.Notification.builder()
+        Notification notification = Notification.builder()
                 .setTitle(notificationMsgRequest.getTitle())
                 .setBody(notificationMsgRequest.getBody())
                 .setImage(notificationMsgRequest.getImage())
@@ -60,7 +59,7 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
     public void addNewToken(String fcmToken, String jwtToken) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
-        Notification notification = new Notification(fcmToken, account);
+        FCMTokenStore notification = new FCMTokenStore(fcmToken, account);
         notificationRepository.save(notification);
     }
 
