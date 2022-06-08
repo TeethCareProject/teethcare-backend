@@ -32,4 +32,7 @@ public class NotificationStore {
 
     @Column(name = "url")
     private String url;
+
+    @Column(name = "is_marked_as_read")
+    private Boolean isMarkedAsRead;
 }

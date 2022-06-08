@@ -10,8 +10,8 @@ import com.teethcare.service.AccountService;
 import com.teethcare.service.NotificationStoreService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -30,6 +30,7 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         NotificationStore notificationStore = notificationMapper.mapNotificationMsgRequestToNotificationStore(notificationMsgRequest);
         notificationStore.setAccount(account);
         notificationStore.setTime(new Timestamp(new Date().getTime()));
+        notificationStore.setIsMarkedAsRead(false);
         notificationStoreRepository.save(notificationStore);
     }
 
@@ -40,5 +41,10 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         return PaginationAndSortFactory.convertToPage(notificationStores, pageable);
     }
 
-
+    public NotificationStore markAsRead(int id) {
+        NotificationStore notificationStore = notificationStoreRepository.findById(id);
+        notificationStore.setIsMarkedAsRead(true);
+        notificationStoreRepository.save(notificationStore);
+        return notificationStore;
+    }
 }

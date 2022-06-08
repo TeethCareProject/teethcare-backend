@@ -37,10 +37,15 @@ public class NotificationController {
                                                                    @RequestParam(name = "size", required = false) Integer size,
                                                                    @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                                    @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        if(size == null) {
+        if (size == null) {
             size = Integer.MAX_VALUE;
         }
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         return new ResponseEntity<>(notificationStoreService.findAllByAccount(authorHeader.substring("Bearer ".length()), pageable), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{id}/read")
+    public ResponseEntity<NotificationStore> markAsRead(@PathVariable("id") int id) {
+        return new ResponseEntity<>(notificationStoreService.markAsRead(id), HttpStatus.OK);
     }
 }

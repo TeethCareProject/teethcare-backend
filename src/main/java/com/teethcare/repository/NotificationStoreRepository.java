@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface NotificationStoreRepository extends JpaRepository<NotificationStore, Integer> {
     List<NotificationStore> findAllByAccount(Account account);
+
+    NotificationStore findById(int id);
 }
