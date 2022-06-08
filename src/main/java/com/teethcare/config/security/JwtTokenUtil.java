@@ -25,16 +25,11 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.refresh-expiration}")
     private long refreshExpiration;
 
-    private final AccountService accountService;
 
     public String getUsernameFromJwt(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public Account getAccountFromJwt(String token){
-        String username = getUsernameFromJwt(token);
-        return accountService.getAccountByUsername(username);
-    }
     public String generateToken(Authentication authen) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + expiration * 60 * 1000 * 24 * 60);

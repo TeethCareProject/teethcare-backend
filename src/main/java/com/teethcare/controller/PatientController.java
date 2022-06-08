@@ -9,12 +9,9 @@ import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.PatientResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.PatientService;
-import com.teethcare.service.RoleService;
-import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,7 +23,6 @@ import java.util.List;
 public class PatientController {
 
     private final PatientService patientService;
-    private final AccountService accountService;
     private final AccountMapper accountMapper;
 
     @GetMapping
@@ -37,9 +33,8 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PatientResponse> getById(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Patient patient = patientService.findById(theID);
+    public ResponseEntity<PatientResponse> getById(@PathVariable("id") int id) {
+        Patient patient = patientService.findById(id);
         if (patient != null) {
             PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
             return new ResponseEntity<>(patientResponse, HttpStatus.OK);
@@ -50,25 +45,16 @@ public class PatientController {
 
     @PostMapping
     public ResponseEntity<PatientResponse> add(@Valid @RequestBody PatientRegisterRequest patientRegisterRequest) {
-        boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
-        if (!isDuplicated) {
-            if (patientRegisterRequest.getPassword().equals(patientRegisterRequest.getConfirmPassword())) {
-                Patient patient = accountMapper.mapPatientRegisterRequestToPatient(patientRegisterRequest);
-                patientService.save(patient);
-                PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
-                return new ResponseEntity<>(patientResponse, HttpStatus.OK);
-            } else
-                throw new BadRequestException("confirm Password is not match with password");
-        }
-        throw new BadRequestException("User existed!");
+        Patient patient = patientService.addNew(patientRegisterRequest);
+        PatientResponse patientResponse = accountMapper.mapPatientToPatientResponse(patient);
+        return new ResponseEntity<>(patientResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Patient patient = patientService.findById(theID);
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
+        Patient patient = patientService.findById(id);
         if (patient != null) {
-            patientService.delete(theID);
+            patientService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         throw new NotFoundException("Patient id " + id + " not found");

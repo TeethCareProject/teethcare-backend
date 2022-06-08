@@ -1,24 +1,21 @@
 package com.teethcare.model.request;
 
+import com.teethcare.utils.Trimmable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingRequest {
+@Getter
+@Setter
+public class StaffRegisterRequest extends PatientRegisterRequest implements Trimmable {
 
-    @NotNull
-    private int serviceId;
+    private String specialization;
 
     private String description;
 
-    @NotNull
-    private long desiredCheckingTime;
+    private String role;
 
 }

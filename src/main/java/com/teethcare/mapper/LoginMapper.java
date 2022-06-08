@@ -10,5 +10,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 public interface LoginMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    LoginResponse mapUserDetailsImplToLoginResponse (UserDetailsImpl userDetails);
+    LoginResponse mapUserDetailsImplToLoginResponse(UserDetailsImpl userDetails);
 }

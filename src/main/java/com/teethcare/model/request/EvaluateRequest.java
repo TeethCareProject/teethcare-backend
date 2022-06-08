@@ -1,4 +1,4 @@
-package com.teethcare.model.response;
+package com.teethcare.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorResponse {
-    private int status;
-    private String message;
-    private long timeStamp;
+public class EvaluateRequest {
+    private String status;
 }

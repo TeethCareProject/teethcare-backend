@@ -5,15 +5,19 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
+import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.service.ClinicService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,18 +30,18 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicRepository.findAll();
     }
 
+
     @Override
     public List<Clinic> findAll(Pageable pageable) {
         return clinicRepository.findAllByStatusIsNotNull(pageable);
     }
 
-    @Override
-    public List<Clinic> findAllByStatus(String status, Pageable pageable) {
-        return clinicRepository.findAllByStatus(status, pageable);
-    }
 
-    public List<Clinic> findAllActive(Pageable pageable) {
-        return clinicRepository.getClinicByStatus(Status.Clinic.ACTIVE.name(), pageable);
+    @Override
+    public Page<Clinic> findAllWithFilter(ClinicFilterRequest filter, Pageable pageable) {
+        List<Clinic> list = clinicRepository.findAll();
+        list = list.stream().filter(filter.getPredicate()).collect(Collectors.toList());
+        return PaginationAndSortFactory.convertToPage(list, pageable);
     }
 
     public Clinic getClinicByManager(Manager manager) {
@@ -51,14 +55,6 @@ public class ClinicServiceImpl implements ClinicService {
             throw new NotFoundException("Clinic id " + theId + " not found!");
         }
         return result.get();
-    }
-
-    @Override
-    public List<Clinic> searchAllActiveByName(String search, Pageable pageable) {
-        if (search == null || search.isBlank()) {
-            throw new NotFoundException();
-        }
-        return clinicRepository.findAllByNameContainingIgnoreCaseAndStatus(search, Status.Clinic.ACTIVE.name(), pageable);
     }
 
     @Override
@@ -79,9 +75,18 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     public void delete(int id) {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
-        Clinic clinic = clinicData.get();
-        clinic.setStatus(Status.Service.INACTIVE.name());
-        clinicRepository.save(clinic);
+        if (clinicData.isPresent()) {
+            Clinic clinic = clinicData.get();
+            clinic.setStatus(Status.Clinic.INACTIVE.name());
+            clinicRepository.save(clinic);
+        } else {
+            throw new NotFoundException("ID not found");
+        }
+    }
+
+    @Override
+    public void update(Clinic theEntity) {
+        clinicRepository.save(theEntity);
     }
 
 }

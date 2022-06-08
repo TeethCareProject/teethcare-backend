@@ -45,6 +45,4 @@ public class Status {
         INACTIVE,
         PENDING
     }
-
-
 }

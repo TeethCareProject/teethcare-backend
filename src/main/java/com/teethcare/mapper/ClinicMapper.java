@@ -19,6 +19,8 @@ public interface ClinicMapper {
     @Mapping(source = "serviceOfClinic", target = "serviceOfClinicResponses")
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 
+
+    @Mapping(target = "ward", source = "ward")
     @Mapping(target = "address",
             expression = "java(location.getAddressString() + \", \" + location.getWard().getName() + \", \" " +
                     "+ location.getWard().getDistrict().getName() + \", \" " +
@@ -47,6 +49,9 @@ public interface ClinicMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ClinicLoginResponse mapClinicToClinicLoginResponse(Clinic clinic);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    ClinicInfoResponse mapClinicToClinicInfoResponse(Clinic clinic);
 
     @Named(value = "mapClinicToClinicSimpleResponse")
     ClinicSimpleResponse mapClinicToClinicSimpleResponse(Clinic clinic);

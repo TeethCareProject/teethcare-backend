@@ -1,22 +1,23 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Dentist;
+import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.DentistService;
-import com.teethcare.utils.ConvertUtils;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,15 +27,19 @@ public class DentistController {
     private final AccountMapper accountMapper;
 
     @GetMapping()
-    public List<Dentist> getAll() {
-        return dentistService.findAll();
+    public ResponseEntity<Page<DentistResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
+        Page<Dentist> dentists = dentistService.findAllWithPaging(pageable);
+        Page<DentistResponse> dentistResponses = dentists.map(accountMapper::mapDentistToDentistResponse);
+        return new ResponseEntity<>(dentistResponses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DentistResponse> get(@PathVariable String id) {
-        int theID = ConvertUtils.covertID(id);
-
-        Dentist theDentist = dentistService.findActiveDentist(theID);
+    public ResponseEntity<DentistResponse> get(@PathVariable int id) {
+        Dentist theDentist = dentistService.findActive(id);
         if (theDentist == null) {
             throw new NotFoundException("Dentist id " + id + "not found");
         }
@@ -42,16 +47,12 @@ public class DentistController {
         return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") String id) {
-        int theID = ConvertUtils.covertID(id);
-        Dentist dentist = dentistService.findById(theID);
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable("id") int id) {
+        Dentist dentist = dentistService.findById(id);
 
-        if (dentist == null) {
-            throw new NotFoundException("Dentist id " + id + "not found");
-        }
-
-        dentist.setId(theID);
+        dentist.setId(id);
         dentist.setStatus(Status.Account.INACTIVE.name());
 
         dentistService.save(dentist);

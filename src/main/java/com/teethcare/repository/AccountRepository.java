@@ -12,9 +12,9 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account findAccountByUsernameAndStatus(String username, String status);
 
-    Account findAccountByUsername(String username);
+    Account findByUsername(String username);
 
-    Account getAccountByUsernameAndStatusIsNot(String username, String status);
+    Account getAccountByUsername(String username);
 
     List<Account> findByRoleId(int roleId);
 

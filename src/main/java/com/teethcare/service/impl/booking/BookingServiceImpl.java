@@ -66,6 +66,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public void update(Booking theEntity) {
+
+    }
+
+    @Override
     public Booking saveBooking(BookingRequest bookingRequest, Account account) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
         //get millisecond
