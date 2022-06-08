@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NotificationMsgRequest {
-    int accountId;
+    Integer accountId;
     private String title;
     private String body;
     private String url;

@@ -3,6 +3,7 @@ package com.teethcare.service.impl.notification;
 import com.google.firebase.messaging.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.FCMTokenStore;
 import com.teethcare.model.request.NotificationMsgRequest;
@@ -28,33 +29,42 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
 
     public void sendNotification(NotificationMsgRequest notificationMsgRequest) throws FirebaseMessagingException {
         Account account = accountService.findById(notificationMsgRequest.getAccountId());
+        if (account == null) {
+            throw new NotFoundException("User ID " + notificationMsgRequest.getAccountId() + " not found");
+        }
         List<FCMTokenStore> fcmTokenStores = fcmTokenStoreRepository.findAllByAccount(account);
-        List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
+
+        if (!fcmTokenStores.isEmpty()) {
+            List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
 
 
-        Notification notification = Notification.builder()
-                .setTitle(notificationMsgRequest.getTitle())
-                .setBody(notificationMsgRequest.getBody())
-                .setImage(notificationMsgRequest.getImage())
-                .build();
+            Notification notification = Notification.builder()
+                    .setTitle(notificationMsgRequest.getTitle())
+                    .setBody(notificationMsgRequest.getBody())
+                    .setImage(notificationMsgRequest.getImage())
+                    .build();
 
-        WebpushNotification webpushNotification = WebpushNotification.builder()
-                .setTitle(notificationMsgRequest.getTitle())
-                .setBody(notificationMsgRequest.getBody())
-                .setImage(notificationMsgRequest.getImage())
-                .build();
+            WebpushNotification webpushNotification = WebpushNotification.builder()
+                    .setTitle(notificationMsgRequest.getTitle())
+                    .setBody(notificationMsgRequest.getBody())
+                    .setImage(notificationMsgRequest.getImage())
+                    .build();
 
-        MulticastMessage multicastMessage = MulticastMessage.builder()
-                .addAllTokens(fcmTokens)
-                .setNotification(notification)
-                .setWebpushConfig(WebpushConfig
-                        .builder()
-                        .setNotification(webpushNotification)
-                        .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
-                        .build())
-                .build();
-        notificationStoreService.addNew(account, notificationMsgRequest);
-        FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
+            MulticastMessage multicastMessage = MulticastMessage.builder()
+                    .addAllTokens(fcmTokens)
+                    .setNotification(notification)
+                    .setWebpushConfig(WebpushConfig
+                            .builder()
+                            .setNotification(webpushNotification)
+                            .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
+                            .build())
+                    .build();
+            FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
+            notificationStoreService.addNew(account, notificationMsgRequest);
+        } else {
+            notificationStoreService.addNew(account, notificationMsgRequest);
+        }
+
     }
 
     public void addNewToken(String fcmToken, String jwtToken) {
