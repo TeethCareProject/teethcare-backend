@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface FCMTokenStoreRepository extends JpaRepository<FCMTokenStore, String> {
     List<FCMTokenStore> findAllByAccount(Account account);
+
+    FCMTokenStore findByAccountAndFcmToken(Account account, String fcmToken);
 }

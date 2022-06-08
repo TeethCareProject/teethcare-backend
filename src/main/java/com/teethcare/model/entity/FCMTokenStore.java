@@ -12,11 +12,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "fcm_token_store")
+@IdClass(FCMTokenStoreKey.class)
 public class FCMTokenStore {
     @Id
     @Column(name = "fcm_token")
     private String fcmToken;
-
+    @Id
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;

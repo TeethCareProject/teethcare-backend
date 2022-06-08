@@ -21,31 +21,13 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(EndpointConstant.Notification.NOTIFICATION_ENDPOINT)
 public class NotificationController {
-
     private final FirebaseMessagingService firebaseMessagingService;
-    private final NotificationStoreService notificationStoreService;
 
-    @PostMapping(EndpointConstant.Notification.FCM_TOKEN_ENDPOINT)
-    public ResponseEntity<Message> addNewToken(@RequestBody FCMTokenRequest fcmTokenRequest,
-                                               @RequestHeader(value = AUTHORIZATION) String authorHeader) {
-        firebaseMessagingService.addNewToken(fcmTokenRequest.getFcmToken(), authorHeader.substring("Bearer ".length()));
-        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
-    }
-
-    @PostMapping(EndpointConstant.Notification.NOTIFICATION_ENDPOINT)
+    @PostMapping
     public ResponseEntity<Message> sendNotification(@RequestBody NotificationMsgRequest notificationMsgRequest)throws FirebaseMessagingException {
         firebaseMessagingService.sendNotification(notificationMsgRequest);
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
-    }
-
-    @GetMapping(EndpointConstant.Notification.NOTIFICATION_ENDPOINT)
-    public ResponseEntity<Page<NotificationStore>> getAllByAccount(@RequestHeader(value = AUTHORIZATION) String authorHeader,
-                                                                   @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                                   @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-                                                                   @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                                   @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
-        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
-        return new ResponseEntity<>(notificationStoreService.findAllByAccount(authorHeader.substring("Bearer ".length()), pageable), HttpStatus.OK);
     }
 }

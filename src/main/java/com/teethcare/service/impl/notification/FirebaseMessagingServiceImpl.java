@@ -2,6 +2,7 @@ package com.teethcare.service.impl.notification;
 
 import com.google.firebase.messaging.*;
 import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.repository.FCMTokenStoreRepository;
@@ -59,8 +60,10 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
     public void addNewToken(String fcmToken, String jwtToken) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
-        System.out.println(username);
-        System.out.println(account.getId());
+        FCMTokenStore fcmTokenStore = fcmTokenStoreRepository.findByAccountAndFcmToken(account, fcmToken);
+        if (fcmTokenStore != null) {
+            throw new BadRequestException("Existed!");
+        }
         FCMTokenStore notification = new FCMTokenStore(fcmToken, account);
         fcmTokenStoreRepository.save(notification);
     }
