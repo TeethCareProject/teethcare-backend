@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -46,6 +47,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> findAll() {
+        //TODO
         return null;
     }
 
@@ -55,20 +57,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void save(Booking theEntity) {
-        bookingRepository.save(theEntity);
+    public void save(Booking entity) {
+        bookingRepository.save(entity);
     }
 
     @Override
-    public void delete(int theId) {
-        Booking booking = findById(theId);
+    public void delete(int id) {
+        Booking booking = findById(id);
         booking.setStatus(Status.Booking.UNAVAILABLE.name());
         save(booking);
     }
 
     @Override
-    public void update(Booking theEntity) {
-
+    public void update(Booking entity) {
+        //TODO
     }
 
     @Override
@@ -160,8 +162,26 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public boolean updateStatus(int bookingId) {
+        Booking booking = bookingRepository.findBookingById(bookingId);
+        String status = booking.getStatus();
+         switch (Status.Booking.valueOf(status)) {
+             case REQUEST:
+                 booking.setStatus(Status.Booking.TREATMENT.name());
+                 break;
+             case TREATMENT:
+                 booking.setStatus(Status.Booking.DONE.name());
+                 break;
+             default:
+                 return false;
+         }
+
+         return true;
+    }
+
+    @Override
     @Transactional
-    public void updateBooking(BookingUpdateRequest bookingUpdateRequest) {
+    public boolean update(BookingUpdateRequest bookingUpdateRequest) {
         int bookingId = bookingUpdateRequest.getBookingId();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
 
@@ -192,8 +212,12 @@ public class BookingServiceImpl implements BookingService {
             case TREATMENT:
                 booking.setServices(services);
                 break;
+            default:
+                return false;
         }
         save(booking);
+
+        return true;
     }
 
 
