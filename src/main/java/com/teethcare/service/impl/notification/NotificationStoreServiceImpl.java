@@ -1,6 +1,5 @@
 package com.teethcare.service.impl.notification;
 
-import antlr.Token;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.NotificationMapper;
 import com.teethcare.model.entity.Account;
@@ -10,7 +9,7 @@ import com.teethcare.repository.NotificationStoreRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.NotificationStoreService;
 import com.teethcare.utils.PaginationAndSortFactory;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

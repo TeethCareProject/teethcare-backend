@@ -72,7 +72,8 @@ public class FeedbackServiceImpl implements FeedbackService {
         return PaginationAndSortFactory.convertToPage(feedbacks, pageable);
 
     }
-    public List<Feedback> getAllByBookingForAdmin(List<Booking> bookings){
+
+    public List<Feedback> getAllByBookingForAdmin(List<Booking> bookings) {
         List<Feedback> feedbacks = new ArrayList<>();
         for (Booking booking : bookings) {
             if (feedbackRepository.findByBookingIdAndStatus(booking.getId(), Status.Feedback.ACTIVE.name()) != null) {
@@ -82,7 +83,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbacks;
     }
 
-    public List<Feedback> getAllByBooking(List<Booking> bookings){
+    public List<Feedback> getAllByBooking(List<Booking> bookings) {
         List<Feedback> feedbacks = new ArrayList<>();
         for (Booking booking : bookings) {
             if (feedbackRepository.findByBookingId(booking.getId()) != null) {

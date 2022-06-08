@@ -4,13 +4,13 @@ import com.google.firebase.messaging.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.FCMTokenStore;
 import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.repository.FCMTokenStoreRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.FirebaseMessagingService;
 import com.teethcare.service.NotificationStoreService;
 import lombok.RequiredArgsConstructor;
-import com.teethcare.model.entity.FCMTokenStore;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

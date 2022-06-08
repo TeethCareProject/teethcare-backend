@@ -13,6 +13,7 @@ public interface AccountService extends CRUDService<Account> {
     Account getAccountByUsername(String username);
 
     Account getActiveAccountByUsername(String username);
+
     Account findById(int id);
 
     boolean isDuplicated(String username);

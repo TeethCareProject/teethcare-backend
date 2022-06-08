@@ -51,6 +51,7 @@ public class AccountController {
             throw new NotFoundException("Account id " + id + " not found!");
         }
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
         Account account = accountService.findById(id);

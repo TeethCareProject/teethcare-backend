@@ -11,13 +11,15 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
-public interface BookingService extends CRUDService<Booking>{
+public interface BookingService extends CRUDService<Booking> {
     List<Booking> findAllByCustomerService(CustomerService customerService);
 
     Booking findBookingById(int id);
+
     Booking saveBooking(BookingRequest bookingRequest, Account account);
 
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
+
     Page<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
 
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);

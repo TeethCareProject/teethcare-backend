@@ -5,5 +5,6 @@ import com.teethcare.model.request.NotificationMsgRequest;
 
 public interface FirebaseMessagingService {
     void sendNotification(NotificationMsgRequest notificationMsgRequest) throws FirebaseMessagingException;
+
     void addNewToken(String fcmToken, String jwtToken);
 }
