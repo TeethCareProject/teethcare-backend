@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface NotificationRepository extends JpaRepository<FCMTokenStore, String> {
+public interface FCMTokenStoreRepository extends JpaRepository<FCMTokenStore, String> {
     List<FCMTokenStore> findAllByAccount(Account account);
 }

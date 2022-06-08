@@ -4,9 +4,10 @@ import com.google.firebase.messaging.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.NotificationMsgRequest;
-import com.teethcare.repository.NotificationRepository;
+import com.teethcare.repository.FCMTokenStoreRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.FirebaseMessagingService;
+import com.teethcare.service.NotificationStoreService;
 import lombok.RequiredArgsConstructor;
 import com.teethcare.model.entity.FCMTokenStore;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,15 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
 
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final NotificationRepository notificationRepository;
+    private final FCMTokenStoreRepository fcmTokenStoreRepository;
     private final AccountService accountService;
+    private final NotificationStoreService notificationStoreService;
 
     public void sendNotification(NotificationMsgRequest notificationMsgRequest, String jwtToken) throws FirebaseMessagingException {
 
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
-        List<FCMTokenStore> fcmTokenStores = notificationRepository.findAllByAccount(account);
+        List<FCMTokenStore> fcmTokenStores = fcmTokenStoreRepository.findAllByAccount(account);
         List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
 
 
@@ -52,15 +54,17 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
                         .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
                         .build())
                 .build();
-
+        notificationStoreService.addNew(account, notificationMsgRequest);
         FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
     }
 
     public void addNewToken(String fcmToken, String jwtToken) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
+        System.out.println(username);
+        System.out.println(account.getId());
         FCMTokenStore notification = new FCMTokenStore(fcmToken, account);
-        notificationRepository.save(notification);
+        fcmTokenStoreRepository.save(notification);
     }
 
 }

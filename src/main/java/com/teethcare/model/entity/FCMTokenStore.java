@@ -11,10 +11,9 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "notification")
-@IdClass(FCMTokenStoreKey.class)
+@Entity(name = "fcm_token_store")
 public class FCMTokenStore {
-    @EmbeddedId
+    @Id
     @Column(name = "fcm_token")
     private String fcmToken;
 
