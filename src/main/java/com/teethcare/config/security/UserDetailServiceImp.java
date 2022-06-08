@@ -1,7 +1,7 @@
 package com.teethcare.config.security;
 
 import com.teethcare.common.Status;
-import com.teethcare.exception.AccountNotFoundException;
+import com.teethcare.exception.UnauthorizedException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserDetailServiceImp implements UserDetailsService {
         if (account != null) {
             return UserDetailsImpl.build(account);
         } else {
-            throw new AccountNotFoundException("Username " + username + " not found ");
+            throw new UnauthorizedException("Username " + username + " not found ");
         }
     }
 }
