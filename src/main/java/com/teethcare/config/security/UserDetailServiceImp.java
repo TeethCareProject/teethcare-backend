@@ -21,9 +21,11 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findAccountByUsernameAndStatus(username, Status.Account.ACTIVE.name());
-        if (account != null) {
+        Account account = accountRepository.getAccountByUsername(username);
+        if (account != null && !account.getStatus().equals(Status.Account.INACTIVE.name())) {
             return UserDetailsImpl.build(account);
+        } else if (account.getStatus().equals(Status.Account.INACTIVE.name())) {
+            throw new UnauthorizedException("Your account is currently inactive.");
         } else {
             throw new UnauthorizedException("Username " + username + " not found ");
         }
