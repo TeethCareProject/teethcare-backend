@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface NotificationStoreService {
     void addNew(Account account, NotificationMsgRequest notificationMsgRequest);
-    List<NotificationStore> findAllByAccount(String jwtToken);
+    Page<NotificationStore> findAllByAccount(String jwtToken, Pageable pageable);
 }

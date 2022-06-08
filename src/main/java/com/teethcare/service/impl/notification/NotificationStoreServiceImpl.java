@@ -8,7 +8,10 @@ import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.repository.NotificationStoreRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.NotificationStoreService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -30,10 +33,11 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         notificationStoreRepository.save(notificationStore);
     }
 
-    public List<NotificationStore> findAllByAccount(String jwtToken) {
+    public Page<NotificationStore> findAllByAccount(String jwtToken, Pageable pageable) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
-        return notificationStoreRepository.findAllByAccount(account);
+        List<NotificationStore> notificationStores = notificationStoreRepository.findAllByAccount(account);
+        return PaginationAndSortFactory.convertToPage(notificationStores, pageable);
     }
 
 
