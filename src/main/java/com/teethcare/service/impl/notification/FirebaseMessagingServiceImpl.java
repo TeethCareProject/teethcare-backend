@@ -31,18 +31,28 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         List<Notification> notifications = notificationRepository.findAllByAccount(account);
         List<String> fcmTokens = notifications.stream().map(Notification::getFcmToken).collect(Collectors.toList());
 
-        WebpushNotification notification = WebpushNotification.builder()
-                .setTimestampMillis(new Date().getTime())
-                .setTitle(notificationMsgRequest.getSubject())
-                .setBody(notificationMsgRequest.getContent())
+
+        com.google.firebase.messaging.Notification notification = com.google.firebase.messaging.Notification.builder()
+                .setTitle(notificationMsgRequest.getTitle())
+                .setBody(notificationMsgRequest.getBody())
+                .setImage(notificationMsgRequest.getImage())
                 .build();
+
+        WebpushNotification webpushNotification = WebpushNotification.builder()
+                .setTitle(notificationMsgRequest.getTitle())
+                .setBody(notificationMsgRequest.getBody())
+                .setImage(notificationMsgRequest.getImage())
+                .build();
+
         MulticastMessage multicastMessage = MulticastMessage.builder()
                 .addAllTokens(fcmTokens)
-                .setWebpushConfig(WebpushConfig.builder()
-                        .setNotification(notification)
-                        .setFcmOptions(WebpushFcmOptions.builder().setLink("/").build())
+                .setNotification(notification)
+                .setWebpushConfig(WebpushConfig
+                        .builder()
+                        .setNotification(webpushNotification)
+                        .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
                         .build())
-                .putAllData(notificationMsgRequest.getData()).build();
+                .build();
 
         FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
     }
