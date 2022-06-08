@@ -8,6 +8,7 @@ import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
+import com.teethcare.model.request.BookingUpdateRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientBookingResponse;
@@ -100,6 +101,13 @@ public class BookingController {
 
         bookingService.confirmBookingRequest(bookingId, isAccepted, customerService);
 
+        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    }
+
+    @PutMapping()
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
+        bookingService.updateBooking(bookingUpdateRequest);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 }

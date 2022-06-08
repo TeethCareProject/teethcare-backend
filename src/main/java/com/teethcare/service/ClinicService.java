@@ -18,9 +18,8 @@ public interface ClinicService extends CRUDService<Clinic> {
                                    Pageable pageable);
 
     Clinic getClinicByManager(Manager manager);
-
+    Clinic findClinicByCustomerServiceId(int csId);
     Clinic findById(int theId);
 
     void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location);
-
 }

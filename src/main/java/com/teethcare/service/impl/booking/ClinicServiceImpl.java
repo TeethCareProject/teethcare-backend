@@ -49,6 +49,11 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    public Clinic findClinicByCustomerServiceId(int csId) {
+        return clinicRepository.findClinicByCustomerServicesId(csId);
+    }
+
+    @Override
     public Clinic findById(int theId) {
         Optional<Clinic> result = clinicRepository.findById(theId);
         if (result.isEmpty()) {

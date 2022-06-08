@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.booking;
 
+import com.teethcare.common.Message;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
@@ -8,14 +9,12 @@ import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
+import com.teethcare.model.request.BookingUpdateRequest;
 import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
-import com.teethcare.service.BookingService;
-import com.teethcare.service.ClinicService;
-import com.teethcare.service.PatientService;
-import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +40,8 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
     private final PatientService patientService;
+    private final DentistService dentistService;
+    private final ClinicService clinicService;
 
 
     @Override
@@ -120,15 +121,12 @@ public class BookingServiceImpl implements BookingService {
 
         switch (Role.valueOf(role)) {
             case CUSTOMER_SERVICE:
-                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByStatusNotLike(Status.Booking.UNAVAILABLE.name());
+                Clinic clinic = clinicService.findClinicByCustomerServiceId(accountId);
+                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinic(clinic);
 
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
-                for(Booking booking: bookingListForCustomerService) {
-                    System.out.println(booking.getId());
-                }
-
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
                 List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId);
@@ -139,11 +137,10 @@ public class BookingServiceImpl implements BookingService {
 
               return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
-                bookingPage = bookingRepository.findBookingByDentistId(accountId, pageable);
-                break;
+                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId);
+                return PaginationAndSortFactory.convertToPage(bookingListForDentist, pageable);
         }
-
-        return bookingPage;
+        return null;
     }
 
     @Override
@@ -161,6 +158,44 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
 
     }
+
+    @Override
+    @Transactional
+    public void updateBooking(BookingUpdateRequest bookingUpdateRequest) {
+        int bookingId = bookingUpdateRequest.getBookingId();
+        List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
+
+        Booking booking = bookingRepository.findBookingById(bookingId);
+
+        List<ServiceOfClinic> services = new ArrayList<>();
+        for (Integer servicesId : servicesIds) {
+            services.add(serviceOfClinicService.findById(servicesId));
+        }
+        String status = booking.getStatus();
+
+        switch (Status.Booking.valueOf(status)) {
+            case REQUEST:
+                Integer dentistId = bookingUpdateRequest.getDentistId();
+                Long examinationTimeRequest = bookingUpdateRequest.getExaminationTime();
+                if (dentistId == null || examinationTimeRequest == null) {
+                    throw new BadRequestException(Message.PARAMS_MISSING.name());
+                }
+                Dentist dentist = dentistService.findActive(dentistId);
+                Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
+                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+                booking.setServices(services);
+                booking.setExaminationTime(examinationTime);
+                booking.setCreateBookingDate(currentTime);
+                booking.setDentist(dentist);
+                break;
+            case TREATMENT:
+                booking.setServices(services);
+                break;
+        }
+        save(booking);
+    }
+
 
     @Override
     public List<Booking> findAllByCustomerService(CustomerService customerService) {

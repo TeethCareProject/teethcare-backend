@@ -5,6 +5,7 @@ import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
+import com.teethcare.model.request.BookingUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,4 +22,5 @@ public interface BookingService extends CRUDService<Booking>{
     Page<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
 
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
+    void updateBooking(BookingUpdateRequest bookingUpdateRequest);
 }
