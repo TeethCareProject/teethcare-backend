@@ -25,10 +25,8 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
     private final AccountService accountService;
     private final NotificationStoreService notificationStoreService;
 
-    public void sendNotification(NotificationMsgRequest notificationMsgRequest, String jwtToken) throws FirebaseMessagingException {
-
-        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
-        Account account = accountService.getAccountByUsername(username);
+    public void sendNotification(NotificationMsgRequest notificationMsgRequest) throws FirebaseMessagingException {
+        Account account = accountService.findById(notificationMsgRequest.getAccountId());
         List<FCMTokenStore> fcmTokenStores = fcmTokenStoreRepository.findAllByAccount(account);
         List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
 

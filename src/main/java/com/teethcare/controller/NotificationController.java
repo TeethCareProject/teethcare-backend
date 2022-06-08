@@ -34,9 +34,8 @@ public class NotificationController {
     }
 
     @PostMapping(EndpointConstant.Notification.NOTIFICATION_ENDPOINT)
-    public ResponseEntity<Message> sendNotification(@RequestBody NotificationMsgRequest notificationMsgRequest,
-                                                    @RequestHeader(value = AUTHORIZATION) String authorHeader) throws FirebaseMessagingException {
-        firebaseMessagingService.sendNotification(notificationMsgRequest, authorHeader.substring("Bearer ".length()));
+    public ResponseEntity<Message> sendNotification(@RequestBody NotificationMsgRequest notificationMsgRequest)throws FirebaseMessagingException {
+        firebaseMessagingService.sendNotification(notificationMsgRequest);
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 
