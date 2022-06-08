@@ -11,5 +11,7 @@ import java.util.List;
 
 public interface FeedbackService extends CRUDService<Feedback>{
     Page<Feedback> findAllByClinicID(Pageable pageable, int clinicID, Account account, Integer rating);
-    Feedback addFeedback(FeedbackRequest feedbackRequest);
+    Feedback addFeedback(FeedbackRequest feedbackRequest, Account account);
+
+    Feedback saveFeedback(Feedback feedback);
 }

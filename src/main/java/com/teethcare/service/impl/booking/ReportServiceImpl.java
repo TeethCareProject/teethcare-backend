@@ -30,7 +30,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report findById(int id) {
-        Report report = reportRepository.getById(id);
+        Report report = reportRepository.findById(id);
         return report;
     }
 

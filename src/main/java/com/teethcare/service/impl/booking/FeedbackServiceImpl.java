@@ -3,6 +3,7 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.ForbiddenException;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
@@ -49,7 +50,6 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public void delete(int theId) {
-
     }
 
     @Override
@@ -63,7 +63,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         Clinic clinic = clinicService.findById(clinicID);
         List<Booking> bookings = bookingService.findBookingByClinic(clinic);
         if (!bookings.isEmpty()) {
-            if (account == null || !account.getRole().getName().equals(Role.ADMIN)) {
+            if (account == null || !account.getRole().getName().equals(Role.ADMIN.name())) {
                 feedbacks = getAllByBooking(bookings);
             } else {
                 feedbacks = getAllByBookingForAdmin(bookings);
@@ -79,17 +79,26 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Feedback addFeedback(FeedbackRequest feedbackRequest) {
+    public Feedback addFeedback(FeedbackRequest feedbackRequest, Account account) {
         int bookingID = feedbackRequest.getBookingID();
         Booking booking = bookingService.findBookingById(bookingID);
         String statusBooking = booking.getStatus();
-        if (!statusBooking.equals(Status.Booking.DONE)){
+        if (!statusBooking.equals(Status.Booking.DONE.name())){
             throw new BadRequestException("The current booking status cannot send feedback");
+        }
+        if (booking.getPatient().getId().compareTo(account.getId()) != 0){
+            throw new ForbiddenException("You can not send feedback for this booking");
         }
         Feedback feedback = feedbackMapper.mapFeedbackRequestToFeedback(feedbackRequest);
         feedback.setBooking(booking);
-        save(feedback);
-        return feedback;
+        Feedback feedbackResponse = saveFeedback(feedback);
+        return feedbackResponse;
+    }
+
+    @Override
+    public Feedback saveFeedback(Feedback feedback) {
+        feedback.setStatus(Status.Feedback.ACTIVE.name());
+        return feedbackRepository.save(feedback);
     }
 
     public List<Feedback> getAllByBooking(List<Booking> bookings){

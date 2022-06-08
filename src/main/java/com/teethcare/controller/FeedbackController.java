@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -50,8 +51,17 @@ public class FeedbackController {
     }
 
     @PostMapping
-    public ResponseEntity<FeedbackResponse> add(@RequestBody FeedbackRequest feedbackRequest) {
-        Feedback feedback = feedbackService.addFeedback(feedbackRequest);
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<FeedbackResponse> add(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
+                                                @RequestBody FeedbackRequest feedbackRequest) {
+
+        Account account = null;
+        if (token != null){
+            token = token.substring("Bearer ".length());
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            account = accountService.getAccountByUsername(username);
+        }
+        Feedback feedback = feedbackService.addFeedback(feedbackRequest, account);
         FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
         return new ResponseEntity<>(feedbackResponse, HttpStatus.OK);
     }

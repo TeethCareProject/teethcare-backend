@@ -20,7 +20,7 @@ import java.util.List;
 public class CustomExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<CustomErrorResponse> handleException(AccountNotFoundException ex) {
+    public ResponseEntity<CustomErrorResponse> handleException(ForbiddenException ex) {
         List<String> errors = new ArrayList();
         errors.add(ex.getMessage());
         CustomErrorResponse error = new CustomErrorResponse(
@@ -116,5 +116,18 @@ public class CustomExceptionHandler {
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<CustomErrorResponse> handleException(AuthorException ex) {
+        List<String> errors = new ArrayList();
+        errors.add(ex.getMessage());
+        CustomErrorResponse error = new CustomErrorResponse(
+                new Timestamp(System.currentTimeMillis()),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.toString(),
+                errors
+        );
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 }
