@@ -74,6 +74,7 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         }
 
     }
+
     @Override
     public void addNewToken(String fcmToken, String jwtToken) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
