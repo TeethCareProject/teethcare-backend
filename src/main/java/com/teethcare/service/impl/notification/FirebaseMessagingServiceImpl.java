@@ -1,6 +1,7 @@
 package com.teethcare.service.impl.notification;
 
 import com.google.firebase.messaging.*;
+import com.teethcare.common.NotificationType;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
@@ -28,6 +29,7 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
     private final NotificationStoreService notificationStoreService;
 
     public void sendNotification(NotificationMsgRequest notificationMsgRequest) throws FirebaseMessagingException {
+        notificationMsgRequest.setType(notificationMsgRequest.getType() == null ? NotificationType.NORMAL_NOTIFICATION.name() : notificationMsgRequest.getType());
         Account account = accountService.findById(notificationMsgRequest.getAccountId());
         if (account == null) {
             throw new NotFoundException("User ID " + notificationMsgRequest.getAccountId() + " not found");

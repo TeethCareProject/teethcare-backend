@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.notification;
 
+import com.teethcare.common.NotificationType;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.NotificationMapper;
@@ -33,6 +34,7 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         notificationStore.setAccount(account);
         notificationStore.setTime(new Timestamp(new Date().getTime()));
         notificationStore.setIsMarkedAsRead(false);
+        notificationStore.setType(notificationMsgRequest.getType());
         notificationStoreRepository.save(notificationStore);
     }
 
