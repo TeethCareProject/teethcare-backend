@@ -19,6 +19,7 @@ import com.teethcare.service.NotificationStoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,10 +42,8 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
             throw new NotFoundException("User ID " + notificationMsgRequest.getAccountId() + " not found");
         }
         List<FCMTokenStore> fcmTokenStores = fcmTokenStoreRepository.findAllByAccount(account);
-
         if (!fcmTokenStores.isEmpty()) {
             List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
-
 
             Notification notification = Notification.builder()
                     .setTitle(notificationMsgRequest.getTitle())
@@ -58,21 +57,22 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
                     .setImage(notificationMsgRequest.getImage())
                     .build();
 
-            MulticastMessage multicastMessage = MulticastMessage.builder()
-                    .addAllTokens(fcmTokens)
-                    .setNotification(notification)
-                    .setWebpushConfig(WebpushConfig
-                            .builder()
-                            .setNotification(webpushNotification)
-                            .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
-                            .build())
-                    .build();
-            FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
+            List<Message> messages = new ArrayList<>();
+            for (String token : fcmTokens) {
+                messages.add(Message.builder()
+                        .setToken(token.trim())
+                        .setNotification(notification)
+                        .setWebpushConfig(WebpushConfig
+                                .builder()
+                                .setNotification(webpushNotification)
+                                .build())
+                        .build());
+            }
+            FirebaseMessaging.getInstance().sendAll(messages);
             notificationStoreService.addNew(account, notificationMsgRequest);
         } else {
             notificationStoreService.addNew(account, notificationMsgRequest);
         }
-
     }
 
     @Override
