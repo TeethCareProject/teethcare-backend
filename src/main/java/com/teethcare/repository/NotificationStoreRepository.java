@@ -10,4 +10,6 @@ public interface NotificationStoreRepository extends JpaRepository<NotificationS
     List<NotificationStore> findAllByAccount(Account account);
 
     NotificationStore findById(int id);
+
+    Integer countAllByIsMarkedAsReadAndAccount(boolean isMarkedAsRead, Account account);
 }

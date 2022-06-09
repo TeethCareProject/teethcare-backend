@@ -6,11 +6,12 @@ import com.teethcare.model.request.NotificationMsgRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface NotificationStoreService {
     void addNew(Account account, NotificationMsgRequest notificationMsgRequest);
+
     Page<NotificationStore> findAllByAccount(String jwtToken, Pageable pageable);
 
-    NotificationStore markAsRead(int id);
+    NotificationStore markAsRead(String jwtToken, int id);
+
+    Integer getNumsOfUnread(String jwtToken);
 }
