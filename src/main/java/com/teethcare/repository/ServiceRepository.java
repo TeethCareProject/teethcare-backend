@@ -1,5 +1,6 @@
 package com.teethcare.repository;
 
+import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.ServiceOfClinic;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

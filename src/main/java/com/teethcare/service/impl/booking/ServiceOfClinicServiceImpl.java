@@ -3,6 +3,7 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.repository.ServiceRepository;
@@ -78,7 +79,6 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
         }
         return  serviceOfClinics;
     }
-
 
     @Override
     public void save(ServiceOfClinic theEntity) {

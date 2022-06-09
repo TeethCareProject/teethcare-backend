@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -193,9 +194,12 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findBookingById(bookingId);
 
         List<ServiceOfClinic> services = new ArrayList<>();
-        for (Integer servicesId : servicesIds) {
-            services.add(serviceOfClinicService.findById(servicesId));
+        if (servicesIds != null) {
+            for (Integer servicesId : servicesIds) {
+                services.add(serviceOfClinicService.findById(servicesId));
+            }
         }
+
         String status = booking.getStatus();
 
         switch (Status.Booking.valueOf(status)) {
@@ -226,7 +230,30 @@ public class BookingServiceImpl implements BookingService {
                 booking.setDentist(dentist);
                 break;
             case TREATMENT:
+                String bookingNote = bookingUpdateRequest.getNote();
+                BigDecimal totalPrice = BigDecimal.ZERO;
+
+                if (bookingNote != null) {
+                    booking.setNote(bookingNote);
+                }
+
+//                List<Booking> bookings = new ArrayList<>();
+//                bookings.add(booking);
+                if (services.isEmpty()) {
+                    services = booking.getServices();
+                } else {
+                    List<ServiceOfClinic> bookingServices = booking.getServices();
+                    services.addAll(bookingServices);
+                }
+
+                for (ServiceOfClinic service : services) {
+                    ServiceOfClinic serviceBooking = serviceOfClinicService.findById(service.getId());
+                    totalPrice = totalPrice.add(serviceBooking.getPrice());
+                }
+
                 booking.setServices(services);
+                booking.setTotalPrice(totalPrice);
+
                 break;
             default:
                 return false;
