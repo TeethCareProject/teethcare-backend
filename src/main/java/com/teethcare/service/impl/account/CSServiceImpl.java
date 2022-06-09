@@ -94,19 +94,15 @@ public class CSServiceImpl implements CSService {
         staffRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(staffRegisterRequest.getUsername());
         if (!isDuplicated) {
-            if (staffRegisterRequest.getPassword().equals(staffRegisterRequest.getConfirmPassword())) {
-                token = token.substring("Bearer ".length());
-                String username = jwtTokenUtil.getUsernameFromJwt(token);
-                Account account = accountService.getAccountByUsername(username);
-                Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
+            token = token.substring("Bearer ".length());
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            Account account = accountService.getAccountByUsername(username);
+            Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
-                CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(staffRegisterRequest);
-                customerService.setClinic(clinic);
-                this.save(customerService);
-                return customerService;
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
+            CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(staffRegisterRequest);
+            customerService.setClinic(clinic);
+            this.save(customerService);
+            return customerService;
         } else {
             throw new BadRequestException("User existed!");
         }

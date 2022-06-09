@@ -13,6 +13,6 @@ public class Constant {
 
     public static class EMAIL {
         public static final String SENDER_EMAIL = "service.teethcare@gmail.com";
-        public static final String SENDER_PASSWORD = "teethcare123";
+        public static final String SENDER_PASSWORD = "ptmbozrgnkgexitx";
     }
 }

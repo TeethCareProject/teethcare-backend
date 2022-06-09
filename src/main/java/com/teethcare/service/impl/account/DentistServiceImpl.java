@@ -102,18 +102,14 @@ public class DentistServiceImpl implements DentistService {
         staffRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(staffRegisterRequest.getUsername());
         if (!isDuplicated) {
-            if (staffRegisterRequest.getPassword().equals(staffRegisterRequest.getConfirmPassword())) {
-                String username = jwtTokenUtil.getUsernameFromJwt(token);
-                Account account = accountService.getAccountByUsername(username);
-                Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            Account account = accountService.getAccountByUsername(username);
+            Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
-                Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(staffRegisterRequest);
-                dentist.setClinic(clinic);
-                this.save(dentist);
-                return dentist;
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
+            Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(staffRegisterRequest);
+            dentist.setClinic(clinic);
+            this.save(dentist);
+            return dentist;
         } else {
             throw new BadRequestException("User existed!");
         }
