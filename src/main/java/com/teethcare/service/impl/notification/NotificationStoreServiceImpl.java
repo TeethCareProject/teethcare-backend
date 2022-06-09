@@ -25,16 +25,20 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
     private final NotificationStoreRepository notificationStoreRepository;
     private final NotificationMapper notificationMapper;
     private final AccountService accountService;
+
     private final JwtTokenUtil jwtTokenUtil;
 
+    @Override
     public void addNew(Account account, NotificationMsgRequest notificationMsgRequest) {
         NotificationStore notificationStore = notificationMapper.mapNotificationMsgRequestToNotificationStore(notificationMsgRequest);
         notificationStore.setAccount(account);
         notificationStore.setTime(new Timestamp(new Date().getTime()));
         notificationStore.setIsMarkedAsRead(false);
+        notificationStore.setType(notificationMsgRequest.getType());
         notificationStoreRepository.save(notificationStore);
     }
 
+    @Override
     public Page<NotificationStore> findAllByAccount(String jwtToken, Pageable pageable) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
@@ -42,6 +46,7 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         return PaginationAndSortFactory.convertToPage(notificationStores, pageable);
     }
 
+    @Override
     public NotificationStore markAsRead(String jwtToken, int id) {
         NotificationStore notificationStore = notificationStoreRepository.findById(id);
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
@@ -54,9 +59,25 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         throw new NotFoundException("Notification not found");
     }
 
+    @Override
+    public void markAllAsRead(String jwtToken) {
+        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
+        Account account = accountService.getAccountByUsername(username);
+        List<NotificationStore> notificationStores = notificationStoreRepository.findAllByAccount(account);
+        if (!notificationStores.isEmpty()) {
+            notificationStores.stream().forEach(notificationStore -> {
+                notificationStore.setIsMarkedAsRead(true);
+                notificationStoreRepository.save(notificationStore);
+            });
+        }
+    }
+
+    @Override
     public Integer getNumsOfUnread(String jwtToken) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
         return notificationStoreRepository.countAllByIsMarkedAsReadAndAccount(false, account);
     }
+
+
 }

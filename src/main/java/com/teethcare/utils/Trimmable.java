@@ -1,6 +1,9 @@
 package com.teethcare.utils;
 
+import com.teethcare.exception.BadRequestException;
+
 import java.lang.reflect.Field;
+
 
 public interface Trimmable {
     /**
@@ -18,7 +21,7 @@ public interface Trimmable {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new BadRequestException("Object trim fail!");
             }
         }
     }

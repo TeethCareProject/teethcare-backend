@@ -35,4 +35,7 @@ public class NotificationStore {
 
     @Column(name = "is_marked_as_read")
     private Boolean isMarkedAsRead;
+
+    @Column(name = "type")
+    private String type;
 }

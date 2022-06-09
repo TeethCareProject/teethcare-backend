@@ -13,5 +13,9 @@ public interface NotificationStoreService {
 
     NotificationStore markAsRead(String jwtToken, int id);
 
+    void markAllAsRead(String jwtToken);
+
     Integer getNumsOfUnread(String jwtToken);
+//    void sendNotificationToCSByBookingId(int bookingId) throws FirebaseMessagingException;
+
 }
