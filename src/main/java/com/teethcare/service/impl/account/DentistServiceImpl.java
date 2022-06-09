@@ -40,10 +40,8 @@ public class DentistServiceImpl implements DentistService {
 
 
     @Override
-    public Dentist findById(int theId) {
-        Optional<Dentist> result = dentistRepository.findById(theId);
-
-        return result.get();
+    public Dentist findById(int id) {
+        return dentistRepository.findDentistById(id);
     }
 
     @Override
@@ -62,7 +60,7 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public void delete(int theId) {
-
+        //TODO
     }
 
     @Override

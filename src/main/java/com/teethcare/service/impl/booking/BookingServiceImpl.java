@@ -140,6 +140,11 @@ public class BookingServiceImpl implements BookingService {
               return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
                 List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId);
+
+                bookingListForDentist = bookingListForDentist.stream()
+                        .filter(filterRequest.getPredicate())
+                        .collect(Collectors.toList());
+
                 return PaginationAndSortFactory.convertToPage(bookingListForDentist, pageable);
         }
         return null;
@@ -204,6 +209,17 @@ public class BookingServiceImpl implements BookingService {
                 Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
                 Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
+                if (examinationTime.compareTo(currentTime) < 0){
+                    throw new BadRequestException(Message.DATE_ERROR.name());
+                }
+
+                List<Booking> checkedBookings = bookingRepository.findBookingByDentistIdAndStatus(dentistId, Status.Booking.TREATMENT.name());
+                if (checkedBookings != null && !checkedBookings.isEmpty()) {
+//                    System.out.println("Dentist id: " + dentistId + " has treated booking" + checkedBookings.get(0).getId());
+                    throw new BadRequestException(Message.DENTIST_NO_AVAILABLE.name());
+                }
+//                System.out.println("Dentist id: " + dentistId + " has treated booking" + checkedBookings.get(0).getId());
+
                 booking.setServices(services);
                 booking.setExaminationTime(examinationTime);
                 booking.setCreateBookingDate(currentTime);
@@ -215,6 +231,7 @@ public class BookingServiceImpl implements BookingService {
             default:
                 return false;
         }
+
         save(booking);
 
         return true;

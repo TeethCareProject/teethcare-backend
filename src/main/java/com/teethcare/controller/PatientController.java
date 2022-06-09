@@ -1,13 +1,16 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
+import com.teethcare.common.Message;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.PatientRegisterRequest;
+import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientResponse;
 import com.teethcare.service.AccountService;
+import com.teethcare.service.BookingService;
 import com.teethcare.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,7 @@ public class PatientController {
 
     private final PatientService patientService;
     private final AccountMapper accountMapper;
+    private final BookingService bookingService;
 
     @GetMapping
     public ResponseEntity<List<PatientResponse>> getAll() {
@@ -60,4 +64,23 @@ public class PatientController {
         throw new NotFoundException("Patient id " + id + " not found");
     }
 
+//    @PutMapping("/checkin")
+//    public ResponseEntity<MessageResponse> checkin(@RequestParam int bookingId) {
+//        boolean isUpdated = bookingService.updateStatus(bookingId);
+//        if (isUpdated) {
+//            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+//        }
+//    }
+
+    @PutMapping("/checkout")
+    public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
+        boolean isUpdated = bookingService.updateStatus(bookingId);
+        if (isUpdated) {
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
+    }
 }

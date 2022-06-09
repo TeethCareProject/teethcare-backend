@@ -12,6 +12,7 @@ public interface DentistRepository extends JpaRepository<Dentist, Integer> {
     List<Dentist> findByClinicIdAndStatus(int id, String status);
 
     Dentist findDentistByIdAndStatus(int id, String status);
+    Dentist findDentistById(int id);
 
     List<Dentist> findAllByStatusIsNotNull(Pageable pageable);
 
