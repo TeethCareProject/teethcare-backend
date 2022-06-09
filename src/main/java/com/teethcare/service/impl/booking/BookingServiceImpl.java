@@ -189,71 +189,16 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public boolean update(BookingUpdateRequest bookingUpdateRequest) {
         int bookingId = bookingUpdateRequest.getBookingId();
-        List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
 
         Booking booking = bookingRepository.findBookingById(bookingId);
 
-        List<ServiceOfClinic> services = new ArrayList<>();
-        if (servicesIds != null) {
-            for (Integer servicesId : servicesIds) {
-                services.add(serviceOfClinicService.findById(servicesId));
-            }
-        }
-
         String status = booking.getStatus();
-
         switch (Status.Booking.valueOf(status)) {
             case REQUEST:
-                Integer dentistId = bookingUpdateRequest.getDentistId();
-                Long examinationTimeRequest = bookingUpdateRequest.getExaminationTime();
-                if (dentistId == null || examinationTimeRequest == null) {
-                    throw new BadRequestException(Message.PARAMS_MISSING.name());
-                }
-                Dentist dentist = dentistService.findActive(dentistId);
-                Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
-                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-
-                if (examinationTime.compareTo(currentTime) < 0){
-                    throw new BadRequestException(Message.DATE_ERROR.name());
-                }
-
-                List<Booking> checkedBookings = bookingRepository.findBookingByDentistIdAndStatus(dentistId, Status.Booking.TREATMENT.name());
-                if (checkedBookings != null && !checkedBookings.isEmpty()) {
-//                    System.out.println("Dentist id: " + dentistId + " has treated booking" + checkedBookings.get(0).getId());
-                    throw new BadRequestException(Message.DENTIST_NO_AVAILABLE.name());
-                }
-//                System.out.println("Dentist id: " + dentistId + " has treated booking" + checkedBookings.get(0).getId());
-
-                booking.setServices(services);
-                booking.setExaminationTime(examinationTime);
-                booking.setCreateBookingDate(currentTime);
-                booking.setDentist(dentist);
+                firstlyUpdated(bookingUpdateRequest);
                 break;
             case TREATMENT:
-                String bookingNote = bookingUpdateRequest.getNote();
-                BigDecimal totalPrice = BigDecimal.ZERO;
-
-                if (bookingNote != null) {
-                    booking.setNote(bookingNote);
-                }
-
-//                List<Booking> bookings = new ArrayList<>();
-//                bookings.add(booking);
-                if (services.isEmpty()) {
-                    services = booking.getServices();
-                } else {
-                    List<ServiceOfClinic> bookingServices = booking.getServices();
-                    services.addAll(bookingServices);
-                }
-
-                for (ServiceOfClinic service : services) {
-                    ServiceOfClinic serviceBooking = serviceOfClinicService.findById(service.getId());
-                    totalPrice = totalPrice.add(serviceBooking.getPrice());
-                }
-
-                booking.setServices(services);
-                booking.setTotalPrice(totalPrice);
-
+                secondlyUpdated(bookingUpdateRequest);
                 break;
             default:
                 return false;
@@ -273,5 +218,73 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findBookingById(int id) {
         return bookingRepository.findBookingById(id);
+    }
+
+    private void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest) {
+        int bookingId = bookingUpdateRequest.getBookingId();
+        List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
+        Integer dentistId = bookingUpdateRequest.getDentistId();
+        Long examinationTimeRequest = bookingUpdateRequest.getExaminationTime();
+
+        Booking booking = bookingRepository.findBookingById(bookingId);
+
+        if (dentistId == null || examinationTimeRequest == null) {
+            throw new BadRequestException(Message.PARAMS_MISSING.name());
+        }
+
+        List<ServiceOfClinic> services = new ArrayList<>();
+        for (Integer servicesId : servicesIds) {
+            services.add(serviceOfClinicService.findById(servicesId));
+        }
+
+        Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        System.out.println(currentTime);
+        if (examinationTime.compareTo(currentTime) < 0){
+            throw new BadRequestException(Message.DATE_ERROR.name());
+        }
+
+        Dentist dentist = dentistService.findActive(dentistId);
+        List<Booking> checkedBookings = bookingRepository.findBookingByDentistIdAndStatus(dentistId, Status.Booking.TREATMENT.name());
+        if (checkedBookings != null && !checkedBookings.isEmpty()) {
+            throw new BadRequestException(Message.DENTIST_NO_AVAILABLE.name());
+        }
+
+        booking.setServices(services);
+        booking.setExaminationTime(examinationTime);
+        booking.setCreateBookingDate(currentTime);
+        booking.setDentist(dentist);
+    }
+
+    private void secondlyUpdated(BookingUpdateRequest bookingUpdateRequest) {
+        int bookingId = bookingUpdateRequest.getBookingId();
+        String bookingNote = bookingUpdateRequest.getNote();
+        List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
+
+
+        Booking booking = bookingRepository.findBookingById(bookingId);
+
+        if (bookingNote != null) {
+            booking.setNote(bookingNote);
+        }
+
+        List<ServiceOfClinic> services = new ArrayList<>();
+        if (servicesIds != null) {
+            for (Integer servicesId : servicesIds) {
+                services.add(serviceOfClinicService.findById(servicesId));
+            }
+        }
+
+        List<ServiceOfClinic> bookingServices = booking.getServices();
+        services.addAll(bookingServices);
+
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (ServiceOfClinic service : services) {
+//            ServiceOfClinic serviceBooking = serviceOfClinicService.findById(service.getId());
+            totalPrice = totalPrice.add(service.getPrice());
+        }
+
+        booking.setServices(services);
+        booking.setTotalPrice(totalPrice);
     }
 }
