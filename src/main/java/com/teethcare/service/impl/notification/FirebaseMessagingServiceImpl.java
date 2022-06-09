@@ -19,6 +19,7 @@ import com.teethcare.service.NotificationStoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,10 +42,9 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
             throw new NotFoundException("User ID " + notificationMsgRequest.getAccountId() + " not found");
         }
         List<FCMTokenStore> fcmTokenStores = fcmTokenStoreRepository.findAllByAccount(account);
-
         if (!fcmTokenStores.isEmpty()) {
             List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
-
+            System.out.println(fcmTokens.get(0).getClass());
 
             Notification notification = Notification.builder()
                     .setTitle(notificationMsgRequest.getTitle())
@@ -58,16 +58,29 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
                     .setImage(notificationMsgRequest.getImage())
                     .build();
 
-            MulticastMessage multicastMessage = MulticastMessage.builder()
-                    .addAllTokens(fcmTokens)
-                    .setNotification(notification)
-                    .setWebpushConfig(WebpushConfig
-                            .builder()
-                            .setNotification(webpushNotification)
-                            .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
-                            .build())
-                    .build();
-            FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
+//            MulticastMessage multicastMessage = MulticastMessage.builder()
+//                    .addAllTokens(fcmTokens)
+//                    .setNotification(notification)
+//                    .setWebpushConfig(WebpushConfig
+//                            .builder()
+//                            .setNotification(webpushNotification)
+//                            .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
+//                            .build())
+//                    .build();
+            List<Message> messages = new ArrayList<>();
+            for (String token : fcmTokens) {
+                System.out.println(token);
+//                Message message = Message.builder().setToken("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV").setNotification(notification).build();
+//                FirebaseMessaging.getInstance().send(message);
+                messages.add(Message.builder().setToken(token.trim()).setNotification(notification).setWebpushConfig(WebpushConfig.builder().setNotification(webpushNotification).build()).build());
+            }
+//            System.out.println("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV".equals(fcmTokens.get(0).trim()));
+//            System.out.println("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV");
+//            System.out.println(fcmTokens.get(0));
+//            Message message = Message.builder().setToken("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV").setNotification(notification).build();
+//            Message message = Message.builder().setToken(fcmTokens.get(0)).setNotification(notification).build();
+//            FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
+            FirebaseMessaging.getInstance().sendAll(messages);
             notificationStoreService.addNew(account, notificationMsgRequest);
         } else {
             notificationStoreService.addNew(account, notificationMsgRequest);
