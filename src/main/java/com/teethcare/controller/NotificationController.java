@@ -6,6 +6,7 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.model.entity.NotificationStore;
 import com.teethcare.model.request.NotificationMsgRequest;
+import com.teethcare.model.response.NotificationListResponse;
 import com.teethcare.service.FirebaseMessagingService;
 import com.teethcare.service.NotificationStoreService;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -32,20 +33,23 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<NotificationStore>> getAllByAccount(@RequestHeader(value = AUTHORIZATION) String authorHeader,
-                                                                   @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-                                                                   @RequestParam(name = "size", required = false) Integer size,
-                                                                   @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                                   @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+    public ResponseEntity<NotificationListResponse> getAllByAccount(@RequestHeader(value = AUTHORIZATION) String authorHeader,
+                                                                    @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                    @RequestParam(name = "size", required = false) Integer size,
+                                                                    @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                    @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         if (size == null) {
             size = Integer.MAX_VALUE;
         }
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
-        return new ResponseEntity<>(notificationStoreService.findAllByAccount(authorHeader.substring("Bearer ".length()), pageable), HttpStatus.OK);
+        Page<NotificationStore> notificationStoreList = notificationStoreService.findAllByAccount(authorHeader.substring("Bearer ".length()), pageable);
+        NotificationListResponse notificationListResponse = new NotificationListResponse(notificationStoreList, notificationStoreService.getNumsOfUnread(authorHeader.substring("Bearer ".length())));
+        return new ResponseEntity<>(notificationListResponse, HttpStatus.OK);
     }
 
     @PutMapping(path = "/{id}/read")
-    public ResponseEntity<NotificationStore> markAsRead(@PathVariable("id") int id) {
-        return new ResponseEntity<>(notificationStoreService.markAsRead(id), HttpStatus.OK);
+    public ResponseEntity<NotificationStore> markAsRead(@RequestHeader(value = AUTHORIZATION) String authorHeader,
+                                                        @PathVariable("id") int id) {
+        return new ResponseEntity<>(notificationStoreService.markAsRead(authorHeader.substring("Bearer ".length()), id), HttpStatus.OK);
     }
 }

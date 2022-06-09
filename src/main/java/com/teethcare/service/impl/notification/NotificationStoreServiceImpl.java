@@ -1,6 +1,7 @@
 package com.teethcare.service.impl.notification;
 
 import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.NotificationMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.NotificationStore;
@@ -41,10 +42,21 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         return PaginationAndSortFactory.convertToPage(notificationStores, pageable);
     }
 
-    public NotificationStore markAsRead(int id) {
+    public NotificationStore markAsRead(String jwtToken, int id) {
         NotificationStore notificationStore = notificationStoreRepository.findById(id);
-        notificationStore.setIsMarkedAsRead(true);
-        notificationStoreRepository.save(notificationStore);
-        return notificationStore;
+        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
+        Account account = accountService.getAccountByUsername(username);
+        if (notificationStore.getAccount().getId() == account.getId()) {
+            notificationStore.setIsMarkedAsRead(true);
+            notificationStoreRepository.save(notificationStore);
+            return notificationStore;
+        }
+        throw new NotFoundException("Notification not found");
+    }
+
+    public Integer getNumsOfUnread(String jwtToken) {
+        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
+        Account account = accountService.getAccountByUsername(username);
+        return notificationStoreRepository.countAllByIsMarkedAsReadAndAccount(false, account);
     }
 }

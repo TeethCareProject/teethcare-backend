@@ -1,16 +1,10 @@
 package com.teethcare.controller;
 
-import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
-import com.teethcare.model.entity.NotificationStore;
 import com.teethcare.model.request.FCMTokenRequest;
 import com.teethcare.service.FirebaseMessagingService;
-import com.teethcare.service.NotificationStoreService;
-import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
