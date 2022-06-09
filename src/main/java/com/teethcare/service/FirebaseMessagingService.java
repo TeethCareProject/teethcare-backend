@@ -7,4 +7,6 @@ public interface FirebaseMessagingService {
     void sendNotification(NotificationMsgRequest notificationMsgRequest) throws FirebaseMessagingException;
 
     void addNewToken(String fcmToken, String jwtToken);
+
+    void sendNotificationToCSByBookingId(int bookingId) throws FirebaseMessagingException;
 }

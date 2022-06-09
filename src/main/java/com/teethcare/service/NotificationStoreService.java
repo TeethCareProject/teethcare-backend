@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.NotificationStore;
 import com.teethcare.model.request.NotificationMsgRequest;
@@ -15,4 +16,6 @@ public interface NotificationStoreService {
     void markAllAsRead(String jwtToken);
 
     Integer getNumsOfUnread(String jwtToken);
+//    void sendNotificationToCSByBookingId(int bookingId) throws FirebaseMessagingException;
+
 }

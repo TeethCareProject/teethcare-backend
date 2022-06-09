@@ -58,4 +58,10 @@ public class NotificationController {
         notificationStoreService.markAllAsRead(authorHeader.substring("Bearer ".length()));
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
+
+    @GetMapping(path = "/bookingDetail/{bookingId}")
+    public ResponseEntity<Message> markAllAsRead(@PathVariable int bookingId) throws FirebaseMessagingException {
+        firebaseMessagingService.sendNotificationToCSByBookingId(bookingId);
+        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
+    }
 }
