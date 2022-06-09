@@ -198,6 +198,9 @@ public class BookingServiceImpl implements BookingService {
                 firstlyUpdated(bookingUpdateRequest);
                 break;
             case TREATMENT:
+                if (booking.getNote() == null) {
+                    return false;
+                }
                 secondlyUpdated(bookingUpdateRequest);
                 break;
             default:
@@ -207,6 +210,21 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
 
         return true;
+    }
+
+    @Override
+    public boolean updateRequestFromDentist(BookingUpdateRequest bookingUpdateRequest) {
+        int bookingId = bookingUpdateRequest.getBookingId();
+        String note = bookingUpdateRequest.getNote();
+
+        Booking booking = bookingRepository.findBookingById(bookingId);
+
+        if (note == null) {
+            note = Message.NO_COMMIT_FROM_DENTIST.name();
+        }
+
+        booking.setNote(note);
+        return false;
     }
 
 

@@ -23,5 +23,6 @@ public interface BookingService extends CRUDService<Booking>{
 
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
     boolean update(BookingUpdateRequest bookingUpdateRequest);
+    boolean updateRequestFromDentist(BookingUpdateRequest bookingUpdateRequest);
     boolean updateStatus(int bookingId);
 }
