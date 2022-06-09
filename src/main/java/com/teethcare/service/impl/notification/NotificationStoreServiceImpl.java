@@ -63,7 +63,10 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
         Account account = accountService.getAccountByUsername(username);
         List<NotificationStore> notificationStores = notificationStoreRepository.findAllByAccount(account);
         if (!notificationStores.isEmpty()) {
-            notificationStores.stream().forEach(notificationStore -> notificationStore.setIsMarkedAsRead(true));
+            notificationStores.stream().forEach(notificationStore -> {
+                notificationStore.setIsMarkedAsRead(true);
+                notificationStoreRepository.save(notificationStore);
+            });
         }
     }
 
