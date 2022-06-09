@@ -52,4 +52,10 @@ public class NotificationController {
                                                         @PathVariable("id") int id) {
         return new ResponseEntity<>(notificationStoreService.markAsRead(authorHeader.substring("Bearer ".length()), id), HttpStatus.OK);
     }
+
+    @PutMapping(path = "/read")
+    public ResponseEntity<Message> markAllAsRead(@RequestHeader(value = AUTHORIZATION) String authorHeader) {
+        notificationStoreService.markAllAsRead(authorHeader.substring("Bearer ".length()));
+        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
+    }
 }

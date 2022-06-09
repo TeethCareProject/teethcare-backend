@@ -12,6 +12,7 @@ public interface NotificationStoreService {
     Page<NotificationStore> findAllByAccount(String jwtToken, Pageable pageable);
 
     NotificationStore markAsRead(String jwtToken, int id);
+    void markAllAsRead(String jwtToken);
 
     Integer getNumsOfUnread(String jwtToken);
 }
