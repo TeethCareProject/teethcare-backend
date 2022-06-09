@@ -93,6 +93,7 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         CustomerService customerService = booking.getCustomerService();
         NotificationMsgRequest notificationMsgRequest = NotificationTemplate.CHECK_IN_NOTIFICATION;
         notificationMsgRequest.setAccountId(customerService.getId());
+        notificationMsgRequest.setBody(String.valueOf(bookingId));
         this.sendNotification(notificationMsgRequest);
     }
 }
