@@ -4,17 +4,21 @@ import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
+import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
+import com.teethcare.model.request.ProfileUpdateRequest;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.service.AccountService;
+import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final AccountMapper accountMapper;
 
     @Override
     public List<Account> findAll() {
@@ -45,8 +50,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account findById(int id) {
-        Optional<Account> account = accountRepository.findById(id);
-        return account.orElse(null);
+        return accountRepository.findById(id);
     }
 
     @Override
@@ -56,8 +60,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void delete(int id) {
-        Optional<Account> accountData = accountRepository.findById(id);
-        Account account = accountData.get();
+        Account account = accountRepository.findById(id);
         account.setStatus(Status.Account.INACTIVE.name());
         accountRepository.save(account);
     }
@@ -109,5 +112,18 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new BadRequestException(Message.INVALID_STATUS.name());
         }
+    }
+
+    @Override
+    public Account updateProfile(ProfileUpdateRequest updateRequest, String username) {
+        Account account = accountRepository.getAccountByUsername(username);
+        accountMapper.updateAccountFromProfileUpdateRequest(updateRequest, account);
+
+        long milliseconds = updateRequest.getDateOfBirth();
+        Date dob = ConvertUtils.getDate(milliseconds);
+        account.setDateOfBirth(dob);
+
+        save(account);
+        return account;
     }
 }
