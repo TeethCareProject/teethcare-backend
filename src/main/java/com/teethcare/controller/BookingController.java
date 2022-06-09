@@ -104,14 +104,25 @@ public class BookingController {
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 
-//    public ResponseEntity<MessageResponse> updateStatus(@RequestParam(value = "bookingId") int bookingId) {
-//        boolean isUpdated = bookingService.updateStatus(bookingId);
-//        if (isUpdated) {
-//            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
-//        }
-//    }
+    @PutMapping("/checkin")
+    public ResponseEntity<MessageResponse> checkin(@RequestParam(value = "bookingId") int bookingId) {
+        boolean isUpdated = bookingService.updateStatus(bookingId);
+        if (isUpdated) {
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
+    }
+
+    @PutMapping("/checkout")
+    public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
+        boolean isUpdated = bookingService.updateStatus(bookingId);
+        if (isUpdated) {
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
+    }
 
     @PutMapping()
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
