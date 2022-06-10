@@ -45,8 +45,9 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         if (!fcmTokenStores.isEmpty()) {
             List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
 
+            // FE requires Type as Title
             Notification notification = Notification.builder()
-                    .setTitle(notificationMsgRequest.getTitle())
+                    .setTitle(notificationMsgRequest.getType())
                     .setBody(notificationMsgRequest.getBody())
                     .setImage(notificationMsgRequest.getImage())
                     .build();
