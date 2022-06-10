@@ -51,9 +51,8 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public void save(CustomerService theCustomerService) {
-        theCustomerService.setStatus(Status.Account.ACTIVE.name());
+        theCustomerService.setStatus(Status.Account.PENDING.name());
         theCustomerService.setRole(roleService.getRoleByName(Role.CUSTOMER_SERVICE.name()));
-        theCustomerService.setPassword(passwordEncoder.encode(theCustomerService.getPassword()));
         customerServiceRepository.save(theCustomerService);
     }
 

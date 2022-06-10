@@ -53,11 +53,10 @@ public class DentistServiceImpl implements DentistService {
 
 
     @Override
-    public void save(Dentist theDentist) {
-        theDentist.setStatus(Status.Account.ACTIVE.name());
-        theDentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
-        theDentist.setPassword(passwordEncoder.encode(theDentist.getPassword()));
-        dentistRepository.save(theDentist);
+    public void save(Dentist dentist) {
+        dentist.setStatus(Status.Account.PENDING.name());
+        dentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
+        dentistRepository.save(dentist);
     }
 
     @Override
