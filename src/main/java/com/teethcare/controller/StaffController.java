@@ -1,13 +1,16 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
+import com.teethcare.common.Message;
 import com.teethcare.common.Role;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
+import com.teethcare.model.request.StaffPasswordRequest;
 import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.model.response.CustomerServiceResponse;
 import com.teethcare.model.response.DentistResponse;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.DentistService;
 import com.teethcare.service.EmailService;
@@ -32,6 +35,7 @@ public class StaffController {
     private final CSService csService;
     private final EmailService emailService;
     private final AccountMapper accountMapper;
+    private final AccountService accountService;
 
     @PostMapping
     public ResponseEntity<Object> add(@Valid @RequestBody StaffRegisterRequest staffRegisterRequest,
@@ -47,6 +51,12 @@ public class StaffController {
             emailService.sendStaffCreatingPasswordEmail(staffRegisterRequest.getEmail(), "http://www.example.com/");
             return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
         }
+    }
 
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<Message> setPassword(@PathVariable("id") int id,
+                                               @Valid StaffPasswordRequest staffPasswordRequest) {
+        accountService.setStaffPassword(id, staffPasswordRequest);
+        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 }

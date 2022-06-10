@@ -7,12 +7,14 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
+import com.teethcare.model.request.StaffPasswordRequest;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<Account> findAll() {
@@ -109,5 +112,16 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new BadRequestException(Message.INVALID_STATUS.name());
         }
+    }
+
+    @Override
+    public void setStaffPassword(int staffId, StaffPasswordRequest staffPasswordRequest) {
+        if (staffPasswordRequest.getPassword().equals(staffPasswordRequest.getConfirmPassword())) {
+            Account account = accountRepository.findAccountsById(staffId);
+            account.setPassword(passwordEncoder.encode(staffPasswordRequest.getPassword()));
+            account.setStatus(Status.Account.ACTIVE.name());
+            update(account);
+        }
+        throw new BadRequestException("Confirm Password is not match with password");
     }
 }
