@@ -169,24 +169,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean updateStatus(int bookingId) {
-        Booking booking = bookingRepository.findBookingById(bookingId);
-        String status = booking.getStatus();
-         switch (Status.Booking.valueOf(status)) {
-             case REQUEST:
-                 booking.setStatus(Status.Booking.TREATMENT.name());
-                 break;
-             case TREATMENT:
-                 booking.setStatus(Status.Booking.DONE.name());
-                 break;
-             default:
-                 return false;
-         }
-
-         return true;
-    }
-
-    @Override
     @Transactional
     public boolean update(BookingUpdateRequest bookingUpdateRequest) {
         int bookingId = bookingUpdateRequest.getBookingId();
@@ -292,7 +274,6 @@ public class BookingServiceImpl implements BookingService {
 
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (ServiceOfClinic service : services) {
-//            ServiceOfClinic serviceBooking = serviceOfClinicService.findById(service.getId());
             totalPrice = totalPrice.add(service.getPrice());
         }
 
