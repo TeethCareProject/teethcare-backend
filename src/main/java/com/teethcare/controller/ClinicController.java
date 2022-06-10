@@ -91,13 +91,6 @@ public class ClinicController {
         String username = jwtTokenUtil.getUsernameFromJwt(token);
         Clinic clinic = clinicService.updateProfile(clinicRequest, username);
         ClinicResponse response = clinicMapper.mapClinicToClinicResponse(clinic);
-/*        clinicRequest.setId(id);
-
-        Clinic clinic = clinicService.findById(id);
-
-        clinicMapper.mapClinicRequestToClinic(clinicRequest);
-
-        clinicService.update(clinic);*/
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
