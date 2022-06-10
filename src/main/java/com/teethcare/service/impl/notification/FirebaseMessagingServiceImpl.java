@@ -44,10 +44,10 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         List<FCMTokenStore> fcmTokenStores = fcmTokenStoreRepository.findAllByAccount(account);
         if (!fcmTokenStores.isEmpty()) {
             List<String> fcmTokens = fcmTokenStores.stream().map(FCMTokenStore::getFcmToken).collect(Collectors.toList());
-            System.out.println(fcmTokens.get(0).getClass());
 
+            // FE requires Type as Title
             Notification notification = Notification.builder()
-                    .setTitle(notificationMsgRequest.getTitle())
+                    .setTitle(notificationMsgRequest.getType())
                     .setBody(notificationMsgRequest.getBody())
                     .setImage(notificationMsgRequest.getImage())
                     .build();
@@ -58,34 +58,22 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
                     .setImage(notificationMsgRequest.getImage())
                     .build();
 
-//            MulticastMessage multicastMessage = MulticastMessage.builder()
-//                    .addAllTokens(fcmTokens)
-//                    .setNotification(notification)
-//                    .setWebpushConfig(WebpushConfig
-//                            .builder()
-//                            .setNotification(webpushNotification)
-//                            .setFcmOptions(WebpushFcmOptions.builder().setLink(notificationMsgRequest.getUrl()).build())
-//                            .build())
-//                    .build();
             List<Message> messages = new ArrayList<>();
             for (String token : fcmTokens) {
-                System.out.println(token);
-//                Message message = Message.builder().setToken("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV").setNotification(notification).build();
-//                FirebaseMessaging.getInstance().send(message);
-                messages.add(Message.builder().setToken(token.trim()).setNotification(notification).setWebpushConfig(WebpushConfig.builder().setNotification(webpushNotification).build()).build());
+                messages.add(Message.builder()
+                        .setToken(token.trim())
+                        .setNotification(notification)
+                        .setWebpushConfig(WebpushConfig
+                                .builder()
+                                .setNotification(webpushNotification)
+                                .build())
+                        .build());
             }
-//            System.out.println("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV".equals(fcmTokens.get(0).trim()));
-//            System.out.println("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV");
-//            System.out.println(fcmTokens.get(0));
-//            Message message = Message.builder().setToken("cWs2s6ADUFiuFuDKef1ksd:APA91bFYeEvgqUMssQbnweHsXJ9TX5QOZilEaHudcGoJ-6sch8j5PAaWwfcl3QjRD4ovpLe1c2V5NRFTLg19fDiB2uTWIkoFSriVMN7DtDVVo1pAhvObSO0qq7o4rM0apxaOdpb1UGIV").setNotification(notification).build();
-//            Message message = Message.builder().setToken(fcmTokens.get(0)).setNotification(notification).build();
-//            FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
             FirebaseMessaging.getInstance().sendAll(messages);
             notificationStoreService.addNew(account, notificationMsgRequest);
         } else {
             notificationStoreService.addNew(account, notificationMsgRequest);
         }
-
     }
 
     @Override
@@ -106,6 +94,7 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         CustomerService customerService = booking.getCustomerService();
         NotificationMsgRequest notificationMsgRequest = NotificationTemplate.CHECK_IN_NOTIFICATION;
         notificationMsgRequest.setAccountId(customerService.getId());
+        notificationMsgRequest.setBody(String.valueOf(bookingId));
         this.sendNotification(notificationMsgRequest);
     }
 }
