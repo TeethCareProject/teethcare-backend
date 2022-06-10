@@ -1,6 +1,7 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.model.request.ServiceRequest;
 import com.teethcare.model.response.ServiceDetailResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import org.mapstruct.*;
@@ -28,4 +29,7 @@ public interface ServiceOfClinicMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "duration", ignore = true)
     ServiceOfClinicResponse mapServiceToServiceResponseWithoutFields(ServiceOfClinic serviceOfClinic);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    ServiceOfClinic mapServiceRequestToServiceOfClinic(ServiceRequest serviceRequest);
 }
