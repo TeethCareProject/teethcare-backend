@@ -56,7 +56,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     public Page<Feedback> findAllByClinicID(Pageable pageable, int clinicID, Account account, Integer rating) {
         List<Feedback> feedbacks = new ArrayList<>();
         Clinic clinic = clinicService.findById(clinicID);
-        List<Booking> bookings = bookingRepository.findBookingByClinic(clinic);
+        List<Booking> bookings = bookingRepository.findBookingByClinic(clinic, pageable.getSort());
         if (!bookings.isEmpty()) {
             if (account == null || !account.getRole().getName().equals(Role.ADMIN)) {
                 feedbacks = getAllByBooking(bookings);

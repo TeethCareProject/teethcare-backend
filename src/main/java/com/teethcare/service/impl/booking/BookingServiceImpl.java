@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -120,19 +121,19 @@ public class BookingServiceImpl implements BookingService {
                                  BookingFilterRequest filterRequest,
                                  Pageable pageable) {
 
-        Page<Booking> bookingPage = null;
+        Sort sort = pageable.getSort();
 
         switch (Role.valueOf(role)) {
             case CUSTOMER_SERVICE:
                 Clinic clinic = clinicService.findClinicByCustomerServiceId(accountId);
-                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinic(clinic);
+                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinic(clinic, sort);
 
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
-                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId);
+                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId, sort);
 
                 bookingListForPatient = bookingListForPatient.stream()
                         .filter(filterRequest.getPredicate())
@@ -140,7 +141,7 @@ public class BookingServiceImpl implements BookingService {
 
               return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
-                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId);
+                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId, sort);
 
                 bookingListForDentist = bookingListForDentist.stream()
                         .filter(filterRequest.getPredicate())
@@ -227,12 +228,6 @@ public class BookingServiceImpl implements BookingService {
         return false;
     }
 
-
-    @Override
-    public List<Booking> findAllByCustomerService(CustomerService customerService) {
-        return bookingRepository.findAllByCustomerService(customerService);
-    }
-
     @Override
     public Booking findBookingById(int id) {
         return bookingRepository.findBookingById(id);
@@ -278,7 +273,6 @@ public class BookingServiceImpl implements BookingService {
         int bookingId = bookingUpdateRequest.getBookingId();
         String bookingNote = bookingUpdateRequest.getNote();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
-
 
         Booking booking = bookingRepository.findBookingById(bookingId);
 
