@@ -44,6 +44,8 @@ public interface ClinicMapper {
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
     Clinic mapClinicRequestToClinic(ClinicRequest clinicRequest);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateClinicFromClinicRequest(ClinicRequest clinicRequest,@MappingTarget Clinic clinic);
 
     ServiceOfClinicResponse mapServiceToServiceResponse(ServiceOfClinic serviceOfClinic);
 
