@@ -104,7 +104,7 @@ public class BookingController {
     }
 
     @PutMapping("/checkin")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> checkin(@RequestParam(value = "bookingId") int bookingId) {
         boolean isUpdated = bookingService.updateStatus(bookingId);
         if (isUpdated) {
@@ -115,7 +115,7 @@ public class BookingController {
     }
 
     @PutMapping("/checkout")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
         boolean isUpdated = bookingService.updateStatus(bookingId);
         if (isUpdated) {
