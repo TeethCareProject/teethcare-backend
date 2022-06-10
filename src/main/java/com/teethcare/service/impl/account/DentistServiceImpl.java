@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.account;
 
+import com.teethcare.common.Constant;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
@@ -16,6 +17,7 @@ import com.teethcare.service.AccountService;
 import com.teethcare.service.DentistService;
 import com.teethcare.service.ManagerService;
 import com.teethcare.service.RoleService;
+import com.teethcare.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -56,6 +58,7 @@ public class DentistServiceImpl implements DentistService {
     public void save(Dentist dentist) {
         dentist.setStatus(Status.Account.PENDING.name());
         dentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
+        dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
         dentistRepository.save(dentist);
     }
 
@@ -104,7 +107,6 @@ public class DentistServiceImpl implements DentistService {
             String username = jwtTokenUtil.getUsernameFromJwt(token);
             Account account = accountService.getAccountByUsername(username);
             Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
-
             Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(staffRegisterRequest);
             dentist.setClinic(clinic);
             this.save(dentist);

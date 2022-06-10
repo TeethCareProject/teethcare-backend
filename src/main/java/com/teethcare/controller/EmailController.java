@@ -23,7 +23,7 @@ public class EmailController {
 
     @GetMapping
     public ResponseEntity<Message> sendStaffCreatingPasswordTestEmail(@RequestBody String emailTo) throws MessagingException {
-        emailService.sendStaffCreatingPasswordEmail(emailTo, "https://www.facebook.com/");
+//        emailService.sendStaffCreatingPasswordEmail(emailTo, "https://www.facebook.com/");
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 }

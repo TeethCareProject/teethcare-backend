@@ -65,12 +65,14 @@ public interface AccountMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
+    @Mapping(source = "password", target = "password")
     Dentist mapDentistRegisterRequestToDentist(StaffRegisterRequest dentistRegisterRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
+    @Mapping(source = "password", target = "password")
     CustomerService mapCSRegisterRequestToCustomerService(StaffRegisterRequest csRegisterRequest);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")

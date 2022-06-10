@@ -21,6 +21,7 @@ public class StaffRegisterRequest implements Trimmable {
     @Length(max = 72)
     private String username;
 
+    private String password;
 
     @NotBlank
     @Length(max = 40)
