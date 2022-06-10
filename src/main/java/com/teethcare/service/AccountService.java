@@ -4,6 +4,7 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
 import com.teethcare.model.request.StaffPasswordRequest;
+import com.teethcare.model.request.ProfileUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -28,5 +29,8 @@ public interface AccountService extends CRUDService<Account> {
     Page<Account> findAllByFilter(AccountFilterRequest filter, Pageable pageable);
 
     void updateStatus(AccountUpdateStatusRequest accountUpdateStatusRequest, int id);
+
     void setStaffPassword(int staffId, StaffPasswordRequest staffPasswordRequest);
+
+    Account updateProfile(ProfileUpdateRequest updateRequest, String username);
 }
