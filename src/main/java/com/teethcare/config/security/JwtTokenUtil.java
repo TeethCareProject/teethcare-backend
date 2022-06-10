@@ -1,7 +1,5 @@
 package com.teethcare.config.security;
 
-import com.teethcare.model.entity.Account;
-import com.teethcare.service.AccountService;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

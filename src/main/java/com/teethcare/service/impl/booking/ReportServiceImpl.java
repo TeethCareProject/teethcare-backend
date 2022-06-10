@@ -69,13 +69,13 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report evaluate(int id, String status) {
-        if (!status.equalsIgnoreCase(Status.Report.REJECTED.name()) && !status.equalsIgnoreCase(Status.Report.APPROVED.name())){
+        if (!status.equalsIgnoreCase(Status.Report.REJECTED.name()) && !status.equalsIgnoreCase(Status.Report.APPROVED.name())) {
             throw new BadRequestException("Report status invalid");
         }
         Report report = findById(id);
         report.setStatus(status);
         reportRepository.save(report);
-        if (status.equalsIgnoreCase(Status.Report.APPROVED.name())){
+        if (status.equalsIgnoreCase(Status.Report.APPROVED.name())) {
             feedbackService.delete(report.getFeedback().getId());
         }
         return report;

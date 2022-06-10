@@ -16,12 +16,9 @@ import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.MessageResponse;
-import com.teethcare.service.CSService;
-import com.teethcare.service.ClinicService;
-import com.teethcare.service.DentistService;
-import com.teethcare.utils.PaginationAndSortFactory;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.*;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,7 +88,6 @@ public class ClinicController {
         clinicService.update(clinic);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
-
 
 
     @GetMapping("/{id}/staffs")

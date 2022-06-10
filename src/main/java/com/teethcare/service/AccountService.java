@@ -14,6 +14,8 @@ public interface AccountService extends CRUDService<Account> {
 
     Account getActiveAccountByUsername(String username);
 
+    Account findById(int id);
+
     boolean isDuplicated(String username);
 
     List<Account> findByRoleId(int id);

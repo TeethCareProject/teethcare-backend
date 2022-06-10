@@ -6,5 +6,6 @@ import com.teethcare.model.response.ManagerResponse;
 
 public interface ManagerService extends CRUDService<Manager> {
     Manager getActiveManager(int id);
+
     ManagerResponse addNew(ManagerRegisterRequest managerRegisterRequest);
 }

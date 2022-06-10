@@ -3,24 +3,18 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
-import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.repository.BookingRepository;
-import com.teethcare.repository.ClinicRepository;
-import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.BookingService;
-import com.teethcare.service.ClinicService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -28,9 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
 
         Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (desiredCheckingTime.compareTo(now) < 0){
+        if (desiredCheckingTime.compareTo(now) < 0) {
             throw new BadRequestException("Desired checking time invalid");
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
@@ -99,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
         bookingTmp.setPatient(patient);
         bookingTmp.setStatus(Status.Booking.PENDING.name());
 
-        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null){
+        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null) {
             return bookingRepository.save(bookingTmp);
         }
         return null;
@@ -125,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
-                for(Booking booking: bookingListForCustomerService) {
+                for (Booking booking : bookingListForCustomerService) {
                     System.out.println(booking.getId());
                 }
 
@@ -137,7 +129,7 @@ public class BookingServiceImpl implements BookingService {
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
                 bookingPage = bookingRepository.findBookingByDentistId(accountId, pageable);
                 break;
