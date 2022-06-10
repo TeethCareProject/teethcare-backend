@@ -5,9 +5,11 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
+import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.repository.BookingRepository;
+import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
@@ -32,6 +34,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
+    private final ServiceRepository serviceRepository;
     private final PatientService patientService;
 
 
@@ -162,5 +165,43 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findBookingById(int id) {
         return bookingRepository.findBookingById(id);
+    }
+
+    @Override
+    public Booking createAppointment(AppointmentRequest appointmentRequest, Account customerService) {
+        Booking bookingTmp = new Booking();
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (appointmentRequest.getAppointmentDate().compareTo(now) < 0) {
+            throw new BadRequestException("Appointment Date invalid");
+        }
+
+        if (appointmentRequest.getExpirationAppointmentDate().compareTo(appointmentRequest.getAppointmentDate()) < 0) {
+            throw new BadRequestException("Expiration Appointment Date invalid");
+        }
+
+        Booking preBooking = findBookingById(appointmentRequest.getPreBookingId());
+        bookingTmp.setPreBooking(preBooking);
+
+        ServiceOfClinic service = serviceRepository.findByIdAndStatus(appointmentRequest.getServiceId(), Status.Service.ACTIVE.name());
+        List<ServiceOfClinic> services = new ArrayList<>();
+        services.add(service);
+        bookingTmp.setServices(services);
+
+        bookingTmp.setCustomerService((CustomerService) customerService);
+
+        bookingTmp.setDescription(appointmentRequest.getDescription());
+
+        bookingTmp.setPatient(preBooking.getPatient());
+
+        //set total price as first service price (appointment has only 1 service)
+        bookingTmp.setTotalPrice(bookingTmp.getServices().get(0).getPrice());
+
+        bookingTmp.setClinic(preBooking.getClinic());
+
+        bookingTmp.setStatus(Status.Booking.APPOINTMENT.name());
+
+        bookingRepository.save(bookingTmp);
+        return bookingTmp;
     }
 }

@@ -1,6 +1,7 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Booking;
+import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
@@ -57,4 +58,7 @@ public interface BookingMapper {
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponseWithoutService")
     List<BookingResponse> mapBookingListToBookingResponseListWithoutService(List<Booking> bookingList);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Booking mapAppoitmentRequestToBooking(AppointmentRequest appointmentRequest);
 }

@@ -31,7 +31,8 @@ public class Status {
         TREATMENT,
         DONE,
         REJECTED,
-        UNAVAILABLE
+        UNAVAILABLE,
+        APPOINTMENT
     }
 
     public enum Service {
