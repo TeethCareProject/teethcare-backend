@@ -16,6 +16,7 @@ import com.teethcare.service.AccountService;
 import com.teethcare.service.DentistService;
 import com.teethcare.service.ManagerService;
 import com.teethcare.service.RoleService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -85,9 +86,15 @@ public class DentistServiceImpl implements DentistService {
     }
 
     @Override
-    public Page<Dentist> findAllWithPaging(Pageable pageable) {
-        List<Dentist> dentistList = dentistRepository.findAllByStatusIsNotNull(pageable);
-        return new PageImpl<>(dentistList);
+    public Page<Dentist> findDentistByClinicId(int clinicId, Pageable pageable) {
+        List<Dentist> dentistList = dentistRepository.findDentistByClinicId(clinicId, pageable);
+        if (pageable.isUnpaged()) {
+            List<Dentist> unpagedDentistList = dentistRepository.findDentistByClinicId(clinicId, pageable);
+            System.out.println("Hello Im not paging");
+            return new PageImpl<>(unpagedDentistList);
+        }
+
+        return PaginationAndSortFactory.convertToPage(dentistList, pageable);
     }
 
     @Override

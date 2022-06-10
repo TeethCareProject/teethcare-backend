@@ -14,7 +14,7 @@ public interface DentistService extends CRUDService<Dentist> {
 
     Dentist findActive(int id);
 
-    Page<Dentist> findAllWithPaging(Pageable pageable);
+    Page<Dentist> findDentistByClinicId(int clinicId, Pageable pageable);
 
     Dentist addNew(StaffRegisterRequest staffRegisterRequest, String token);
 }
