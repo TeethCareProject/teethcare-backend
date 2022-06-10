@@ -48,12 +48,12 @@ public class StaffController {
         if (staffRegisterRequest.getRole().trim().equals(Role.DENTIST.name())) {
             Dentist dentist = dentistService.addNew(staffRegisterRequest, token.substring("Bearer ".length()));
             DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(dentist);
-            emailService.sendStaffCreatingPasswordEmail(new StaffCreatingPasswordDTO(staffRegisterRequest.getEmail(),staffRegisterRequest.getUsername(),staffRegisterRequest.getPassword(), "http://www.example.com/"));
+            emailService.sendStaffCreatingPasswordEmail(new StaffCreatingPasswordDTO(staffRegisterRequest.getEmail(), staffRegisterRequest.getUsername(), staffRegisterRequest.getPassword(), "http://www.example.com/"));
             return new ResponseEntity<>(dentistResponse, HttpStatus.OK);
         } else {
             CustomerService customerService = csService.addNew(staffRegisterRequest, token);
             CustomerServiceResponse customerServiceResponse = accountMapper.mapCustomerServiceToCustomerServiceResponse(customerService);
-            emailService.sendStaffCreatingPasswordEmail(new StaffCreatingPasswordDTO(staffRegisterRequest.getEmail(),staffRegisterRequest.getUsername(),staffRegisterRequest.getPassword(), "http://www.example.com/"));
+            emailService.sendStaffCreatingPasswordEmail(new StaffCreatingPasswordDTO(staffRegisterRequest.getEmail(), staffRegisterRequest.getUsername(), staffRegisterRequest.getPassword(), "http://www.example.com/"));
             return new ResponseEntity<>(customerServiceResponse, HttpStatus.OK);
         }
     }

@@ -1,6 +1,5 @@
 package com.teethcare.service.impl.account;
 
-import com.teethcare.common.Constant;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
@@ -17,7 +16,6 @@ import com.teethcare.service.AccountService;
 import com.teethcare.service.DentistService;
 import com.teethcare.service.ManagerService;
 import com.teethcare.service.RoleService;
-import com.teethcare.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

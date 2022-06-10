@@ -17,6 +17,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account getAccountByUsername(String username);
 
     List<Account> findByRoleId(int roleId);
+
     Account findAccountsById(int id);
 
     List<Account> findAllByStatusIsNotNull(Pageable pageable);
