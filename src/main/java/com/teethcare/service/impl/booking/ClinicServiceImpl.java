@@ -3,15 +3,14 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.ClinicMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Location;
-import com.teethcare.model.entity.Manager;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.ClinicService;
+import com.teethcare.service.LocationService;
+import com.teethcare.service.WardService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +29,8 @@ public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
     private final AccountService accountService;
     private final ClinicMapper clinicMapper;
+    private final LocationService locationService;
+    private final WardService wardService;
 
     @Override
     public List<Clinic> findAll() {
@@ -83,6 +84,17 @@ public class ClinicServiceImpl implements ClinicService {
         Account manager = accountService.getAccountByUsername(username);
         Clinic clinic = clinicRepository.getClinicByManager(manager);
         clinicMapper.updateClinicFromClinicRequest(clinicRequest, clinic);
+        if (clinicRequest.getClinicAddress() != null) {
+            Location location = new Location();
+            location.setAddressString(clinicRequest.getClinicAddress());
+            if (clinicRequest.getWardId() != null) {
+                location.setWard(wardService.findById(clinicRequest.getWardId()));
+            } else {
+                location.setWard(clinic.getLocation().getWard());
+            }
+            locationService.save(location);
+            clinic.setLocation(location);
+        }
         clinicRepository.save(clinic);
         return clinic;
     }
