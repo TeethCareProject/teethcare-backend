@@ -11,7 +11,7 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
 
     Feedback findByBookingIdAndStatus(int bookingId, String status);
 
-    Feedback findById(int id);
+    Feedback findFeedbackById(int id);
 
     Feedback save(Feedback feedback);
 

@@ -39,7 +39,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback findById(int id) {
-        return feedbackRepository.findById(id);
+        return feedbackRepository.findFeedbackById(id);
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Dentist;
-import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.DentistService;
