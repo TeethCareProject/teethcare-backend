@@ -181,7 +181,7 @@ public class BookingServiceImpl implements BookingService {
                 firstlyUpdated(bookingUpdateRequest);
                 break;
             case TREATMENT:
-                if (booking.getNote() == null) {
+                if (booking.getNote() == null || booking.getNote().isEmpty()) {
                     return false;
                 }
                 secondlyUpdated(bookingUpdateRequest);
