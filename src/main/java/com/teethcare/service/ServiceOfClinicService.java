@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface ServiceOfClinicService extends CRUDService<ServiceOfClinic> {
     ServiceOfClinic findById(int theId, Account account);
+
     Page<ServiceOfClinic> findAllWithFilter(ServiceFilterRequest serviceFilterRequest, Pageable pageable, Account account);
+
     List<ServiceOfClinic> findAllByRole(Account account, Pageable pageable);
 
 }

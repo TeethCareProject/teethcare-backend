@@ -77,7 +77,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
                     serviceOfClinic.getStatus().equals(Status.Service.INACTIVE.name());
             serviceOfClinics.removeIf(condition);
         }
-        return  serviceOfClinics;
+        return serviceOfClinics;
     }
 
     @Override

@@ -16,6 +16,7 @@ public interface ServiceOfClinicMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "clinic", target = "clinic")
     ServiceDetailResponse mapServiceOfClinicToServiceDetailResponse(ServiceOfClinic serviceOfClinic);
+
     ServiceOfClinicResponse mapServiceToServiceResponse(ServiceOfClinic serviceOfClinic);
 
     @Named("mapServiceListToServiceResponseListWithoutFields")

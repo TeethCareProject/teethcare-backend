@@ -1,7 +1,6 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.model.entity.Clinic;
@@ -10,7 +9,6 @@ import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.response.ClinicInfoResponse;
 import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.service.*;
-import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

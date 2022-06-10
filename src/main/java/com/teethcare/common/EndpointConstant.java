@@ -66,12 +66,18 @@ public final class EndpointConstant {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Feedback{
+    public static final class Feedback {
         public static final String FEEDBACK_ENDPOINT = ROOT_ENDPOINT + "/feedbacks";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Report{
+    public static final class Report {
         public static final String REPORT_ENDPOINT = ROOT_ENDPOINT + "/reports";
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class Notification {
+        public static final String NOTIFICATION_ENDPOINT = ROOT_ENDPOINT + "/notifications";
+        public static final String FCM_TOKEN_ENDPOINT = ROOT_ENDPOINT + "/fcm-tokens";
     }
 }

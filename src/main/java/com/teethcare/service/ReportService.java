@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ReportService extends CRUDService<Report> {
     List<Report> findAll(Pageable pageable);
+
     Page<Report> findByStatus(Pageable pageable, ReportFilterRequest request);
 
     Report evaluate(int id, String status);

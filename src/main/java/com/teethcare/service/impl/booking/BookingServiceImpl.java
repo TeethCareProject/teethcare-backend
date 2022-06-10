@@ -15,11 +15,13 @@ import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.*;
+import com.teethcare.service.BookingService;
+import com.teethcare.service.PatientService;
+import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -83,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
 
         Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (desiredCheckingTime.compareTo(now) < 0){
+        if (desiredCheckingTime.compareTo(now) < 0) {
             throw new BadRequestException("Desired checking time invalid");
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
@@ -104,7 +106,7 @@ public class BookingServiceImpl implements BookingService {
         bookingTmp.setPatient(patient);
         bookingTmp.setStatus(Status.Booking.PENDING.name());
 
-        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null){
+        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null) {
             return bookingRepository.save(bookingTmp);
         }
         return null;

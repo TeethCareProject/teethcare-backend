@@ -1,9 +1,9 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.*;
-
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
+import com.teethcare.model.request.ProfileUpdateRequest;
 import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.model.response.*;
 import org.mapstruct.*;
@@ -84,4 +84,10 @@ public interface AccountMapper {
 
     @InheritConfiguration(name = "mapCustomerServiceToCustomerServiceResponse")
     List<CustomerServiceResponse> mapCustomerServiceListToCustomerServiceResponseList(List<CustomerService> dentistList);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "phoneNumber", target = "phone")
+    @Mapping(target = "dateOfBirth", ignore = true)
+    void updateAccountFromProfileUpdateRequest(ProfileUpdateRequest profileUpdateRequest, @MappingTarget Account account);
+
 }

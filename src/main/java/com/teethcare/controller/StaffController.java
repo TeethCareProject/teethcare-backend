@@ -33,8 +33,8 @@ public class StaffController {
 
     @PostMapping
     public ResponseEntity<Object> add(@Valid @RequestBody StaffRegisterRequest staffRegisterRequest,
-                                               @RequestHeader(AUTHORIZATION) String token) {
-        if(staffRegisterRequest.getRole().trim().equals(Role.DENTIST.name())) {
+                                      @RequestHeader(AUTHORIZATION) String token) {
+        if (staffRegisterRequest.getRole().trim().equals(Role.DENTIST.name())) {
             Dentist dentist = dentistService.addNew(staffRegisterRequest, token.substring("Bearer ".length()));
             DentistResponse dentistResponse = accountMapper.mapDentistToDentistResponse(dentist);
             return new ResponseEntity<>(dentistResponse, HttpStatus.OK);

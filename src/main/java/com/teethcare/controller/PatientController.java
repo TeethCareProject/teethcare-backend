@@ -1,16 +1,13 @@
 package com.teethcare.controller;
 
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Message;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.PatientRegisterRequest;
-import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientResponse;
 import com.teethcare.service.AccountService;
-import com.teethcare.service.BookingService;
 import com.teethcare.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -63,4 +60,5 @@ public class PatientController {
         }
         throw new NotFoundException("Patient id " + id + " not found");
     }
+
 }

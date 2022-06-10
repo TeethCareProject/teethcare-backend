@@ -1,11 +1,9 @@
 package com.teethcare.model.request;
 
-import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Locale;
 import java.util.function.Predicate;
 
 @Getter
@@ -23,7 +21,7 @@ public class BookingFilterRequest {
         Predicate<Booking> predicate = booking -> true;
         if (bookingId != null) {
             predicate = predicate.and(booking -> Integer.toString(booking.getId()).
-                                                contains(Integer.toString(getBookingId())));
+                    contains(Integer.toString(getBookingId())));
         }
 
         if (status != null) {
@@ -32,7 +30,7 @@ public class BookingFilterRequest {
 
         if (patientName != null) {
             predicate = predicate.and(booking -> (booking.getPatient().getFirstName() + booking.getPatient().getLastName()).toLowerCase()
-                                                .contains(getPatientName().toLowerCase()));
+                    .contains(getPatientName().toLowerCase()));
         }
 
         if (patientPhone != null) {
@@ -41,17 +39,17 @@ public class BookingFilterRequest {
 
         if (dentistId != null) {
             predicate = predicate.and(booking -> booking.getDentist() != null).
-                                    and(booking -> booking.getDentist().getId() == getDentistId());
+                    and(booking -> booking.getDentist().getId() == getDentistId());
         }
 
         if (customerServiceId != null) {
             predicate = predicate.and(booking -> booking.getCustomerService() != null).
-                                    and(booking -> booking.getCustomerService().getId() == getCustomerServiceId());
+                    and(booking -> booking.getCustomerService().getId() == getCustomerServiceId());
         }
 
         if (clinicName != null) {
             predicate = predicate.and(booking -> booking.getClinic().getName().toLowerCase()
-                                                .contains(getClinicName().toLowerCase()));
+                    .contains(getClinicName().toLowerCase()));
         }
 
         return predicate;

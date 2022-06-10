@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 
 public interface BookingService extends CRUDService<Booking>{
+    List<Booking> findAllByCustomerService(CustomerService customerService);
 
     Booking findBookingById(int id);
     Booking saveBooking(BookingRequest bookingRequest, Account account);
