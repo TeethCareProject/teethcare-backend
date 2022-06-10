@@ -23,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
@@ -77,10 +79,24 @@ public class ServiceOfClinicController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> add(@RequestHeader(value = AUTHORIZATION, required = true) String token,
-                                               @RequestBody ServiceRequest serviceRequest) {
+                                               @Valid @RequestBody ServiceRequest serviceRequest) {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
         serviceOfClinicService.add(serviceRequest, username);
+        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<MessageResponse> update(@RequestBody ServiceRequest serviceRequest) {
+        serviceOfClinicService.updateInfo(serviceRequest);
+        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<MessageResponse> delete(@PathVariable("id") int id) {
+        serviceOfClinicService.delete(id);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 }

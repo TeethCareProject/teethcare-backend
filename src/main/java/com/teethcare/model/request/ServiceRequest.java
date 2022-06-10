@@ -11,6 +11,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class ServiceRequest {
+
+    private Integer id;
+
     @NotBlank
     @Length(max = 100)
     private String name;

@@ -15,4 +15,6 @@ public interface ServiceOfClinicService extends CRUDService<ServiceOfClinic> {
     List<ServiceOfClinic> findAllByRole(Account account, Pageable pageable);
     void add(ServiceRequest serviceRequest, String username);
 
+    void updateInfo(ServiceRequest serviceRequest);
+
 }

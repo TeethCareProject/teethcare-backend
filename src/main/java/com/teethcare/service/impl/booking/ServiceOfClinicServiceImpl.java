@@ -95,6 +95,13 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
         save(service);
     }
 
+    @Override
+    public void updateInfo(ServiceRequest serviceRequest) {
+        ServiceOfClinic service = serviceRepository.findServiceOfClinicById(serviceRequest.getId());
+        serviceOfClinicMapper.updateServiceOfClinicFromServiceRequest(serviceRequest, service);
+        save(service);
+    }
+
 
     @Override
     public void save(ServiceOfClinic theEntity) {
@@ -104,11 +111,15 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
 
     @Override
     public void delete(int theId) {
-
+        ServiceOfClinic service = serviceRepository.findServiceOfClinicById(theId);
+        service.setStatus(Status.Service.INACTIVE.name());
+        serviceRepository.save(service);
     }
 
     @Override
     public void update(ServiceOfClinic theEntity) {
 
     }
+
+
 }

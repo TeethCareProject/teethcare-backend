@@ -31,5 +31,9 @@ public interface ServiceOfClinicMapper {
     ServiceOfClinicResponse mapServiceToServiceResponseWithoutFields(ServiceOfClinic serviceOfClinic);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
     ServiceOfClinic mapServiceRequestToServiceOfClinic(ServiceRequest serviceRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateServiceOfClinicFromServiceRequest(ServiceRequest serviceRequest, @MappingTarget ServiceOfClinic service);
 }
