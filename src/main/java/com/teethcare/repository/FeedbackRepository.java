@@ -8,5 +8,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
     Feedback findByBookingId(int bookingID);
+
     Feedback findByBookingIdAndStatus(int bookingId, String status);
+
+    Feedback findFeedbackById(int id);
+
+    Feedback save(Feedback feedback);
+
 }

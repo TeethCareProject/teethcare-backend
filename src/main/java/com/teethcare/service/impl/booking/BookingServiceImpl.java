@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(int id) {
-        return bookingRepository.getById(id);
+        return bookingRepository.findBookingById(id);
     }
 
     @Override
@@ -160,6 +160,11 @@ public class BookingServiceImpl implements BookingService {
 
         save(booking);
 
+    }
+
+    @Override
+    public List<Booking> findBookingByClinic(Clinic clinic) {
+        return bookingRepository.findBookingByClinic(clinic);
     }
 
     @Override
