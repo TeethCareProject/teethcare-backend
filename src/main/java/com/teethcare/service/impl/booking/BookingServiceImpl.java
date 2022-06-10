@@ -163,6 +163,25 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
+    public boolean updateStatus(int bookingId) {
+        Booking booking = bookingRepository.findBookingById(bookingId);
+        String status = booking.getStatus();
+        switch (Status.Booking.valueOf(status)) {
+            case REQUEST:
+                booking.setStatus(Status.Booking.TREATMENT.name());
+                break;
+            case TREATMENT:
+                booking.setStatus(Status.Booking.DONE.name());
+                break;
+            default:
+                return false;
+        }
+        bookingRepository.save(booking);
+        return true;
+    }
+
+    @Override
     public List<Booking> findAllByCustomerService(CustomerService customerService) {
         return bookingRepository.findAllByCustomerService(customerService);
     }
