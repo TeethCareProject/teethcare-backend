@@ -29,8 +29,6 @@ public class Status {
         PENDING,
         REQUEST,
         TREATMENT,
-        TREATMENT_REQUEST,
-        TREATMENT_ACCEPTED,
         DONE,
         REJECTED,
         UNAVAILABLE
