@@ -7,14 +7,11 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.PatientRegisterRequest;
-import com.teethcare.model.response.PatientResponse;
 import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +61,7 @@ public class PatientServiceImpl implements PatientService {
         }
     }
 
+    @Override
     public Patient addNew(PatientRegisterRequest patientRegisterRequest) {
         patientRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
@@ -73,7 +71,7 @@ public class PatientServiceImpl implements PatientService {
                 this.save(patient);
                 return patient;
             } else {
-                throw new BadRequestException("confirm Password is not match with password");
+                throw new BadRequestException("Confirm Password is not match with password");
             }
         }
         {

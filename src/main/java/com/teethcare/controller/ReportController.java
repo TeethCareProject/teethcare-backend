@@ -27,13 +27,14 @@ public class ReportController {
     private final ReportService reportService;
     private final FeedbackMapper feedbackMapper;
     private final FeedbackService feedbackService;
+
     @GetMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<Page<ReportResponse>> getAll(ReportFilterRequest request,
                                                        @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-                                                       @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction){
+                                                       @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
         Page<Report> list = reportService.findByStatus(pageable, request);
         Page<ReportResponse> responses = list.map(feedbackMapper::mapReportToReportResponse);
@@ -42,7 +43,7 @@ public class ReportController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity<ReportResponse> getById(@PathVariable("id") String id){
+    public ResponseEntity<ReportResponse> getById(@PathVariable("id") String id) {
         int theId = ConvertUtils.covertID(id);
         Report report = reportService.findById(theId);
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
@@ -51,7 +52,7 @@ public class ReportController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority((T(com.teethcare.common.Role).MANAGER), T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<ReportResponse> add(@RequestBody ReportRequest reportRequest){
+    public ResponseEntity<ReportResponse> add(@RequestBody ReportRequest reportRequest) {
         Report report = feedbackMapper.mapReportRequestToReport(reportRequest);
         report.setFeedback(feedbackService.findById(reportRequest.getFeedbackID()));
         reportService.save(report);
@@ -63,7 +64,7 @@ public class ReportController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
     public ResponseEntity<ReportResponse> update(@RequestBody EvaluateRequest request,
-                                                 @PathVariable("id") String id){
+                                                 @PathVariable("id") String id) {
         int theID = ConvertUtils.covertID(id);
         Report report = reportService.evaluate(theID, request.getStatus());
 
