@@ -61,6 +61,7 @@ public class PatientServiceImpl implements PatientService {
         }
     }
 
+    @Override
     public Patient addNew(PatientRegisterRequest patientRegisterRequest) {
         patientRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(patientRegisterRequest.getUsername());
@@ -70,7 +71,7 @@ public class PatientServiceImpl implements PatientService {
                 this.save(patient);
                 return patient;
             } else {
-                throw new BadRequestException("confirm Password is not match with password");
+                throw new BadRequestException("Confirm Password is not match with password");
             }
         }
         {

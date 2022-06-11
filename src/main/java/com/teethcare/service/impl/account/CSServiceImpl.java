@@ -50,11 +50,11 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public void save(CustomerService theCustomerService) {
-        theCustomerService.setStatus(Status.Account.ACTIVE.name());
-        theCustomerService.setRole(roleService.getRoleByName(Role.CUSTOMER_SERVICE.name()));
-        theCustomerService.setPassword(passwordEncoder.encode(theCustomerService.getPassword()));
-        customerServiceRepository.save(theCustomerService);
+    public void save(CustomerService customerService) {
+        customerService.setStatus(Status.Account.PENDING.name());
+        customerService.setRole(roleService.getRoleByName(Role.CUSTOMER_SERVICE.name()));
+        customerService.setPassword(passwordEncoder.encode(customerService.getPassword()));
+        customerServiceRepository.save(customerService);
     }
 
     @Override
@@ -94,19 +94,15 @@ public class CSServiceImpl implements CSService {
         staffRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(staffRegisterRequest.getUsername());
         if (!isDuplicated) {
-            if (staffRegisterRequest.getPassword().equals(staffRegisterRequest.getConfirmPassword())) {
-                token = token.substring("Bearer ".length());
-                String username = jwtTokenUtil.getUsernameFromJwt(token);
-                Account account = accountService.getAccountByUsername(username);
-                Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
+            token = token.substring("Bearer ".length());
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            Account account = accountService.getAccountByUsername(username);
+            Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
 
-                CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(staffRegisterRequest);
-                customerService.setClinic(clinic);
-                this.save(customerService);
-                return customerService;
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
+            CustomerService customerService = accountMapper.mapCSRegisterRequestToCustomerService(staffRegisterRequest);
+            customerService.setClinic(clinic);
+            this.save(customerService);
+            return customerService;
         } else {
             throw new BadRequestException("User existed!");
         }

@@ -53,11 +53,11 @@ public class DentistServiceImpl implements DentistService {
 
 
     @Override
-    public void save(Dentist theDentist) {
-        theDentist.setStatus(Status.Account.ACTIVE.name());
-        theDentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
-        theDentist.setPassword(passwordEncoder.encode(theDentist.getPassword()));
-        dentistRepository.save(theDentist);
+    public void save(Dentist dentist) {
+        dentist.setStatus(Status.Account.PENDING.name());
+        dentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
+        dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
+        dentistRepository.save(dentist);
     }
 
     @Override
@@ -102,18 +102,13 @@ public class DentistServiceImpl implements DentistService {
         staffRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(staffRegisterRequest.getUsername());
         if (!isDuplicated) {
-            if (staffRegisterRequest.getPassword().equals(staffRegisterRequest.getConfirmPassword())) {
-                String username = jwtTokenUtil.getUsernameFromJwt(token);
-                Account account = accountService.getAccountByUsername(username);
-                Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
-
-                Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(staffRegisterRequest);
-                dentist.setClinic(clinic);
-                this.save(dentist);
-                return dentist;
-            } else {
-                throw new BadRequestException("confirm Password is not match with password");
-            }
+            String username = jwtTokenUtil.getUsernameFromJwt(token);
+            Account account = accountService.getAccountByUsername(username);
+            Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
+            Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(staffRegisterRequest);
+            dentist.setClinic(clinic);
+            this.save(dentist);
+            return dentist;
         } else {
             throw new BadRequestException("User existed!");
         }

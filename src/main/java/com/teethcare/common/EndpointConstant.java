@@ -80,4 +80,9 @@ public final class EndpointConstant {
         public static final String NOTIFICATION_ENDPOINT = ROOT_ENDPOINT + "/notifications";
         public static final String FCM_TOKEN_ENDPOINT = ROOT_ENDPOINT + "/fcm-tokens";
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class Email {
+        public static final String EMAIL_ENDPOINT = ROOT_ENDPOINT + "/emails";
+    }
 }
