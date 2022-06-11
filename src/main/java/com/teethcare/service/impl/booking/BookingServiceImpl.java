@@ -230,8 +230,12 @@ public class BookingServiceImpl implements BookingService {
         }
 
         List<ServiceOfClinic> services = new ArrayList<>();
-        for (Integer servicesId : servicesIds) {
-            services.add(serviceOfClinicService.findById(servicesId));
+        if (servicesIds != null) {
+            for (Integer servicesId : servicesIds) {
+                services.add(serviceOfClinicService.findById(servicesId));
+            }
+        } else {
+            services = booking.getServices();
         }
 
         Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
