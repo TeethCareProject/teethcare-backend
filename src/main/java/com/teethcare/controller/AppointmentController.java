@@ -1,53 +1,67 @@
 package com.teethcare.controller;
 
+import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.BookingMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
+import com.teethcare.model.entity.Appointment;
+import com.teethcare.model.request.AppointmentFilterRequest;
 import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.model.response.AppointmentResponse;
-import com.teethcare.model.response.PatientBookingResponse;
-import com.teethcare.service.AccountService;
-import com.teethcare.service.BookingService;
+import com.teethcare.service.AppointmentService;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Appointment.APPOINTMENT_ENDPOINT)
-//@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+
 public class AppointmentController {
 
-    private final JwtTokenUtil jwtTokenUtil;
-    private final AccountService accountService;
     private final BookingMapper bookingMapper;
-    private final BookingService bookingService;
+    private final AppointmentService appointmentService;
 
     @PostMapping
-    public ResponseEntity<AppointmentResponse> addAppointment(@Valid @RequestBody AppointmentRequest appointmentRequest,
-                                                                 @RequestHeader(value = AUTHORIZATION) String token) {
-        token = token.substring("Bearer ".length());
-        String username = jwtTokenUtil.getUsernameFromJwt(token);
-        Account customerService = accountService.getAccountByUsername(username);
-        Booking booking = bookingService.createAppointment(appointmentRequest, customerService);
-        AppointmentResponse appointmentResponse = bookingMapper.mapBookingToAppointmentResponse(booking);
-        // aAppointment has only 1 service
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<AppointmentResponse> add(@Valid @RequestBody AppointmentRequest appointmentRequest) {
+        Appointment appointment = appointmentService.createAppointment(appointmentRequest);
+        AppointmentResponse appointmentResponse = bookingMapper.mapAppointmentToAppointmentResponse(appointment);
         return new ResponseEntity<>(appointmentResponse, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{bookingId}/chain")
-    public ResponseEntity<List<AppointmentResponse>> getAppointmentChain(@PathVariable("bookingId") int bookingId) {
-        List<Booking> bookings = bookingService.getAppointmentChainByBookingId(bookingId);
-        List<AppointmentResponse> appointmentResponses = bookingMapper.mapBookingListToAppointmentResponseList(bookings);
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<Page<AppointmentResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                            @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                            @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                            @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction,
+                                                            AppointmentFilterRequest appointmentFilterRequest,
+                                                            @RequestHeader(AUTHORIZATION) String token) {
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
+        Page<Appointment> appointments = appointmentService.getAllWithFilter(token.substring("Bearer ".length()), pageable, appointmentFilterRequest);
+        Page<AppointmentResponse> appointmentResponses = appointments.map(bookingMapper::mapAppointmentToAppointmentResponse);
         return new ResponseEntity<>(appointmentResponses, HttpStatus.OK);
     }
 
+//    @GetMapping
+//    public ResponseEntity<Page<AppointmentResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+//                                                            @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+//                                                            @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+//                                                            @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction,
+//                                                            AppointmentFilterRequest appointmentFilterRequest,
+//                                                            @RequestHeader(AUTHORIZATION) String token) {
+//        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
+//        Page<Appointment> appointments = appointmentService.getAllWithFilter(token.substring("Bearer ".length()), pageable, appointmentFilterRequest);
+//        Page<AppointmentResponse> appointmentResponses = appointments.map(bookingMapper::mapAppointmentToAppointmentResponse);
+//        return new ResponseEntity<>(appointmentResponses, HttpStatus.OK);
+//    }
 }

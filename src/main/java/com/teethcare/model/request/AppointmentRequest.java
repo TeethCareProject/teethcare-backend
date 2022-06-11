@@ -14,7 +14,7 @@ public class AppointmentRequest {
     private Integer preBookingId;
     @NotNull
     private Integer serviceId;
-    private String description;
+    private String note;
     private Long appointmentDate;
     private Long expirationAppointmentDate;
 

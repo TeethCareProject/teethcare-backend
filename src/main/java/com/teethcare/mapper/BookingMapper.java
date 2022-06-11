@@ -1,5 +1,6 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.AppointmentResponse;
@@ -62,12 +63,10 @@ public interface BookingMapper {
     @Named(value = "mapBookingToAppointmentResponse")
     @Mapping(source = "services", target = "services",
             qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
-    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapAccountToUserInforResponse")
-    @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
     @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
-    AppointmentResponse mapBookingToAppointmentResponse(Booking booking);
+    AppointmentResponse mapAppointmentToAppointmentResponse(Appointment appointment);
 
     @IterableMapping(qualifiedByName = "mapBookingToAppointmentResponse")
-    List<AppointmentResponse> mapBookingListToAppointmentResponseList(List<Booking> bookingList);
+    List<AppointmentResponse> mapAppointmentListToAppointmentResponseList(List<Appointment> bookingList);
 }
