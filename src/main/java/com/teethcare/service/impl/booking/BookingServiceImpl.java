@@ -167,18 +167,21 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findBookingById(id);
     }
 
+//  ### APPOINTMENT SECTION ###
     @Override
     public Booking createAppointment(AppointmentRequest appointmentRequest, Account customerService) {
         Booking bookingTmp = new Booking();
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (appointmentRequest.getAppointmentDate().compareTo(now) < 0) {
+        bookingTmp.setCreateBookingDate(now);
+        if (appointmentRequest.getAppointmentDate() - now.getTime() < 0) {
             throw new BadRequestException("Appointment Date invalid");
         }
-
+        bookingTmp.setAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getAppointmentDate()));
         if (appointmentRequest.getExpirationAppointmentDate().compareTo(appointmentRequest.getAppointmentDate()) < 0) {
             throw new BadRequestException("Expiration Appointment Date invalid");
         }
+        bookingTmp.setExpireAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getExpirationAppointmentDate()));
 
         Booking preBooking = findBookingById(appointmentRequest.getPreBookingId());
         bookingTmp.setPreBooking(preBooking);
@@ -203,5 +206,15 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(bookingTmp);
         return bookingTmp;
+    }
+
+    public List<Booking> getAppointmentChainByBookingId(int bookingId) {
+        List<Booking> bookings = new ArrayList<>();
+        Booking booking = bookingRepository.findBookingById(bookingId);
+        bookings.add(booking);
+        for (Booking b = booking.getMappedPreBooking(); b != null; b = b.getMappedPreBooking()) {
+            bookings.add(b);
+        }
+        return bookings;
     }
 }

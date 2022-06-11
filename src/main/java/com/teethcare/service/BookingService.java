@@ -26,4 +26,5 @@ public interface BookingService extends CRUDService<Booking> {
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
 
     Booking createAppointment(AppointmentRequest appointmentRequest, Account customerService);
+    List<Booking> getAppointmentChainByBookingId(int bookingId);
 }

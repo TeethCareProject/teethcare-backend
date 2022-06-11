@@ -1,8 +1,8 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Booking;
-import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
+import com.teethcare.model.response.AppointmentResponse;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import org.mapstruct.*;
@@ -59,6 +59,15 @@ public interface BookingMapper {
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponseWithoutService")
     List<BookingResponse> mapBookingListToBookingResponseListWithoutService(List<Booking> bookingList);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Booking mapAppoitmentRequestToBooking(AppointmentRequest appointmentRequest);
+    @Named(value = "mapBookingToAppointmentResponse")
+    @Mapping(source = "services", target = "services",
+            qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
+    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
+    @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
+    AppointmentResponse mapBookingToAppointmentResponse(Booking booking);
+
+    @IterableMapping(qualifiedByName = "mapBookingToAppointmentResponse")
+    List<AppointmentResponse> mapBookingListToAppointmentResponseList(List<Booking> bookingList);
 }
