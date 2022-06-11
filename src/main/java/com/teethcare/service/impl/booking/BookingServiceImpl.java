@@ -209,7 +209,8 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking.setNote(note);
-        return false;
+        bookingRepository.save(booking);
+        return true;
     }
 
     @Override
