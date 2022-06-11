@@ -121,9 +121,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                     CustomerService customerService = (CustomerService) account;
                     Clinic clinic = customerService.getClinic();
                     feedback = findById(id);
-                    if (feedback.getBooking().getClinic().getId().compareTo(clinic.getId()) == 0){
-                        feedback = feedbackRepository.findFeedbackByIdAndBooking_Clinic(id, clinic);
-                    } else {
+                    if (feedback.getBooking().getClinic().getId().compareTo(clinic.getId()) != 0) {
                         feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
                     }
                     break;

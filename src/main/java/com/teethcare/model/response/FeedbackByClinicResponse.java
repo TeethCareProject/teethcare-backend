@@ -1,7 +1,6 @@
 package com.teethcare.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.teethcare.model.entity.Report;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

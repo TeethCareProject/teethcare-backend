@@ -43,6 +43,11 @@ public interface FeedbackMapper {
     ReportResponse mapReportToReportResponse(Report report);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "feedback", target = "feedbackResponse")
+    @Mapping(source = "createdTime", target = "createdTime")
+    List<ReportResponse> mapReportListToReportResponseList(List<Report> report);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Report mapReportRequestToReport(ReportRequest reportRequest);
 
     static Long mapDateTimeToLong(Timestamp dateTime) {
