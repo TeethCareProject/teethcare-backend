@@ -175,7 +175,7 @@ public class BookingServiceImpl implements BookingService {
                 }
                 booking.setStatus(Status.Booking.TREATMENT.name());
                 break;
-            case TREATMENT:
+            case TREATMENT_ACCEPTED:
                 if (booking.getExaminationTime() == null || booking.getDentist() == null || booking.getNote() == null
                         || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null) {
                     return false;
