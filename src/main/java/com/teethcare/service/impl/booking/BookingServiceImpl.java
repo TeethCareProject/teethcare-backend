@@ -181,8 +181,8 @@ public class BookingServiceImpl implements BookingService {
             case REQUEST:
                 firstlyUpdated(bookingUpdateRequest, isAllDeleted);
                 break;
-            case TREATMENT_REQUEST:
-                if (booking.getNote() == null || booking.getNote().isEmpty()) {
+            case TREATMENT:
+                if (booking.getNote() == null || booking.getNote().isEmpty() || booking.isConfirmed()) {
                     return false;
                 }
                 secondlyUpdated(bookingUpdateRequest, isAllDeleted);
@@ -203,12 +203,16 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = bookingRepository.findBookingById(bookingId);
 
+        if (!booking.isRequestChanged() || booking.getNote() != null || !booking.getNote().isEmpty()) {
+            return false;
+        }
+
         if (note == null) {
             note = Message.NO_COMMIT_FROM_DENTIST.name();
         }
 
 //        booking.setStatus(Status.Booking.TREATMENT_REQUEST.name());
-        booking.setRequestChanged(true);
+//        booking.setRequestChanged(true);
         booking.setNote(note);
         bookingRepository.save(booking);
         return true;
@@ -263,7 +267,6 @@ public class BookingServiceImpl implements BookingService {
 
     private void secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
-        String bookingNote = bookingUpdateRequest.getNote();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
 
         Booking booking = bookingRepository.findBookingById(bookingId);
@@ -288,6 +291,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
 //        booking.setConfirmed();
+        booking.setRequestChanged(false);
         booking.setStatus(Status.Booking.TREATMENT_ACCEPTED.name());
         booking.setServices(services);
         booking.setTotalPrice(totalPrice);
