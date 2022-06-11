@@ -1,9 +1,13 @@
 package com.teethcare.model.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.teethcare.model.entity.Report;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +20,6 @@ public class FeedbackByClinicResponse {
     private String detail;
     private int ratingScore;
     private String status;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ReportResponse> reports;
 }

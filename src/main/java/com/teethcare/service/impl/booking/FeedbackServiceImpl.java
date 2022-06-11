@@ -5,15 +5,13 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.ForbiddenException;
 import com.teethcare.mapper.FeedbackMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Feedback;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.repository.FeedbackRepository;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.ClinicService;
 import com.teethcare.service.FeedbackService;
+import com.teethcare.service.ReportService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +29,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final BookingService bookingService;
     private final ClinicService clinicService;
     private final FeedbackMapper feedbackMapper;
+    private final ReportService reportService;
 
     @Override
     public List<Feedback> findAll() {
@@ -49,8 +48,10 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public void delete(int theId) {
-
+    public void delete(int id) {
+        Feedback feedback = findById(id);
+        feedback.setStatus(Status.Feedback.INACTIVE.name());
+        feedbackRepository.save(feedback);
     }
 
     @Override
@@ -64,10 +65,19 @@ public class FeedbackServiceImpl implements FeedbackService {
         Clinic clinic = clinicService.findById(clinicID);
         List<Booking> bookings = bookingService.findBookingByClinic(clinic);
         if (!bookings.isEmpty()) {
-            if (account == null || !account.getRole().getName().equals(Role.ADMIN.name())) {
-                feedbacks = getAllByBooking(bookings);
+            if (account != null) {
+                switch (Role.valueOf(account.getRole().getName())) {
+                    case CUSTOMER_SERVICE:
+                        feedbacks = getAllBookingForCS(bookings, clinicID, account);
+                        break;
+                    case ADMIN:
+                        feedbacks = getAllByBookingForAdmin(bookings);
+                        break;
+                    default:
+                        feedbacks = getAllByBooking(bookings);
+                }
             } else {
-                feedbacks = getAllByBookingForAdmin(bookings);
+                feedbacks = getAllByBooking(bookings);
             }
             if (rating != null) {
                 feedbacks = feedbacks.stream()
@@ -84,10 +94,10 @@ public class FeedbackServiceImpl implements FeedbackService {
         int bookingID = feedbackRequest.getBookingID();
         Booking booking = bookingService.findBookingById(bookingID);
         String statusBooking = booking.getStatus();
-        if (!statusBooking.equals(Status.Booking.DONE.name())){
+        if (!statusBooking.equals(Status.Booking.DONE.name())) {
             throw new BadRequestException("The current booking status cannot send feedback");
         }
-        if (booking.getPatient().getId().compareTo(account.getId()) != 0){
+        if (booking.getPatient().getId().compareTo(account.getId()) != 0) {
             throw new ForbiddenException("You can not send feedback for this booking");
         }
         Feedback feedback = feedbackMapper.mapFeedbackRequestToFeedback(feedbackRequest);
@@ -102,22 +112,70 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackRepository.save(feedback);
     }
 
-    public List<Feedback> getAllByBooking(List<Booking> bookings){
+    @Override
+    public Feedback findById(int id, Account account) {
+        Feedback feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+        if (account != null) {
+            switch (Role.valueOf(account.getRole().getName())) {
+                case CUSTOMER_SERVICE:
+                    CustomerService customerService = (CustomerService) account;
+                    Clinic clinic = customerService.getClinic();
+                    feedback = findById(id);
+                    if (feedback.getBooking().getClinic().getId().compareTo(clinic.getId()) == 0){
+                        feedback = feedbackRepository.findFeedbackByIdAndBooking_Clinic(id, clinic);
+                    } else {
+                        feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+                    }
+                    break;
+                case ADMIN:
+                    feedback = findById(id);
+                    break;
+            }
+        }
+        return feedback;
+    }
+
+    public List<Feedback> getAllByBooking(List<Booking> bookings) {
         List<Feedback> feedbacks = new ArrayList<>();
         for (Booking booking : bookings) {
             if (feedbackRepository.findByBookingIdAndStatus(booking.getId(), Status.Feedback.ACTIVE.name()) != null) {
                 feedbacks.add(feedbackRepository.findByBookingIdAndStatus(booking.getId(), Status.Feedback.ACTIVE.name()));
             }
         }
+        for (Feedback feedback : feedbacks) {
+            feedback.setReports(null);
+        }
         return feedbacks;
     }
 
-    public List<Feedback> getAllByBookingForAdmin(List<Booking> bookings){
+    public List<Feedback> getAllByBookingForAdmin(List<Booking> bookings) {
         List<Feedback> feedbacks = new ArrayList<>();
         for (Booking booking : bookings) {
             if (feedbackRepository.findByBookingId(booking.getId()) != null) {
                 feedbacks.add(feedbackRepository.findByBookingId(booking.getId()));
             }
+        }
+        for (Feedback feedback : feedbacks) {
+            feedback.setReports(null);
+        }
+        return feedbacks;
+    }
+
+    public List<Feedback> getAllBookingForCS(List<Booking> bookings, int clinicId, Account account) {
+        CustomerService customerService = (CustomerService) account;
+        List<Feedback> feedbacks = new ArrayList<>();
+        if (customerService.getClinic().getId() == clinicId) {
+            feedbacks = getAllByBookingForAdmin(bookings);
+            for (Feedback feebdback : feedbacks) {
+                List<Report> reports = new ArrayList<>();
+                reports.add(reportService.findReportByFeedback(feebdback).get(0));
+                for (Report report : reports) {
+                    report.setFeedback(null);
+                }
+                feebdback.setReports(reports);
+            }
+        } else {
+            feedbacks = getAllByBooking(bookings);
         }
         return feedbacks;
     }
