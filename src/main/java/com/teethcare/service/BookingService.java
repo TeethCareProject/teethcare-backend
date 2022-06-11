@@ -21,6 +21,6 @@ public interface BookingService extends CRUDService<Booking>{
     Page<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
 
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
-    boolean update(BookingUpdateRequest bookingUpdateRequest);
+    boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
     boolean updateRequestFromDentist(BookingUpdateRequest bookingUpdateRequest);
 }

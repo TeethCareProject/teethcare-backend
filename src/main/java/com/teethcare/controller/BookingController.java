@@ -112,8 +112,9 @@ public class BookingController {
 
     @PutMapping()
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
-        boolean isUpdated = bookingService.update(bookingUpdateRequest);
+    public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
+                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
+        boolean isUpdated = bookingService.update(bookingUpdateRequest, isAllDeleted);
         if (isUpdated) {
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {

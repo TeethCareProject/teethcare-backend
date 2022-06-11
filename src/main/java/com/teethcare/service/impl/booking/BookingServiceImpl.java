@@ -172,7 +172,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public boolean update(BookingUpdateRequest bookingUpdateRequest) {
+    public boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
 
         Booking booking = bookingRepository.findBookingById(bookingId);
@@ -180,13 +180,13 @@ public class BookingServiceImpl implements BookingService {
         String status = booking.getStatus();
         switch (Status.Booking.valueOf(status)) {
             case REQUEST:
-                firstlyUpdated(bookingUpdateRequest);
+                firstlyUpdated(bookingUpdateRequest, isAllDeleted);
                 break;
             case TREATMENT:
                 if (booking.getNote() == null || booking.getNote().isEmpty()) {
                     return false;
                 }
-                secondlyUpdated(bookingUpdateRequest);
+                secondlyUpdated(bookingUpdateRequest, isAllDeleted);
                 break;
             default:
                 return false;
@@ -217,7 +217,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findBookingById(id);
     }
 
-    private void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest) {
+    private void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
         Integer dentistId = bookingUpdateRequest.getDentistId();
@@ -235,7 +235,9 @@ public class BookingServiceImpl implements BookingService {
                 services.add(serviceOfClinicService.findById(servicesId));
             }
         } else {
-            services = booking.getServices();
+            if (!isAllDeleted) {
+                services = booking.getServices();
+            }
         }
 
         Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
@@ -257,30 +259,35 @@ public class BookingServiceImpl implements BookingService {
         booking.setDentist(dentist);
     }
 
-    private void secondlyUpdated(BookingUpdateRequest bookingUpdateRequest) {
+    private void secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
         String bookingNote = bookingUpdateRequest.getNote();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
 
         Booking booking = bookingRepository.findBookingById(bookingId);
-
-        if (bookingNote != null) {
-            booking.setNote(bookingNote);
-        }
+//
+//        if (bookingNote != null) {
+//            booking.setNote(bookingNote);
+//        }
 
         List<ServiceOfClinic> services = new ArrayList<>();
         if (servicesIds != null) {
             for (Integer servicesId : servicesIds) {
                 services.add(serviceOfClinicService.findById(servicesId));
             }
+        } else {
+            System.out.println("There is no service and isAllDeleted" + isAllDeleted);
+            if (!isAllDeleted) {
+                services = booking.getServices();
+                System.out.println(services.get(0));
+            }
         }
 
-        List<ServiceOfClinic> bookingServices = booking.getServices();
-        services.addAll(bookingServices);
-
         BigDecimal totalPrice = BigDecimal.ZERO;
-        for (ServiceOfClinic service : services) {
-            totalPrice = totalPrice.add(service.getPrice());
+        if (services.size() != 0) {
+            for (ServiceOfClinic service : services) {
+                totalPrice = totalPrice.add(service.getPrice());
+            }
         }
 
         booking.setServices(services);
