@@ -38,23 +38,27 @@ public class ReportController {
     private final AccountService accountService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<Page<ReportResponse>> getAll(ReportFilterRequest request,
+                                                       @RequestHeader(value = AUTHORIZATION) String token,
                                                        @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                        @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                        @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
                                                        @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        Account account = accountService.getAccountByUsername(username);
+
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
-        Page<Report> list = reportService.findByStatus(pageable, request);
+        Page<Report> list = reportService.findByStatus(pageable, request , account);
         Page<ReportResponse> responses = list.map(feedbackMapper::mapReportToReportResponse);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity<ReportResponse> getById(@PathVariable("id") String id) {
-        int theId = ConvertUtils.covertID(id);
-        Report report = reportService.findById(theId);
+    public ResponseEntity<ReportResponse> getById(@PathVariable("id") int id) {
+        Report report = reportService.findById(id);
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

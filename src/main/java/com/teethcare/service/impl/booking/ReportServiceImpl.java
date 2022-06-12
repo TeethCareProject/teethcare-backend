@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.booking;
 
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.ForbiddenException;
@@ -71,11 +72,17 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Page<Report> findByStatus(Pageable pageable, ReportFilterRequest request) {
+    public Page<Report> findByStatus(Pageable pageable, ReportFilterRequest request, Account account) {
         List<Report> list = findAll(pageable);
         list = list.stream()
                 .filter(request.requestPredicate().stream().reduce(report -> true, Predicate::and))
                 .collect(Collectors.toList());
+        if (account.getRole().getName().equals(Role.CUSTOMER_SERVICE.name())){
+            CustomerService customerService = (CustomerService) account;
+            list = list.stream()
+                    .filter(report -> report.getFeedback().getBooking().getClinic() == customerService.getClinic())
+                    .collect(Collectors.toList());
+        }
         return PaginationAndSortFactory.convertToPage(list, pageable);
     }
 

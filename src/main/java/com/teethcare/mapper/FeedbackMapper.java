@@ -21,7 +21,6 @@ public interface FeedbackMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "booking", target = "bookingResponse")
     FeedbackResponse mapFeedbackToFeedbackResponse(Feedback feedback);
 
     @InheritConfiguration(name = "mapReportToReportResponse")
