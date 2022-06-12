@@ -16,14 +16,12 @@ import java.util.List;
 public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "booking", ignore = true)
-    @Mapping(source = "bookingID", target = "id")
+    @Mapping(source = "bookingId", target = "id")
     Feedback mapFeedbackRequestToFeedback(FeedbackRequest feedbackRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "booking.id", target = "bookingID")
-    @Mapping(source = "booking.patient", target = "patientResponse")
-    @Mapping(source = "booking.clinic", target = "clinicInfoResponse")
+    @Mapping(source = "booking", target = "bookingResponse")
     FeedbackResponse mapFeedbackToFeedbackResponse(Feedback feedback);
 
     @InheritConfiguration(name = "mapReportToReportResponse")

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class FeedbackRequest {
     @NotNull
-    private int bookingID;
+    private int bookingId;
 
     private String detail;
 

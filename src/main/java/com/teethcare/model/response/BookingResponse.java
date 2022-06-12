@@ -31,4 +31,6 @@ public class BookingResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ServiceOfClinicResponse> services;
     private ClinicSimpleResponse clinic;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private FeedbackResponse feedbackResponse;
 }

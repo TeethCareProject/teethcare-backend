@@ -92,7 +92,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback addFeedback(FeedbackRequest feedbackRequest, Account account) {
-        int bookingID = feedbackRequest.getBookingID();
+        int bookingID = feedbackRequest.getBookingId();
         Booking booking = bookingService.findBookingById(bookingID);
         String statusBooking = booking.getStatus();
         if (!statusBooking.equals(Status.Booking.DONE.name())) {
