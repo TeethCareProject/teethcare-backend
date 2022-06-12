@@ -1,10 +1,10 @@
 package com.teethcare.common;
 
-public class Status {
-    private Status() {
-    }
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-    ;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class Status {
 
     public enum Report {
         PENDING,

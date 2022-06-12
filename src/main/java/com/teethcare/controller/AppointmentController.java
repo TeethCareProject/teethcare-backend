@@ -39,7 +39,7 @@ public class AppointmentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).PATIENT)")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE, T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<Page<AppointmentResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                             @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
                                                             @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
@@ -52,16 +52,10 @@ public class AppointmentController {
         return new ResponseEntity<>(appointmentResponses, HttpStatus.OK);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Page<AppointmentResponse>> getAll(@RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
-//                                                            @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
-//                                                            @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
-//                                                            @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction,
-//                                                            AppointmentFilterRequest appointmentFilterRequest,
-//                                                            @RequestHeader(AUTHORIZATION) String token) {
-//        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
-//        Page<Appointment> appointments = appointmentService.getAllWithFilter(token.substring("Bearer ".length()), pageable, appointmentFilterRequest);
-//        Page<AppointmentResponse> appointmentResponses = appointments.map(bookingMapper::mapAppointmentToAppointmentResponse);
-//        return new ResponseEntity<>(appointmentResponses, HttpStatus.OK);
-//    }
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE, T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<AppointmentResponse> getById(@PathVariable("id") int appointmentId) {
+        Appointment appointment = appointmentService.findById(appointmentId);
+        return new ResponseEntity<>(bookingMapper.mapAppointmentToAppointmentResponse(appointment), HttpStatus.OK);
+    }
 }

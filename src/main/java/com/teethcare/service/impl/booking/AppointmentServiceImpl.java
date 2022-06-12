@@ -4,17 +4,12 @@ import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Appointment;
-import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.AppointmentFilterRequest;
 import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.ServiceRepository;
-import com.teethcare.service.AccountService;
-import com.teethcare.service.AppointmentService;
-import com.teethcare.service.BookingService;
+import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +31,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final AccountService accountService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ManagerService managerService;
+    private final ClinicService clinicService;
+    private final DentistService dentistService;
+    private final CSService csService;
 
     @Override
     public Appointment createAppointment(AppointmentRequest appointmentRequest) {
@@ -78,14 +77,30 @@ public class AppointmentServiceImpl implements AppointmentService {
         Account account = accountService.getAccountByUsername(username);
         List<Appointment> appointments;
         switch (Role.valueOf(account.getRole().getName())) {
-            case ADMIN:
-                appointments = appointmentRepository.findAllByStatusIsNotNullAndExaminationTimeIsNull(pageable.getSort());
+            case MANAGER:
+                Manager manager = managerService.findById(account.getId());
+                Clinic clinic = clinicService.getClinicByManager(manager);
+                appointments = appointmentRepository.findAllByStatusIsNotNullAndClinicIdAndExaminationTimeIsNull(clinic.getId(), pageable.getSort());
                 appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
+
+            case CUSTOMER_SERVICE:
+                CustomerService customerService = csService.findById(account.getId());
+                appointments = appointmentRepository.findAllByStatusIsNotNullAndClinicIdAndExaminationTimeIsNull(customerService.getClinic().getId(), pageable.getSort());
+                appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
+                break;
+
+            case DENTIST:
+                Dentist dentist = dentistService.findById(account.getId());
+                appointments = appointmentRepository.findAllByStatusIsNotNullAndClinicIdAndExaminationTimeIsNull(dentist.getClinic().getId(), pageable.getSort());
+                appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
+                break;
+
             case PATIENT:
                 appointments = appointmentRepository.findAllByStatusIsNotNullAndPatientIdAndExaminationTimeIsNull(account.getId(), pageable.getSort());
                 appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
+
             default:
                 return null;
         }
