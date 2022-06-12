@@ -2,11 +2,12 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Status;
+import com.teethcare.common.Message;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.request.AppointmentFilterRequest;
 import com.teethcare.model.request.AppointmentRequest;
+import com.teethcare.model.request.AppointmentUpdateRequest;
 import com.teethcare.model.response.AppointmentResponse;
 import com.teethcare.service.AppointmentService;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -33,8 +34,9 @@ public class AppointmentController {
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<AppointmentResponse> add(@Valid @RequestBody AppointmentRequest appointmentRequest) {
-        Appointment appointment = appointmentService.createAppointment(appointmentRequest);
+    public ResponseEntity<AppointmentResponse> add(@Valid @RequestBody AppointmentRequest appointmentRequest,
+                                                   @RequestHeader(AUTHORIZATION) String token) {
+        Appointment appointment = appointmentService.createAppointment(token.substring("Bearer ".length()), appointmentRequest);
         AppointmentResponse appointmentResponse = bookingMapper.mapAppointmentToAppointmentResponse(appointment);
         return new ResponseEntity<>(appointmentResponse, HttpStatus.OK);
     }
@@ -60,10 +62,20 @@ public class AppointmentController {
         return new ResponseEntity<>(bookingMapper.mapAppointmentToAppointmentResponse(appointment), HttpStatus.OK);
     }
 
-//    @DeleteMapping("/{id}")
-//    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-//    public ResponseEntity<AppointmentResponse> getById(@PathVariable("id") int appointmentId) {
-//        Appointment appointment = appointmentService.findById(appointmentId);
-//        return new ResponseEntity<>(bookingMapper.mapAppointmentToAppointmentResponse(appointment), HttpStatus.OK);
-//    }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<Message> delete(@PathVariable("id") int appointmentId,
+                                          @RequestHeader(AUTHORIZATION) String token) {
+        appointmentService.deleteByCSAndId(token.substring("Bearer ".length()), appointmentId);
+        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<Message> update(@PathVariable("id") int appointmentId,
+                                                      @RequestBody AppointmentUpdateRequest appointmentRequest,
+                                                      @RequestHeader(AUTHORIZATION) String token) {
+        appointmentService.updateByCSAndId(token.substring("Bearer ".length()), appointmentId, appointmentRequest);
+        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
+    }
 }

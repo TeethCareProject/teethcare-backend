@@ -24,12 +24,12 @@ public class Appointment {
     @Column(name = "id")
     private int id;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "preBooking")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "preBooking")
     @JsonBackReference
-    private Booking mappedPreBooking;
+    private List<Booking> mappedPreBooking;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pre_booking_id", referencedColumnName = "id")
     @JsonManagedReference
     private Booking preBooking;
@@ -71,4 +71,9 @@ public class Appointment {
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonManagedReference
     private List<ServiceOfClinic> services;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_service_id")
+    @JsonManagedReference
+    private CustomerService customerService;
 }

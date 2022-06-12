@@ -4,16 +4,17 @@ import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.AppointmentFilterRequest;
 import com.teethcare.model.request.AppointmentRequest;
+import com.teethcare.model.request.AppointmentUpdateRequest;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,8 +39,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final CSService csService;
 
     @Override
-    public Appointment createAppointment(AppointmentRequest appointmentRequest) {
+    public Appointment createAppointment(String jwtToken, AppointmentRequest appointmentRequest) {
         Appointment appointment = new Appointment();
+        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
+        Account account = accountService.getAccountByUsername(username);
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
         appointment.setCreateBookingDate(now);
@@ -53,6 +56,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setExpireAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getExpirationAppointmentDate()));
 
         Booking preBooking = bookingService.findBookingById(appointmentRequest.getPreBookingId());
+        if (preBooking == null) {
+            throw new NotFoundException("Booking ID" + appointmentRequest.getPreBookingId() + " not found!");
+        }
         appointment.setPreBooking(preBooking);
 
         ServiceOfClinic service = serviceRepository.findByIdAndStatus(appointmentRequest.getServiceId(), Status.Service.ACTIVE.name());
@@ -62,19 +68,24 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         appointment.setPatient(preBooking.getPatient());
 
+        appointment.setCustomerService((CustomerService) account);
+
         appointment.setNote(appointment.getNote());
 
         appointment.setTotalPrice(service.getPrice());
 
         appointment.setClinic(preBooking.getClinic());
-        appointment.setStatus(Status.Appointment.ACTIVE.name());
         save(appointment);
         return appointment;
     }
 
     @Override
     public Appointment findAppointmentById(int id) {
-        return appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), id);
+        Appointment appointment = appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), id);
+        if (appointment == null) {
+            throw new NotFoundException("Appointment ID " + id + " not found!");
+        }
+        return appointment;
     }
 
     @Override
@@ -126,6 +137,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void save(Appointment theEntity) {
+        theEntity.setStatus(Status.Appointment.ACTIVE.name());
         appointmentRepository.save(theEntity);
     }
 
@@ -135,7 +147,38 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void update(Appointment theEntity) {
+    public void deleteByCSAndId(String jwtToken, int id) {
+        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
+        Account account = accountService.getAccountByUsername(username);
+        Appointment appointment = appointmentRepository.findByStatusIsAndCustomerServiceIdAndId(Status.Appointment.ACTIVE.name(), account.getId(), id);
+        if (appointment == null) {
+            throw new NotFoundException("Appointment ID " + id + " not found!");
+        }
+        appointment.setStatus(Status.Appointment.INACTIVE.name());
+        update(appointment);
+    }
 
+    @Override
+    public void update(Appointment theEntity) {
+        appointmentRepository.save(theEntity);
+    }
+
+    public void updateByCSAndId(String jwtToken, int id, AppointmentUpdateRequest appointmentUpdateRequest) {
+        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
+        Account account = accountService.getAccountByUsername(username);
+        Appointment appointment = appointmentRepository.findByStatusIsAndCustomerServiceIdAndId(Status.Appointment.ACTIVE.name(), account.getId(), id);
+        if (appointment == null) {
+            throw new NotFoundException("Appointment ID " + id + " not found!");
+        }
+        if (appointmentUpdateRequest.getNote() != null) {
+            appointment.setNote(appointmentUpdateRequest.getNote());
+        }
+        if (appointmentUpdateRequest.getAppointmentDate() != null) {
+            appointment.setAppointmentDate(ConvertUtils.getTimestamp(appointmentUpdateRequest.getAppointmentDate()));
+        }
+        if (appointmentUpdateRequest.getExpirationAppointmentDate() != null) {
+            appointment.setAppointmentDate(ConvertUtils.getTimestamp(appointmentUpdateRequest.getExpirationAppointmentDate()));
+        }
+        update(appointment);
     }
 }
