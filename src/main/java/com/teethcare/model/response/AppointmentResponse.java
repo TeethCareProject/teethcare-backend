@@ -12,7 +12,7 @@ public class AppointmentResponse {
     private int id;
     private PatientResponse patient;
     private BigDecimal totalPrice;
-    private String description;
+    private String note ;
     private Long appointmentDate;
     private Long expireAppointmentDate;
     private String status;

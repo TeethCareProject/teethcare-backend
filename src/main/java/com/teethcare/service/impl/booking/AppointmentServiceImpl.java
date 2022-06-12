@@ -13,6 +13,7 @@ import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,13 +67,18 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setTotalPrice(service.getPrice());
 
         appointment.setClinic(preBooking.getClinic());
-        appointment.setStatus(Status.Booking.APPOINTMENT.name());
+        appointment.setStatus(Status.Appointment.ACTIVE.name());
         save(appointment);
         return appointment;
     }
 
     @Override
-    public Page<Appointment> getAllWithFilter(String jwtToken, Pageable pageable, AppointmentFilterRequest appointmentFilterRequest) {
+    public Appointment findAppointmentById(int id) {
+        return appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), id);
+    }
+
+    @Override
+    public Page<Appointment> findAllWithFilter(String jwtToken, Pageable pageable, AppointmentFilterRequest appointmentFilterRequest) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
         List<Appointment> appointments;
@@ -80,24 +86,24 @@ public class AppointmentServiceImpl implements AppointmentService {
             case MANAGER:
                 Manager manager = managerService.findById(account.getId());
                 Clinic clinic = clinicService.getClinicByManager(manager);
-                appointments = appointmentRepository.findAllByStatusIsNotNullAndClinicIdAndExaminationTimeIsNull(clinic.getId(), pageable.getSort());
+                appointments = appointmentRepository.findAllByStatusInAndClinicId(Status.Appointment.getNames(), clinic.getId(), pageable.getSort());
                 appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
             case CUSTOMER_SERVICE:
                 CustomerService customerService = csService.findById(account.getId());
-                appointments = appointmentRepository.findAllByStatusIsNotNullAndClinicIdAndExaminationTimeIsNull(customerService.getClinic().getId(), pageable.getSort());
+                appointments = appointmentRepository.findAllByStatusInAndClinicId(Status.Appointment.getNames(), customerService.getClinic().getId(), pageable.getSort());
                 appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
             case DENTIST:
                 Dentist dentist = dentistService.findById(account.getId());
-                appointments = appointmentRepository.findAllByStatusIsNotNullAndClinicIdAndExaminationTimeIsNull(dentist.getClinic().getId(), pageable.getSort());
+                appointments = appointmentRepository.findAllByStatusInAndClinicId(Status.Appointment.getNames(), dentist.getClinic().getId(), pageable.getSort());
                 appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
             case PATIENT:
-                appointments = appointmentRepository.findAllByStatusIsNotNullAndPatientIdAndExaminationTimeIsNull(account.getId(), pageable.getSort());
+                appointments = appointmentRepository.findAllByStatusInAndPatientId(Status.Appointment.getNames(), account.getId(), pageable.getSort());
                 appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
@@ -116,6 +122,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment findById(int id) {
         return null;
     }
+
 
     @Override
     public void save(Appointment theEntity) {

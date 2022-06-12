@@ -2,6 +2,7 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
+import com.teethcare.common.Status;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.request.AppointmentFilterRequest;
@@ -47,7 +48,7 @@ public class AppointmentController {
                                                             AppointmentFilterRequest appointmentFilterRequest,
                                                             @RequestHeader(AUTHORIZATION) String token) {
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
-        Page<Appointment> appointments = appointmentService.getAllWithFilter(token.substring("Bearer ".length()), pageable, appointmentFilterRequest);
+        Page<Appointment> appointments = appointmentService.findAllWithFilter(token.substring("Bearer ".length()), pageable, appointmentFilterRequest);
         Page<AppointmentResponse> appointmentResponses = appointments.map(bookingMapper::mapAppointmentToAppointmentResponse);
         return new ResponseEntity<>(appointmentResponses, HttpStatus.OK);
     }
@@ -55,7 +56,14 @@ public class AppointmentController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE, T(com.teethcare.common.Role).DENTIST, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<AppointmentResponse> getById(@PathVariable("id") int appointmentId) {
-        Appointment appointment = appointmentService.findById(appointmentId);
+        Appointment appointment = appointmentService.findAppointmentById(appointmentId);
         return new ResponseEntity<>(bookingMapper.mapAppointmentToAppointmentResponse(appointment), HttpStatus.OK);
     }
+
+//    @DeleteMapping("/{id}")
+//    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+//    public ResponseEntity<AppointmentResponse> getById(@PathVariable("id") int appointmentId) {
+//        Appointment appointment = appointmentService.findById(appointmentId);
+//        return new ResponseEntity<>(bookingMapper.mapAppointmentToAppointmentResponse(appointment), HttpStatus.OK);
+//    }
 }

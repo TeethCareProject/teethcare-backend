@@ -8,5 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface AppointmentService extends CRUDService<Appointment> {
     Appointment createAppointment(AppointmentRequest appointmentRequest);
-    Page<Appointment> getAllWithFilter(String jwtToken, Pageable pageable, AppointmentFilterRequest appointmentFilterRequest);
+    Appointment findAppointmentById(int id);
+    Page<Appointment> findAllWithFilter(String jwtToken, Pageable pageable, AppointmentFilterRequest appointmentFilterRequest);
 }
