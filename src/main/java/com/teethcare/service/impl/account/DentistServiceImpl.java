@@ -56,6 +56,7 @@ public class DentistServiceImpl implements DentistService {
     public void save(Dentist dentist) {
         dentist.setStatus(Status.Account.PENDING.name());
         dentist.setRole(roleService.getRoleByName(Role.DENTIST.name()));
+        dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
         dentistRepository.save(dentist);
     }
 
@@ -104,7 +105,6 @@ public class DentistServiceImpl implements DentistService {
             String username = jwtTokenUtil.getUsernameFromJwt(token);
             Account account = accountService.getAccountByUsername(username);
             Clinic clinic = clinicService.getClinicByManager(managerService.findById(account.getId()));
-
             Dentist dentist = accountMapper.mapDentistRegisterRequestToDentist(staffRegisterRequest);
             dentist.setClinic(clinic);
             this.save(dentist);

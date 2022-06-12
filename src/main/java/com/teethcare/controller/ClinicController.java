@@ -24,12 +24,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @RestController
@@ -77,16 +80,15 @@ public class ClinicController {
 
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<MessageResponse> update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable int id) {
-        clinicRequest.setId(id);
-
-        Clinic clinic = clinicService.findById(id);
-
-        clinicMapper.mapClinicRequestToClinic(clinicRequest);
-
-        clinicService.update(clinic);
-        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    @PutMapping
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
+    public ResponseEntity<ClinicResponse> update(@Valid @RequestBody ClinicRequest clinicRequest,
+                                                  @RequestHeader(value = AUTHORIZATION) String token) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        Clinic clinic = clinicService.updateProfile(clinicRequest, username);
+        ClinicResponse response = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

@@ -5,7 +5,6 @@ import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
-import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.repository.BookingRepository;
@@ -166,5 +165,4 @@ public class BookingServiceImpl implements BookingService {
     public Booking findBookingById(int id) {
         return bookingRepository.findBookingById(id);
     }
-
 }

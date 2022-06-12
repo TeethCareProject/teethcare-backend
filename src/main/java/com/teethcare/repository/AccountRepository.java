@@ -19,9 +19,13 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     List<Account> findByRoleId(int roleId);
     Account findAccountsById(int id);
 
+    Account findAccountsById(int id);
+
     List<Account> findAllByStatusIsNotNull(Pageable pageable);
 
 
     @Query("SELECT a FROM Account a WHERE CONCAT(a.lastName, ' ', a.firstName) LIKE %?1%")
     List<Account> searchAccountsByFullName(String search, Pageable pageable);
+
+    Account findById(int id);
 }

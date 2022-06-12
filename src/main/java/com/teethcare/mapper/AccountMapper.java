@@ -3,6 +3,7 @@ package com.teethcare.mapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
+import com.teethcare.model.request.ProfileUpdateRequest;
 import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.model.response.*;
 import org.mapstruct.*;
@@ -64,12 +65,14 @@ public interface AccountMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
+    @Mapping(source = "password", target = "password")
     Dentist mapDentistRegisterRequestToDentist(StaffRegisterRequest dentistRegisterRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "role", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
+    @Mapping(source = "password", target = "password")
     CustomerService mapCSRegisterRequestToCustomerService(StaffRegisterRequest csRegisterRequest);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")
@@ -83,4 +86,10 @@ public interface AccountMapper {
 
     @InheritConfiguration(name = "mapCustomerServiceToCustomerServiceResponse")
     List<CustomerServiceResponse> mapCustomerServiceListToCustomerServiceResponseList(List<CustomerService> dentistList);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "phoneNumber", target = "phone")
+    @Mapping(target = "dateOfBirth", ignore = true)
+    void updateAccountFromProfileUpdateRequest(ProfileUpdateRequest profileUpdateRequest, @MappingTarget Account account);
+
 }

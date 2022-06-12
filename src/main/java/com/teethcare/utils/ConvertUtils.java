@@ -29,4 +29,11 @@ public class ConvertUtils {
         String formatted = format.format(date);
         return Timestamp.valueOf(formatted);
     }
+
+    public static Date getDate(long timestampInString) {
+        Date date = new Date(timestampInString);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String formatted = format.format(date);
+        return date;
+    }
 }
