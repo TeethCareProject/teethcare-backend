@@ -1,8 +1,8 @@
 package com.teethcare.service.impl.booking;
 
-import com.teethcare.common.Message;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.teethcare.common.*;
 import com.teethcare.common.Role;
-import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
@@ -10,6 +10,7 @@ import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.ClinicRepository;
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.teethcare.common.NotificationMessage.UPDATE_1ST_MESSAGE;
+
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -47,6 +50,7 @@ public class BookingServiceImpl implements BookingService {
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
+    private final FirebaseMessagingService firebaseMessagingService;
 
 
     @Override
@@ -171,26 +175,49 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
+    public boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException {
         int bookingId = bookingUpdateRequest.getBookingId();
 
         Booking booking = bookingRepository.findBookingById(bookingId);
+        int patientId = booking.getPatient().getId();
+        int dentistId = booking.getDentist().getId();
 
         String status = booking.getStatus();
         switch (Status.Booking.valueOf(status)) {
             case REQUEST:
                 firstlyUpdated(bookingUpdateRequest, isAllDeleted);
+
+                NotificationMsgRequest update1stNotificationPatient =
+                        NotificationMsgRequest.builder()
+                                .accountId(patientId)
+                                .title(NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name())
+                                .body(NotificationMessage.UPDATE_1ST_MESSAGE + bookingId)
+                                .build();
+                firebaseMessagingService.sendNotification(update1stNotificationPatient);
+
+                NotificationMsgRequest update1stNotificationDentist =
+                        update1stNotificationPatient.toBuilder().accountId(dentistId).build();
+
+                firebaseMessagingService.sendNotification(update1stNotificationDentist);
                 break;
             case TREATMENT:
                 if (booking.getNote() == null || booking.getNote().isEmpty() || booking.isConfirmed()) {
                     return false;
                 }
+
                 secondlyUpdated(bookingUpdateRequest, isAllDeleted);
+
+                NotificationMsgRequest update2rdNotification =
+                        NotificationMsgRequest.builder()
+                                .accountId(patientId)
+                                .title(NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name())
+                                .body(NotificationMessage.UPDATE_2RD_MESSAGE + bookingId)
+                                .build();
+                firebaseMessagingService.sendNotification(update2rdNotification);
                 break;
             default:
                 return false;
         }
-
         save(booking);
 
         return true;

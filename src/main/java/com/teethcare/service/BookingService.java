@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
@@ -21,6 +22,6 @@ public interface BookingService extends CRUDService<Booking>{
     Page<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
 
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
-    boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
+    boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException;
     boolean updateRequestFromDentist(BookingUpdateRequest bookingUpdateRequest);
 }
