@@ -14,8 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FeedbackByClinicResponse {
     private int id;
-    private int bookingID;
-    private PatientResponse patientResponse;
+    private BookingResponse bookingResponse;
     private String detail;
     private int ratingScore;
     private String status;

@@ -71,7 +71,7 @@ public class FeedbackController {
     }
 
     @GetMapping
-    public ResponseEntity<FeedbackResponse> getById(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
+    public ResponseEntity<FeedbackByClinicResponse> getById(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
                                                     @RequestParam(name = "id") int id) {
         Account account = null;
         if (token != null) {
@@ -80,7 +80,7 @@ public class FeedbackController {
             account = accountService.getAccountByUsername(username);
         }
         Feedback feedback = feedbackService.findById(id, account);
-        FeedbackResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
+        FeedbackByClinicResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackByClinicResponse(feedback);
         return new ResponseEntity<>(feedbackResponse, HttpStatus.OK);
     }
 }

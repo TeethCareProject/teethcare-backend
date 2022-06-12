@@ -12,7 +12,7 @@ import org.mapstruct.*;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",  uses = {BookingMapper.class})
 public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "booking", ignore = true)
@@ -29,8 +29,7 @@ public interface FeedbackMapper {
     @InheritConfiguration(name = "mapReportToReportResponse")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "booking.id", target = "bookingID")
-    @Mapping(source = "booking.patient", target = "patientResponse")
+    @Mapping(source = "booking", target = "bookingResponse")
     @Mapping(source = "reports", target = "reports")
     FeedbackByClinicResponse mapFeedbackToFeedbackByClinicResponse(Feedback feedback);
 
@@ -50,13 +49,13 @@ public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Report mapReportRequestToReport(ReportRequest reportRequest);
 
-    static Long mapDateTimeToLong(Timestamp dateTime) {
+/*    static Long mapDateTimeToLong(Timestamp dateTime) {
         if (dateTime != null) {
             return  dateTime.getTime();
         } else {
             return null;
         }
 
-    }
+    }*/
 
 }

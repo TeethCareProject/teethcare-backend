@@ -38,7 +38,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback findById(int id) {
-        return feedbackRepository.findFeedbackById(id);
+        Feedback feedback = feedbackRepository.findFeedbackById(id);
+        return feedback;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public void delete(int id) {
-        Feedback feedback = findById(id);
+        Feedback feedback = feedbackRepository.findFeedbackById(id);
         feedback.setStatus(Status.Feedback.INACTIVE.name());
         feedbackRepository.save(feedback);
     }
@@ -115,18 +116,32 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Feedback findById(int id, Account account) {
         Feedback feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+        feedback.setReports(null);
         if (account != null) {
             switch (Role.valueOf(account.getRole().getName())) {
                 case CUSTOMER_SERVICE:
                     CustomerService customerService = (CustomerService) account;
                     Clinic clinic = customerService.getClinic();
                     feedback = findById(id);
+                    List<Report> reports = new ArrayList<>();
+                    reports.add(reportService.findReportByFeedback(feedback).get(0));
+                    for (Report report : reports) {
+                        report.setFeedback(null);
+                    }
+                    feedback.setReports(reports);
                     if (feedback.getBooking().getClinic().getId().compareTo(clinic.getId()) != 0) {
                         feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+                        feedback.setReports(null);
                     }
                     break;
                 case ADMIN:
                     feedback = findById(id);
+                    List<Report> reportList = new ArrayList<>();
+                    reportList.add(reportService.findReportByFeedback(feedback).get(0));
+                    for (Report report : reportList) {
+                        report.setFeedback(null);
+                    }
+                    feedback.setReports(reportList);
                     break;
             }
         }
