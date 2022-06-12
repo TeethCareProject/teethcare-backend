@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
@@ -113,7 +114,7 @@ public class BookingController {
     @PutMapping()
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
-                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
+                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) throws FirebaseMessagingException {
         boolean isUpdated = bookingService.update(bookingUpdateRequest, isAllDeleted);
         if (isUpdated) {
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
