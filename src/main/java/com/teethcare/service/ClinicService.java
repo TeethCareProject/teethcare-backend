@@ -4,6 +4,7 @@ import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ClinicFilterRequest;
+import com.teethcare.model.request.ClinicRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,4 +23,7 @@ public interface ClinicService extends CRUDService<Clinic> {
     Clinic findById(int theId);
 
     void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location);
+
+    Clinic updateProfile (ClinicRequest clinicRequest, String username);
+
 }

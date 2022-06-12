@@ -11,4 +11,12 @@ public class Constant {
         public static final String DEFAULT_SORT_DIRECTION = "asc";
     }
 
+    public static class EMAIL {
+        public static final String SENDER_EMAIL = "service.teethcare@gmail.com";
+        public static final String SENDER_PASSWORD = "ptmbozrgnkgexitx";
+    }
+
+    public static class PASSWORD {
+        public static final int DEFAULT_LENGTH = 6;
+    }
 }

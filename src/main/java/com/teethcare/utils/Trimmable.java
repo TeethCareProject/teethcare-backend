@@ -11,6 +11,9 @@ public interface Trimmable {
      */
     default void trim() {
         for (Field field : this.getClass().getDeclaredFields()) {
+            if (field.getName().contains("Password")) {
+                continue;
+            }
             try {
                 field.setAccessible(true);
                 Object value = field.get(this);
