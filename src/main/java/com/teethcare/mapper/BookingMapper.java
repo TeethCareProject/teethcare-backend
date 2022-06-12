@@ -1,5 +1,6 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.BookingResponse;
@@ -57,4 +58,6 @@ public interface BookingMapper {
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponseWithoutService")
     List<BookingResponse> mapBookingListToBookingResponseListWithoutService(List<Booking> bookingList);
+
+//    BookingConfirmationDTO mapBookingToBookingConfirmationDTO(Booking booking);
 }

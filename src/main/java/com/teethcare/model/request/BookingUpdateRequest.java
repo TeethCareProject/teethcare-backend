@@ -20,4 +20,5 @@ public class BookingUpdateRequest {
     private Integer dentistId;
     private Long examinationTime;
     private String note;
+    private Integer version;
 }

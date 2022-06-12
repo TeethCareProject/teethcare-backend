@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
-    private final FirebaseMessagingService firebaseMessagingService;
+//    public FirebaseMessagingService firebaseMessagingService;
 
 
     @Override
@@ -174,52 +174,27 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
-    public boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException {
+    public boolean confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest) {
         int bookingId = bookingUpdateRequest.getBookingId();
 
-        Booking booking = bookingRepository.findBookingById(bookingId);
-        int patientId = booking.getPatient().getId();
-        int dentistId = booking.getDentist().getId();
-
-        String status = booking.getStatus();
-        switch (Status.Booking.valueOf(status)) {
-            case REQUEST:
-                firstlyUpdated(bookingUpdateRequest, isAllDeleted);
-
-                NotificationMsgRequest update1stNotificationPatient =
-                        NotificationMsgRequest.builder()
-                                .accountId(patientId)
-                                .title(NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name())
-                                .body(NotificationMessage.UPDATE_1ST_MESSAGE + bookingId)
-                                .build();
-                firebaseMessagingService.sendNotification(update1stNotificationPatient);
-
-                NotificationMsgRequest update1stNotificationDentist =
-                        update1stNotificationPatient.toBuilder().accountId(dentistId).build();
-
-                firebaseMessagingService.sendNotification(update1stNotificationDentist);
-                break;
-            case TREATMENT:
-                if (booking.getNote() == null || booking.getNote().isEmpty() || booking.isConfirmed()) {
-                    return false;
-                }
-
-                secondlyUpdated(bookingUpdateRequest, isAllDeleted);
-
-                NotificationMsgRequest update2rdNotification =
-                        NotificationMsgRequest.builder()
-                                .accountId(patientId)
-                                .title(NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name())
-                                .body(NotificationMessage.UPDATE_2RD_MESSAGE + bookingId)
-                                .build();
-                firebaseMessagingService.sendNotification(update2rdNotification);
-                break;
-            default:
-                return false;
+        if (bookingUpdateRequest.getVersion() == null) {
+            throw new BadRequestException(Message.PARAMS_MISSING.name());
         }
-        save(booking);
 
+        Booking booking = findBookingById(bookingId);
+
+        if (booking.getVersion() != bookingUpdateRequest.getVersion() || booking.isConfirmed()) {
+            return false;
+        }
+
+        booking.setConfirmed(true);
+        bookingRepository.save(booking);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException {
         return true;
     }
 
@@ -230,15 +205,16 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = bookingRepository.findBookingById(bookingId);
 
-        if (booking.isRequestChanged() || booking.getNote() != null || !booking.getNote().isEmpty()) {
+        if (booking.isRequestChanged() || booking.getNote() != null && !booking.getNote().isEmpty()) {
             return false;
         }
 
-        if (note == null) {
+        if (note == null || note.isEmpty()) {
             note = Message.NO_COMMIT_FROM_DENTIST.name();
         }
 
         booking.setNote(note);
+        booking.setRequestChanged(true);
         bookingRepository.save(booking);
         return true;
     }
@@ -248,7 +224,8 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findBookingById(id);
     }
 
-    private void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
+    @Override
+    public boolean firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
         Integer dentistId = bookingUpdateRequest.getDentistId();
@@ -288,13 +265,20 @@ public class BookingServiceImpl implements BookingService {
         booking.setExaminationTime(examinationTime);
         booking.setCreateBookingDate(currentTime);
         booking.setDentist(dentist);
+
+        save(booking);
+        return true;
     }
 
-    private void secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
+    @Override
+    public boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
-
         Booking booking = bookingRepository.findBookingById(bookingId);
+
+        if (booking.getNote() == null || booking.getNote().isEmpty() || booking.isConfirmed()) {
+            return false;
+        }
 
         List<ServiceOfClinic> services = new ArrayList<>();
         if (servicesIds != null) {
@@ -315,9 +299,16 @@ public class BookingServiceImpl implements BookingService {
             }
         }
 
-        booking.setRequestChanged(false);
-        booking.setStatus(Status.Booking.TREATMENT_ACCEPTED.name());
+
+        int bookingVersion = booking.getVersion() + 1;
+
+//        booking.setRequestChanged(false);
+        booking.setStatus(Status.Booking.TREATMENT.name());
         booking.setServices(services);
         booking.setTotalPrice(totalPrice);
+        booking.setVersion(bookingVersion);
+        System.out.println(bookingVersion);
+        save(booking);
+        return true;
     }
 }

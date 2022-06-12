@@ -1,11 +1,10 @@
 package com.teethcare.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.teethcare.common.Constant;
-import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Message;
+import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.BookingMapper;
+import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
@@ -13,13 +12,11 @@ import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientBookingResponse;
-import com.teethcare.service.AccountService;
-import com.teethcare.service.BookingService;
-import com.teethcare.service.CSService;
-import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,8 +26,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
+import static com.teethcare.common.Constant.EMAIL.BOOKING_DETAIL_CONFIRM;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
@@ -43,6 +42,8 @@ public class BookingController {
     private final ServiceOfClinicService serviceOfClinicService;
     private final CSService CSService;
     private final AccountService accountService;
+    private final FirebaseMessagingService firebaseMessagingService;
+    private final EmailService emailService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping
@@ -115,8 +116,61 @@ public class BookingController {
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
                                                   @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) throws FirebaseMessagingException {
-        boolean isUpdated = bookingService.update(bookingUpdateRequest, isAllDeleted);
-        if (isUpdated) {
+        boolean isSuccess = false;
+
+        int bookingId = bookingUpdateRequest.getBookingId();
+
+        Booking booking = bookingService.findBookingById(bookingId);
+        int patientId = booking.getPatient().getId();
+        String status = booking.getStatus();
+
+        switch (Status.Booking.valueOf(status)) {
+            case REQUEST:
+                isSuccess = bookingService.firstlyUpdated(bookingUpdateRequest, isAllDeleted);
+
+                NotificationMsgRequest update1stNotificationPatient =
+                        NotificationMsgRequest.builder()
+                                .accountId(patientId)
+                                .title(NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name())
+                                .body(NotificationMessage.UPDATE_1ST_MESSAGE + bookingId)
+                                .build();
+                firebaseMessagingService.sendNotification(update1stNotificationPatient);
+
+                int dentistId = booking.getDentist().getId();
+                NotificationMsgRequest update1stNotificationDentist =
+                        update1stNotificationPatient.toBuilder().accountId(dentistId).build();
+
+                firebaseMessagingService.sendNotification(update1stNotificationDentist);
+                break;
+            case TREATMENT:
+                isSuccess = bookingService.secondlyUpdated(bookingUpdateRequest, isAllDeleted);
+
+                NotificationMsgRequest update2rdNotification =
+                        NotificationMsgRequest.builder()
+                                .accountId(patientId)
+                                .title(NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name())
+                                .body(NotificationMessage.UPDATE_2RD_MESSAGE + bookingId)
+                                .build();
+                firebaseMessagingService.sendNotification(update2rdNotification);
+
+                BookingConfirmationDTO bookingConfirmationDTO = new BookingConfirmationDTO();
+                bookingConfirmationDTO.setFirstname(booking.getPatient().getFirstName());
+                bookingConfirmationDTO.setLastname(booking.getPatient().getLastName());
+                bookingConfirmationDTO.setEmail(booking.getPatient().getEmail());
+                bookingConfirmationDTO.setBookingId(bookingId);
+                bookingConfirmationDTO.setFwdLink(BOOKING_DETAIL_CONFIRM);
+
+                try {
+                    emailService.sendBookingConfirmEmail(bookingConfirmationDTO);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
+
+        if (isSuccess) {
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
@@ -133,4 +187,16 @@ public class BookingController {
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
         }
     }
+
+    @PutMapping("/confirm")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<MessageResponse> confirmFinalBooking(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
+        boolean isUpdated = bookingService.confirmFinalBooking(bookingUpdateRequest);
+        if (isUpdated) {
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
+    }
+
 }
