@@ -203,7 +203,7 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = bookingRepository.findBookingById(bookingId);
 
-        if (!booking.isRequestChanged() || booking.getNote() != null || !booking.getNote().isEmpty()) {
+        if (booking.isRequestChanged() || booking.getNote() != null || !booking.getNote().isEmpty()) {
             return false;
         }
 
@@ -211,8 +211,6 @@ public class BookingServiceImpl implements BookingService {
             note = Message.NO_COMMIT_FROM_DENTIST.name();
         }
 
-//        booking.setStatus(Status.Booking.TREATMENT_REQUEST.name());
-//        booking.setRequestChanged(true);
         booking.setNote(note);
         bookingRepository.save(booking);
         return true;
@@ -290,7 +288,6 @@ public class BookingServiceImpl implements BookingService {
             }
         }
 
-//        booking.setConfirmed();
         booking.setRequestChanged(false);
         booking.setStatus(Status.Booking.TREATMENT_ACCEPTED.name());
         booking.setServices(services);
