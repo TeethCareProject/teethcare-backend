@@ -16,6 +16,9 @@ public class FirebaseConfig {
     @Value("${firebase.service-account}")
     private String serviceAccount;
 
+    @Value("${firebase.bucket-name}")
+    private String bucketName;
+
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials
@@ -23,6 +26,7 @@ public class FirebaseConfig {
         FirebaseOptions firebaseOptions = FirebaseOptions
                 .builder()
                 .setCredentials(googleCredentials)
+                .setStorageBucket(bucketName)
                 .build();
         FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions);
         return FirebaseMessaging.getInstance(app);
