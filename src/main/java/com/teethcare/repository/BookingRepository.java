@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaSpecificationExecutor<Booking> {
@@ -18,19 +19,10 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     List<Booking> findBookingByClinic(Clinic clinic, Sort sort);
     List<Booking> findBookingByDentistId(int id, Sort sort);
     List<Booking> findBookingByDentistIdAndStatus(int id, String status);
-
-    List<Booking> findAllByCustomerService(CustomerService customerService);
-
-    List<Booking> findBookingByStatusNotLike(String status);
-
-    List<Booking> findBookingByPatientId(int id);
-
-    Page<Booking> findBookingByDentistId(int id, Pageable pageable);
+    List<Booking> findBookingByStatusAndExaminationTimeAndDentistId(String status, Timestamp examinationTime, int dentistId);
 
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
 
     Booking findBookingById(int id);
-
-    List<Booking> findBookingByClinic(Clinic clinic);
 
 }

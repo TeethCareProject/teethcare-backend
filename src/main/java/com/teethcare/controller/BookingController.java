@@ -158,7 +158,7 @@ public class BookingController {
                 bookingConfirmationDTO.setLastname(booking.getPatient().getLastName());
                 bookingConfirmationDTO.setEmail(booking.getPatient().getEmail());
                 bookingConfirmationDTO.setBookingId(bookingId);
-                bookingConfirmationDTO.setFwdLink(BOOKING_DETAIL_CONFIRM);
+                bookingConfirmationDTO.setFwdLink(BOOKING_DETAIL_CONFIRM + booking.getId());
 
                 try {
                     emailService.sendBookingConfirmEmail(bookingConfirmationDTO);
@@ -170,11 +170,7 @@ public class BookingController {
                 return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
         }
 
-        if (isSuccess) {
-            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
-        }
+        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 
     @PutMapping("/update-request")

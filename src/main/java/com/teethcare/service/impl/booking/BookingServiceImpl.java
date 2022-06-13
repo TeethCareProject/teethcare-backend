@@ -250,14 +250,15 @@ public class BookingServiceImpl implements BookingService {
 
         Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        System.out.println(currentTime);
-        if (examinationTime.compareTo(currentTime) < 0){
+        if (examinationTime.compareTo(currentTime) < 0) {
             throw new BadRequestException(Message.DATE_ERROR.name());
         }
 
         Dentist dentist = dentistService.findActive(dentistId);
-        List<Booking> checkedBookings = bookingRepository.findBookingByDentistIdAndStatus(dentistId, Status.Booking.TREATMENT.name());
-        if (checkedBookings != null && !checkedBookings.isEmpty()) {
+        List<Booking> checkedBookings = new ArrayList<>();
+        checkedBookings.addAll(bookingRepository.findBookingByStatusAndExaminationTimeAndDentistId(Status.Booking.TREATMENT.name(), examinationTime, dentistId));
+        checkedBookings.addAll(bookingRepository.findBookingByStatusAndExaminationTimeAndDentistId(Status.Booking.REQUEST.name(), examinationTime, dentistId));
+        if (!checkedBookings.isEmpty()) {
             throw new BadRequestException(Message.DENTIST_NO_AVAILABLE.name());
         }
 
@@ -286,7 +287,6 @@ public class BookingServiceImpl implements BookingService {
                 services.add(serviceOfClinicService.findById(servicesId));
             }
         } else {
-            System.out.println("There is no service and isAllDeleted" + isAllDeleted);
             if (!isAllDeleted) {
                 services = booking.getServices();
             }
@@ -299,15 +299,12 @@ public class BookingServiceImpl implements BookingService {
             }
         }
 
-
         int bookingVersion = booking.getVersion() + 1;
 
-//        booking.setRequestChanged(false);
         booking.setStatus(Status.Booking.TREATMENT.name());
         booking.setServices(services);
         booking.setTotalPrice(totalPrice);
         booking.setVersion(bookingVersion);
-        System.out.println(bookingVersion);
         save(booking);
         return true;
     }
