@@ -112,7 +112,7 @@ public class BookingController {
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 
-    @PutMapping()
+    @PutMapping("/first-update")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
                                                   @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) throws FirebaseMessagingException {
@@ -124,53 +124,76 @@ public class BookingController {
         int patientId = booking.getPatient().getId();
         String status = booking.getStatus();
 
-        switch (Status.Booking.valueOf(status)) {
-            case REQUEST:
-                isSuccess = bookingService.firstlyUpdated(bookingUpdateRequest, isAllDeleted);
+        if (Status.Booking.valueOf(status) == Status.Booking.REQUEST) {
+            isSuccess = bookingService.firstlyUpdated(bookingUpdateRequest, isAllDeleted);
 
-                NotificationMsgRequest update1stNotificationPatient =
-                        NotificationMsgRequest.builder()
-                                .accountId(patientId)
-                                .title(NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name())
-                                .body(NotificationMessage.UPDATE_1ST_MESSAGE + bookingId)
-                                .build();
-                firebaseMessagingService.sendNotification(update1stNotificationPatient);
-
-                int dentistId = booking.getDentist().getId();
-                NotificationMsgRequest update1stNotificationDentist =
-                        update1stNotificationPatient.toBuilder().accountId(dentistId).build();
-
-                firebaseMessagingService.sendNotification(update1stNotificationDentist);
-                break;
-            case TREATMENT:
-                isSuccess = bookingService.secondlyUpdated(bookingUpdateRequest, isAllDeleted);
-
-                NotificationMsgRequest update2rdNotification =
-                        NotificationMsgRequest.builder()
-                                .accountId(patientId)
-                                .title(NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name())
-                                .body(NotificationMessage.UPDATE_2RD_MESSAGE + bookingId)
-                                .build();
-                firebaseMessagingService.sendNotification(update2rdNotification);
-
-                BookingConfirmationDTO bookingConfirmationDTO = new BookingConfirmationDTO();
-                bookingConfirmationDTO.setFirstname(booking.getPatient().getFirstName());
-                bookingConfirmationDTO.setLastname(booking.getPatient().getLastName());
-                bookingConfirmationDTO.setEmail(booking.getPatient().getEmail());
-                bookingConfirmationDTO.setBookingId(bookingId);
-                bookingConfirmationDTO.setFwdLink(BOOKING_DETAIL_CONFIRM + booking.getId());
-
-                try {
-                    emailService.sendBookingConfirmEmail(bookingConfirmationDTO);
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
-                break;
-            default:
+            if (!isSuccess) {
                 return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
-        }
+            }
 
-        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+            NotificationMsgRequest update1stNotificationPatient =
+                    NotificationMsgRequest.builder()
+                            .accountId(patientId)
+                            .title(NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name())
+                            .body(NotificationMessage.UPDATE_1ST_MESSAGE + bookingId)
+                            .build();
+            firebaseMessagingService.sendNotification(update1stNotificationPatient);
+
+            int dentistId = booking.getDentist().getId();
+            System.out.println(dentistId);
+            NotificationMsgRequest update1stNotificationDentist =
+                    update1stNotificationPatient.toBuilder().accountId(dentistId).build();
+
+            firebaseMessagingService.sendNotification(update1stNotificationDentist);
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
+    }
+
+    @PutMapping("/second-update")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
+    public ResponseEntity<MessageResponse> secondlyUpdated(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
+                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) throws FirebaseMessagingException {
+        boolean isSuccess = false;
+
+        int bookingId = bookingUpdateRequest.getBookingId();
+
+        Booking booking = bookingService.findBookingById(bookingId);
+        int patientId = booking.getPatient().getId();
+        String status = booking.getStatus();
+
+        if (Status.Booking.valueOf(status) == Status.Booking.TREATMENT) {
+            isSuccess = bookingService.secondlyUpdated(bookingUpdateRequest, isAllDeleted);
+
+            if (!isSuccess) {
+                return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+            }
+
+            NotificationMsgRequest update2rdNotification =
+                    NotificationMsgRequest.builder()
+                            .accountId(patientId)
+                            .title(NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name())
+                            .body(NotificationMessage.UPDATE_2RD_MESSAGE + bookingId)
+                            .build();
+            firebaseMessagingService.sendNotification(update2rdNotification);
+
+            BookingConfirmationDTO bookingConfirmationDTO = new BookingConfirmationDTO();
+            bookingConfirmationDTO.setFirstname(booking.getPatient().getFirstName());
+            bookingConfirmationDTO.setLastname(booking.getPatient().getLastName());
+            bookingConfirmationDTO.setEmail(booking.getPatient().getEmail());
+            bookingConfirmationDTO.setBookingId(bookingId);
+            bookingConfirmationDTO.setFwdLink(BOOKING_DETAIL_CONFIRM + booking.getId());
+
+            try {
+                emailService.sendBookingConfirmEmail(bookingConfirmationDTO);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
     }
 
     @PutMapping("/update-request")
