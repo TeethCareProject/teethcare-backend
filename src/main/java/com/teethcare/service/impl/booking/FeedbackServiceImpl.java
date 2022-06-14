@@ -115,6 +115,11 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback saveFeedback(Feedback feedback) {
+        Booking booking = feedback.getBooking();
+        Feedback feedback1 = feedbackRepository.findByBookingId(booking.getId());
+        if (feedback1 != null){
+            throw new ForbiddenException("You have submitted a feedback for this booking.");
+        }
         feedback.setStatus(Status.Feedback.ACTIVE.name());
         return feedbackRepository.save(feedback);
     }
