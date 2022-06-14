@@ -25,6 +25,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
@@ -66,7 +68,7 @@ public class ReportController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<ReportResponse> add(@RequestHeader(value = AUTHORIZATION) String token,
-                                              @RequestBody ReportRequest reportRequest) {
+                                              @Valid @RequestBody ReportRequest reportRequest) {
         Account account = null;
         if (token != null) {
             token = token.substring("Bearer ".length());

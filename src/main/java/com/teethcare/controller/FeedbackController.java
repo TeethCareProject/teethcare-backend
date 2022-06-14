@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = EndpointConstant.Feedback.FEEDBACK_ENDPOINT)
 @RequiredArgsConstructor
@@ -53,7 +55,7 @@ public class FeedbackController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<MessageResponse> add(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
-                                               @RequestBody FeedbackRequest feedbackRequest) {
+                                               @Valid @RequestBody FeedbackRequest feedbackRequest) {
         Account account = null;
         if (token != null) {
             token = token.substring("Bearer ".length());

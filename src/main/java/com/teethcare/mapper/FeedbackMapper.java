@@ -16,7 +16,6 @@ import java.util.List;
 public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "booking", ignore = true)
-    @Mapping(source = "bookingId", target = "id")
     Feedback mapFeedbackRequestToFeedback(FeedbackRequest feedbackRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -46,13 +45,5 @@ public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Report mapReportRequestToReport(ReportRequest reportRequest);
 
-/*    static Long mapDateTimeToLong(Timestamp dateTime) {
-        if (dateTime != null) {
-            return  dateTime.getTime();
-        } else {
-            return null;
-        }
-
-    }*/
 
 }

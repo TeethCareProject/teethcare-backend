@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class BookingRequest {
 
     @NotNull
-    private int serviceId;
+    private Integer serviceId;
 
     private String description;
 

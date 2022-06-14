@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class ReportRequest {
     @NotNull
-    private int feedbackId;
+    private Integer feedbackId;
 
     @NotEmpty
     private String detail;

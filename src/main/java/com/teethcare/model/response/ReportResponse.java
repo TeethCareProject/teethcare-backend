@@ -17,5 +17,5 @@ public class ReportResponse {
     private FeedbackResponse feedbackResponse;
     private String detail;
     private String status;
-    private long createdTime;
+    private Long createdTime;
 }

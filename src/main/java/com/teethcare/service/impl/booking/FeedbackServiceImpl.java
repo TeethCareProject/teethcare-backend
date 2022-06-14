@@ -4,6 +4,7 @@ import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.ForbiddenException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.FeedbackRequest;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -103,6 +105,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         Feedback feedback = feedbackMapper.mapFeedbackRequestToFeedback(feedbackRequest);
         feedback.setBooking(booking);
+        feedback.setCreatedTime(new Timestamp(System.currentTimeMillis()));
         Feedback saveFeedback = saveFeedback(feedback);
         return saveFeedback;
     }
@@ -116,6 +119,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Feedback findById(int id, Account account) {
         Feedback feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+        if (feedback == null){
+            throw new NotFoundException("Feedback " + id + " was not found.");
+        }
         feedback.setReports(null);
         if (account != null) {
             switch (Role.valueOf(account.getRole().getName())) {
