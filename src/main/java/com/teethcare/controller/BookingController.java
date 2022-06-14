@@ -188,7 +188,7 @@ public class BookingController {
             try {
                 emailService.sendBookingConfirmEmail(bookingConfirmationDTO);
             } catch (MessagingException e) {
-                e.printStackTrace();
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SENDMAIL.name()), HttpStatus.OK);
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
