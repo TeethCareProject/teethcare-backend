@@ -2,17 +2,14 @@ package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-@Mapper
+@Mapper(componentModel = "spring",
+        config = ConfigurationMapper.class)
 public interface DentistMapper {
-//    "dateOfBirth": "2002-10-26T00:00:00.000+07:00",
-//            "email": null,
-//            "phone": null,
-//            "gender": "FEMALE",
-//            "status": "ACTIVE",
     @Named("mapDentistToDentistResponse")
     @Mapping(source = "clinic", target = "clinic", ignore = true)
     @Mapping(source = "avatarImage", target = "avatarImage", ignore = true)

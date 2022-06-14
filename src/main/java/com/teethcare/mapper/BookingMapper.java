@@ -10,7 +10,9 @@ import org.mapstruct.*;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ServiceOfClinicMapper.class, AccountMapper.class,
+@Mapper(componentModel = "spring",
+        config = ConfigurationMapper.class,
+        uses = {ServiceOfClinicMapper.class, AccountMapper.class,
         UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -28,15 +30,6 @@ public interface BookingMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "clinic", target = "clinic")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
-
-    static Long mapDateTimeToLong(Timestamp dateTime) {
-        if (dateTime != null) {
-            return dateTime.getTime();
-        } else {
-            return null;
-        }
-
-    }
 
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",

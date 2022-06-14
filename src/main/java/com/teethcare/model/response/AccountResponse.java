@@ -21,7 +21,7 @@ public class AccountResponse {
     private String lastName;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String avatarImage;
-    private String dateOfBirth;
+    private Long dateOfBirth;
     private String email;
     private String phone;
     private String gender;
