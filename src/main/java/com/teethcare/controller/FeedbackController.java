@@ -9,6 +9,7 @@ import com.teethcare.model.entity.*;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.model.response.FeedbackByClinicResponse;
 import com.teethcare.model.response.MessageResponse;
+import com.teethcare.model.response.ReportResponse;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.FeedbackService;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -47,8 +48,7 @@ public class FeedbackController {
             String username = jwtTokenUtil.getUsernameFromJwt(token);
             account = accountService.getAccountByUsername(username);
         }
-        Page<Feedback> feedbacks = feedbackService.findAllByClinicID(pageable, clinicId, account, ratingScore);
-        Page<FeedbackByClinicResponse> responses = feedbacks.map(feedbackMapper::mapFeedbackToFeedbackByClinicResponse);
+        Page<FeedbackByClinicResponse> responses = feedbackService.findAllByClinicID(pageable, clinicId, account, ratingScore);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
@@ -77,6 +77,11 @@ public class FeedbackController {
         }
         Feedback feedback = feedbackService.findById(id, account);
         FeedbackByClinicResponse feedbackResponse = feedbackMapper.mapFeedbackToFeedbackByClinicResponse(feedback);
+        if (feedback.getReports() != null) {
+            Report report = feedback.getReports().get(0);
+            ReportResponse reportResponse = feedbackMapper.mapReportToReportResponse(report);
+            feedbackResponse.setReports(reportResponse);
+        }
         return new ResponseEntity<>(feedbackResponse, HttpStatus.OK);
     }
 }

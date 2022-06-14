@@ -27,8 +27,12 @@ public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
     @Mapping(source = "booking", target = "bookingResponse")
-    @Mapping(source = "reports", target = "reports")
+    @Mapping(target = "reports", ignore = true)
     FeedbackByClinicResponse mapFeedbackToFeedbackByClinicResponse(Feedback feedback);
+
+    @InheritConfiguration(name = "mapFeedbackToFeedbackByClinicResponse")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    List<FeedbackByClinicResponse> mapFeedbackListToFeedbackByClinicResponseList(List<Feedback> feedback);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     List<FeedbackResponse> mapFeedbackListToFeedbackResponseList(List<Feedback> feedbacks);

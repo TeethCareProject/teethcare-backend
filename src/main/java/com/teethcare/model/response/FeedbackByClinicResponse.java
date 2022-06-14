@@ -19,5 +19,5 @@ public class FeedbackByClinicResponse {
     private int ratingScore;
     private String status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<ReportResponse> reports;
+    private ReportResponse reports;
 }

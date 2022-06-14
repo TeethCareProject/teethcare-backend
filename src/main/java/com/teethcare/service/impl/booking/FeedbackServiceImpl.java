@@ -8,6 +8,8 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.FeedbackRequest;
+import com.teethcare.model.response.FeedbackByClinicResponse;
+import com.teethcare.model.response.ReportResponse;
 import com.teethcare.repository.FeedbackRepository;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.ClinicService;
@@ -29,7 +31,6 @@ import java.util.stream.Collectors;
 public class FeedbackServiceImpl implements FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final BookingService bookingService;
-    private final ClinicService clinicService;
     private final FeedbackMapper feedbackMapper;
     private final ReportService reportService;
 
@@ -66,9 +67,14 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Page<Feedback> findAllByClinicID(Pageable pageable, Integer clinicID, Account account, Integer rating) {
+    public Page<FeedbackByClinicResponse> findAllByClinicID(Pageable pageable, Integer clinicID, Account account, Integer rating) {
         List<Feedback> feedbacks = new ArrayList<>();
         feedbacks = feedbackRepository.findAllByStatus(Status.Feedback.ACTIVE.name());
+        if (!feedbacks.isEmpty()){
+            for (Feedback feedback: feedbacks) {
+                feedback.setReports(null);
+            }
+        }
         if (account != null) {
             switch (Role.valueOf(account.getRole().getName())) {
                 case CUSTOMER_SERVICE:
@@ -80,6 +86,11 @@ public class FeedbackServiceImpl implements FeedbackService {
                     break;
                 case ADMIN:
                     feedbacks = feedbackRepository.findAll();
+                    if (!feedbacks.isEmpty()){
+                        for (Feedback feedback: feedbacks) {
+                            feedback.setReports(null);
+                        }
+                    }
                     break;
             }
         }
@@ -93,7 +104,17 @@ public class FeedbackServiceImpl implements FeedbackService {
                     .filter(feedback -> feedback.getRatingScore() == rating)
                     .collect(Collectors.toList());
         }
-        return PaginationAndSortFactory.convertToPage(feedbacks, pageable);
+        List<FeedbackByClinicResponse> feedbackByClinicResponses = new ArrayList<>();
+        for (Feedback feedback: feedbacks) {
+            FeedbackByClinicResponse response = feedbackMapper.mapFeedbackToFeedbackByClinicResponse(feedback);
+            if (feedback.getReports() != null) {
+                Report report = feedback.getReports().get(0);
+                ReportResponse reportResponse = feedbackMapper.mapReportToReportResponse(report);
+                response.setReports(reportResponse);
+            }
+            feedbackByClinicResponses.add(response);
+        }
+        return PaginationAndSortFactory.convertToPage(feedbackByClinicResponses, pageable);
 
     }
 
@@ -128,42 +149,56 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Feedback findById(int id, Account account) {
-        Feedback feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
-        if (feedback == null) {
-            throw new NotFoundException("Feedback " + id + " was not found.");
-        }
-        feedback.setReports(null);
+        Feedback feedback = null;
         if (account != null) {
             switch (Role.valueOf(account.getRole().getName())) {
                 case CUSTOMER_SERVICE:
                     CustomerService customerService = (CustomerService) account;
                     Clinic clinic = customerService.getClinic();
                     feedback = findById(id);
-                    List<Report> reports = new ArrayList<>();
-                    if (!reportService.findReportByFeedback(feedback).isEmpty()) {
-                        reports.add(reportService.findReportByFeedback(feedback).get(0));
+                    List<Report> reports = reportService.findReportByFeedback(feedback);
+                    if (!reports.isEmpty()) {
                         for (Report report : reports) {
                             report.setFeedback(null);
                         }
+                        feedback.setReports(reports);
+                    }else {
+                        feedback.setReports(null);
                     }
-                    feedback.setReports(reports);
                     if (feedback.getBooking().getClinic().getId().compareTo(clinic.getId()) != 0) {
                         feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+                        if (feedback == null){
+                            throw new NotFoundException("Feedback " + id + " was not found.");
+                        }
                         feedback.setReports(null);
                     }
                     break;
                 case ADMIN:
                     feedback = findById(id);
-                    List<Report> reportList = new ArrayList<>();
-                    if (!reportService.findReportByFeedback(feedback).isEmpty()) {
-                        reportList.add(reportService.findReportByFeedback(feedback).get(0));
+                    List<Report> reportList = reportService.findReportByFeedback(feedback);
+                    if (!reportList.isEmpty()) {
                         for (Report report : reportList) {
                             report.setFeedback(null);
                         }
+                        feedback.setReports(reportList);
+                    } else  {
+                        feedback.setReports(null);
                     }
-                    feedback.setReports(reportList);
+                    break;
+                default:
+                    feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+                    if (feedback == null) {
+                        throw new NotFoundException("Feedback " + id + " was not found.");
+                    }
+                    feedback.setReports(null);
                     break;
             }
+        }else{
+            feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
+            if (feedback == null) {
+                throw new NotFoundException("Feedback " + id + " was not found.");
+            }
+            feedback.setReports(null);
         }
         return feedback;
     }
@@ -177,14 +212,15 @@ public class FeedbackServiceImpl implements FeedbackService {
             }
         }
         for (Feedback feedback : feedbacks) {
-            List<Report> reports = new ArrayList<>();
-            if (!reportService.findReportByFeedback(feedback).isEmpty()) {
-                reports.add(reportService.findReportByFeedback(feedback).get(0));
+            List<Report> reports = reportService.findReportByFeedback(feedback);
+            if (!reports.isEmpty()) {
                 for (Report report : reports) {
                     report.setFeedback(null);
                 }
+                feedback.setReports(reports);
+            }else {
+                feedback.setReports(null);
             }
-            feedback.setReports(reports);
         }
         return feedbacks;
     }
