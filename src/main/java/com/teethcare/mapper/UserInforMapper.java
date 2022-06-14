@@ -1,7 +1,9 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Patient;
 import com.teethcare.model.response.UserInforResponse;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -14,4 +16,8 @@ public interface UserInforMapper {
     @Mapping(source = "firstName", target = "firstName")
     @Mapping(source = "lastName", target = "lastName")
     UserInforResponse mapAccountToUserInforResponse(Account account);
+
+    @InheritConfiguration(name = "mapAccountToUserInforResponse")
+    @Named(value = "mapPatientToUserInforAccount")
+    Patient mapPatientToUserInforAccount(Patient patient);
 }

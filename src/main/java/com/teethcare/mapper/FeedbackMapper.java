@@ -12,14 +12,16 @@ import org.mapstruct.*;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Mapper(componentModel = "spring",  uses = {BookingMapper.class})
+@Mapper(componentModel = "spring",  uses = {BookingMapper.class, UserInforMapper.class})
 public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "booking", ignore = true)
     Feedback mapFeedbackRequestToFeedback(FeedbackRequest feedbackRequest);
 
+    @Named(value = "mapFeedbackToFeedbackResponse")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "booking.patient", target = "patient")
     FeedbackResponse mapFeedbackToFeedbackResponse(Feedback feedback);
 
     @InheritConfiguration(name = "mapReportToReportResponse")
@@ -33,14 +35,14 @@ public interface FeedbackMapper {
     List<FeedbackResponse> mapFeedbackListToFeedbackResponseList(List<Feedback> feedbacks);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "feedback", target = "feedbackResponse")
     @Mapping(source = "createdTime", target = "createdTime")
+    @Mapping(source = "feedback", target = "feedbackResponse",  qualifiedByName = "mapFeedbackToFeedbackResponse")
     ReportResponse mapReportToReportResponse(Report report);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "feedback", target = "feedbackResponse")
+/*    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "feedback", target = "feedbackResponse", qualifiedByName = "mapFeedbackToFeedbackResponse")
     @Mapping(source = "createdTime", target = "createdTime")
-    List<ReportResponse> mapReportListToReportResponseList(List<Report> report);
+    List<ReportResponse> mapReportListToReportResponseList(List<Report> report);*/
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Report mapReportRequestToReport(ReportRequest reportRequest);

@@ -41,7 +41,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Feedback findById(int id) {
         Feedback feedback = feedbackRepository.findFeedbackById(id);
-        if (feedback == null){
+        if (feedback == null) {
             throw new NotFoundException("Feedback " + id + " was not found.");
         }
         return feedback;
@@ -122,7 +122,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Feedback findById(int id, Account account) {
         Feedback feedback = feedbackRepository.findFeedbackByIdAndStatus(id, Status.Feedback.ACTIVE.name());
-        if (feedback == null){
+        if (feedback == null) {
             throw new NotFoundException("Feedback " + id + " was not found.");
         }
         feedback.setReports(null);
@@ -133,9 +133,11 @@ public class FeedbackServiceImpl implements FeedbackService {
                     Clinic clinic = customerService.getClinic();
                     feedback = findById(id);
                     List<Report> reports = new ArrayList<>();
-                    reports.add(reportService.findReportByFeedback(feedback).get(0));
-                    for (Report report : reports) {
-                        report.setFeedback(null);
+                    if (!reportService.findReportByFeedback(feedback).isEmpty()) {
+                        reports.add(reportService.findReportByFeedback(feedback).get(0));
+                        for (Report report : reports) {
+                            report.setFeedback(null);
+                        }
                     }
                     feedback.setReports(reports);
                     if (feedback.getBooking().getClinic().getId().compareTo(clinic.getId()) != 0) {
@@ -146,9 +148,11 @@ public class FeedbackServiceImpl implements FeedbackService {
                 case ADMIN:
                     feedback = findById(id);
                     List<Report> reportList = new ArrayList<>();
-                    reportList.add(reportService.findReportByFeedback(feedback).get(0));
-                    for (Report report : reportList) {
-                        report.setFeedback(null);
+                    if (!reportService.findReportByFeedback(feedback).isEmpty()) {
+                        reportList.add(reportService.findReportByFeedback(feedback).get(0));
+                        for (Report report : reportList) {
+                            report.setFeedback(null);
+                        }
                     }
                     feedback.setReports(reportList);
                     break;
@@ -188,13 +192,15 @@ public class FeedbackServiceImpl implements FeedbackService {
         List<Feedback> feedbacks = new ArrayList<>();
         if (customerService.getClinic().getId() == clinicId) {
             feedbacks = getAllByBookingForAdmin(bookings);
-            for (Feedback feebdback : feedbacks) {
+            for (Feedback feedback : feedbacks) {
                 List<Report> reports = new ArrayList<>();
-                reports.add(reportService.findReportByFeedback(feebdback).get(0));
-                for (Report report : reports) {
-                    report.setFeedback(null);
+                if (!reportService.findReportByFeedback(feedback).isEmpty()) {
+                    reports.add(reportService.findReportByFeedback(feedback).get(0));
+                    for (Report report : reports) {
+                        report.setFeedback(null);
+                    }
                 }
-                feebdback.setReports(reports);
+                feedback.setReports(reports);
             }
         } else {
             feedbacks = getAllByBooking(bookings);
