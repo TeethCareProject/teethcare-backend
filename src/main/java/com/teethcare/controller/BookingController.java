@@ -196,17 +196,6 @@ public class BookingController {
         }
     }
 
-    @PutMapping("/update-request")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
-    public ResponseEntity<MessageResponse> updateRequestFromDentist(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
-        boolean isUpdated = bookingService.updateRequestFromDentist(bookingUpdateRequest);
-        if (isUpdated) {
-            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
-        }
-    }
-
     @PutMapping("/confirm")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<MessageResponse> confirmFinalBooking(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {

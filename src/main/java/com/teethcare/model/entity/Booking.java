@@ -71,9 +71,6 @@ public class Booking {
     @Column(name = "is_confirmed")
     private boolean isConfirmed;
 
-    @Column(name = "is_request_changed")
-    private boolean isRequestChanged;
-
     @Column(name = "version")
     private int version;
 

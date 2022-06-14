@@ -24,7 +24,6 @@ public interface BookingService extends CRUDService<Booking>{
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
     boolean confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest);
     boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException;
-    boolean updateRequestFromDentist(BookingUpdateRequest bookingUpdateRequest);
     boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
     boolean firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
 }

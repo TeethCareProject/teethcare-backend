@@ -199,27 +199,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean updateRequestFromDentist(BookingUpdateRequest bookingUpdateRequest) {
-        int bookingId = bookingUpdateRequest.getBookingId();
-        String note = bookingUpdateRequest.getNote();
-
-        Booking booking = bookingRepository.findBookingById(bookingId);
-
-        if (booking.isRequestChanged() || booking.getNote() != null && !booking.getNote().isEmpty()) {
-            return false;
-        }
-
-        if (note == null || note.isEmpty()) {
-            note = Message.NO_COMMIT_FROM_DENTIST.name();
-        }
-
-        booking.setNote(note);
-        booking.setRequestChanged(true);
-        bookingRepository.save(booking);
-        return true;
-    }
-
-    @Override
     public Booking findBookingById(int id) {
         return bookingRepository.findBookingById(id);
     }
@@ -275,9 +254,10 @@ public class BookingServiceImpl implements BookingService {
     public boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
+        String note = bookingUpdateRequest.getNote();
         Booking booking = bookingRepository.findBookingById(bookingId);
 
-        if (booking.getNote() == null || booking.getNote().isEmpty() || booking.isConfirmed()) {
+        if (booking.isConfirmed()) {
             return false;
         }
 
@@ -302,6 +282,7 @@ public class BookingServiceImpl implements BookingService {
         int bookingVersion = booking.getVersion() + 1;
 
         booking.setStatus(Status.Booking.TREATMENT.name());
+        booking.setNote(note);
         booking.setServices(services);
         booking.setTotalPrice(totalPrice);
         booking.setVersion(bookingVersion);
