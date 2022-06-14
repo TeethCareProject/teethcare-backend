@@ -66,30 +66,32 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Page<Feedback> findAllByClinicID(Pageable pageable, int clinicID, Account account, Integer rating) {
+    public Page<Feedback> findAllByClinicID(Pageable pageable, Integer clinicID, Account account, Integer rating) {
         List<Feedback> feedbacks = new ArrayList<>();
-        Clinic clinic = clinicService.findById(clinicID);
-        List<Booking> bookings = bookingService.findBookingByClinic(clinic);
-        if (!bookings.isEmpty()) {
-            if (account != null) {
-                switch (Role.valueOf(account.getRole().getName())) {
-                    case CUSTOMER_SERVICE:
-                        feedbacks = getAllBookingForCS(bookings, clinicID, account);
-                        break;
-                    case ADMIN:
-                        feedbacks = getAllByBookingForAdmin(bookings);
-                        break;
-                    default:
-                        feedbacks = getAllByBooking(bookings);
-                }
-            } else {
-                feedbacks = getAllByBooking(bookings);
+        feedbacks = feedbackRepository.findAllByStatus(Status.Feedback.ACTIVE.name());
+        if (account != null) {
+            switch (Role.valueOf(account.getRole().getName())) {
+                case CUSTOMER_SERVICE:
+                    CustomerService customerService = (CustomerService) account;
+                    List<Booking> bookings = bookingService.findBookingByClinic(customerService.getClinic());
+                    if (!bookings.isEmpty()) {
+                        feedbacks = getAllBookingForCS(bookings);
+                    }
+                    break;
+                case ADMIN:
+                    feedbacks = feedbackRepository.findAll();
+                    break;
             }
-            if (rating != null) {
-                feedbacks = feedbacks.stream()
-                        .filter(feedback -> feedback.getRatingScore() == rating)
-                        .collect(Collectors.toList());
-            }
+        }
+        if (clinicID != null) {
+            feedbacks = feedbacks.stream()
+                    .filter(feedback -> feedback.getBooking().getClinic().getId().compareTo(clinicID) == 0)
+                    .collect(Collectors.toList());
+        }
+        if (rating != null) {
+            feedbacks = feedbacks.stream()
+                    .filter(feedback -> feedback.getRatingScore() == rating)
+                    .collect(Collectors.toList());
         }
         return PaginationAndSortFactory.convertToPage(feedbacks, pageable);
 
@@ -117,7 +119,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     public Feedback saveFeedback(Feedback feedback) {
         Booking booking = feedback.getBooking();
         Feedback feedback1 = feedbackRepository.findByBookingId(booking.getId());
-        if (feedback1 != null){
+        if (feedback1 != null) {
             throw new ForbiddenException("You have submitted a feedback for this booking.");
         }
         feedback.setStatus(Status.Feedback.ACTIVE.name());
@@ -166,49 +168,23 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedback;
     }
 
-    public List<Feedback> getAllByBooking(List<Booking> bookings) {
+    public List<Feedback> getAllBookingForCS(List<Booking> bookings) {
         List<Feedback> feedbacks = new ArrayList<>();
         for (Booking booking : bookings) {
-            if (feedbackRepository.findByBookingIdAndStatus(booking.getId(), Status.Feedback.ACTIVE.name()) != null) {
-                feedbacks.add(feedbackRepository.findByBookingIdAndStatus(booking.getId(), Status.Feedback.ACTIVE.name()));
+            Feedback feedback = feedbackRepository.findByBookingId(booking.getId());
+            if (feedback != null) {
+                feedbacks.add(feedback);
             }
         }
         for (Feedback feedback : feedbacks) {
-            feedback.setReports(null);
-        }
-        return feedbacks;
-    }
-
-    public List<Feedback> getAllByBookingForAdmin(List<Booking> bookings) {
-        List<Feedback> feedbacks = new ArrayList<>();
-        for (Booking booking : bookings) {
-            if (feedbackRepository.findByBookingId(booking.getId()) != null) {
-                feedbacks.add(feedbackRepository.findByBookingId(booking.getId()));
-            }
-        }
-        for (Feedback feedback : feedbacks) {
-            feedback.setReports(null);
-        }
-        return feedbacks;
-    }
-
-    public List<Feedback> getAllBookingForCS(List<Booking> bookings, int clinicId, Account account) {
-        CustomerService customerService = (CustomerService) account;
-        List<Feedback> feedbacks = new ArrayList<>();
-        if (customerService.getClinic().getId() == clinicId) {
-            feedbacks = getAllByBookingForAdmin(bookings);
-            for (Feedback feedback : feedbacks) {
-                List<Report> reports = new ArrayList<>();
-                if (!reportService.findReportByFeedback(feedback).isEmpty()) {
-                    reports.add(reportService.findReportByFeedback(feedback).get(0));
-                    for (Report report : reports) {
-                        report.setFeedback(null);
-                    }
+            List<Report> reports = new ArrayList<>();
+            if (!reportService.findReportByFeedback(feedback).isEmpty()) {
+                reports.add(reportService.findReportByFeedback(feedback).get(0));
+                for (Report report : reports) {
+                    report.setFeedback(null);
                 }
-                feedback.setReports(reports);
             }
-        } else {
-            feedbacks = getAllByBooking(bookings);
+            feedback.setReports(reports);
         }
         return feedbacks;
     }

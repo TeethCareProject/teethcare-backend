@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FeedbackResponse {
     private int id;
+    private int bookingId;
     private String detail;
     private int ratingScore;
     private String status;

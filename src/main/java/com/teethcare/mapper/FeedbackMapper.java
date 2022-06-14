@@ -1,8 +1,6 @@
 package com.teethcare.mapper;
 
-import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Feedback;
-import com.teethcare.model.entity.Patient;
 import com.teethcare.model.entity.Report;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.model.request.ReportRequest;
@@ -22,6 +20,7 @@ public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
     @Mapping(source = "booking.patient", target = "patient")
+    @Mapping(source = "booking.id", target = "bookingId")
     FeedbackResponse mapFeedbackToFeedbackResponse(Feedback feedback);
 
     @InheritConfiguration(name = "mapReportToReportResponse")
@@ -38,11 +37,6 @@ public interface FeedbackMapper {
     @Mapping(source = "createdTime", target = "createdTime")
     @Mapping(source = "feedback", target = "feedbackResponse",  qualifiedByName = "mapFeedbackToFeedbackResponse")
     ReportResponse mapReportToReportResponse(Report report);
-
-/*    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "feedback", target = "feedbackResponse", qualifiedByName = "mapFeedbackToFeedbackResponse")
-    @Mapping(source = "createdTime", target = "createdTime")
-    List<ReportResponse> mapReportListToReportResponseList(List<Report> report);*/
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Report mapReportRequestToReport(ReportRequest reportRequest);

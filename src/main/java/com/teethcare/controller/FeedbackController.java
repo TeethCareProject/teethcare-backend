@@ -31,9 +31,9 @@ public class FeedbackController {
     private final JwtTokenUtil jwtTokenUtil;
     private final AccountService accountService;
 
-    @GetMapping("/{clinicID}")
+    @GetMapping()
     public ResponseEntity<Page<FeedbackByClinicResponse>> getAll(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
-                                                                 @PathVariable("clinicID") int clinicId,
+                                                                 @RequestParam(value = "clinicId", required = false) Integer clinicId,
                                                                  @RequestParam(name = "ratingScore", required = false) Integer ratingScore,
                                                                  @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                                  @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
@@ -66,9 +66,9 @@ public class FeedbackController {
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public ResponseEntity<FeedbackByClinicResponse> getById(@RequestHeader(value = "AUTHORIZATION", required = false) String token,
-                                                    @RequestParam(name = "id") int id) {
+                                                    @PathVariable(name = "id") int id) {
         Account account = null;
         if (token != null) {
             token = token.substring("Bearer ".length());
