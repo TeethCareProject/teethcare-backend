@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportResponse {
-    private int id;
+    private Integer id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private FeedbackResponse feedbackResponse;
     private String detail;

@@ -4,6 +4,7 @@ import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.ForbiddenException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ReportFilterRequest;
@@ -35,7 +36,10 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report findById(int id) {
-        Report report = reportRepository.getById(id);
+        Report report = reportRepository.findReportById(id);
+        if (report == null){
+            throw new NotFoundException("Report " + id +  " was not found.");
+        }
         return report;
     }
 
@@ -114,6 +118,19 @@ public class ReportServiceImpl implements ReportService {
         Report report = feedbackMapper.mapReportRequestToReport(request);
         report.setFeedback(feedback);
         save(report);
+        return report;
+    }
+
+    @Override
+    public Report findById(int id, Account account) {
+        Report report = findById(id);
+        if (account.getRole().getName().equals(Role.CUSTOMER_SERVICE.name())){
+            CustomerService customerService = (CustomerService) account;
+            Clinic clinic = customerService.getClinic();
+            if (report.getFeedback().getBooking().getClinic() != clinic){
+                throw new ForbiddenException("This report not belong to your clinic");
+            }
+        }
         return report;
     }
 }

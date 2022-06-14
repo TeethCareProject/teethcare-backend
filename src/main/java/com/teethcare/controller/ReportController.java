@@ -58,9 +58,14 @@ public class ReportController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
-    public ResponseEntity<ReportResponse> getById(@PathVariable("id") int id) {
-        Report report = reportService.findById(id);
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<ReportResponse> getById(@PathVariable("id") int id,
+                                                  @RequestHeader(value = AUTHORIZATION) String token) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        Account account = accountService.getAccountByUsername(username);
+
+        Report report = reportService.findById(id, account);
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

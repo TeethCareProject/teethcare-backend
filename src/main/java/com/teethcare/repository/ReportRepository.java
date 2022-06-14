@@ -14,4 +14,6 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
     List<Report> findAllByStatus(Pageable pageable, String status);
     List<Report> findAll();
     List<Report> findReportByFeedback(Feedback feedback);
+
+    Report findReportById(int id);
 }

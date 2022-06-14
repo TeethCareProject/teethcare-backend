@@ -41,6 +41,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Feedback findById(int id) {
         Feedback feedback = feedbackRepository.findFeedbackById(id);
+        if (feedback == null){
+            throw new NotFoundException("Feedback " + id + " was not found.");
+        }
         return feedback;
     }
 

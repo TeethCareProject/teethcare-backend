@@ -15,6 +15,7 @@ public interface ReportService extends CRUDService<Report> {
     Page<Report> findByStatus(Pageable pageable, ReportFilterRequest request, Account account);
     Report evaluate(int id, String status);
     List<Report> findReportByFeedback(Feedback feedback);
-
     Report add(ReportRequest request, Account account, Feedback feedback);
+
+    Report findById(int id, Account account);
 }
