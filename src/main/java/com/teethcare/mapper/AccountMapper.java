@@ -10,11 +10,12 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+        config = ConfigurationMapper.class)
 public interface AccountMapper {
     @Mapping(source = "role.id", target = "roleId")
     @Mapping(source = "role.name", target = "roleName")
-    @Mapping(source = "dateOfBirth", target = "dateOfBirth", dateFormat = "dd/MM/yyyy")
+    @Mapping(source = "dateOfBirth", target = "dateOfBirth")
     AccountResponse mapAccountToAccountResponse(Account account);
 
     @InheritConfiguration(name = "mapAccountToAccountResponse")
