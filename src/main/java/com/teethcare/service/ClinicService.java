@@ -24,6 +24,6 @@ public interface ClinicService extends CRUDService<Clinic> {
 
     void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location);
 
-    Clinic updateProfile (ClinicRequest clinicRequest, String username);
+    Clinic updateProfile(ClinicRequest clinicRequest, String username);
 
 }

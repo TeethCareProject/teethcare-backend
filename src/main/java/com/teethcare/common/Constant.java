@@ -18,5 +18,6 @@ public class Constant {
 
     public static class PASSWORD {
         public static final int DEFAULT_LENGTH = 6;
+        public static final int DEFAULT_FORGOT_PASSWORD_KEY_LENGTH = 32;
     }
 }

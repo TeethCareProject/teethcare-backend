@@ -2,7 +2,6 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.NotFoundException;
@@ -15,7 +14,6 @@ import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
-import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -83,7 +81,7 @@ public class ClinicController {
     @PutMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<ClinicResponse> update(@Valid @RequestBody ClinicRequest clinicRequest,
-                                                  @RequestHeader(value = AUTHORIZATION) String token) {
+                                                 @RequestHeader(value = AUTHORIZATION) String token) {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
         Clinic clinic = clinicService.updateProfile(clinicRequest, username);
