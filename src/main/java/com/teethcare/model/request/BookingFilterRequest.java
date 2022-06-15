@@ -16,6 +16,7 @@ public class BookingFilterRequest {
     Integer dentistId;
     String clinicName;
     String status;
+    Boolean isConfirmed;
 
     public Predicate<Booking> getPredicate() {
         Predicate<Booking> predicate = booking -> true;
@@ -26,6 +27,10 @@ public class BookingFilterRequest {
 
         if (status != null) {
             predicate = predicate.and(booking -> getStatus().equalsIgnoreCase(booking.getStatus()));
+        }
+
+        if (isConfirmed != null) {
+            predicate = predicate.and(booking -> getIsConfirmed() == booking.isConfirmed());
         }
 
         if (patientName != null) {
