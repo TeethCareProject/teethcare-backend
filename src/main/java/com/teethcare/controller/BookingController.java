@@ -208,8 +208,8 @@ public class BookingController {
             NotificationMsgRequest confirmNotification =
                     NotificationMsgRequest.builder()
                             .accountId(dentistId)
-                            .title(NotificationType.CONFIRM_BOOKING.name())
-                            .body(NotificationMessage.CONFIRM_BOOKING + bookingId)
+                            .title(NotificationType.CONFIRM_BOOKING_SUCCESS.name())
+                            .body(NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId)
                             .build();
             try {
                 firebaseMessagingService.sendNotification(confirmNotification);
@@ -218,6 +218,17 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
+            NotificationMsgRequest confirmNotification =
+                    NotificationMsgRequest.builder()
+                            .accountId(dentistId)
+                            .title(NotificationType.CONFIRM_BOOKING_FAIL.name())
+                            .body(NotificationMessage.CONFIRM_BOOKING_FAIL + bookingId)
+                            .build();
+            try {
+                firebaseMessagingService.sendNotification(confirmNotification);
+            } catch (FirebaseMessagingException e) {
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+            }
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
         }
     }
