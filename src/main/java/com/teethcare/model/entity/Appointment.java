@@ -58,7 +58,7 @@ public class Appointment {
     @Column(name = "expire_appointment_date")
     private Timestamp expireAppointmentDate;
 
-    @Column(name = "status")
+    @Column(name = "appointment_status")
     private String status;
 
     @ManyToOne
