@@ -27,6 +27,7 @@ public class BookingResponse {
     private String description;
     private boolean isRequestChanged;
     private int version;
+    private boolean isConfirmed;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ServiceOfClinicResponse> services;
     private ClinicSimpleResponse clinic;

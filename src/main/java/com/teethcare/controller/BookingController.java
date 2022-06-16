@@ -161,6 +161,7 @@ public class BookingController {
 
         Booking booking = bookingService.findBookingById(bookingId);
         int patientId = booking.getPatient().getId();
+        int dentistId = booking.getDentist().getId();
         String status = booking.getStatus();
 
         if (Status.Booking.valueOf(status) == Status.Booking.TREATMENT) {
@@ -200,7 +201,21 @@ public class BookingController {
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<MessageResponse> confirmFinalBooking(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
         boolean isUpdated = bookingService.confirmFinalBooking(bookingUpdateRequest);
+        int bookingId = bookingUpdateRequest.getBookingId();
+        Booking booking = bookingService.findBookingById(bookingId);
+        int dentistId = booking.getDentist().getId();
         if (isUpdated) {
+            NotificationMsgRequest confirmNotification =
+                    NotificationMsgRequest.builder()
+                            .accountId(dentistId)
+                            .title(NotificationType.CONFIRM_BOOKING.name())
+                            .body(NotificationMessage.CONFIRM_BOOKING + bookingId)
+                            .build();
+            try {
+                firebaseMessagingService.sendNotification(confirmNotification);
+            } catch (FirebaseMessagingException e) {
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+            }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
