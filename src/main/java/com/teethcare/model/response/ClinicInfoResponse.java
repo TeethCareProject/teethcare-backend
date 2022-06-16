@@ -18,4 +18,8 @@ public class ClinicInfoResponse {
     private String taxCode;
     private float avgRatingScore;
     private String status;
+    private Long startTimeShift1;
+    private Long endTimeShift1;
+    private Long startTimeShift2;
+    private Long endTimeShift2;
 }
