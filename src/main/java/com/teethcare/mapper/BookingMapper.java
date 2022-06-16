@@ -1,5 +1,6 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.request.BookingRequest;
@@ -12,7 +13,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {ServiceOfClinicMapper.class, AccountMapper.class,
-        UserInforMapper.class, ClinicMapper.class})
+        UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)
@@ -42,7 +43,7 @@ public interface BookingMapper {
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",
             qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
-    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapDentistToUserInforResponse")
     @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
     @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
@@ -53,12 +54,14 @@ public interface BookingMapper {
 
     @Named(value = "mapBookingToBookingResponseWithoutService")
     @Mapping(source = "services", target = "services", ignore = true)
-    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapDentistToUserInforResponse")
     @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     BookingResponse mapBookingToBookingResponseWithoutService(Booking booking);
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponseWithoutService")
     List<BookingResponse> mapBookingListToBookingResponseListWithoutService(List<Booking> bookingList);
+
+//    BookingConfirmationDTO mapBookingToBookingConfirmationDTO(Booking booking);
 
     @Named(value = "mapBookingToAppointmentResponse")
     @Mapping(source = "services", target = "services",

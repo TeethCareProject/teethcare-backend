@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -52,12 +54,6 @@ public class Booking {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "appointment_date")
-    private Timestamp appointmentDate;
-
-    @Column(name = "expire_appointment_date")
-    private Timestamp expireAppointmentDate;
-
     @Column(name = "status")
     private String status;
 
@@ -71,6 +67,15 @@ public class Booking {
 
     @Column(name = "desired_checking_time")
     private Timestamp desiredCheckingTime;
+
+    @Column(name = "is_confirmed")
+    private boolean isConfirmed;
+
+    @Column(name = "is_request_changed")
+    private boolean isRequestChanged;
+
+    @Column(name = "version")
+    private int version;
 
     @ManyToOne
     @JoinColumn(name = "clinic_id", referencedColumnName = "id")

@@ -7,9 +7,9 @@ public interface CRUDService<T> {
 
     T findById(int id);
 
-    void save(T theEntity);
+    void save(T entity);
 
-    void delete(int theId);
+    void delete(int id);
 
-    void update(T theEntity);
+    void update(T entity);
 }

@@ -14,6 +14,7 @@ public class Constant {
     public static class EMAIL {
         public static final String SENDER_EMAIL = "service.teethcare@gmail.com";
         public static final String SENDER_PASSWORD = "ptmbozrgnkgexitx";
+        public static final String BOOKING_DETAIL_CONFIRM = "http://localhost:3000/";
     }
 
     public static class PASSWORD {
