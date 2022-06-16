@@ -1,12 +1,12 @@
 package com.teethcare.service;
 
+import com.teethcare.exception.BadRequestException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -42,6 +42,15 @@ public interface FileService {
             throw e;
         } finally {
             baos.close();
+        }
+    }
+
+    default String uploadFile(MultipartFile file) {
+        try {
+            String fileName = save(file);
+            return getImageUrl(fileName);
+        } catch (Exception e) {
+            throw new BadRequestException("File Update Failed");
         }
     }
 }
