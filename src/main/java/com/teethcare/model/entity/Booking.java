@@ -25,16 +25,15 @@ public class Booking {
     @Column(name = "id")
     private int id;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "preBooking")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "preBooking")
     @JsonBackReference
-    private Booking mappedPreBooking;
+    private List<Booking> mappedPreBooking;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pre_booking_id", referencedColumnName = "id")
     @JsonManagedReference
     private Booking preBooking;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
