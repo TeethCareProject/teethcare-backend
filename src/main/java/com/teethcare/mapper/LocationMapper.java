@@ -12,7 +12,8 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+        config = ConfigurationMapper.class)
 public interface LocationMapper {
     @Mapping(source = "districts", target = "districtList")
     @InheritConfiguration(name = "mapDistrictToDistrictResponse")
