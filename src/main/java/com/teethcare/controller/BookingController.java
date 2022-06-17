@@ -129,6 +129,7 @@ public class BookingController {
             isSuccess = bookingService.firstlyUpdated(bookingUpdateRequest, isAllDeleted);
 
             if (!isSuccess) {
+                System.out.println("Update progress fail");
                 return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
             }
             try {
@@ -141,6 +142,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
+            System.out.println("Wrong status");
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
         }
     }

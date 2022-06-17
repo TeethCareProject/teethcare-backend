@@ -30,7 +30,6 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final FCMTokenStoreRepository fcmTokenStoreRepository;
-    private final FirebaseMessagingService firebaseMessagingService;
     private final AccountService accountService;
     private final NotificationStoreService notificationStoreService;
     private final BookingService bookingService;
@@ -99,19 +98,6 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         this.sendNotification(notificationMsgRequest);
     }
 
-    public void sendNotificationToDentistByBookingId(int bookingId, String title, String body) throws FirebaseMessagingException {
-        Booking booking = bookingService.findBookingById(bookingId);
-        int dentistId = booking.getDentist().getId();
-        NotificationMsgRequest confirmNotification =
-                NotificationMsgRequest.builder()
-                        .accountId(dentistId)
-                        .title(title)
-                        .body(body)
-                        .build();
-
-        firebaseMessagingService.sendNotification(confirmNotification);
-    }
-
     public void sendNotification(int bookingId, String title, String body, String role)
             throws FirebaseMessagingException, BadAttributeValueExpException {
         Booking booking = bookingService.findBookingById(bookingId);
@@ -134,6 +120,6 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
                         .body(body)
                         .build();
 
-        sendNotification(confirmNotification);
+        this.sendNotification(confirmNotification);
     }
 }

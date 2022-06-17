@@ -34,5 +34,3 @@ build/
 
 ### FIREBASE JSON ###
 *.json
-
-*.properties

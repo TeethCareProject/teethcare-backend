@@ -51,8 +51,6 @@ public class BookingServiceImpl implements BookingService {
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
-//    public FirebaseMessagingService firebaseMessagingService;
-
 
     @Override
     public List<Booking> findAll() {
