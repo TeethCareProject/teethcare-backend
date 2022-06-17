@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,13 +88,6 @@ public class BookingServiceImpl implements BookingService {
         //get millisecond
         long millisecond = bookingRequest.getDesiredCheckingTime();
 
-        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (desiredCheckingTime.compareTo(now) < 0) {
-            throw new BadRequestException("Desired checking time invalid");
-        }
-        bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
-
         //set service to booking
         int serviceID = bookingRequest.getServiceId();
         ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
@@ -104,6 +98,14 @@ public class BookingServiceImpl implements BookingService {
         //set clinic to booking
         Clinic clinic = service.getClinic();
         bookingTmp.setClinic(clinic);
+
+        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+//        Time startTimeShift1 = clinic.getS
+        if (desiredCheckingTime.compareTo(now) < 0) {
+            throw new BadRequestException("Desired checking time invalid");
+        }
+        bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
 
         //set patient to booking
         Patient patient = patientService.findById(account.getId());

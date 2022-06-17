@@ -1,15 +1,13 @@
 package com.teethcare.service.impl.notification;
 
+import com.google.firebase.ErrorCode;
 import com.google.firebase.messaging.*;
 import com.teethcare.common.NotificationTemplate;
 import com.teethcare.common.NotificationType;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.FCMTokenStore;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.repository.FCMTokenStoreRepository;
 import com.teethcare.service.AccountService;
@@ -18,7 +16,9 @@ import com.teethcare.service.FirebaseMessagingService;
 import com.teethcare.service.NotificationStoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.MethodNotAllowedException;
 
+import javax.management.BadAttributeValueExpException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +30,7 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final FCMTokenStoreRepository fcmTokenStoreRepository;
+    private final FirebaseMessagingService firebaseMessagingService;
     private final AccountService accountService;
     private final NotificationStoreService notificationStoreService;
     private final BookingService bookingService;
@@ -96,5 +97,43 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
         notificationMsgRequest.setAccountId(customerService.getId());
         notificationMsgRequest.setBody(String.valueOf(bookingId));
         this.sendNotification(notificationMsgRequest);
+    }
+
+    public void sendNotificationToDentistByBookingId(int bookingId, String title, String body) throws FirebaseMessagingException {
+        Booking booking = bookingService.findBookingById(bookingId);
+        int dentistId = booking.getDentist().getId();
+        NotificationMsgRequest confirmNotification =
+                NotificationMsgRequest.builder()
+                        .accountId(dentistId)
+                        .title(title)
+                        .body(body)
+                        .build();
+
+        firebaseMessagingService.sendNotification(confirmNotification);
+    }
+
+    public void sendNotification(int bookingId, String title, String body, String role)
+            throws FirebaseMessagingException, BadAttributeValueExpException {
+        Booking booking = bookingService.findBookingById(bookingId);
+        int accountId;
+        switch (com.teethcare.common.Role.valueOf(role)) {
+            case PATIENT:
+                accountId = booking.getPatient().getId();
+                break;
+            case DENTIST:
+                accountId = booking.getDentist().getId();
+                break;
+            default:
+                throw new BadAttributeValueExpException(role);
+        }
+
+        NotificationMsgRequest confirmNotification =
+                NotificationMsgRequest.builder()
+                        .accountId(accountId)
+                        .title(title)
+                        .body(body)
+                        .build();
+
+        sendNotification(confirmNotification);
     }
 }

@@ -7,10 +7,7 @@ import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.DentistResponse;
 import com.teethcare.model.response.PatientResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -20,6 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class BookingConfirmationDTO {
     private String firstname;
     private String lastname;

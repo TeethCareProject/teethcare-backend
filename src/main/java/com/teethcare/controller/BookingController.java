@@ -27,6 +27,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
 
 import static com.teethcare.common.Constant.EMAIL.BOOKING_DETAIL_CONFIRM;
@@ -115,7 +116,7 @@ public class BookingController {
     @PutMapping("/first-update")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
-                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) throws FirebaseMessagingException {
+                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
         boolean isSuccess = false;
 
         int bookingId = bookingUpdateRequest.getBookingId();
@@ -130,21 +131,14 @@ public class BookingController {
             if (!isSuccess) {
                 return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
             }
-
-            NotificationMsgRequest update1stNotificationPatient =
-                    NotificationMsgRequest.builder()
-                            .accountId(patientId)
-                            .title(NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name())
-                            .body(NotificationMessage.UPDATE_1ST_MESSAGE + bookingId)
-                            .build();
-            firebaseMessagingService.sendNotification(update1stNotificationPatient);
-
-            int dentistId = booking.getDentist().getId();
-            System.out.println(dentistId);
-            NotificationMsgRequest update1stNotificationDentist =
-                    update1stNotificationPatient.toBuilder().accountId(dentistId).build();
-
-            firebaseMessagingService.sendNotification(update1stNotificationDentist);
+            try {
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name(),
+                        NotificationMessage.UPDATE_1ST_MESSAGE + bookingId, Role.PATIENT.name());
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.UPDATE_BOOKING_1ST_NOTIFICATION.name(),
+                        NotificationMessage.UPDATE_1ST_MESSAGE + bookingId, Role.DENTIST.name());
+            } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+            }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
@@ -154,7 +148,7 @@ public class BookingController {
     @PutMapping("/second-update")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
     public ResponseEntity<MessageResponse> secondlyUpdated(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
-                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) throws FirebaseMessagingException {
+                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
         boolean isSuccess = false;
 
         int bookingId = bookingUpdateRequest.getBookingId();
@@ -171,23 +165,12 @@ public class BookingController {
                 return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
             }
 
-            NotificationMsgRequest update2rdNotification =
-                    NotificationMsgRequest.builder()
-                            .accountId(patientId)
-                            .title(NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name())
-                            .body(NotificationMessage.UPDATE_2RD_MESSAGE + bookingId)
-                            .build();
-            firebaseMessagingService.sendNotification(update2rdNotification);
-
-            BookingConfirmationDTO bookingConfirmationDTO = new BookingConfirmationDTO();
-            bookingConfirmationDTO.setFirstname(booking.getPatient().getFirstName());
-            bookingConfirmationDTO.setLastname(booking.getPatient().getLastName());
-            bookingConfirmationDTO.setEmail(booking.getPatient().getEmail());
-            bookingConfirmationDTO.setBookingId(bookingId);
-            bookingConfirmationDTO.setFwdLink(BOOKING_DETAIL_CONFIRM + booking.getId());
-
             try {
-                emailService.sendBookingConfirmEmail(bookingConfirmationDTO);
+                firebaseMessagingService.sendNotification(bookingId,NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name(),
+                        NotificationMessage.UPDATE_2RD_MESSAGE + bookingId, Role.PATIENT.name());
+                emailService.sendBookingConfirmEmail(booking);
+            } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
             } catch (MessagingException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SENDMAIL.name()), HttpStatus.OK);
             }
@@ -203,30 +186,20 @@ public class BookingController {
         boolean isUpdated = bookingService.confirmFinalBooking(bookingUpdateRequest);
         int bookingId = bookingUpdateRequest.getBookingId();
         Booking booking = bookingService.findBookingById(bookingId);
-        int dentistId = booking.getDentist().getId();
         if (isUpdated) {
-            NotificationMsgRequest confirmNotification =
-                    NotificationMsgRequest.builder()
-                            .accountId(dentistId)
-                            .title(NotificationType.CONFIRM_BOOKING_SUCCESS.name())
-                            .body(NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId)
-                            .build();
             try {
-                firebaseMessagingService.sendNotification(confirmNotification);
-            } catch (FirebaseMessagingException e) {
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
+                                                        NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
+            } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            NotificationMsgRequest confirmNotification =
-                    NotificationMsgRequest.builder()
-                            .accountId(dentistId)
-                            .title(NotificationType.CONFIRM_BOOKING_FAIL.name())
-                            .body(NotificationMessage.CONFIRM_BOOKING_FAIL + bookingId)
-                            .build();
             try {
-                firebaseMessagingService.sendNotification(confirmNotification);
-            } catch (FirebaseMessagingException e) {
+//                int bookingId, String title, String body, String role
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_FAIL.name(),
+                                                            NotificationMessage.CONFIRM_BOOKING_FAIL + bookingId, Role.DENTIST.name());
+            } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
             }
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
