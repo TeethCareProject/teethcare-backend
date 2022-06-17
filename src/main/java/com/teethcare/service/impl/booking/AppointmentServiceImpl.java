@@ -98,24 +98,24 @@ public class AppointmentServiceImpl implements AppointmentService {
                 Manager manager = managerService.findById(account.getId());
                 Clinic clinic = clinicService.getClinicByManager(manager);
                 appointments = appointmentRepository.findAllByStatusInAndClinicId(Status.Appointment.getNames(), clinic.getId(), pageable.getSort());
-                appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
+                appointments = appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
             case CUSTOMER_SERVICE:
                 CustomerService customerService = csService.findById(account.getId());
                 appointments = appointmentRepository.findAllByStatusInAndClinicId(Status.Appointment.getNames(), customerService.getClinic().getId(), pageable.getSort());
-                appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
+                appointments = appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
             case DENTIST:
                 Dentist dentist = dentistService.findById(account.getId());
                 appointments = appointmentRepository.findAllByStatusInAndClinicId(Status.Appointment.getNames(), dentist.getClinic().getId(), pageable.getSort());
-                appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
+                appointments = appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
             case PATIENT:
                 appointments = appointmentRepository.findAllByStatusInAndPatientId(Status.Appointment.getNames(), account.getId(), pageable.getSort());
-                appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
+                appointments = appointments.stream().filter(appointmentFilterRequest.getPredicate()).collect(Collectors.toList());
                 break;
 
             default:

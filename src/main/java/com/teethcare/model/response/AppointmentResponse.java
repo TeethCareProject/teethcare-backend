@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class AppointmentResponse {
     private int id;
+    private BookingResponse preBooking;
     private PatientResponse patient;
     private BigDecimal totalPrice;
     private String note ;
