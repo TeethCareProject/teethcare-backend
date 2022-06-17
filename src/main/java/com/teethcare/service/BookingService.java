@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 
 public interface BookingService extends CRUDService<Booking> {
-    List<Booking> findAllByCustomerService(CustomerService customerService);
 
     Booking findBookingById(int id);
 
@@ -26,7 +25,6 @@ public interface BookingService extends CRUDService<Booking> {
 
     void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
     boolean confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest);
-    boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException;
     boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
     boolean firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
 

@@ -15,7 +15,7 @@ public class ConfigurationMapping {
 
     }
 
-    static Long mapDateTimeToLong(Date date) {
+    static Long mapDateTimeToLong(Timestamp date) {
         if (date != null) {
             return date.getTime();
         } else {

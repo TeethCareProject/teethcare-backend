@@ -33,6 +33,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking saveBooking(BookingRequest bookingRequest, Account account) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
         //get millisecond
-        long millisecond = bookingRequest.getDesiredCheckingTime();
+
 
         //set service to booking
         int serviceID = bookingRequest.getServiceId();
@@ -97,11 +98,25 @@ public class BookingServiceImpl implements BookingService {
         Clinic clinic = service.getClinic();
         bookingTmp.setClinic(clinic);
 
+        long millisecond = bookingRequest.getDesiredCheckingTime();
         Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
+        System.out.println(desiredCheckingTime.toString());
         Timestamp now = new Timestamp(System.currentTimeMillis());
 //        Time startTimeShift1 = clinic.getS
         if (desiredCheckingTime.compareTo(now) < 0) {
             throw new BadRequestException("Desired checking time invalid");
+        }
+
+        LocalTime checkedTime = desiredCheckingTime.toLocalDateTime().toLocalTime();
+        LocalTime startTimeShift1 = clinic.getStartTimeShift1().toLocalTime();
+        LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
+        LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
+        LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
+        boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
+                                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
+
+        if (isValidWorkTime) {
+            throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
 

@@ -33,7 +33,7 @@ public interface BookingMapper {
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",
             qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
-    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapAccountToUserInforResponse")
+    @Mapping(source = "dentist", target = "dentist", qualifiedByName = "mapDentistToUserInforResponse")
     @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
     @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")

@@ -71,9 +71,6 @@ public class Booking {
     @Column(name = "desired_checking_time")
     private Timestamp desiredCheckingTime;
 
-    @Column(name = "is_confirmed")
-    private boolean isConfirmed;
-
     @Column(name = "version")
     private int version;
 
