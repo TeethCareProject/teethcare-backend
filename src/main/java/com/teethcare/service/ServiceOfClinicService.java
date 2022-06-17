@@ -15,5 +15,4 @@ public interface ServiceOfClinicService extends CRUDService<ServiceOfClinic> {
     Page<ServiceOfClinic> findAllWithFilter(ServiceFilterRequest serviceFilterRequest, Pageable pageable, Account account);
 
     List<ServiceOfClinic> findAllByRole(Account account, Pageable pageable);
-
 }

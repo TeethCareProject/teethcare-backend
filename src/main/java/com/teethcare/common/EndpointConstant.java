@@ -85,4 +85,9 @@ public final class EndpointConstant {
     public static final class Email {
         public static final String EMAIL_ENDPOINT = ROOT_ENDPOINT + "/emails";
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class Appointment {
+        public static final String APPOINTMENT_ENDPOINT = ROOT_ENDPOINT + "/appointments";
+    }
 }

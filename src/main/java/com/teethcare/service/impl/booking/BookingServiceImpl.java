@@ -16,6 +16,7 @@ import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.*;
+import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.BookingService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.ServiceOfClinicService;
@@ -48,6 +49,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
+    private final ServiceRepository serviceRepository;
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;

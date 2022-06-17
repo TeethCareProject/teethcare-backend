@@ -1,8 +1,10 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.dto.BookingConfirmationDTO;
+import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.request.BookingRequest;
+import com.teethcare.model.response.AppointmentResponse;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import org.mapstruct.*;
@@ -53,4 +55,15 @@ public interface BookingMapper {
     List<BookingResponse> mapBookingListToBookingResponseListWithoutService(List<Booking> bookingList);
 
 //    BookingConfirmationDTO mapBookingToBookingConfirmationDTO(Booking booking);
+
+    @Named(value = "mapBookingToAppointmentResponse")
+    @Mapping(source = "services", target = "services",
+            qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
+    @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
+    @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
+    @Mapping(source = "preBooking", target = "preBooking", qualifiedByName = "mapBookingToBookingResponse")
+    AppointmentResponse mapAppointmentToAppointmentResponse(Appointment appointment);
+
+    @IterableMapping(qualifiedByName = "mapBookingToAppointmentResponse")
+    List<AppointmentResponse> mapAppointmentListToAppointmentResponseList(List<Appointment> bookingList);
 }
