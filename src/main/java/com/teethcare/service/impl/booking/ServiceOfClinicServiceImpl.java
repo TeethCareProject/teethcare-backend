@@ -12,12 +12,14 @@ import com.teethcare.model.request.ServiceRequest;
 import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.CSService;
+import com.teethcare.service.FileService;
 import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -31,6 +33,7 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     private final CSService csService;
     private final AccountService accountService;
     private final ServiceOfClinicMapper serviceOfClinicMapper;
+    private final FileService fileService;
 
     @Override
     public List<ServiceOfClinic> findAll() {
@@ -102,6 +105,15 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
         save(service);
     }
 
+    @Override
+    public void updateImage(int serviceId, MultipartFile image, String username) {
+        CustomerService customerService = (CustomerService) accountService.getAccountByUsername(username);
+        Clinic clinic = customerService.getClinic();
+        ServiceOfClinic service = serviceRepository.findServiceOfClinicByIdAndClinic(serviceId, clinic);
+        service.setImageUrl(fileService.uploadFile(image));
+        update(service);
+    }
+
 
     @Override
     public void save(ServiceOfClinic theEntity) {
@@ -118,8 +130,6 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
 
     @Override
     public void update(ServiceOfClinic theEntity) {
-
+        serviceRepository.save(theEntity);
     }
-
-
 }
