@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,5 +36,12 @@ public class ConvertUtils {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String formatted = format.format(date);
         return date;
+    }
+
+    public static Time convertToTime(long milliseconds) {
+        Time time = new Time(milliseconds);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        String formatted = format.format(time);
+        return Time.valueOf(formatted);
     }
 }

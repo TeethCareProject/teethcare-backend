@@ -13,4 +13,6 @@ public interface ServiceRepository extends JpaRepository<ServiceOfClinic, Intege
     List<ServiceOfClinic> findAllByStatus(Pageable pageable, String status);
 
     ServiceOfClinic findByIdAndStatus(int id, String status);
+
+    ServiceOfClinic findServiceOfClinicById(int id);
 }

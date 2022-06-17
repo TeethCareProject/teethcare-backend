@@ -194,7 +194,29 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException {
+    public boolean updateStatus(int bookingId) {
+        Booking booking = bookingRepository.findBookingById(bookingId);
+        String status = booking.getStatus();
+        switch (Status.Booking.valueOf(status)) {
+            case REQUEST:
+                if (booking.getExaminationTime() == null || booking.getDentist() == null
+                        || booking.getCustomerService() == null || booking.getServices() == null) {
+                    return false;
+                }
+                booking.setStatus(Status.Booking.TREATMENT.name());
+                break;
+            case TREATMENT:
+                if (booking.getExaminationTime() == null || booking.getDentist() == null
+                        || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
+                        || !booking.isConfirmed()) {
+                    return false;
+                }
+                booking.setStatus(Status.Booking.DONE.name());
+                break;
+            default:
+                return false;
+        }
+        bookingRepository.save(booking);
         return true;
     }
 

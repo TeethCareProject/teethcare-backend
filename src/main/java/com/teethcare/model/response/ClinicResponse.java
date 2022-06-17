@@ -21,5 +21,9 @@ public class ClinicResponse {
     private LocationResponse location;
     private AccountResponse manager;
     private String status;
+    private Long startTimeShift1;
+    private Long endTimeShift1;
+    private Long startTimeShift2;
+    private Long endTimeShift2;
     private List<ServiceOfClinicResponse> serviceOfClinicResponses;
 }
