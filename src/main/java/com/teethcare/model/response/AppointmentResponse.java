@@ -1,5 +1,6 @@
 package com.teethcare.model.response;
 
+import com.teethcare.model.entity.Booking;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Setter
 public class AppointmentResponse {
     private int id;
+    private BookingResponse preBooking;
     private PatientResponse patient;
     private BigDecimal totalPrice;
     private String note ;

@@ -18,8 +18,7 @@ public class AppointmentFilterRequest {
     public Predicate<Appointment> getPredicate() {
         Predicate<Appointment> predicate = appointment -> true;
         if (appointmentId != null) {
-            predicate = predicate.and(appointment -> Integer.toString(appointment.getId()).
-                    contains(Integer.toString(appointmentId)));
+            predicate = predicate.and(appointment -> StringUtils.containsIgnoreCase(String.valueOf(appointment.getId()) , appointmentId.toString()));
         }
 
         if (patientName != null) {
