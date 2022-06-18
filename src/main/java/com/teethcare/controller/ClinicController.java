@@ -16,23 +16,23 @@ import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.model.response.MessageResponse;
-import com.teethcare.service.CSService;
-import com.teethcare.service.ClinicService;
-import com.teethcare.service.DentistService;
-import com.teethcare.utils.PaginationAndSortFactory;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.*;
+import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @RestController
@@ -80,19 +80,16 @@ public class ClinicController {
 
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<MessageResponse> update(@Valid @RequestBody ClinicRequest clinicRequest, @PathVariable int id) {
-        clinicRequest.setId(id);
-
-        Clinic clinic = clinicService.findById(id);
-
-        clinicMapper.mapClinicRequestToClinic(clinicRequest);
-
-        clinicService.update(clinic);
-        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    @PutMapping
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
+    public ResponseEntity<ClinicResponse> update(@Valid @RequestBody ClinicRequest clinicRequest,
+                                                  @RequestHeader(value = AUTHORIZATION) String token) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        Clinic clinic = clinicService.updateProfile(clinicRequest, username);
+        ClinicResponse response = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
 
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable int id) {
@@ -145,6 +142,4 @@ public class ClinicController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
 
     }
-
-
 }

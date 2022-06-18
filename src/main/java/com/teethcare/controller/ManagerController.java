@@ -12,7 +12,6 @@ import com.teethcare.model.response.ClinicInfoResponse;
 import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.*;
-import com.teethcare.utils.ConvertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

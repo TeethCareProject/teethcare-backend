@@ -46,6 +46,7 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 
     }
+
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(EntityNotFoundException ex) {
         List<String> errors = new ArrayList();
@@ -91,6 +92,7 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(customErrorResponse, HttpStatus.BAD_REQUEST);
 
     }
+
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(DataIntegrityViolationException ex) {
         List<String> errors = new ArrayList();
@@ -104,6 +106,7 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
+
     @ExceptionHandler
     public ResponseEntity<CustomErrorResponse> handleException(TypeMismatchException ex) {
         List<String> errors = new ArrayList();

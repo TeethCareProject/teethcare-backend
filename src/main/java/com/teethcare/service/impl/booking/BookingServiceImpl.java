@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
 
         Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (desiredCheckingTime.compareTo(now) < 0){
+        if (desiredCheckingTime.compareTo(now) < 0) {
             throw new BadRequestException("Desired checking time invalid");
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
@@ -91,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
         bookingTmp.setPatient(patient);
         bookingTmp.setStatus(Status.Booking.PENDING.name());
 
-        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null){
+        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null) {
             return bookingRepository.save(bookingTmp);
         }
         return null;
@@ -117,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
-                for(Booking booking: bookingListForCustomerService) {
+                for (Booking booking : bookingListForCustomerService) {
                     System.out.println(booking.getId());
                 }
 
@@ -129,7 +129,7 @@ public class BookingServiceImpl implements BookingService {
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
                 bookingPage = bookingRepository.findBookingByDentistId(accountId, pageable);
                 break;
@@ -157,6 +157,33 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> findBookingByClinic(Clinic clinic) {
         return bookingRepository.findBookingByClinic(clinic);
+
+    @Transactional
+    public boolean updateStatus(int bookingId) {
+        Booking booking = bookingRepository.findBookingById(bookingId);
+        String status = booking.getStatus();
+        switch (Status.Booking.valueOf(status)) {
+            case REQUEST:
+                if (booking.getExaminationTime() == null || booking.getDentist() == null
+                        || booking.getCustomerService() == null || booking.getServices() == null) {
+                    return false;
+                }
+                booking.setStatus(Status.Booking.TREATMENT.name());
+                break;
+            case TREATMENT:
+                if (booking.getExaminationTime() == null || booking.getDentist() == null
+                        || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
+                        || !booking.isConfirmed()) {
+                    return false;
+                }
+                booking.setStatus(Status.Booking.DONE.name());
+                break;
+            default:
+                return false;
+        }
+        bookingRepository.save(booking);
+        return true;
+
     }
 
     @Override

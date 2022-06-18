@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.util.List;
 
 
@@ -48,6 +49,18 @@ public class Clinic {
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "start_time_shift_1")
+    private Time startTimeShift1;
+
+    @Column(name = "end_time_shift_1")
+    private Time endTimeShift1;
+
+    @Column(name = "start_time_shift_2")
+    private Time startTimeShift2;
+
+    @Column(name = "end_time_shift_2")
+    private Time endTimeShift2;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")

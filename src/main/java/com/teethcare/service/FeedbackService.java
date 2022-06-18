@@ -1,7 +1,6 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Feedback;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.model.response.FeedbackByClinicResponse;

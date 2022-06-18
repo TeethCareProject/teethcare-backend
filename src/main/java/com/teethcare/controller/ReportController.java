@@ -58,6 +58,7 @@ public class ReportController {
     }
 
     @GetMapping("/{id}")
+
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<ReportResponse> getById(@PathVariable("id") int id,
                                                   @RequestHeader(value = AUTHORIZATION) String token) {
@@ -66,11 +67,13 @@ public class ReportController {
         Account account = accountService.getAccountByUsername(username);
 
         Report report = reportService.findById(id, account);
+
         ReportResponse response = feedbackMapper.mapReportToReportResponse(report);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping
+
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<ReportResponse> add(@RequestHeader(value = AUTHORIZATION) String token,
                                               @Valid @RequestBody ReportRequest reportRequest) {

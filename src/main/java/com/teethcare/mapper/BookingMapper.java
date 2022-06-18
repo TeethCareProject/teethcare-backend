@@ -1,22 +1,22 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
-import com.teethcare.model.response.PatientResponse;
 import org.mapstruct.*;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ServiceOfClinicMapper.class, AccountMapper.class,
-                                            UserInforMapper.class, ClinicMapper.class})
+@Mapper(componentModel = "spring",
+        uses = {ServiceOfClinicMapper.class, AccountMapper.class,
+        UserInforMapper.class, ClinicMapper.class},
+        config = ConfigurationMapper.class)
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)
-    Booking mapBookingRequestToBooking (BookingRequest bookingRequest);
+    Booking mapBookingRequestToBooking(BookingRequest bookingRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "bookingID")
@@ -30,14 +30,7 @@ public interface BookingMapper {
     @Mapping(source = "clinic", target = "clinic")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
 
-    static Long mapDateTimeToLong(Timestamp dateTime) {
-        if (dateTime != null) {
-            return  dateTime.getTime();
-        } else {
-            return null;
-        }
 
-    }
 
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",

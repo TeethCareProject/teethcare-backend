@@ -27,4 +27,6 @@ public interface BookingService extends CRUDService<Booking> {
 
     List<Booking> findBookingByClinic(Clinic clinic);
 
+    boolean updateStatus(int bookingId);
+
 }

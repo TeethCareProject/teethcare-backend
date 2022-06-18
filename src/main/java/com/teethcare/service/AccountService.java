@@ -3,6 +3,8 @@ package com.teethcare.service;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
+import com.teethcare.model.request.ProfileUpdateRequest;
+import com.teethcare.model.request.StaffPasswordRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,6 +15,8 @@ public interface AccountService extends CRUDService<Account> {
     Account getAccountByUsername(String username);
 
     Account getActiveAccountByUsername(String username);
+
+    Account findById(int id);
 
     boolean isDuplicated(String username);
 
@@ -26,4 +30,7 @@ public interface AccountService extends CRUDService<Account> {
 
     void updateStatus(AccountUpdateStatusRequest accountUpdateStatusRequest, int id);
 
+    void setStaffPassword(int staffId, StaffPasswordRequest staffPasswordRequest);
+
+    Account updateProfile(ProfileUpdateRequest updateRequest, String username);
 }

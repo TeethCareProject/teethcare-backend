@@ -5,13 +5,19 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.BookingMapper;
-import com.teethcare.model.entity.*;
+import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Booking;
+import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientBookingResponse;
-import com.teethcare.service.*;
+import com.teethcare.service.AccountService;
+import com.teethcare.service.BookingService;
+import com.teethcare.service.CSService;
+import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +46,7 @@ public class BookingController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingRequest bookingRequest,
-                                                                 @RequestHeader(value = "AUTHORIZATION") String token){
+                                                                 @RequestHeader(value = AUTHORIZATION) String token) {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
 
@@ -101,5 +107,27 @@ public class BookingController {
         bookingService.confirmBookingRequest(bookingId, isAccepted, customerService);
 
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    }
+
+    @PutMapping("/checkin")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<MessageResponse> checkin(@RequestParam(value = "bookingId") int bookingId) {
+        boolean isUpdated = bookingService.updateStatus(bookingId);
+        if (isUpdated) {
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
+    }
+
+    @PutMapping("/checkout")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
+        boolean isUpdated = bookingService.updateStatus(bookingId);
+        if (isUpdated) {
+            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
+        }
     }
 }

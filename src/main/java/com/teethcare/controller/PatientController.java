@@ -9,7 +9,6 @@ import com.teethcare.model.entity.Patient;
 import com.teethcare.model.request.PatientRegisterRequest;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientResponse;
-import com.teethcare.service.AccountService;
 import com.teethcare.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

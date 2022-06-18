@@ -4,13 +4,16 @@ import com.teethcare.model.entity.Feedback;
 import com.teethcare.model.entity.Report;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.model.request.ReportRequest;
-import com.teethcare.model.response.*;
+import com.teethcare.model.response.FeedbackByClinicResponse;
+import com.teethcare.model.response.FeedbackResponse;
+import com.teethcare.model.response.ReportResponse;
 import org.mapstruct.*;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-@Mapper(componentModel = "spring",  uses = {BookingMapper.class, UserInforMapper.class})
+@Mapper(componentModel = "spring",  uses = {BookingMapper.class, UserInforMapper.class},  config = ConfigurationMapper.class)
+
 public interface FeedbackMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "booking", ignore = true)
