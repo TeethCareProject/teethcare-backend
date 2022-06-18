@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final CSService csService;
 
     @Override
+    @Transactional
     public Appointment createAppointment(String jwtToken, AppointmentRequest appointmentRequest) {
         Appointment appointment = new Appointment();
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
@@ -60,19 +62,19 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new NotFoundException("Booking ID" + appointmentRequest.getPreBookingId() + " not found!");
         }
         appointment.setPreBooking(preBooking);
-
-        ServiceOfClinic service = serviceRepository.findByIdAndStatus(appointmentRequest.getServiceId(), Status.Service.ACTIVE.name());
-        List<ServiceOfClinic> services = new ArrayList<>();
-        services.add(service);
-        appointment.setServices(services);
+        if (appointmentRequest.getServiceId() != null) {
+            ServiceOfClinic service = serviceRepository.findByIdAndStatus(appointmentRequest.getServiceId(), Status.Service.ACTIVE.name());
+            List<ServiceOfClinic> services = new ArrayList<>();
+            services.add(service);
+            appointment.setServices(services);
+            appointment.setTotalPrice(service.getPrice());
+        }
 
         appointment.setPatient(preBooking.getPatient());
 
         appointment.setCustomerService((CustomerService) account);
 
         appointment.setNote(appointment.getNote());
-
-        appointment.setTotalPrice(service.getPrice());
 
         appointment.setClinic(preBooking.getClinic());
         save(appointment);
