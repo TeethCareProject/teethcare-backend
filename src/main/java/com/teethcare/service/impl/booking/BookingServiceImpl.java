@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(int id) {
-        return bookingRepository.getById(id);
+        return bookingRepository.findBookingById(id);
     }
 
     @Override
@@ -155,6 +155,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<Booking> findBookingByClinic(Clinic clinic) {
+        return bookingRepository.findBookingByClinic(clinic);
+
     @Transactional
     public boolean updateStatus(int bookingId) {
         Booking booking = bookingRepository.findBookingById(bookingId);
@@ -180,6 +183,7 @@ public class BookingServiceImpl implements BookingService {
         }
         bookingRepository.save(booking);
         return true;
+
     }
 
     @Override
