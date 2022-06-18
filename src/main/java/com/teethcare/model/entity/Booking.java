@@ -58,9 +58,6 @@ public class Booking {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "is_confirmed")
-    private boolean isConfirmed;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dentist_id")
     @JsonManagedReference
