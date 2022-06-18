@@ -11,6 +11,4 @@ public interface AppointmentService extends CRUDService<Appointment> {
     Appointment createAppointment(String jwtToken, AppointmentRequest appointmentRequest);
     Appointment findAppointmentById(int id);
     Page<Appointment> findAllWithFilter(String jwtToken, Pageable pageable, AppointmentFilterRequest appointmentFilterRequest);
-    void deleteByCSAndId(String jwtToken, int id);
-    void updateByCSAndId(String jwtToken, int id, AppointmentUpdateRequest appointmentUpdateRequest);
 }

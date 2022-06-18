@@ -145,42 +145,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void delete(int theId) {
-
+        //TODO
     }
 
     @Override
-    public void deleteByCSAndId(String jwtToken, int id) {
-        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
-        Account account = accountService.getAccountByUsername(username);
-        Appointment appointment = appointmentRepository.findByStatusIsAndClinicIdAndAndId(Status.Appointment.ACTIVE.name(), ((CustomerService) account).getClinic().getId(), id);
-        if (appointment == null) {
-            throw new NotFoundException("Appointment ID " + id + " not found!");
-        }
-        appointment.setStatus(Status.Appointment.INACTIVE.name());
-        update(appointment);
-    }
-
-    @Override
-    public void update(Appointment theEntity) {
-        appointmentRepository.save(theEntity);
-    }
-
-    public void updateByCSAndId(String jwtToken, int id, AppointmentUpdateRequest appointmentUpdateRequest) {
-        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
-        Account account = accountService.getAccountByUsername(username);
-        Appointment appointment = appointmentRepository.findByStatusIsAndClinicIdAndAndId(Status.Appointment.ACTIVE.name(), ((CustomerService) account).getClinic().getId(), id);
-        if (appointment == null) {
-            throw new NotFoundException("Appointment ID " + id + " not found!");
-        }
-        if (appointmentUpdateRequest.getNote() != null) {
-            appointment.setNote(appointmentUpdateRequest.getNote());
-        }
-        if (appointmentUpdateRequest.getAppointmentDate() != null) {
-            appointment.setAppointmentDate(ConvertUtils.getTimestamp(appointmentUpdateRequest.getAppointmentDate()));
-        }
-        if (appointmentUpdateRequest.getExpirationAppointmentDate() != null) {
-            appointment.setAppointmentDate(ConvertUtils.getTimestamp(appointmentUpdateRequest.getExpirationAppointmentDate()));
-        }
-        update(appointment);
+    public void update(Appointment entity) {
+        appointmentRepository.save(entity);
     }
 }

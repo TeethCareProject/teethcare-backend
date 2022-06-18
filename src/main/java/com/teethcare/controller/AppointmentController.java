@@ -61,21 +61,4 @@ public class AppointmentController {
         Appointment appointment = appointmentService.findAppointmentById(appointmentId);
         return new ResponseEntity<>(bookingMapper.mapAppointmentToAppointmentResponse(appointment), HttpStatus.OK);
     }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<Message> delete(@PathVariable("id") int appointmentId,
-                                          @RequestHeader(AUTHORIZATION) String token) {
-        appointmentService.deleteByCSAndId(token.substring("Bearer ".length()), appointmentId);
-        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<Message> update(@PathVariable("id") int appointmentId,
-                                                      @RequestBody AppointmentUpdateRequest appointmentRequest,
-                                                      @RequestHeader(AUTHORIZATION) String token) {
-        appointmentService.updateByCSAndId(token.substring("Bearer ".length()), appointmentId, appointmentRequest);
-        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
-    }
 }
