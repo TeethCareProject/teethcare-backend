@@ -1,25 +1,21 @@
 package com.teethcare.service.impl.booking;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.teethcare.common.*;
+import com.teethcare.common.Message;
 import com.teethcare.common.Role;
+import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
+import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
-import com.teethcare.model.request.NotificationMsgRequest;
-import com.teethcare.model.response.PatientBookingResponse;
+import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
-import com.teethcare.repository.ClinicRepository;
-import com.teethcare.repository.PatientRepository;
-import com.teethcare.service.*;
 import com.teethcare.repository.ServiceRepository;
-import com.teethcare.service.BookingService;
-import com.teethcare.service.PatientService;
-import com.teethcare.service.ServiceOfClinicService;
+import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -27,20 +23,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static com.teethcare.common.NotificationMessage.UPDATE_1ST_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +43,7 @@ public class BookingServiceImpl implements BookingService {
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public List<Booking> findAll() {
@@ -147,7 +138,7 @@ public class BookingServiceImpl implements BookingService {
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
                 List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId, sort);
 
@@ -318,5 +309,49 @@ public class BookingServiceImpl implements BookingService {
         booking.setVersion(bookingVersion);
         save(booking);
         return true;
+    }
+
+    @Override
+    public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
+//        Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
+
+        Booking bookingTmp = new Booking();
+        //get millisecond
+        long millisecond = bookingFromAppointmentRequest.getDesiredCheckingTime();
+
+        //set service to booking
+        if (bookingFromAppointmentRequest.getServiceId() != null) {
+            int serviceID = bookingFromAppointmentRequest.getServiceId();
+            ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
+            List<ServiceOfClinic> serviceOfClinicList = new ArrayList<>();
+            serviceOfClinicList.add(service);
+            bookingTmp.setServices(serviceOfClinicList);
+        }
+        Appointment appointment = appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), bookingFromAppointmentRequest.getAppointmentId());
+        if (appointment == null) {
+            throw new NotFoundException("Appointment ID " + bookingFromAppointmentRequest.getAppointmentId() + " not found!");
+        }
+        //set clinic to booking
+        Clinic clinic = appointment.getClinic();
+        bookingTmp.setClinic(clinic);
+
+        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+//        Time startTimeShift1 = clinic.getS
+        if (desiredCheckingTime.compareTo(now) < 0) {
+            throw new BadRequestException("Desired checking time invalid");
+        }
+        bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+
+        //set patient to booking
+        Patient patient = patientService.findById(account.getId());
+        bookingTmp.setPatient(patient);
+        bookingTmp.setStatus(Status.Booking.PENDING.name());
+
+        if (patient != null && clinic != null) {
+            return bookingRepository.save(bookingTmp);
+        }
+        return null;
+
     }
 }
