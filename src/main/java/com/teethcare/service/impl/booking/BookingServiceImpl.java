@@ -100,9 +100,8 @@ public class BookingServiceImpl implements BookingService {
 
         long millisecond = bookingRequest.getDesiredCheckingTime();
         Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
-        System.out.println(desiredCheckingTime.toString());
         Timestamp now = new Timestamp(System.currentTimeMillis());
-//        Time startTimeShift1 = clinic.getS
+
         if (desiredCheckingTime.compareTo(now) < 0) {
             throw new BadRequestException("Desired checking time invalid");
         }

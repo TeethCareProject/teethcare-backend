@@ -90,7 +90,6 @@ public class DentistServiceImpl implements DentistService {
         List<Dentist> dentistList = dentistRepository.findDentistByClinicId(clinicId, pageable);
         if (pageable.isUnpaged()) {
             List<Dentist> unpagedDentistList = dentistRepository.findDentistByClinicId(clinicId, pageable);
-            System.out.println("Hello Im not paging");
             return new PageImpl<>(unpagedDentistList);
         }
 
