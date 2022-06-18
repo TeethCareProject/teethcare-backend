@@ -73,7 +73,7 @@ public class Appointment {
     private List<ServiceOfClinic> services;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_service_id")
+    @JoinColumn(name = "dentist_id")
     @JsonManagedReference
-    private CustomerService customerService;
+    private Dentist dentist;
 }

@@ -33,7 +33,7 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
     public ResponseEntity<AppointmentResponse> add(@Valid @RequestBody AppointmentRequest appointmentRequest,
                                                    @RequestHeader(AUTHORIZATION) String token) {
         Appointment appointment = appointmentService.createAppointment(token.substring("Bearer ".length()), appointmentRequest);
