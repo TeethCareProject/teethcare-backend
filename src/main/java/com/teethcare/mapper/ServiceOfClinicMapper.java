@@ -1,6 +1,7 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.model.request.ServiceRequest;
 import com.teethcare.model.response.ServiceDetailResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import org.mapstruct.*;
@@ -30,4 +31,11 @@ public interface ServiceOfClinicMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "duration", ignore = true)
     ServiceOfClinicResponse mapServiceToServiceResponseWithoutFields(ServiceOfClinic serviceOfClinic);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    ServiceOfClinic mapServiceRequestToServiceOfClinic(ServiceRequest serviceRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateServiceOfClinicFromServiceRequest(ServiceRequest serviceRequest, @MappingTarget ServiceOfClinic service);
 }

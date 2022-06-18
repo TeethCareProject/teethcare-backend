@@ -78,8 +78,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void update(Booking entity) {
-        //TODO
+    public void update(Booking theEntity) {
+
     }
 
     @Override
@@ -190,6 +190,34 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking.setConfirmed(true);
+        bookingRepository.save(booking);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateStatus(int bookingId) {
+        Booking booking = bookingRepository.findBookingById(bookingId);
+        String status = booking.getStatus();
+        switch (Status.Booking.valueOf(status)) {
+            case REQUEST:
+                if (booking.getExaminationTime() == null || booking.getDentist() == null
+                        || booking.getCustomerService() == null || booking.getServices() == null) {
+                    return false;
+                }
+                booking.setStatus(Status.Booking.TREATMENT.name());
+                break;
+            case TREATMENT:
+                if (booking.getExaminationTime() == null || booking.getDentist() == null
+                        || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
+                        || !booking.isConfirmed()) {
+                    return false;
+                }
+                booking.setStatus(Status.Booking.DONE.name());
+                break;
+            default:
+                return false;
+        }
         bookingRepository.save(booking);
         return true;
     }

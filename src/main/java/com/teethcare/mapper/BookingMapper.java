@@ -33,6 +33,8 @@ public interface BookingMapper {
     @Mapping(source = "clinic", target = "clinic")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
 
+
+
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",
             qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
@@ -53,8 +55,6 @@ public interface BookingMapper {
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponseWithoutService")
     List<BookingResponse> mapBookingListToBookingResponseListWithoutService(List<Booking> bookingList);
-
-//    BookingConfirmationDTO mapBookingToBookingConfirmationDTO(Booking booking);
 
     @Named(value = "mapBookingToAppointmentResponse")
     @Mapping(source = "services", target = "services",
