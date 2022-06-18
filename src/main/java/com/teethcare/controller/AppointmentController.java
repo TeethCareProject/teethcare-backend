@@ -1,15 +1,16 @@
 package com.teethcare.controller;
 
-import com.teethcare.common.Constant;
-import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Message;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.teethcare.common.*;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.request.AppointmentFilterRequest;
 import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.model.request.AppointmentUpdateRequest;
 import com.teethcare.model.response.AppointmentResponse;
+import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.AppointmentService;
+import com.teethcare.service.FirebaseMessagingService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -31,13 +33,20 @@ public class AppointmentController {
 
     private final BookingMapper bookingMapper;
     private final AppointmentService appointmentService;
+    private final FirebaseMessagingService firebaseMessagingService;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
-    public ResponseEntity<AppointmentResponse> add(@Valid @RequestBody AppointmentRequest appointmentRequest,
+    public ResponseEntity<Object> add(@Valid @RequestBody AppointmentRequest appointmentRequest,
                                                    @RequestHeader(AUTHORIZATION) String token) {
         Appointment appointment = appointmentService.createAppointment(token.substring("Bearer ".length()), appointmentRequest);
         AppointmentResponse appointmentResponse = bookingMapper.mapAppointmentToAppointmentResponse(appointment);
+        try {
+            firebaseMessagingService.sendNotification(appointment.getId(), NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
+                    NotificationMessage.CREATE_APPOINTMENT_SUCCESS + appointment.getId(), Role.DENTIST.name());
+        } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+        }
         return new ResponseEntity<>(appointmentResponse, HttpStatus.OK);
     }
 

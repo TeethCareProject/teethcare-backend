@@ -8,7 +8,6 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.AppointmentFilterRequest;
 import com.teethcare.model.request.AppointmentRequest;
-import com.teethcare.model.request.AppointmentUpdateRequest;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
@@ -38,6 +37,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final ClinicService clinicService;
     private final DentistService dentistService;
     private final CSService csService;
+    private final FirebaseMessagingService firebaseMessagingService;
 
     @Override
     @Transactional
