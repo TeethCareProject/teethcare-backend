@@ -10,12 +10,13 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+        config = ConfigurationMapper.class)
 public interface ClinicMapper {
 
     @Mapping(source = "manager.role.id", target = "manager.roleId")
     @Mapping(source = "manager.role.name", target = "manager.roleName")
-    @Mapping(source = "manager.dateOfBirth", target = "manager.dateOfBirth", dateFormat = "dd/MM/yyyy")
+    @Mapping(source = "manager.dateOfBirth", target = "manager.dateOfBirth")
     @Mapping(source = "serviceOfClinic", target = "serviceOfClinicResponses")
     ClinicResponse mapClinicToClinicResponse(Clinic clinic);
 

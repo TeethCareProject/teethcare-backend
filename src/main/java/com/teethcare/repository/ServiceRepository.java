@@ -13,4 +13,5 @@ public interface ServiceRepository extends JpaRepository<ServiceOfClinic, Intege
 
     ServiceOfClinic findByIdAndStatus(int id, String status);
 
+    ServiceOfClinic findServiceOfClinicById(int id);
 }

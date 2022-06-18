@@ -2,10 +2,15 @@ package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
+import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
+import com.teethcare.model.request.ServiceRequest;
 import com.teethcare.repository.ServiceRepository;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.CSService;
 import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -24,6 +29,8 @@ import java.util.stream.Collectors;
 public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
     private final ServiceRepository serviceRepository;
     private final CSService csService;
+    private final AccountService accountService;
+    private final ServiceOfClinicMapper serviceOfClinicMapper;
 
     @Override
     public List<ServiceOfClinic> findAll() {
@@ -79,19 +86,40 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
         return serviceOfClinics;
     }
 
+    @Override
+    public void add(ServiceRequest serviceRequest, String username) {
+        CustomerService customerService = (CustomerService) accountService.getAccountByUsername(username);
+        ServiceOfClinic service = serviceOfClinicMapper.mapServiceRequestToServiceOfClinic(serviceRequest);
+        Clinic clinic = customerService.getClinic();
+        service.setClinic(clinic);
+        save(service);
+    }
+
+    @Override
+    public void updateInfo(ServiceRequest serviceRequest) {
+        ServiceOfClinic service = serviceRepository.findServiceOfClinicById(serviceRequest.getId());
+        serviceOfClinicMapper.updateServiceOfClinicFromServiceRequest(serviceRequest, service);
+        save(service);
+    }
+
 
     @Override
     public void save(ServiceOfClinic theEntity) {
-
+        theEntity.setStatus(Status.Service.ACTIVE.name());
+        serviceRepository.save(theEntity);
     }
 
     @Override
     public void delete(int theId) {
-
+        ServiceOfClinic service = serviceRepository.findServiceOfClinicById(theId);
+        service.setStatus(Status.Service.INACTIVE.name());
+        serviceRepository.save(service);
     }
 
     @Override
     public void update(ServiceOfClinic theEntity) {
 
     }
+
+
 }
