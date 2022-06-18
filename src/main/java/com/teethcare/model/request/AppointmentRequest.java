@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 public class AppointmentRequest {
     @NotNull
     private Integer preBookingId;
-    @NotNull
     private Integer serviceId;
     private String note;
     private Long appointmentDate;
