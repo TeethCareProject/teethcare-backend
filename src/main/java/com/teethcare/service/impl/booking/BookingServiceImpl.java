@@ -313,45 +313,46 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
-//        Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
+        if (bookingRepository.findBookingByPreBookingId(bookingFromAppointmentRequest.getAppointmentId()) == null) {
+            Booking bookingTmp = new Booking();
+            //get millisecond
+            long millisecond = bookingFromAppointmentRequest.getDesiredCheckingTime();
 
-        Booking bookingTmp = new Booking();
-        //get millisecond
-        long millisecond = bookingFromAppointmentRequest.getDesiredCheckingTime();
+            //set service to booking
+            if (bookingFromAppointmentRequest.getServiceId() != null) {
+                int serviceID = bookingFromAppointmentRequest.getServiceId();
+                ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
+                List<ServiceOfClinic> serviceOfClinicList = new ArrayList<>();
+                serviceOfClinicList.add(service);
+                bookingTmp.setServices(serviceOfClinicList);
+            }
+            Appointment appointment = appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), bookingFromAppointmentRequest.getAppointmentId());
+            if (appointment == null) {
+                throw new NotFoundException("Appointment ID " + bookingFromAppointmentRequest.getAppointmentId() + " not found!");
+            }
+            //set clinic to booking
+            Clinic clinic = appointment.getClinic();
+            bookingTmp.setClinic(clinic);
 
-        //set service to booking
-        if (bookingFromAppointmentRequest.getServiceId() != null) {
-            int serviceID = bookingFromAppointmentRequest.getServiceId();
-            ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
-            List<ServiceOfClinic> serviceOfClinicList = new ArrayList<>();
-            serviceOfClinicList.add(service);
-            bookingTmp.setServices(serviceOfClinicList);
-        }
-        Appointment appointment = appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), bookingFromAppointmentRequest.getAppointmentId());
-        if (appointment == null) {
-            throw new NotFoundException("Appointment ID " + bookingFromAppointmentRequest.getAppointmentId() + " not found!");
-        }
-        //set clinic to booking
-        Clinic clinic = appointment.getClinic();
-        bookingTmp.setClinic(clinic);
-
-        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
-        Timestamp now = new Timestamp(System.currentTimeMillis());
+            Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
+            Timestamp now = new Timestamp(System.currentTimeMillis());
 //        Time startTimeShift1 = clinic.getS
-        if (desiredCheckingTime.compareTo(now) < 0) {
-            throw new BadRequestException("Desired checking time invalid");
+            if (desiredCheckingTime.compareTo(now) < 0) {
+                throw new BadRequestException("Desired checking time invalid");
+            }
+            bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+
+            //set patient to booking
+            Patient patient = patientService.findById(account.getId());
+            bookingTmp.setPatient(patient);
+            bookingTmp.setStatus(Status.Booking.PENDING.name());
+
+            if (patient != null && clinic != null) {
+                return bookingRepository.save(bookingTmp);
+            }
+            return null;
+        } else {
+            throw new BadRequestException("The booking corresponding to this appointment has been created!");
         }
-        bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
-
-        //set patient to booking
-        Patient patient = patientService.findById(account.getId());
-        bookingTmp.setPatient(patient);
-        bookingTmp.setStatus(Status.Booking.PENDING.name());
-
-        if (patient != null && clinic != null) {
-            return bookingRepository.save(bookingTmp);
-        }
-        return null;
-
     }
 }

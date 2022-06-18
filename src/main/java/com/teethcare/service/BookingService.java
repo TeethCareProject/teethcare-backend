@@ -24,8 +24,6 @@ public interface BookingService extends CRUDService<Booking>{
     boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException;
     boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
     boolean firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
-
     boolean updateStatus(int bookingId);
-
     Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account);
 }

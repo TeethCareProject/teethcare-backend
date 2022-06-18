@@ -24,5 +24,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
 
     Booking findBookingById(int id);
+    Booking findBookingByPreBookingId(int id);
 
 }
