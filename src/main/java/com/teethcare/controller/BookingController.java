@@ -212,6 +212,12 @@ public class BookingController {
     public ResponseEntity<MessageResponse> checkin(@RequestParam(value = "bookingId") int bookingId) {
         boolean isUpdated = bookingService.updateStatus(bookingId);
         if (isUpdated) {
+            try {
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
+                        NotificationMessage.CHECK_OUT_SUCCESS, Role.DENTIST.name());
+            } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+            }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
@@ -223,6 +229,12 @@ public class BookingController {
     public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
         boolean isUpdated = bookingService.updateStatus(bookingId);
         if (isUpdated) {
+            try {
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
+                        NotificationMessage.CHECK_OUT_SUCCESS, Role.DENTIST.name());
+            } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+            }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.OK);
