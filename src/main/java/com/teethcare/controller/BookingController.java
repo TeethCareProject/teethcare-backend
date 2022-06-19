@@ -19,6 +19,8 @@ import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Booking.BOOKING_ENDPOINT)
+@Slf4j
 public class BookingController {
     private final BookingService bookingService;
     private final BookingMapper bookingMapper;
@@ -157,12 +160,14 @@ public class BookingController {
             isSuccess = bookingService.secondlyUpdated(bookingUpdateRequest, isAllDeleted);
 
             if (!isSuccess) {
+                log.warn("Fail for uncompleted service");
                 return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
             }
 
             try {
                 firebaseMessagingService.sendNotification(bookingId,NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name(),
                         NotificationMessage.UPDATE_2RD_MESSAGE + bookingId, Role.PATIENT.name());
+                log.info("Successful notification");
                 emailService.sendBookingConfirmEmail(booking);
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -171,6 +176,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
+            log.warn("Fail for wrong status");
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
         }
     }

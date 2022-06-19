@@ -22,6 +22,7 @@ import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -44,6 +45,7 @@ import static com.teethcare.common.NotificationMessage.UPDATE_1ST_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -128,7 +130,6 @@ public class BookingServiceImpl implements BookingService {
             return bookingRepository.save(bookingTmp);
         }
         return null;
-
     }
 
     @Override
