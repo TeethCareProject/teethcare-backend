@@ -35,10 +35,8 @@ public class DentistController {
                                                         @RequestParam(name = "clinicId", required = true) int clinicId,
                                                         @RequestParam(name = "isPageable", required = false, defaultValue = "true") boolean isPageable) {
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
-        System.out.println("Im checking paging" + isPageable);
         if (!isPageable) {
             pageable = Pageable.unpaged();
-            System.out.println("Im checking paging");
         }
         Page<Dentist> dentists = dentistService.findDentistByClinicId(clinicId, pageable);
         Page<DentistResponse> dentistResponses = dentists.map(accountMapper::mapDentistToDentistResponse);

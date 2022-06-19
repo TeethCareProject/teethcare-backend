@@ -1,11 +1,14 @@
 package com.teethcare.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,4 +34,16 @@ public class Feedback {
 
     @Column(name = "status")
     private String status;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "feedback")
+    @JsonBackReference
+    private List<Report> reports;
+
+    @Column(name = "created_time")
+    private Timestamp createdTime;
+
+    public int getId() {
+        return id;
+    }
 }

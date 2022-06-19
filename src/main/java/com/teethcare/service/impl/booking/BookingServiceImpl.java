@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(int id) {
-        return bookingRepository.getById(id);
+        return bookingRepository.findBookingById(id);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking saveBooking(BookingRequest bookingRequest, Account account) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
         //get millisecond
-        long millisecond = bookingRequest.getDesiredCheckingTime();
+
 
         //set service to booking
         int serviceID = bookingRequest.getServiceId();
@@ -90,11 +91,24 @@ public class BookingServiceImpl implements BookingService {
         Clinic clinic = service.getClinic();
         bookingTmp.setClinic(clinic);
 
+        long millisecond = bookingRequest.getDesiredCheckingTime();
         Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-//        Time startTimeShift1 = clinic.getS
+
         if (desiredCheckingTime.compareTo(now) < 0) {
             throw new BadRequestException("Desired checking time invalid");
+        }
+
+        LocalTime checkedTime = desiredCheckingTime.toLocalDateTime().toLocalTime();
+        LocalTime startTimeShift1 = clinic.getStartTimeShift1().toLocalTime();
+        LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
+        LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
+        LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
+        boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
+                                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
+
+        if (isValidWorkTime) {
+            throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
 
@@ -103,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
         bookingTmp.setPatient(patient);
         bookingTmp.setStatus(Status.Booking.PENDING.name());
 
-        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null) {
+        if (patient != null && !serviceOfClinicList.isEmpty()) {
             return bookingRepository.save(bookingTmp);
         }
         return null;
@@ -186,6 +200,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<Booking> findBookingByClinic(Clinic clinic) {
+        return bookingRepository.findBookingByClinic(clinic);
+    }
+
     @Transactional
     public boolean updateStatus(int bookingId) {
         Booking booking = bookingRepository.findBookingById(bookingId);
@@ -225,7 +243,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
+    public void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
         Integer dentistId = bookingUpdateRequest.getDentistId();
@@ -268,7 +286,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setDentist(dentist);
 
         save(booking);
-        return true;
     }
 
     @Override

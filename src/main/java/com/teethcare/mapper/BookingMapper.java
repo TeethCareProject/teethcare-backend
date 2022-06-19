@@ -42,6 +42,7 @@ public interface BookingMapper {
     @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
     @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
+    @Mapping(target = "feedbackResponse", ignore = true)
     BookingResponse mapBookingToBookingResponse(Booking booking);
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponse")

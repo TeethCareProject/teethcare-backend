@@ -5,18 +5,17 @@ import java.sql.Time;
 import java.sql.Timestamp;
 
 import static com.teethcare.utils.ConvertUtils.convertToTime;
-
 public class ConfigurationMapping {
-    static Long mapDateTimeToLong(Timestamp dateTime) {
-        if (dateTime != null) {
-            return dateTime.getTime();
+    static Long mapDateToLong(Date date) {
+        if (date != null) {
+            return date.getTime();
         } else {
             return null;
         }
 
     }
 
-    static Long mapDateTimeToLong(Date date) {
+    static Long mapDateTimeToLong(Timestamp date) {
         if (date != null) {
             return date.getTime();
         } else {
