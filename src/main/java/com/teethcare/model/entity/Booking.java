@@ -10,7 +10,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -27,12 +26,12 @@ public class Booking {
     @Column(name = "id")
     private int id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "preBooking")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "preBooking")
     @JsonBackReference
-    private List<Booking> mappedPreBooking;
+    private Booking mappedPreBooking;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pre_booking_id", referencedColumnName = "id")
     @JsonManagedReference
     private Booking preBooking;
@@ -57,6 +56,9 @@ public class Booking {
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "is_confirmed")
+    private boolean isConfirmed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dentist_id")

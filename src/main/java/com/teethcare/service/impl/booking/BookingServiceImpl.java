@@ -231,11 +231,6 @@ public class BookingServiceImpl implements BookingService {
         return true;
     }
 
-    @Override
-    @Transactional
-    public boolean update(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) throws FirebaseMessagingException {
-        return true;
-    }
 
     @Override
     public Booking findBookingById(int id) {
