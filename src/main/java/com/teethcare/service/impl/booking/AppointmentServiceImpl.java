@@ -81,7 +81,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             save(appointment);
             return appointment;
         } else {
-            throw new BadRequestException("The appointment corresponding to this booking has been created!");
+            return null;
         }
     }
 

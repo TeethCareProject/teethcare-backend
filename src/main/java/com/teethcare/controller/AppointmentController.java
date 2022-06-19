@@ -6,7 +6,6 @@ import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.request.AppointmentFilterRequest;
 import com.teethcare.model.request.AppointmentRequest;
-import com.teethcare.model.request.AppointmentUpdateRequest;
 import com.teethcare.model.response.AppointmentResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.service.AppointmentService;
@@ -38,16 +37,24 @@ public class AppointmentController {
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
     public ResponseEntity<Object> add(@Valid @RequestBody AppointmentRequest appointmentRequest,
-                                                   @RequestHeader(AUTHORIZATION) String token) {
+                                      @RequestHeader(AUTHORIZATION) String token) {
         Appointment appointment = appointmentService.createAppointment(token.substring("Bearer ".length()), appointmentRequest);
-        AppointmentResponse appointmentResponse = bookingMapper.mapAppointmentToAppointmentResponse(appointment);
         try {
-            firebaseMessagingService.sendNotification(appointment.getId(), NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
-                    NotificationMessage.CREATE_APPOINTMENT_SUCCESS + appointment.getId(), Role.DENTIST.name());
+            if (appointment != null) {
+                AppointmentResponse appointmentResponse = bookingMapper.mapAppointmentToAppointmentResponse(appointment);
+
+                firebaseMessagingService.sendNotification(appointment.getId(), NotificationType.CREATE_APPOINTMENT_SUCCESS.name(),
+                        NotificationMessage.CREATE_APPOINTMENT_SUCCESS + appointment.getId(), Role.DENTIST.name());
+
+                return new ResponseEntity<>(appointmentResponse, HttpStatus.OK);
+            } else {
+                firebaseMessagingService.sendNotification(appointmentRequest.getPreBookingId(), NotificationType.CREATE_APPOINTMENT_FAIL.name(),
+                        NotificationMessage.CREATE_APPOINTMENT_FAIL, Role.DENTIST.name());
+            }
         } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
             return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
         }
-        return new ResponseEntity<>(appointmentResponse, HttpStatus.OK);
+        return new ResponseEntity<>(Message.CREATE_FAIL, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping
