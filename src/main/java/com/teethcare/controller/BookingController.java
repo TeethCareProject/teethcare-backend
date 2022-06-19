@@ -207,8 +207,8 @@ public class BookingController {
         boolean isUpdated = bookingService.updateStatus(bookingId);
         if (isUpdated) {
             try {
-                firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
-                        NotificationMessage.CHECK_OUT_SUCCESS, Role.DENTIST.name());
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_IN_SUCCESS.name(),
+                        NotificationMessage.CHECK_IN_SUCCESS, Role.PATIENT.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -225,7 +225,7 @@ public class BookingController {
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
-                        NotificationMessage.CHECK_OUT_SUCCESS, Role.DENTIST.name());
+                        NotificationMessage.CHECK_OUT_SUCCESS, Role.PATIENT.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
             }
