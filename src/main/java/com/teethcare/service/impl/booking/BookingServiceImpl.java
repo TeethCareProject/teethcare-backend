@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
         bookingTmp.setPatient(patient);
         bookingTmp.setStatus(Status.Booking.PENDING.name());
 
-        if (patient != null && !serviceOfClinicList.isEmpty() && clinic != null) {
+        if (patient != null && !serviceOfClinicList.isEmpty()) {
             return bookingRepository.save(bookingTmp);
         }
         return null;
@@ -240,7 +240,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
+    public void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted) {
         int bookingId = bookingUpdateRequest.getBookingId();
         List<Integer> servicesIds = bookingUpdateRequest.getServiceIds();
         Integer dentistId = bookingUpdateRequest.getDentistId();
@@ -283,7 +283,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setDentist(dentist);
 
         save(booking);
-        return true;
     }
 
     @Override
