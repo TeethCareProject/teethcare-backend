@@ -16,6 +16,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     Appointment findByStatusInAndId(List<String> status, int id);
 
-//    Appointment findByStatusIsAndCustomerServiceIdAndId(String status, int csId, int appointmentId);
+    //    Appointment findByStatusIsAndCustomerServiceIdAndId(String status, int csId, int appointmentId);
     Appointment findByStatusIsAndClinicIdAndAndId(String status, int clinicId, int appointmentId);
+
+    Appointment findAppointmentByPreBookingId(int id);
 }

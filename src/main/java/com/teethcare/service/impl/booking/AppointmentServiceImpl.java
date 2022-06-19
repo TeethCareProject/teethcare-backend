@@ -42,43 +42,47 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional
     public Appointment createAppointment(String jwtToken, AppointmentRequest appointmentRequest) {
-        Appointment appointment = new Appointment();
-        String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
-        Account account = accountService.getAccountByUsername(username);
+        if (appointmentRepository.findAppointmentByPreBookingId(appointmentRequest.getPreBookingId()) == null) {
+            Appointment appointment = new Appointment();
+            String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
+            Account account = accountService.getAccountByUsername(username);
 
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        appointment.setCreateBookingDate(now);
-        if (appointmentRequest.getAppointmentDate() - now.getTime() < 0) {
-            throw new BadRequestException("Appointment Date invalid");
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            appointment.setCreateBookingDate(now);
+            if (appointmentRequest.getAppointmentDate() - now.getTime() < 0) {
+                throw new BadRequestException("Appointment Date invalid");
+            }
+            appointment.setAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getAppointmentDate()));
+            if (appointmentRequest.getExpirationAppointmentDate().compareTo(appointmentRequest.getAppointmentDate()) < 0) {
+                throw new BadRequestException("Expiration Appointment Date invalid");
+            }
+            appointment.setExpireAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getExpirationAppointmentDate()));
+
+            Booking preBooking = bookingService.findBookingById(appointmentRequest.getPreBookingId());
+            if (preBooking == null) {
+                throw new NotFoundException("Booking ID" + appointmentRequest.getPreBookingId() + " not found!");
+            }
+            appointment.setPreBooking(preBooking);
+            if (appointmentRequest.getServiceId() != null) {
+                ServiceOfClinic service = serviceRepository.findByIdAndStatus(appointmentRequest.getServiceId(), Status.Service.ACTIVE.name());
+                List<ServiceOfClinic> services = new ArrayList<>();
+                services.add(service);
+                appointment.setServices(services);
+                appointment.setTotalPrice(service.getPrice());
+            }
+
+            appointment.setPatient(preBooking.getPatient());
+
+            appointment.setDentist((Dentist) account);
+
+            appointment.setNote(appointment.getNote());
+
+            appointment.setClinic(preBooking.getClinic());
+            save(appointment);
+            return appointment;
+        } else {
+            throw new BadRequestException("The appointment corresponding to this booking has been created!");
         }
-        appointment.setAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getAppointmentDate()));
-        if (appointmentRequest.getExpirationAppointmentDate().compareTo(appointmentRequest.getAppointmentDate()) < 0) {
-            throw new BadRequestException("Expiration Appointment Date invalid");
-        }
-        appointment.setExpireAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getExpirationAppointmentDate()));
-
-        Booking preBooking = bookingService.findBookingById(appointmentRequest.getPreBookingId());
-        if (preBooking == null) {
-            throw new NotFoundException("Booking ID" + appointmentRequest.getPreBookingId() + " not found!");
-        }
-        appointment.setPreBooking(preBooking);
-        if (appointmentRequest.getServiceId() != null) {
-            ServiceOfClinic service = serviceRepository.findByIdAndStatus(appointmentRequest.getServiceId(), Status.Service.ACTIVE.name());
-            List<ServiceOfClinic> services = new ArrayList<>();
-            services.add(service);
-            appointment.setServices(services);
-            appointment.setTotalPrice(service.getPrice());
-        }
-
-        appointment.setPatient(preBooking.getPatient());
-
-        appointment.setDentist((Dentist) account);
-
-        appointment.setNote(appointment.getNote());
-
-        appointment.setClinic(preBooking.getClinic());
-        save(appointment);
-        return appointment;
     }
 
     @Override
