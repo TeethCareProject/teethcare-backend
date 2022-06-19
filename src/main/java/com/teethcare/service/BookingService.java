@@ -3,6 +3,7 @@ package com.teethcare.service;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
+import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
@@ -28,5 +29,8 @@ public interface BookingService extends CRUDService<Booking> {
     boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
     void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
 
+    List<Booking> findBookingByClinic(Clinic clinic);
+
     boolean updateStatus(int bookingId);
+
 }

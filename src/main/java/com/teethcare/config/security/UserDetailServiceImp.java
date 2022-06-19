@@ -1,7 +1,7 @@
 package com.teethcare.config.security;
 
 import com.teethcare.common.Status;
-import com.teethcare.exception.AccountNotFoundException;
+import com.teethcare.exception.UnauthorizedException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,13 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findAccountByUsernameAndStatus(username, Status.Account.ACTIVE.name());
-        if (account != null) {
+        Account account = accountRepository.getAccountByUsername(username);
+        if (account != null && !account.getStatus().equals(Status.Account.INACTIVE.name())) {
             return UserDetailsImpl.build(account);
+        } else if (account.getStatus().equals(Status.Account.INACTIVE.name())) {
+            throw new UnauthorizedException("Your account is currently inactive.");
         } else {
-            throw new AccountNotFoundException("Username " + username + " not found ");
+            throw new UnauthorizedException("Username " + username + " not found ");
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.teethcare.repository;
 
+import com.teethcare.model.entity.Feedback;
 import com.teethcare.model.entity.Report;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,8 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
     List<Report> findAllByStatusIsNotNull(Pageable pageable);
 
     List<Report> findAllByStatus(Pageable pageable, String status);
-
     List<Report> findAll();
+    List<Report> findReportByFeedback(Feedback feedback);
+
+    Report findReportById(int id);
 }
