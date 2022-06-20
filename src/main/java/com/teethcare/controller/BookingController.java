@@ -82,13 +82,10 @@ public class BookingController {
                     ServiceOfClinic service = serviceOfClinicService.findById(bookingFromAppointmentRequest.getServiceId());
                     patientBookingResponse.setServiceName(service.getName());
                 }
-                firebaseMessagingService.sendNotification(booking.getId(), NotificationType.CREATE_BOOKING_SUCCESS.name(),
+                firebaseMessagingService.sendNotification(booking.getPreBooking().getPreBooking().getId(), NotificationType.CREATE_BOOKING_SUCCESS.name(),
                         NotificationMessage.CREATE_BOOKING_SUCCESS + booking.getId(), Role.DENTIST.name());
 
                 return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
-            } else {
-                firebaseMessagingService.sendNotification(bookingFromAppointmentRequest.getAppointmentId(), NotificationType.CREATE_BOOKING_FAIL.name(),
-                        NotificationMessage.CREATE_BOOKING_FAIL, Role.DENTIST.name());
             }
         } catch (FirebaseMessagingException |
                  BadAttributeValueExpException e) {
