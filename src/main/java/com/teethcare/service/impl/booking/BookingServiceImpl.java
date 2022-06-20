@@ -157,7 +157,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> findBookingByClinic(Clinic clinic) {
         return bookingRepository.findBookingByClinic(clinic);
-
+    }
     @Transactional
     public boolean updateStatus(int bookingId) {
         Booking booking = bookingRepository.findBookingById(bookingId);

@@ -8,6 +8,7 @@ import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Feedback;
+import com.teethcare.model.entity.Report;
 import com.teethcare.model.request.FeedbackRequest;
 import com.teethcare.model.response.FeedbackByClinicResponse;
 import com.teethcare.model.response.MessageResponse;
