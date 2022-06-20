@@ -1,21 +1,21 @@
 package com.teethcare.mapper;
 
-import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.entity.Booking;
+import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.AppointmentResponse;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
+import com.teethcare.model.response.ServiceOfClinicResponse;
 import org.mapstruct.*;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
         config = ConfigurationMapper.class,
         uses = {ServiceOfClinicMapper.class, AccountMapper.class,
-        UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
+                UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)
@@ -32,7 +32,6 @@ public interface BookingMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "clinic", target = "clinic")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
-
 
 
     @Named(value = "mapBookingToBookingResponse")
@@ -67,4 +66,8 @@ public interface BookingMapper {
 
     @IterableMapping(qualifiedByName = "mapBookingToAppointmentResponse")
     List<AppointmentResponse> mapAppointmentListToAppointmentResponseList(List<Appointment> bookingList);
+
+    @Named(value = "mapAppointmentToBooking")
+    @Mapping(source = "mappedPreBooking", target = "mappedPreBooking", ignore = true)
+    Booking mapAppointmentToBooking(Appointment appointment);
 }

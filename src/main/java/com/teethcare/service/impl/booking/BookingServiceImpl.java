@@ -341,6 +341,7 @@ public class BookingServiceImpl implements BookingService {
             if (appointment == null) {
                 throw new NotFoundException("Appointment ID " + bookingFromAppointmentRequest.getAppointmentId() + " not found!");
             }
+            bookingTmp.setPreBooking(bookingMapper.mapAppointmentToBooking(appointment));
             //set clinic to booking
             Clinic clinic = appointment.getClinic();
             bookingTmp.setClinic(clinic);
@@ -352,7 +353,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new BadRequestException("Desired checking time invalid");
             }
             bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
-
+            bookingTmp.setCreateBookingDate(now);
             //set patient to booking
             Patient patient = patientService.findById(account.getId());
             bookingTmp.setPatient(patient);
