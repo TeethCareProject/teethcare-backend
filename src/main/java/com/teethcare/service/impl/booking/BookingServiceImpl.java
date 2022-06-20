@@ -1,6 +1,5 @@
 package com.teethcare.service.impl.booking;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.Message;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
@@ -105,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
         LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
-                                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
+                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
         if (isValidWorkTime) {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
@@ -362,9 +361,8 @@ public class BookingServiceImpl implements BookingService {
             if (patient != null && clinic != null) {
                 return bookingRepository.save(bookingTmp);
             }
-            return null;
-        } else {
-            throw new BadRequestException("The booking corresponding to this appointment has been created!");
+
         }
+        return null;
     }
 }

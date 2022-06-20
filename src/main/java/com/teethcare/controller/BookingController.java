@@ -66,22 +66,35 @@ public class BookingController {
 
     @PostMapping(path = "/create-from-appointment")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
-    public ResponseEntity<PatientBookingResponse> bookingService(@Valid @RequestBody BookingFromAppointmentRequest bookingFromAppointmentRequest,
-                                                                 @RequestHeader(value = AUTHORIZATION) String token) {
+    public ResponseEntity<Object> bookingService(@Valid @RequestBody BookingFromAppointmentRequest bookingFromAppointmentRequest,
+                                                 @RequestHeader(value = AUTHORIZATION) String token) {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
 
         Account account = accountService.getAccountByUsername(username);
 
         Booking booking = bookingService.saveBookingFromAppointment(bookingFromAppointmentRequest, account);
-        PatientBookingResponse patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
-        patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
-        if (bookingFromAppointmentRequest.getServiceId() != null) {
-            ServiceOfClinic service = serviceOfClinicService.findById(bookingFromAppointmentRequest.getServiceId());
-            patientBookingResponse.setServiceName(service.getName());
-        }
+        try {
+            if (booking != null) {
+                PatientBookingResponse patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
+                patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
+                if (bookingFromAppointmentRequest.getServiceId() != null) {
+                    ServiceOfClinic service = serviceOfClinicService.findById(bookingFromAppointmentRequest.getServiceId());
+                    patientBookingResponse.setServiceName(service.getName());
+                }
+                firebaseMessagingService.sendNotification(booking.getId(), NotificationType.CREATE_BOOKING_SUCCESS.name(),
+                        NotificationMessage.CREATE_BOOKING_SUCCESS + booking.getId(), Role.DENTIST.name());
 
-        return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
+                return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
+            } else {
+                firebaseMessagingService.sendNotification(bookingFromAppointmentRequest.getAppointmentId(), NotificationType.CREATE_BOOKING_FAIL.name(),
+                        NotificationMessage.CREATE_BOOKING_FAIL, Role.DENTIST.name());
+            }
+        } catch (FirebaseMessagingException |
+                 BadAttributeValueExpException e) {
+            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(Message.CREATE_FAIL, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping
@@ -163,7 +176,7 @@ public class BookingController {
     @PutMapping("/second-update")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
     public ResponseEntity<MessageResponse> secondlyUpdated(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
-                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
+                                                           @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
         boolean isSuccess;
 
         int bookingId = bookingUpdateRequest.getBookingId();
