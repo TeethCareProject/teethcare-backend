@@ -1,8 +1,8 @@
 package com.teethcare.service.impl.booking;
 
-import com.teethcare.common.Message;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.Role;
-import com.teethcare.common.Status;
+import com.teethcare.common.*;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.management.BadAttributeValueExpException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -44,6 +45,8 @@ public class BookingServiceImpl implements BookingService {
     private final DentistService dentistService;
     private final ClinicService clinicService;
     private final AppointmentRepository appointmentRepository;
+    private final FirebaseMessagingService firebaseMessagingService;
+
 
     @Override
     public List<Booking> findAll() {
@@ -359,9 +362,16 @@ public class BookingServiceImpl implements BookingService {
             bookingTmp.setStatus(Status.Booking.PENDING.name());
 
             if (patient != null && clinic != null) {
-                return bookingRepository.save(bookingTmp);
+                try {
+                    Booking booking = bookingRepository.save(bookingTmp);
+                    firebaseMessagingService.sendNotification(appointment.getPreBooking().getId(), NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
+                            NotificationMessage.CREATE_BOOKING_SUCCESS + booking.getId(), Role.DENTIST.name());
+                    return booking;
+                } catch (FirebaseMessagingException |
+                         BadAttributeValueExpException e) {
+                    return null;
+                }
             }
-
         }
         return null;
     }

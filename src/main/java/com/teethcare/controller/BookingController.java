@@ -74,26 +74,11 @@ public class BookingController {
         Account account = accountService.getAccountByUsername(username);
 
         Booking booking = bookingService.saveBookingFromAppointment(bookingFromAppointmentRequest, account);
-        try {
-            if (booking != null) {
-                PatientBookingResponse patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
-                patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
-                if (bookingFromAppointmentRequest.getServiceId() != null) {
-                    ServiceOfClinic service = serviceOfClinicService.findById(bookingFromAppointmentRequest.getServiceId());
-                    patientBookingResponse.setServiceName(service.getName());
-                }
-                firebaseMessagingService.sendNotification(booking.getId(), NotificationType.CREATE_BOOKING_SUCCESS.name(),
-                        NotificationMessage.CREATE_BOOKING_SUCCESS + booking.getId(), Role.DENTIST.name());
 
-                return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
-            } else {
-                firebaseMessagingService.sendNotification(bookingFromAppointmentRequest.getAppointmentId(), NotificationType.CREATE_BOOKING_FAIL.name(),
-                        NotificationMessage.CREATE_BOOKING_FAIL, Role.DENTIST.name());
-            }
-        } catch (FirebaseMessagingException |
-                 BadAttributeValueExpException e) {
-            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+        if (booking != null) {
+            return new ResponseEntity<>(booking, HttpStatus.OK);
         }
+
         return new ResponseEntity<>(Message.CREATE_FAIL, HttpStatus.BAD_REQUEST);
     }
 
