@@ -91,7 +91,7 @@ public class BookingController {
             }
         } catch (FirebaseMessagingException |
                  BadAttributeValueExpException e) {
-            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(Message.CREATE_FAIL, HttpStatus.BAD_REQUEST);
     }
