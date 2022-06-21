@@ -10,6 +10,8 @@ import java.util.List;
 public interface ClinicRepository extends JpaRepository<Clinic, Integer> {
 
     Clinic getClinicByManager(Account manager);
+    Clinic findClinicByCustomerServicesId(Integer csId);
 
     List<Clinic> findAllByStatusIsNotNull(Pageable pageable);
+
 }

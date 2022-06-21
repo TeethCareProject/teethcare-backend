@@ -6,17 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class FeedbackRequest {
+@NoArgsConstructor
+public class BookingUpdateRequest {
     @NotNull
     private Integer bookingId;
 
-    private String detail;
-
-    @NotNull
-    private Integer ratingScore;
+    private List<Integer> serviceIds;
+    private Integer dentistId;
+    private Long examinationTime;
+    private String note;
+    private Integer version;
 }

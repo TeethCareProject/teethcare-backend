@@ -6,6 +6,7 @@ import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
+import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.request.ServiceRequest;
@@ -117,15 +118,12 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
 
     @Override
     public void save(ServiceOfClinic theEntity) {
-        theEntity.setStatus(Status.Service.ACTIVE.name());
-        serviceRepository.save(theEntity);
+
     }
 
     @Override
     public void delete(int theId) {
-        ServiceOfClinic service = serviceRepository.findServiceOfClinicById(theId);
-        service.setStatus(Status.Service.INACTIVE.name());
-        serviceRepository.save(service);
+
     }
 
     @Override

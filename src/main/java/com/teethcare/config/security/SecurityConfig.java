@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(EndpointConstant.Notification.NOTIFICATION_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Email.EMAIL_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Notification.FCM_TOKEN_ENDPOINT + "/**").permitAll();
-        http.authorizeRequests().antMatchers(EndpointConstant.Dentist.DENTIST_ENDPOINT + "/**").permitAll();
+        http.authorizeRequests().antMatchers(EndpointConstant.Dentist.DENTIST_ENDPOINT + "/**");
         http.authorizeRequests().antMatchers(EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Patient.PATIENT_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Service.SERVICE_ENDPOINT + "/**").permitAll();

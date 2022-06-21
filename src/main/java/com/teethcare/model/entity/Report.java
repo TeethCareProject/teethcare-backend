@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -13,13 +14,13 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "report")
-public class Report {
+public class Report implements Comparable<Report>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "feedback_id", referencedColumnName = "id")
     private Feedback feedback;
 
@@ -28,4 +29,12 @@ public class Report {
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "created_time")
+    private Timestamp createdTime;
+
+    @Override
+    public int compareTo(Report o) {
+        return o.createdTime.compareTo(this.createdTime);
+    }
 }

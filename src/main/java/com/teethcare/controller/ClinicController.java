@@ -100,7 +100,6 @@ public class ClinicController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @GetMapping("/{id}/staffs")
     public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable int id) {
 
@@ -152,6 +151,4 @@ public class ClinicController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
 
     }
-
-
 }
