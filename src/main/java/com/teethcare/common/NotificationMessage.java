@@ -11,5 +11,4 @@ public class NotificationMessage {
     public final static String CREATE_APPOINTMENT_FAIL = "The appointment corresponding to this booking has been created!";
     public final static String CREATE_BOOKING_SUCCESS = "An booking has been recently created! Booking ID is: ";
     public final static String CREATE_BOOKING_FAIL = "The booking corresponding to this appointment has been created!";
-
 }

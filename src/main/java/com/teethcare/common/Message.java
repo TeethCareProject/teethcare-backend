@@ -21,5 +21,5 @@ public enum Message {
     ERROR_SEND_NOTIFICATION,
     OUT_OF_WORKING_TIME,
     //BAD_REQUEST
-    CREATE_FAIL,
+    CREATE_FAIL
 }

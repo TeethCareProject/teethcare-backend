@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -83,6 +84,17 @@ public class ServiceOfClinicController {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
         serviceOfClinicService.add(serviceRequest, username);
+        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{id}/update-image")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    public ResponseEntity<MessageResponse> updateImage(@RequestBody MultipartFile image,
+                                                       @RequestHeader(value = AUTHORIZATION) String token,
+                                                       @PathVariable("id") int serviceId) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        serviceOfClinicService.updateImage(serviceId, image, username);
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
 

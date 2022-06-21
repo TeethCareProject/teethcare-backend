@@ -16,6 +16,7 @@ import java.util.List;
         config = ConfigurationMapper.class,
         uses = {ServiceOfClinicMapper.class, AccountMapper.class,
                 UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
+        UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)
@@ -32,7 +33,6 @@ public interface BookingMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "clinic", target = "clinic")
     PatientBookingResponse mapBookingToPatientBookingResponse(Booking booking);
-
 
     @Named(value = "mapBookingToBookingResponse")
     @Mapping(source = "services", target = "services",

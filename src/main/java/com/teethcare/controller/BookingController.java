@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.BookingMapper;
+import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
@@ -12,12 +13,16 @@ import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.NotificationMsgRequest;
+import com.teethcare.model.request.BookingUpdateRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,12 +34,14 @@ import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
 
+import static com.teethcare.common.Constant.EMAIL.BOOKING_DETAIL_CONFIRM;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Booking.BOOKING_ENDPOINT)
+@Slf4j
 public class BookingController {
     private final BookingService bookingService;
     private final BookingMapper bookingMapper;
@@ -173,7 +180,7 @@ public class BookingController {
     @PutMapping("/second-update")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
     public ResponseEntity<MessageResponse> secondlyUpdated(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
-                                                           @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
+                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
         boolean isSuccess;
 
         int bookingId = bookingUpdateRequest.getBookingId();
@@ -185,12 +192,14 @@ public class BookingController {
             isSuccess = bookingService.secondlyUpdated(bookingUpdateRequest, isAllDeleted);
 
             if (!isSuccess) {
+                log.warn("Fail for uncompleted service");
                 return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
             }
 
             try {
-                firebaseMessagingService.sendNotification(bookingId, NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name(),
+                firebaseMessagingService.sendNotification(bookingId,NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name(),
                         NotificationMessage.UPDATE_2RD_MESSAGE + bookingId, Role.PATIENT.name());
+                log.info("Successful notification");
                 emailService.sendBookingConfirmEmail(booking);
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -199,6 +208,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
+            log.warn("Fail for wrong status");
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
         }
     }
@@ -212,7 +222,7 @@ public class BookingController {
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
-                        NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
+                                                        NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -220,7 +230,7 @@ public class BookingController {
         } else {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_FAIL.name(),
-                        NotificationMessage.CONFIRM_BOOKING_FAIL + bookingId, Role.DENTIST.name());
+                                                            NotificationMessage.CONFIRM_BOOKING_FAIL + bookingId, Role.DENTIST.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
             }

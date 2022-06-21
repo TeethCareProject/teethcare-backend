@@ -10,8 +10,6 @@ public interface FirebaseMessagingService {
             throws FirebaseMessagingException;
     void sendNotification(int bookingId, String title, String body, String role)
             throws FirebaseMessagingException, BadAttributeValueExpException;
-
     void addNewToken(String fcmToken, String jwtToken);
-
     void sendNotificationToCSByBookingId(int bookingId) throws FirebaseMessagingException;
 }

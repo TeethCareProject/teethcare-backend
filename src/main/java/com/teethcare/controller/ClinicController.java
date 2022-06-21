@@ -2,7 +2,6 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.NotFoundException;
@@ -15,7 +14,6 @@ import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
-import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -26,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -68,7 +67,6 @@ public class ClinicController {
         Clinic clinic = clinicService.findById(id);
         ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
         return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
-
     }
 
     @DeleteMapping("/{id}")
@@ -87,6 +85,17 @@ public class ClinicController {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
         Clinic clinic = clinicService.updateProfile(clinicRequest, username);
+        ClinicResponse response = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/update-image")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).MANAGER)")
+    public ResponseEntity<ClinicResponse> updateImage(@RequestBody MultipartFile image,
+                                                 @RequestHeader(value = AUTHORIZATION) String token) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        Clinic clinic = clinicService.updateImage(image, username);
         ClinicResponse response = clinicMapper.mapClinicToClinicResponse(clinic);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

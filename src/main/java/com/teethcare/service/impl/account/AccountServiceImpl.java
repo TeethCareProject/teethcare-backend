@@ -13,6 +13,7 @@ import com.teethcare.model.request.StaffPasswordRequest;
 import com.teethcare.model.request.StaffPasswordRequest;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.service.AccountService;
+import com.teethcare.service.FileService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 import java.util.List;
@@ -33,6 +35,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final AccountMapper accountMapper;
+    private final FileService fileService;
 
     @Override
     public List<Account> findAll() {
@@ -126,6 +129,14 @@ public class AccountServiceImpl implements AccountService {
         Date dob = ConvertUtils.getDate(milliseconds);
         account.setDateOfBirth(dob);
 
+        save(account);
+        return account;
+    }
+
+    @Override
+    public Account updateImage(MultipartFile image, String username) {
+        Account account = accountRepository.getAccountByUsername(username);
+        account.setAvatarImage(fileService.uploadFile(image));
         save(account);
         return account;
     }

@@ -1,8 +1,9 @@
 package com.teethcare.service.impl.booking;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.teethcare.common.*;
 import com.teethcare.common.Message;
 import com.teethcare.common.Role;
-import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
@@ -11,29 +12,47 @@ import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.NotificationMsgRequest;
+import com.teethcare.model.response.PatientBookingResponse;
+import com.teethcare.model.request.BookingUpdateRequest;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
+import com.teethcare.repository.ClinicRepository;
+import com.teethcare.repository.PatientRepository;
+import com.teethcare.service.*;
+import com.teethcare.service.BookingService;
+import com.teethcare.service.PatientService;
+import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.math.BigDecimal;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.teethcare.common.NotificationMessage.UPDATE_1ST_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -41,6 +60,8 @@ public class BookingServiceImpl implements BookingService {
     private final ServiceOfClinicService serviceOfClinicService;
     private final ServiceRepository serviceRepository;
     private final PatientService patientService;
+    private final DentistService dentistService;
+    private final ClinicService clinicService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
     private final AppointmentRepository appointmentRepository;
@@ -69,16 +90,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void update(Booking theEntity) {
-
+    public void update(Booking entity) {
+        //TODO
     }
 
     @Override
     public Booking saveBooking(BookingRequest bookingRequest, Account account) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
-        //get millisecond
-
-
         //set service to booking
         int serviceID = bookingRequest.getServiceId();
         ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
@@ -104,7 +122,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
         LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
-                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
+                                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
         if (isValidWorkTime) {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
@@ -120,7 +138,6 @@ public class BookingServiceImpl implements BookingService {
             return bookingRepository.save(bookingTmp);
         }
         return null;
-
     }
 
     @Override
@@ -151,7 +168,7 @@ public class BookingServiceImpl implements BookingService {
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
                 List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId, sort);
 
@@ -321,7 +338,6 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
         return true;
     }
-
     @Override
     public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
         if (bookingRepository.findBookingByPreBookingId(bookingFromAppointmentRequest.getAppointmentId()) == null) {
@@ -365,5 +381,4 @@ public class BookingServiceImpl implements BookingService {
 
         }
         return null;
-    }
-}
+    }}
