@@ -334,7 +334,7 @@ public class BookingServiceImpl implements BookingService {
                 serviceOfClinicList.add(service);
                 bookingTmp.setServices(serviceOfClinicList);
             }
-            Appointment appointment = appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), bookingFromAppointmentRequest.getAppointmentId());
+            Appointment appointment = appointmentRepository.findAppointmentByStatusInAndId(Status.Appointment.getNames(), bookingFromAppointmentRequest.getAppointmentId());
             if (appointment == null) {
                 throw new NotFoundException("Appointment ID " + bookingFromAppointmentRequest.getAppointmentId() + " not found!");
             }

@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final ClinicService clinicService;
     private final DentistService dentistService;
     private final CSService csService;
-    private final FirebaseMessagingService firebaseMessagingService;
 
     @Override
     @Transactional
@@ -65,8 +63,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             appointment.setPreBooking(preBooking);
             if (appointmentRequest.getServiceId() != null) {
                 ServiceOfClinic service = serviceRepository.findByIdAndStatus(appointmentRequest.getServiceId(), Status.Service.ACTIVE.name());
-                List<ServiceOfClinic> services = new ArrayList<>();
-                services.add(service);
+                List<ServiceOfClinic> services = List.of(service);
                 appointment.setServices(services);
                 appointment.setTotalPrice(service.getPrice());
             }
@@ -87,7 +84,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment findAppointmentById(int id) {
-        Appointment appointment = appointmentRepository.findByStatusInAndId(Status.Appointment.getNames(), id);
+        Appointment appointment = appointmentRepository.findAppointmentByStatusInAndId(Status.Appointment.getNames(), id);
         if (appointment == null) {
             throw new NotFoundException("Appointment ID " + id + " not found!");
         }
