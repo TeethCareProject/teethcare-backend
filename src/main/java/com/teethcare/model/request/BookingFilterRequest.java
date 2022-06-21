@@ -15,12 +15,22 @@ public class BookingFilterRequest {
     Integer customerServiceId;
     Integer dentistId;
     String clinicName;
+    String status;
+    Boolean isConfirmed;
 
     public Predicate<Booking> getPredicate() {
         Predicate<Booking> predicate = booking -> true;
         if (bookingId != null) {
             predicate = predicate.and(booking -> Integer.toString(booking.getId()).
                     contains(Integer.toString(getBookingId())));
+        }
+
+        if (status != null) {
+            predicate = predicate.and(booking -> getStatus().equalsIgnoreCase(booking.getStatus()));
+        }
+
+        if (isConfirmed != null) {
+            predicate = predicate.and(booking -> getIsConfirmed() == booking.isConfirmed());
         }
 
         if (patientName != null) {

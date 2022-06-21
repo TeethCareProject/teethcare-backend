@@ -1,4 +1,4 @@
-package com.teethcare.model.request;
+package com.teethcare.model.dto;
 
 import com.teethcare.utils.Trimmable;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class NotificationMsgRequest implements Trimmable {
+public class NotificationDTO {
     private Integer accountId;
     private String title;
     private String body;

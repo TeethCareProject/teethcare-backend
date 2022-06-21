@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class Booking {
     private Patient patient;
 
     @Column(name = "total_price")
-    private Integer totalPrice;
+    private BigDecimal totalPrice;
 
     @Column(name = "create_booking_date")
     private Timestamp createBookingDate;
@@ -51,12 +53,6 @@ public class Booking {
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "appointment_date")
-    private Timestamp appointmentDate;
-
-    @Column(name = "expire_appointment_date")
-    private Timestamp expireAppointmentDate;
 
     @Column(name = "status")
     private String status;
@@ -74,6 +70,9 @@ public class Booking {
 
     @Column(name = "desired_checking_time")
     private Timestamp desiredCheckingTime;
+
+    @Column(name = "version")
+    private int version;
 
     @ManyToOne
     @JoinColumn(name = "clinic_id", referencedColumnName = "id")
