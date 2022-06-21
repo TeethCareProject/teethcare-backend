@@ -9,6 +9,7 @@ import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.CheckAvailableTimeRequest;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
@@ -100,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
         LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
-                                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
+                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
         if (isValidWorkTime) {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
@@ -146,7 +147,7 @@ public class BookingServiceImpl implements BookingService {
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
                 List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId, sort);
 
@@ -224,6 +225,20 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
         return true;
 
+    }
+
+    @Override
+    public boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest) {
+        Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - 30 * 60);
+        Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + 30 * 60);
+        List<Booking> queryBookingList =
+                bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
+                        lowerBound, upperBound, lowerBound, upperBound);
+        Clinic clinic = clinicService.findById(checkAvailableTimeRequest.getClinicId());
+        if (clinic == null) {
+            throw new BadRequestException("Clinic ID " + checkAvailableTimeRequest.getClinicId() + " not found!");
+        }
+        return clinic.getDentists().size() - queryBookingList.size() > 0;
     }
 
     @Override
