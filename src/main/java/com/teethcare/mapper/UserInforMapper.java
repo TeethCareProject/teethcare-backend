@@ -1,8 +1,8 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Patient;
 import com.teethcare.model.entity.Dentist;
+import com.teethcare.model.entity.Patient;
 import com.teethcare.model.response.UserInforResponse;
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;

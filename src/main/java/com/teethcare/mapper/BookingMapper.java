@@ -6,7 +6,6 @@ import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import org.mapstruct.*;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper(componentModel = "spring",

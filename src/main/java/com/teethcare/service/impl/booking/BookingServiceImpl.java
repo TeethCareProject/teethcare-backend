@@ -1,24 +1,16 @@
 package com.teethcare.service.impl.booking;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.teethcare.common.*;
+import com.teethcare.common.Message;
 import com.teethcare.common.Role;
+import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
-import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
-import com.teethcare.model.request.NotificationMsgRequest;
-import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.repository.BookingRepository;
-import com.teethcare.repository.ClinicRepository;
-import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.*;
-import com.teethcare.service.BookingService;
-import com.teethcare.service.PatientService;
-import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -27,21 +19,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static com.teethcare.common.NotificationMessage.UPDATE_1ST_MESSAGE;
 
 @Service
 @RequiredArgsConstructor

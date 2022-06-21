@@ -9,7 +9,6 @@ import com.teethcare.model.response.FeedbackResponse;
 import com.teethcare.model.response.ReportResponse;
 import org.mapstruct.*;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper(componentModel = "spring",  uses = {BookingMapper.class, UserInforMapper.class},  config = ConfigurationMapper.class)

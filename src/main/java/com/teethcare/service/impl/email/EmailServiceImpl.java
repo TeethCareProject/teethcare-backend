@@ -3,7 +3,6 @@ package com.teethcare.service.impl.email;
 import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.dto.StaffCreatingPasswordDTO;
 import com.teethcare.model.entity.Booking;
-import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.service.EmailService;
 import com.teethcare.utils.MailTemplateUtils;
 import lombok.RequiredArgsConstructor;
