@@ -1,7 +1,6 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.request.ServiceRequest;

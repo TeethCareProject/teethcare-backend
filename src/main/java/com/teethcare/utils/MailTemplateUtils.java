@@ -1,7 +1,6 @@
 package com.teethcare.utils;
 
 import com.teethcare.model.dto.BookingConfirmationDTO;
-import com.teethcare.model.response.BookingResponse;
 
 public class MailTemplateUtils {
     public static String getStaffCreatingPasswordEmail(String username, String password, String fwdLink) {

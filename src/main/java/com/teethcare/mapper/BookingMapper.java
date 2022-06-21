@@ -2,12 +2,10 @@ package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.response.AppointmentResponse;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
-import com.teethcare.model.response.ServiceOfClinicResponse;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -16,7 +14,6 @@ import java.util.List;
         config = ConfigurationMapper.class,
         uses = {ServiceOfClinicMapper.class, AccountMapper.class,
                 UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
-        UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)

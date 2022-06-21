@@ -1,7 +1,5 @@
 package com.teethcare.common;
 
-import javax.annotation.Resource;
-
 public enum NotificationType {
     NORMAL_NOTIFICATION,
     OPEN_BOOKING_NOTIFICATION,

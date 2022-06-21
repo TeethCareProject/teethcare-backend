@@ -10,7 +10,6 @@ import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
 import com.teethcare.model.request.ProfileUpdateRequest;
 import com.teethcare.model.request.StaffPasswordRequest;
-import com.teethcare.model.request.StaffPasswordRequest;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.FileService;

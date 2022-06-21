@@ -1,7 +1,6 @@
 package com.teethcare.repository;
 
 import com.teethcare.model.entity.Dentist;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,17 +1,15 @@
 package com.teethcare.service;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.BookingFilterRequest;
+import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
-import com.teethcare.model.request.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;

@@ -4,16 +4,14 @@ import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.request.ServiceRequest;
 import com.teethcare.repository.ServiceRepository;
-import com.teethcare.service.AccountService;
 import com.teethcare.service.CSService;
+import com.teethcare.service.AccountService;
 import com.teethcare.service.FileService;
 import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -22,11 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor

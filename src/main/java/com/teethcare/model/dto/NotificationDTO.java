@@ -1,6 +1,5 @@
 package com.teethcare.model.dto;
 
-import com.teethcare.utils.Trimmable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
