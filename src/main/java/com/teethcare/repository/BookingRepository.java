@@ -2,7 +2,6 @@ package com.teethcare.repository;
 
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.CustomerService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,9 +19,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     List<Booking> findBookingByDentistId(int id, Sort sort);
     List<Booking> findBookingByClinic(Clinic id);
     List<Booking> findBookingByStatusAndExaminationTimeAndDentistId(String status, Timestamp examinationTime, int dentistId);
-
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
-
     Booking findBookingById(int id);
-
+    Booking findBookingByPreBookingId(int id);
 }

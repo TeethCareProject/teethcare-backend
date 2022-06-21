@@ -4,22 +4,20 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.BookingMapper;
-import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.BookingFilterRequest;
+import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
-import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.MessageResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +30,6 @@ import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
 
-import static com.teethcare.common.Constant.EMAIL.BOOKING_DETAIL_CONFIRM;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
@@ -67,6 +64,36 @@ public class BookingController {
         patientBookingResponse.setServiceName(service.getName());
 
         return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/create-from-appointment")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<Object> bookingService(@Valid @RequestBody BookingFromAppointmentRequest bookingFromAppointmentRequest,
+                                                 @RequestHeader(value = AUTHORIZATION) String token) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+
+        Account account = accountService.getAccountByUsername(username);
+
+        Booking booking = bookingService.saveBookingFromAppointment(bookingFromAppointmentRequest, account);
+        try {
+            if (booking != null) {
+                PatientBookingResponse patientBookingResponse = bookingMapper.mapBookingToPatientBookingResponse(booking);
+                patientBookingResponse.setDesiredCheckingTime(booking.getDesiredCheckingTime().getTime());
+                if (bookingFromAppointmentRequest.getServiceId() != null) {
+                    ServiceOfClinic service = serviceOfClinicService.findById(bookingFromAppointmentRequest.getServiceId());
+                    patientBookingResponse.setServiceName(service.getName());
+                }
+                firebaseMessagingService.sendNotification(booking.getPreBooking().getPreBooking().getId(), NotificationType.CREATE_BOOKING_SUCCESS.name(),
+                        NotificationMessage.CREATE_BOOKING_SUCCESS + booking.getId(), Role.DENTIST.name());
+
+                return new ResponseEntity<>(patientBookingResponse, HttpStatus.OK);
+            }
+        } catch (FirebaseMessagingException |
+                 BadAttributeValueExpException e) {
+            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(Message.CREATE_FAIL, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping

@@ -6,7 +6,6 @@ import com.teethcare.common.Message;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Feedback;
 import com.teethcare.model.entity.Report;
 import com.teethcare.model.request.FeedbackRequest;
