@@ -131,14 +131,14 @@ public class BookingServiceImpl implements BookingService {
         switch (Role.valueOf(role)) {
             case CUSTOMER_SERVICE:
                 Clinic clinic = clinicService.findClinicByCustomerServiceId(accountId);
-                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinic(clinic, sort);
+                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinicAndStatusIsNotNull(clinic, sort);
 
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
-                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId, sort);
+                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientIdAndStatusIsNotNull(accountId, sort);
 
                 bookingListForPatient = bookingListForPatient.stream()
                         .filter(filterRequest.getPredicate())
@@ -146,7 +146,7 @@ public class BookingServiceImpl implements BookingService {
 
                 return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
-                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId, sort);
+                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistIdAndStatusIsNotNull(accountId, sort);
 
                 bookingListForDentist = bookingListForDentist.stream()
                         .filter(filterRequest.getPredicate())

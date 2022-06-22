@@ -13,11 +13,11 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaSpecificationExecutor<Booking> {
-    List<Booking> findBookingByPatientId(int id, Sort sort);
+    List<Booking> findBookingByPatientIdAndStatusIsNotNull(int id, Sort sort);
 
-    List<Booking> findBookingByClinic(Clinic clinic, Sort sort);
+    List<Booking> findBookingByClinicAndStatusIsNotNull(Clinic clinic, Sort sort);
 
-    List<Booking> findBookingByDentistId(int id, Sort sort);
+    List<Booking> findBookingByDentistIdAndStatusIsNotNull(int id, Sort sort);
 
     List<Booking> findBookingByClinic(Clinic id);
 
