@@ -19,15 +19,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     List<Booking> findBookingByDentistId(int id, Sort sort);
     List<Booking> findBookingByClinic(Clinic id);
     List<Booking> findBookingByStatusAndExaminationTimeAndDentistId(String status, Timestamp examinationTime, int dentistId);
-
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
-
     Booking findBookingById(int id);
-
     List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(int clinicId,
-                                                                                                Timestamp lowerDesiredCheckingTime,
-                                                                                                Timestamp upperDesiredCheckingTime,
-                                                                                                Timestamp lowerExaminationTime,
-                                                                                                Timestamp upperExaminationTime);
-
+    Booking findBookingByPreBookingId(int id);
 }

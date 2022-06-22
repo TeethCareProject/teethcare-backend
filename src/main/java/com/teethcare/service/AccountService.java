@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
-
 public interface AccountService extends CRUDService<Account> {
     Account getAccountByUsername(String username);
 

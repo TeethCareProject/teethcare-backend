@@ -18,19 +18,18 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "booking")
-public class Booking {
-
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "preBooking")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "preBooking")
     @JsonBackReference
-    private Booking mappedPreBooking;
+    private List<Booking> mappedPreBooking;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pre_booking_id", referencedColumnName = "id")
     @JsonManagedReference
     private Booking preBooking;
@@ -50,37 +49,21 @@ public class Booking {
     @Column(name = "examination_time")
     private Timestamp examinationTime;
 
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "status")
-    private String status;
-
-    @Column(name = "is_confirmed")
-    private boolean isConfirmed;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dentist_id")
-    @JsonManagedReference
-    private Dentist dentist;
-
     @Column(name = "note")
     private String note;
 
-    @Column(name = "desired_checking_time")
-    private Timestamp desiredCheckingTime;
+    @Column(name = "appointment_date")
+    private Timestamp appointmentDate;
 
-    @Column(name = "version")
-    private int version;
+    @Column(name = "expire_appointment_date")
+    private Timestamp expireAppointmentDate;
+
+    @Column(name = "appointment_status")
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "clinic_id", referencedColumnName = "id")
     private Clinic clinic;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_service_id")
-    @JsonManagedReference
-    private CustomerService customerService;
 
     @ManyToMany
     @JoinTable(name = "booking_detail",
@@ -88,4 +71,9 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonManagedReference
     private List<ServiceOfClinic> services;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dentist_id")
+    @JsonManagedReference
+    private Dentist dentist;
 }

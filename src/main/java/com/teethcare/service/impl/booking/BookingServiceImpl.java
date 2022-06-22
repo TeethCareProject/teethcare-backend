@@ -7,10 +7,13 @@ import com.teethcare.exception.BadRequestException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.BookingFilterRequest;
+import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.model.request.CheckAvailableTimeRequest;
 import com.teethcare.repository.BookingRepository;
+import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -38,9 +41,11 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
+    private final ServiceRepository serviceRepository;
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public List<Booking> findAll() {
@@ -73,9 +78,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking saveBooking(BookingRequest bookingRequest, Account account) {
         Booking bookingTmp = bookingMapper.mapBookingRequestToBooking(bookingRequest);
-        //get millisecond
-
-
         //set service to booking
         int serviceID = bookingRequest.getServiceId();
         ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
@@ -224,8 +226,8 @@ public class BookingServiceImpl implements BookingService {
         }
         bookingRepository.save(booking);
         return true;
-
     }
+
 
     @Override
     public boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest) {
@@ -331,4 +333,46 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
         return true;
     }
-}
+    @Override
+    public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
+        if (bookingRepository.findBookingByPreBookingId(bookingFromAppointmentRequest.getAppointmentId()) == null) {
+            Booking bookingTmp = new Booking();
+            //get millisecond
+            long millisecond = bookingFromAppointmentRequest.getDesiredCheckingTime();
+
+            //set service to booking
+            if (bookingFromAppointmentRequest.getServiceId() != null) {
+                int serviceID = bookingFromAppointmentRequest.getServiceId();
+                ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
+                List<ServiceOfClinic> serviceOfClinicList = new ArrayList<>();
+                serviceOfClinicList.add(service);
+                bookingTmp.setServices(serviceOfClinicList);
+            }
+            Appointment appointment = appointmentRepository.findAppointmentByStatusInAndId(Status.Appointment.getNames(), bookingFromAppointmentRequest.getAppointmentId());
+            if (appointment == null) {
+                throw new NotFoundException("Appointment ID " + bookingFromAppointmentRequest.getAppointmentId() + " not found!");
+            }
+            bookingTmp.setPreBooking(bookingMapper.mapAppointmentToBooking(appointment));
+            //set clinic to booking
+            Clinic clinic = appointment.getClinic();
+            bookingTmp.setClinic(clinic);
+
+            Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+//        Time startTimeShift1 = clinic.getS
+            if (desiredCheckingTime.compareTo(now) < 0) {
+                throw new BadRequestException("Desired checking time invalid");
+            }
+            bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+            bookingTmp.setCreateBookingDate(now);
+            //set patient to booking
+            Patient patient = patientService.findById(account.getId());
+            bookingTmp.setPatient(patient);
+            bookingTmp.setStatus(Status.Booking.PENDING.name());
+
+            if (patient != null && clinic != null) {
+                return bookingRepository.save(bookingTmp);
+            }
+        }
+        return null;
+    }}
