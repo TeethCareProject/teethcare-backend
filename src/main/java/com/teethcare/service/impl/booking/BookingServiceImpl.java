@@ -4,16 +4,12 @@ import com.teethcare.common.Message;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
-import com.teethcare.model.request.BookingFilterRequest;
-import com.teethcare.model.request.BookingFromAppointmentRequest;
-import com.teethcare.model.request.BookingRequest;
-import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.*;
 import com.teethcare.repository.AppointmentRepository;
-import com.teethcare.model.request.CheckAvailableTimeRequest;
 import com.teethcare.repository.BookingRepository;
-import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -41,7 +37,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
-    private final ServiceRepository serviceRepository;
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
@@ -231,8 +226,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest) {
-        Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - 30 * 60);
-        Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + 30 * 60);
+        Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - 30 * 60 * 1000);
+        Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + 30 * 60 * 1000);
         List<Booking> queryBookingList =
                 bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
                         lowerBound, upperBound, lowerBound, upperBound);

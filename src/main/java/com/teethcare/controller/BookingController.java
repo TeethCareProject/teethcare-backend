@@ -271,7 +271,6 @@ public class BookingController {
     }
 
     @GetMapping("check-available-time")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).PATIENT, (T(com.teethcare.common.Role).DENTIST))")
     public ResponseEntity<CheckAvailableTimeResponse> checkAvailableTime(@Valid CheckAvailableTimeRequest checkAvailableTimeRequest) {
         boolean result = bookingService.checkAvailableTime(checkAvailableTimeRequest);
         CheckAvailableTimeResponse checkAvailableTimeResponse = new CheckAvailableTimeResponse(Status.CheckTime.UNAVAILABLE.name());
