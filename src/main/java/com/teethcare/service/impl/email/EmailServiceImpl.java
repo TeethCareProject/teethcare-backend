@@ -6,6 +6,8 @@ import com.teethcare.model.entity.Booking;
 import com.teethcare.service.EmailService;
 import com.teethcare.utils.MailTemplateUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,10 @@ import static com.teethcare.common.Constant.EMAIL.BOOKING_DETAIL_CONFIRM;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailServiceImpl implements EmailService {
+    @Value("${front_end_origin}")
+    private String homePageUrl;
 
     public final JavaMailSender emailSender;
 
@@ -49,9 +54,10 @@ public class EmailServiceImpl implements EmailService {
                         .lastname(booking.getPatient().getFirstName())
                         .email(booking.getPatient().getEmail())
                         .bookingId(booking.getId())
-                        .fwdLink(BOOKING_DETAIL_CONFIRM + booking.getId())
+                        .fwdLink(homePageUrl + booking.getId() + "?version=" + booking.getVersion())
                         .build();
 
+        log.info("Forward Link: " + homePageUrl + booking.getId() + "?version=" + booking.getVersion());
         MimeMessage message = emailSender.createMimeMessage();
 
         boolean multipart = true;
