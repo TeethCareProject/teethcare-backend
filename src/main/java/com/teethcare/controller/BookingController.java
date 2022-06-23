@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.config.security.UserDetailUtil;
+import com.teethcare.config.security.UserDetailsImpl;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
@@ -25,11 +28,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -128,18 +139,23 @@ public class BookingController {
     }
 
     @PutMapping("/{id}/accept")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE, T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<MessageResponse> isAccepted(@RequestBody ObjectNode objectNode,
                                                       @PathVariable(value = "id") int bookingId,
                                                       @RequestHeader(AUTHORIZATION) String token) {
-        token = token.substring("Bearer ".length());
-        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        String username = UserDetailUtil.getUsername();
+        String role = UserDetailUtil.getRole();
 
-        Account account = accountService.getAccountByUsername(username);
-
-        CustomerService customerService = CSService.findById(account.getId());
-
-        bookingService.confirmBookingRequest(bookingId, customerService, objectNode);
+        switch (Role.valueOf(role)) {
+            case CUSTOMER_SERVICE:
+                Account account = accountService.getAccountByUsername(username);
+                CustomerService customerService = CSService.findById(account.getId());
+                bookingService.confirmBookingRequest(bookingId, customerService, objectNode);
+                break;
+            case PATIENT:
+                bookingService.rejectBookingRequest(bookingId);
+                break;
+        }
 
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }

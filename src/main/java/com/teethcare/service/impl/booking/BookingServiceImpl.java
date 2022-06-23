@@ -91,8 +91,7 @@ public class BookingServiceImpl implements BookingService {
         Clinic clinic = service.getClinic();
         bookingTmp.setClinic(clinic);
 
-        long millisecond = bookingRequest.getDesiredCheckingTime();
-        Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
+        Timestamp desiredCheckingTime = new Timestamp(bookingRequest.getDesiredCheckingTime());
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
         if (desiredCheckingTime.compareTo(now) < 0) {
@@ -100,9 +99,12 @@ public class BookingServiceImpl implements BookingService {
         }
 
         LocalTime checkedTime = desiredCheckingTime.toLocalDateTime().toLocalTime();
+        log.info("CheckedTime: " + checkedTime.toString());
         LocalTime startTimeShift1 = clinic.getStartTimeShift1().toLocalTime();
         LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
+        log.info("startTimeShift2: " + startTimeShift2.toString());
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
+        log.info("endTimeShift1: " + endTimeShift1.toString());
         LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
                                 || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
@@ -111,6 +113,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+        bookingTmp.setCreateBookingDate(now);
 
         //set patient to booking
         Patient patient = patientService.findById(account.getId());
@@ -186,6 +189,21 @@ public class BookingServiceImpl implements BookingService {
         }
         booking.setCustomerService(customerService);
 
+        save(booking);
+    }
+
+    @Override
+    public void rejectBookingRequest(int bookingId) {
+        Booking booking = findBookingById(bookingId);
+
+        long currentTime = System.currentTimeMillis();
+        boolean notOver120s = (currentTime - booking.getCreateBookingDate().getTime()) <= 120*1000;
+        log.info("It is not over 120s: " + notOver120s);
+        if (notOver120s) {
+            booking.setStatus(Status.Booking.REJECTED.name());
+        } else {
+            throw new BadRequestException(Message.UPDATE_FAIL.name() + ": Over 120s");
+        }
         save(booking);
     }
 
@@ -270,7 +288,7 @@ public class BookingServiceImpl implements BookingService {
             }
         }
 
-        Timestamp examinationTime = ConvertUtils.getTimestamp(examinationTimeRequest);
+        Timestamp examinationTime = new Timestamp(examinationTimeRequest);
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
         if (examinationTime.compareTo(currentTime) < 0) {
             throw new BadRequestException(Message.DATE_ERROR.name());
@@ -286,7 +304,6 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setServices(services);
         booking.setExaminationTime(examinationTime);
-        booking.setCreateBookingDate(currentTime);
         booking.setDentist(dentist);
 
         save(booking);
@@ -354,7 +371,7 @@ public class BookingServiceImpl implements BookingService {
             Clinic clinic = appointment.getClinic();
             bookingTmp.setClinic(clinic);
 
-            Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
+            Timestamp desiredCheckingTime = new Timestamp(millisecond);
             Timestamp now = new Timestamp(System.currentTimeMillis());
 
             if (desiredCheckingTime.compareTo(now) < 0) {
