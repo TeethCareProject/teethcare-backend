@@ -101,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime startTimeShift1 = clinic.getStartTimeShift1().toLocalTime();
         LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
-        LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
+        LocalTime endTimeShift2 = clinic.getEndTimeShift2().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
                                 || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
