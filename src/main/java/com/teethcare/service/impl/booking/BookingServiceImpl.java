@@ -101,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime startTimeShift1 = clinic.getStartTimeShift1().toLocalTime();
         LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
-        LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
+        LocalTime endTimeShift2 = clinic.getEndTimeShift2().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
                                 || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
@@ -109,6 +109,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+        bookingTmp.setCreateBookingDate(now);
 
         //set patient to booking
         Patient patient = patientService.findById(account.getId());
@@ -274,7 +275,6 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setServices(services);
         booking.setExaminationTime(examinationTime);
-        booking.setCreateBookingDate(currentTime);
         booking.setDentist(dentist);
 
         save(booking);
