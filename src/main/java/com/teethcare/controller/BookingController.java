@@ -252,7 +252,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UNABLE_TO_CHECKIN.name()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(Message.UNABLE_TO_CHECKIN.name() + ": Not reach time to check in"), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -270,7 +270,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UNABLE_TO_CHECKIN.name()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(Message.UNABLE_TO_CHECKIN.name() + ": Not reach time to check out"), HttpStatus.BAD_REQUEST);
         }
     }
 }
