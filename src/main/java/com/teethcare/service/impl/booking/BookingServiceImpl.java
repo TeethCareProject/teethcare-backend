@@ -227,6 +227,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest) {
+        boolean check;
         Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - 30 * 60 * 1000);
         Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + 30 * 60 * 1000);
         List<Booking> queryBookingList =
@@ -236,7 +237,10 @@ public class BookingServiceImpl implements BookingService {
         if (clinic == null) {
             throw new BadRequestException("Clinic ID " + checkAvailableTimeRequest.getClinicId() + " not found!");
         }
-        return clinic.getDentists().size() - queryBookingList.size() > 0;
+        check = ((checkAvailableTimeRequest.getDesiredCheckingTime() >= clinic.getStartTimeShift1().getTime() && checkAvailableTimeRequest.getDesiredCheckingTime() <= clinic.getEndTimeShift1().getTime())
+                || (checkAvailableTimeRequest.getDesiredCheckingTime() >= clinic.getStartTimeShift2().getTime() && checkAvailableTimeRequest.getDesiredCheckingTime() <= clinic.getEndTimeShift2().getTime()))
+                && (clinic.getDentists().size() - queryBookingList.size() > 0);
+        return check;
     }
 
     @Override
@@ -328,6 +332,7 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
         return true;
     }
+
     @Override
     public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
         if (bookingRepository.findBookingByPreBookingId(bookingFromAppointmentRequest.getAppointmentId()) == null) {
@@ -370,4 +375,5 @@ public class BookingServiceImpl implements BookingService {
             }
         }
         return null;
-    }}
+    }
+}
