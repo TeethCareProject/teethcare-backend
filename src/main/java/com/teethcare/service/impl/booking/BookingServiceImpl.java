@@ -109,6 +109,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+        bookingTmp.setCreateBookingDate(now);
 
         //set patient to booking
         Patient patient = patientService.findById(account.getId());
@@ -274,7 +275,6 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setServices(services);
         booking.setExaminationTime(examinationTime);
-        booking.setCreateBookingDate(currentTime);
         booking.setDentist(dentist);
 
         save(booking);
