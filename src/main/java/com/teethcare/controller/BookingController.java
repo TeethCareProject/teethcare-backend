@@ -1,5 +1,6 @@
 package com.teethcare.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
@@ -126,10 +127,10 @@ public class BookingController {
         return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/accept")
+    @PutMapping("/{id}/accept")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<MessageResponse> isAccepted(@RequestParam(value = "isAccepted") boolean isAccepted,
-                                                      @RequestParam(value = "bookingId") int bookingId,
+    public ResponseEntity<MessageResponse> isAccepted(@RequestBody ObjectNode objectNode,
+                                                      @PathVariable(value = "id") int bookingId,
                                                       @RequestHeader(AUTHORIZATION) String token) {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
@@ -138,7 +139,7 @@ public class BookingController {
 
         CustomerService customerService = CSService.findById(account.getId());
 
-        bookingService.confirmBookingRequest(bookingId, isAccepted, customerService);
+        bookingService.confirmBookingRequest(bookingId, customerService, objectNode);
 
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
@@ -213,7 +214,7 @@ public class BookingController {
     public ResponseEntity<MessageResponse> confirmFinalBooking(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
         boolean isUpdated = bookingService.confirmFinalBooking(bookingUpdateRequest);
         int bookingId = bookingUpdateRequest.getBookingId();
-        Booking booking = bookingService.findBookingById(bookingId);
+
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),

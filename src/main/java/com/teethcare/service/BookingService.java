@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
@@ -17,13 +18,17 @@ import java.util.List;
 public interface BookingService extends CRUDService<Booking> {
     Booking findBookingById(int id);
     Booking saveBooking(BookingRequest bookingRequest, Account account);
+    Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account);
+
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
     Page<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
-    void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService);
+
+    void confirmBookingRequest(int bookingId, CustomerService customerService, ObjectNode objectNode);
+    void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
+
     boolean confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest);
     boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
-    void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
-    List<Booking> findBookingByClinic(Clinic clinic);
     boolean updateStatus(int bookingId);
-    Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account);
+
+    List<Booking> findBookingByClinic(Clinic clinic);
 }

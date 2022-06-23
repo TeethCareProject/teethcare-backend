@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.booking;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.teethcare.common.Message;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
@@ -11,6 +12,7 @@ import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
 import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.response.AccountResponse;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.ServiceRepository;
@@ -164,13 +166,23 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public void confirmBookingRequest(int bookingId, boolean isAccepted, CustomerService customerService) {
+    public void confirmBookingRequest(int bookingId, CustomerService customerService, ObjectNode objectNode) {
         Booking booking = findBookingById(bookingId);
+
+        boolean isAccepted = objectNode.get("isAccepted").asBoolean();
 
         if (isAccepted) {
             booking.setStatus(Status.Booking.REQUEST.name());
         } else {
+            String rejectedNote;
+            log.info("rejectedNote: " + objectNode.get("rejectedNote"));
+            if (objectNode.get("rejectedNote") == null) {
+                rejectedNote = null;
+            } else {
+                rejectedNote = objectNode.get("rejectedNote").asText();
+            }
             booking.setStatus(Status.Booking.REJECTED.name());
+            booking.setRejectedNote(rejectedNote);
         }
         booking.setCustomerService(customerService);
 
@@ -249,9 +261,9 @@ public class BookingServiceImpl implements BookingService {
 
         List<ServiceOfClinic> services = new ArrayList<>();
         if (servicesIds != null) {
-            for (Integer servicesId : servicesIds) {
-                services.add(serviceOfClinicService.findById(servicesId));
-            }
+            services = servicesIds.stream()
+                    .map(serviceOfClinicService::findById)
+                    .collect(Collectors.toList());
         } else {
             if (!isAllDeleted) {
                 services = booking.getServices();
@@ -293,9 +305,9 @@ public class BookingServiceImpl implements BookingService {
 
         List<ServiceOfClinic> services = new ArrayList<>();
         if (servicesIds != null) {
-            for (Integer servicesId : servicesIds) {
-                services.add(serviceOfClinicService.findById(servicesId));
-            }
+            services = servicesIds.stream()
+                    .map(serviceOfClinicService::findById)
+                    .collect(Collectors.toList());
         } else {
             if (!isAllDeleted) {
                 services = booking.getServices();
@@ -330,8 +342,7 @@ public class BookingServiceImpl implements BookingService {
             if (bookingFromAppointmentRequest.getServiceId() != null) {
                 int serviceID = bookingFromAppointmentRequest.getServiceId();
                 ServiceOfClinic service = serviceOfClinicService.findById(serviceID);
-                List<ServiceOfClinic> serviceOfClinicList = new ArrayList<>();
-                serviceOfClinicList.add(service);
+                List<ServiceOfClinic> serviceOfClinicList = List.of(service);
                 bookingTmp.setServices(serviceOfClinicList);
             }
             Appointment appointment = appointmentRepository.findAppointmentByStatusInAndId(Status.Appointment.getNames(), bookingFromAppointmentRequest.getAppointmentId());
@@ -345,7 +356,7 @@ public class BookingServiceImpl implements BookingService {
 
             Timestamp desiredCheckingTime = ConvertUtils.getTimestamp(millisecond);
             Timestamp now = new Timestamp(System.currentTimeMillis());
-//        Time startTimeShift1 = clinic.getS
+
             if (desiredCheckingTime.compareTo(now) < 0) {
                 throw new BadRequestException("Desired checking time invalid");
             }
