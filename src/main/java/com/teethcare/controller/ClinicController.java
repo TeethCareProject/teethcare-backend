@@ -151,4 +151,20 @@ public class ClinicController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
 
     }
+
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<ClinicResponse> approve(@PathVariable("id") int id) {
+        Clinic clinic = clinicService.findById(id);
+        clinic = clinicService.approve(clinic);
+        ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<ClinicResponse> reject(@PathVariable("id") int id) {
+        Clinic clinic = clinicService.findById(id);
+        clinic = clinicService.reject(clinic);
+        ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
+    }
 }

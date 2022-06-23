@@ -27,5 +27,7 @@ public interface ClinicService extends CRUDService<Clinic> {
 
     Clinic updateProfile (ClinicRequest clinicRequest, String username);
     Clinic updateImage (MultipartFile image, String username);
+    Clinic approve(Clinic clinic);
+    Clinic reject(Clinic clinic);
 
 }

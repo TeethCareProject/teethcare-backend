@@ -116,6 +116,20 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    public Clinic approve(Clinic clinic) {
+        clinic.setStatus(Status.Clinic.ACTIVE.name());
+        update(clinic);
+        return clinic;
+    }
+
+    @Override
+    public Clinic reject(Clinic clinic) {
+        clinic.setStatus(Status.Clinic.INACTIVE.name());
+        update(clinic);
+        return clinic;
+    }
+
+    @Override
     public void delete(int id) {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
         if (clinicData.isPresent()) {
