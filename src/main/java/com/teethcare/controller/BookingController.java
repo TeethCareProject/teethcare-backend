@@ -3,6 +3,7 @@ package com.teethcare.controller;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
+
+import java.util.Objects;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -237,7 +240,9 @@ public class BookingController {
     @PutMapping("/checkin")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> checkin(@RequestParam(value = "bookingId") int bookingId) {
-        boolean isUpdated = bookingService.updateStatus(bookingId);
+        boolean isCheckin = true;
+        boolean isUpdated = bookingService.updateStatus(bookingId, isCheckin);
+
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_IN_SUCCESS.name(),
@@ -247,14 +252,15 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(Message.UNABLE_TO_CHECKIN.name()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/checkout")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
-        boolean isUpdated = bookingService.updateStatus(bookingId);
+        boolean isCheckin = false;
+        boolean isUpdated = bookingService.updateStatus(bookingId, isCheckin);
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
@@ -264,7 +270,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageResponse(Message.UNABLE_TO_CHECKIN.name()), HttpStatus.BAD_REQUEST);
         }
     }
 }

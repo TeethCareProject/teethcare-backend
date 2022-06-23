@@ -31,6 +31,7 @@ import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -202,11 +203,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public boolean updateStatus(int bookingId) {
+    public boolean updateStatus(int bookingId, boolean isCheckin) {
         Booking booking = bookingRepository.findBookingById(bookingId);
+        if (booking == null) {
+            throw new NotFoundException();
+        }
         String status = booking.getStatus();
         switch (Status.Booking.valueOf(status)) {
             case REQUEST:
+                if (!isCheckin) {
+                    throw new BadRequestException(Message.WRONG_STATUS.name() + ": Your booking status is " + booking.getStatus());
+                }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null) {
                     return false;
@@ -222,12 +229,11 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.Booking.DONE.name());
                 break;
             default:
-                return false;
+                throw new BadRequestException(Message.WRONG_STATUS.name() + ": Your booking status is " + booking.getStatus());
         }
         bookingRepository.save(booking);
         return true;
     }
-
 
     @Override
     public Booking findBookingById(int id) {
