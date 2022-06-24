@@ -265,7 +265,7 @@ public class BookingController {
         }
     }
 
-    @GetMapping("check-available-time")
+    @GetMapping("/check-available-time")
     public ResponseEntity<CheckAvailableTimeResponse> checkAvailableTime(@Valid CheckAvailableTimeRequest checkAvailableTimeRequest) {
         boolean result = bookingService.checkAvailableTime(checkAvailableTimeRequest);
         CheckAvailableTimeResponse checkAvailableTimeResponse = new CheckAvailableTimeResponse(Status.CheckTime.UNAVAILABLE.name());
@@ -280,7 +280,6 @@ public class BookingController {
     public ResponseEntity<GetAvailableTimeResponse> getAvailableTimeByDate(@Valid GetAvailableTimeRequest getAvailableTimeRequest) {
         List<Integer> result = bookingService.getAvailableTime(getAvailableTimeRequest);
         GetAvailableTimeResponse getAvailableTimeResponse = new GetAvailableTimeResponse(result);
-
         return new ResponseEntity<>(getAvailableTimeResponse, HttpStatus.OK);
     }
 }
