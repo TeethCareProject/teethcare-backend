@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
