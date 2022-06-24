@@ -10,6 +10,7 @@ import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.repository.ClinicRepository;
+import com.teethcare.repository.ManagerRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +31,11 @@ import java.util.stream.Collectors;
 public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
     private final AccountService accountService;
+    private final ManagerRepository managerRepository;
     private final ClinicMapper clinicMapper;
     private final LocationService locationService;
     private final FileService fileService;
+    private final EmailService emailService;
     private final WardService wardService;
 
     @Override
@@ -116,16 +120,26 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public Clinic approve(Clinic clinic) {
+    @Transactional
+    public Clinic approve(Clinic clinic) throws MessagingException {
         clinic.setStatus(Status.Clinic.ACTIVE.name());
+        Account manager = clinic.getManager();
+        manager.setStatus(Status.Account.ACTIVE.name());
+        managerRepository.save((Manager) manager);
         update(clinic);
+        emailService.sendClinicApprovementEmail(clinic);
         return clinic;
     }
 
     @Override
-    public Clinic reject(Clinic clinic) {
+    @Transactional
+    public Clinic reject(Clinic clinic) throws MessagingException {
         clinic.setStatus(Status.Clinic.INACTIVE.name());
+        Account manager = clinic.getManager();
+        manager.setStatus(Status.Account.INACTIVE.name());
+        managerRepository.save((Manager) manager);
         update(clinic);
+        emailService.sendClinicRejectionEmail(clinic);
         return clinic;
     }
 

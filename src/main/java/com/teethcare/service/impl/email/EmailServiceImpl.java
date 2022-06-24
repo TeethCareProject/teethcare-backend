@@ -3,6 +3,7 @@ package com.teethcare.service.impl.email;
 import com.teethcare.model.dto.BookingConfirmationDTO;
 import com.teethcare.model.dto.StaffCreatingPasswordDTO;
 import com.teethcare.model.entity.Booking;
+import com.teethcare.model.entity.Clinic;
 import com.teethcare.service.EmailService;
 import com.teethcare.utils.MailTemplateUtils;
 import lombok.RequiredArgsConstructor;
@@ -69,4 +70,41 @@ public class EmailServiceImpl implements EmailService {
         this.emailSender.send(message);
     }
 
+    @Override
+    public void sendClinicApprovementEmail(Clinic clinic) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        boolean multipart = true;
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
+
+        String htmlMsg = MailTemplateUtils.getClinicApprovement(clinic.getManager().getFirstName());
+
+        message.setContent(htmlMsg, "text/html");
+
+        helper.setTo(clinic.getManager().getEmail());
+
+        helper.setSubject("[TEETHCARE] YOUR CLINIC REGISTRATION HAS BEEN APPROVED!");
+
+        this.emailSender.send(message);
+    }
+
+    @Override
+    public void sendClinicRejectionEmail(Clinic clinic) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        boolean multipart = true;
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
+
+        String htmlMsg = MailTemplateUtils.getClinicRejection(clinic.getManager().getFirstName());
+
+        message.setContent(htmlMsg, "text/html");
+
+        helper.setTo(clinic.getManager().getEmail());
+
+        helper.setSubject("[TEETHCARE] YOUR CLINIC REGISTRATION HAS BEEN REJECTED!");
+
+        this.emailSender.send(message);
+    }
 }
