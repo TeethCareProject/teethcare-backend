@@ -1,6 +1,7 @@
 package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.model.entity.Account;
@@ -122,6 +123,9 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     @Transactional
     public Clinic approve(Clinic clinic) throws MessagingException {
+        if (!clinic.getStatus().equals(Status.Clinic.PENDING.name())) {
+            throw new BadRequestException("This Clinic has been approved/rejected before!");
+        }
         clinic.setStatus(Status.Clinic.ACTIVE.name());
         Account manager = clinic.getManager();
         manager.setStatus(Status.Account.ACTIVE.name());
@@ -134,6 +138,9 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     @Transactional
     public Clinic reject(Clinic clinic) throws MessagingException {
+        if (!clinic.getStatus().equals(Status.Clinic.PENDING.name())) {
+            throw new BadRequestException("This Clinic has been approved/rejected before!");
+        }
         clinic.setStatus(Status.Clinic.INACTIVE.name());
         Account manager = clinic.getManager();
         manager.setStatus(Status.Account.INACTIVE.name());
