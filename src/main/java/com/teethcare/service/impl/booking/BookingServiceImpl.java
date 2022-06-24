@@ -221,6 +221,9 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.Booking.TREATMENT.name());
                 break;
             case TREATMENT:
+                if (isCheckin) {
+                    throw new BadRequestException(Message.WRONG_STATUS.name() + ": Your booking status is " + booking.getStatus());
+                }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
                         || !booking.isConfirmed()) {

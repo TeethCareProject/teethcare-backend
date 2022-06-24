@@ -33,21 +33,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authManager;
-
     private final JwtTokenUtil jwtTokenUtil;
-
     private final AccountService accountService;
-
     private final LoginMapper loginMapper;
-
     private final ClinicService clinicService;
-
     private final ManagerService managerService;
-
     private final DentistService dentistService;
-
     private final CSService csService;
-
     private final ClinicMapper clinicMapper;
 
     @PostMapping(path = EndpointConstant.Authentication.LOGIN_ENDPOINT)
