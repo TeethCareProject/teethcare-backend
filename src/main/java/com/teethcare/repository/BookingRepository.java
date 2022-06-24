@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -27,6 +28,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
 
     Booking findBookingById(int id);
 
+    @Query("select b from Booking b " +
+            "where b.clinic.id = ?1 and b.desiredCheckingTime between ?2 and ?3 or b.examinationTime between ?4 and ?5")
     List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(int clinicId,
                                                                                                 Timestamp lowerDesiredCheckingTime,
                                                                                                 Timestamp upperDesiredCheckingTime,

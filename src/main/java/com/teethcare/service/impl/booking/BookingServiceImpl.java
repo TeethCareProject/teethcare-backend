@@ -230,7 +230,7 @@ public class BookingServiceImpl implements BookingService {
         boolean check;
         Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - 30 * 60 * 1000);
         Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + 30 * 60 * 1000);
-            List<Booking> queryBookingList =
+        List<Booking> queryBookingList =
                 bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
                         lowerBound, upperBound, lowerBound, upperBound);
         Clinic clinic = clinicService.findById(checkAvailableTimeRequest.getClinicId());
