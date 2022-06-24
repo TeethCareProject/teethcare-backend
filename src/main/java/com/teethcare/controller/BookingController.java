@@ -237,9 +237,15 @@ public class BookingController {
     }
 
 
-    @PutMapping("/checkin")
+    @PutMapping("/checkin/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<MessageResponse> checkin(@RequestParam(value = "bookingId") int bookingId) {
+    public ResponseEntity<MessageResponse> checkin(@PathVariable(value = "id") String id) {
+        int bookingId;
+        try {
+            bookingId = Integer.parseInt(id);
+        } catch(NumberFormatException exception) {
+            bookingId = 0;
+        }
         boolean isCheckin = true;
         boolean isUpdated = bookingService.updateStatus(bookingId, isCheckin);
 
@@ -248,7 +254,8 @@ public class BookingController {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_IN_SUCCESS.name(),
                         NotificationMessage.CHECK_IN_SUCCESS, Role.PATIENT.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
-                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()),
+                        HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
@@ -256,9 +263,15 @@ public class BookingController {
         }
     }
 
-    @PutMapping("/checkout")
+    @PutMapping("/checkout/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
+    public ResponseEntity<MessageResponse> checkout(@PathVariable(value = "id") String id) {
+        int bookingId;
+        try {
+            bookingId = Integer.parseInt(id);
+        } catch(NumberFormatException exception) {
+            bookingId = 0;
+        }
         boolean isCheckin = false;
         boolean isUpdated = bookingService.updateStatus(bookingId, isCheckin);
         if (isUpdated) {
