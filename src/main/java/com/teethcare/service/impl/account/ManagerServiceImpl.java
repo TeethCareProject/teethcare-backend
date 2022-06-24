@@ -15,6 +15,7 @@ import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.repository.ManagerRepository;
 import com.teethcare.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository managerRepository;
@@ -87,14 +89,28 @@ public class ManagerServiceImpl implements ManagerService {
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
-                Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
+//                Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
+//                Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
+//                Location location = new Location();
+//                location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
+//                location.setAddressString(managerRegisterRequest.getClinicAddress());
+//                locationService.save(location);
+//                this.save(manager);
+//                clinicService.saveWithManagerAndLocation(clinic, manager, location);
                 Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
+                Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
+                clinic.setManager(manager);
+
                 Location location = new Location();
                 location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
                 location.setAddressString(managerRegisterRequest.getClinicAddress());
-                locationService.save(location);
-                this.save(manager);
-                clinicService.saveWithManagerAndLocation(clinic, manager, location);
+                clinic.setLocation(location);
+
+                clinic.setStatus(Status.Clinic.PENDING.name());
+//                locationService.save(location);
+//                this.save(manager);
+//                clinicService.saveWithManagerAndLocation(clinic, manager, location);
+                clinicService.save(clinic);
                 ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
                 return accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);
             } else {
