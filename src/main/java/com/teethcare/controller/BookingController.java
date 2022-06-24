@@ -8,11 +8,7 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.ServiceOfClinic;
-import com.teethcare.model.request.BookingFilterRequest;
-import com.teethcare.model.request.BookingFromAppointmentRequest;
-import com.teethcare.model.request.BookingRequest;
-import com.teethcare.model.request.BookingUpdateRequest;
-import com.teethcare.model.request.CheckAvailableTimeRequest;
+import com.teethcare.model.request.*;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.CheckAvailableTimeResponse;
 import com.teethcare.model.response.MessageResponse;
@@ -276,7 +272,8 @@ public class BookingController {
         CheckAvailableTimeResponse checkAvailableTimeResponse = new CheckAvailableTimeResponse(Status.CheckTime.UNAVAILABLE.name());
         if (result) {
             checkAvailableTimeResponse.setStatus(Status.CheckTime.AVAILABLE.name());
+            return new ResponseEntity<>(checkAvailableTimeResponse, HttpStatus.OK);
         }
-        return new ResponseEntity<>(checkAvailableTimeResponse, HttpStatus.OK);
+        return new ResponseEntity<>(checkAvailableTimeResponse, HttpStatus.BAD_REQUEST);
     }
 }
