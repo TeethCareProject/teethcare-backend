@@ -169,13 +169,17 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public void confirmBookingRequest(int bookingId, CustomerService customerService, ObjectNode objectNode) {
+    public boolean confirmBookingRequest(int bookingId, CustomerService customerService, ObjectNode objectNode) {
         Booking booking = findBookingById(bookingId);
 
         boolean isAccepted = objectNode.get("isAccepted").asBoolean();
 
         if (isAccepted) {
             booking.setStatus(Status.Booking.REQUEST.name());
+            booking.setCustomerService(customerService);
+
+            save(booking);
+            return true;
         } else {
             String rejectedNote;
             log.info("rejectedNote: " + objectNode.get("rejectedNote"));
@@ -186,10 +190,12 @@ public class BookingServiceImpl implements BookingService {
             }
             booking.setStatus(Status.Booking.REJECTED.name());
             booking.setRejectedNote(rejectedNote);
-        }
-        booking.setCustomerService(customerService);
+            booking.setCustomerService(customerService);
 
-        save(booking);
+            save(booking);
+            return false;
+        }
+
     }
 
     @Override

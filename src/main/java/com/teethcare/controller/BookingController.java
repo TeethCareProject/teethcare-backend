@@ -150,7 +150,17 @@ public class BookingController {
             case CUSTOMER_SERVICE:
                 Account account = accountService.getAccountByUsername(username);
                 CustomerService customerService = CSService.findById(account.getId());
-                bookingService.confirmBookingRequest(bookingId, customerService, objectNode);
+
+                boolean isAccepted = bookingService.confirmBookingRequest(bookingId, customerService, objectNode);
+                String rejectedNote = bookingService.findBookingById(bookingId).getRejectedNote();
+                if (!isAccepted) {
+                    try {
+                        firebaseMessagingService.sendNotification(bookingId, NotificationType.REJECT_BOOKING.name(),
+                                NotificationMessage.REJECT_BOOKING + rejectedNote, Role.PATIENT.name());
+                    } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+                        return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }
                 break;
             case PATIENT:
                 bookingService.rejectBookingRequest(bookingId);

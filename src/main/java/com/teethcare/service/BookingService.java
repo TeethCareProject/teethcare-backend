@@ -23,7 +23,7 @@ public interface BookingService extends CRUDService<Booking> {
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
     Page<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
 
-    void confirmBookingRequest(int bookingId, CustomerService customerService, ObjectNode objectNode);
+    boolean confirmBookingRequest(int bookingId, CustomerService customerService, ObjectNode objectNode);
     void rejectBookingRequest(int bookingId);
     void firstlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
 
