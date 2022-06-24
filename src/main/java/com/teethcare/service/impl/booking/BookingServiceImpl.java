@@ -13,6 +13,8 @@ import com.teethcare.repository.BookingRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
+import com.teethcare.utils.TimeUtils;
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,11 +25,13 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -248,6 +252,33 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<Integer> getAvailableTime(GetAvailableTimeRequest getAvailableTimeRequest) {
+        Clinic neededClinic = clinicService.findById(getAvailableTimeRequest.getClinicId());
+
+        if(neededClinic == null) {
+            throw new NotFoundException("Invalid clinic Id");
+        }
+
+        List<Integer> defaultTimes = IntStream.range(LocalTime.MIN.getHour(), LocalTime.MAX.getHour()).mapToObj(i -> i).collect(Collectors.toList());
+
+        List<Integer> shiftRange1 =  IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift1()), TimeUtils.floorHour(neededClinic.getEndTimeShift1())).mapToObj(i -> i).collect(Collectors.toList());
+        List<Integer> shiftRange2 =  IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift2()), TimeUtils.floorHour(neededClinic.getEndTimeShift2())).mapToObj(i -> i).collect(Collectors.toList());
+
+        List<Integer> clinicWorkingTimes = defaultTimes.stream().filter(hour -> (shiftRange1.contains(hour) || shiftRange2.contains(hour))).collect(Collectors.toList());
+
+        List<Integer> availableTimes = clinicWorkingTimes.stream().filter(hour ->  {
+                    CheckAvailableTimeRequest check = new CheckAvailableTimeRequest(
+                            getAvailableTimeRequest.getClinicId(),
+                            getAvailableTimeRequest.getDate() + (hour * 60 * 60 * 1000)
+                    );
+                    return checkAvailableTime(check);
+                }
+        ).collect(Collectors.toList());
+
+        return availableTimes;
+    }
+
+    @Override
     public Booking findBookingById(int id) {
         return bookingRepository.findBookingById(id);
     }
@@ -380,4 +411,6 @@ public class BookingServiceImpl implements BookingService {
         }
         return null;
     }
+
+
 }

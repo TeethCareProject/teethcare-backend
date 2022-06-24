@@ -9,10 +9,7 @@ import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.*;
-import com.teethcare.model.response.BookingResponse;
-import com.teethcare.model.response.CheckAvailableTimeResponse;
-import com.teethcare.model.response.MessageResponse;
-import com.teethcare.model.response.PatientBookingResponse;
+import com.teethcare.model.response.*;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -275,5 +274,13 @@ public class BookingController {
             return new ResponseEntity<>(checkAvailableTimeResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(checkAvailableTimeResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/get-available-time")
+    public ResponseEntity<GetAvailableTimeResponse> getAvailableTimeByDate(@Valid GetAvailableTimeRequest getAvailableTimeRequest) {
+        List<Integer> result = bookingService.getAvailableTime(getAvailableTimeRequest);
+        GetAvailableTimeResponse getAvailableTimeResponse = new GetAvailableTimeResponse(result);
+
+        return new ResponseEntity<>(getAvailableTimeResponse, HttpStatus.OK);
     }
 }
