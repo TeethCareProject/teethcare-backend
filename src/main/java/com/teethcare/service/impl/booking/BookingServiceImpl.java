@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -269,7 +270,7 @@ public class BookingServiceImpl implements BookingService {
         List<Integer> availableTimes = clinicWorkingTimes.stream().filter(hour ->  {
                     CheckAvailableTimeRequest check = new CheckAvailableTimeRequest(
                             getAvailableTimeRequest.getClinicId(),
-                            getAvailableTimeRequest.getDate() + (hour * 60 * 60 * 1000)
+                            ConvertUtils.getDate(getAvailableTimeRequest.getDate()).toLocalDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() + (hour * 60 * 60 * 1000)
                     );
                     return checkAvailableTime(check);
                 }
