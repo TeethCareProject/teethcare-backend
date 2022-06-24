@@ -230,16 +230,20 @@ public class BookingServiceImpl implements BookingService {
         boolean check;
         Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - 30 * 60 * 1000);
         Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + 30 * 60 * 1000);
-        List<Booking> queryBookingList =
+            List<Booking> queryBookingList =
                 bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
                         lowerBound, upperBound, lowerBound, upperBound);
         Clinic clinic = clinicService.findById(checkAvailableTimeRequest.getClinicId());
         if (clinic == null) {
             throw new BadRequestException("Clinic ID " + checkAvailableTimeRequest.getClinicId() + " not found!");
         }
-        check = ((checkAvailableTimeRequest.getDesiredCheckingTime() >= clinic.getStartTimeShift1().getTime() && checkAvailableTimeRequest.getDesiredCheckingTime() <= clinic.getEndTimeShift1().getTime())
-                || (checkAvailableTimeRequest.getDesiredCheckingTime() >= clinic.getStartTimeShift2().getTime() && checkAvailableTimeRequest.getDesiredCheckingTime() <= clinic.getEndTimeShift2().getTime()))
-                && (clinic.getDentists().size() - queryBookingList.size() > 0);
+        long now = System.currentTimeMillis();
+        LocalTime checkedTime = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime()).toLocalDateTime().toLocalTime();
+        boolean isInvalidWorkTime = checkedTime.isAfter(clinic.getEndTimeShift2().toLocalTime()) || checkedTime.isBefore(clinic.getStartTimeShift1().toLocalTime())
+                || checkedTime.isAfter(clinic.getStartTimeShift2().toLocalTime()) && checkedTime.isBefore(clinic.getStartTimeShift2().toLocalTime());
+        check = !isInvalidWorkTime
+                && (clinic.getDentists().size() - queryBookingList.size() > 0)
+                && checkAvailableTimeRequest.getDesiredCheckingTime() >= now;
         return check;
     }
 
