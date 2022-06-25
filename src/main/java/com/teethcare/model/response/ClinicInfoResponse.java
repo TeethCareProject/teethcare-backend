@@ -16,6 +16,7 @@ public class ClinicInfoResponse {
     private String description;
     private String imageUrl;
     private String taxCode;
+    private String email;
     private float avgRatingScore;
     private String status;
     private Long startTimeShift1;

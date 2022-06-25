@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.account;
 
+import com.teethcare.common.Message;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
@@ -20,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,27 +92,24 @@ public class ManagerServiceImpl implements ManagerService {
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
-//                Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
-//                Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
-//                Location location = new Location();
-//                location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
-//                location.setAddressString(managerRegisterRequest.getClinicAddress());
-//                locationService.save(location);
-//                this.save(manager);
-//                clinicService.saveWithManagerAndLocation(clinic, manager, location);
                 Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
+                LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
+                LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
+                if (endTimeShift1.isAfter(startTimeShift2)) {
+                    throw new BadRequestException(Message.WORKING_TIME_INVALID.name());
+                }
+                clinic.setStatus(Status.Clinic.PENDING.name());
+
                 Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
+                save(manager);
                 clinic.setManager(manager);
 
                 Location location = new Location();
                 location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
                 location.setAddressString(managerRegisterRequest.getClinicAddress());
+                locationService.save(location);
                 clinic.setLocation(location);
 
-                clinic.setStatus(Status.Clinic.PENDING.name());
-//                locationService.save(location);
-//                this.save(manager);
-//                clinicService.saveWithManagerAndLocation(clinic, manager, location);
                 clinicService.save(clinic);
                 ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
                 return accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);

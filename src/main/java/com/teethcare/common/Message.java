@@ -22,5 +22,6 @@ public enum Message {
     //BAD_REQUEST
     OUT_OF_WORKING_TIME,
     //BAD_REQUEST
-    CREATE_FAIL
+    CREATE_FAIL,
+    WORKING_TIME_INVALID
 }

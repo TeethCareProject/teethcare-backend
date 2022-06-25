@@ -18,6 +18,7 @@ public class ClinicResponse {
     private String imageUrl;
     private String taxCode;
     private float avgRatingScore;
+    private String email;
     private LocationResponse location;
     private AccountResponse manager;
     private String status;
