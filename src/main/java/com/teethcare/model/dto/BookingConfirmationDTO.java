@@ -16,4 +16,6 @@ public class BookingConfirmationDTO {
     private String fwdLink;
     private String email;
     private int bookingId;
+    private String content;
+    private String clinicName;
 }

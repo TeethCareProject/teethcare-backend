@@ -155,10 +155,14 @@ public class BookingController {
                 String rejectedNote = bookingService.findBookingById(bookingId).getRejectedNote();
                 if (!isAccepted) {
                     try {
+                        Booking booking = bookingService.findBookingById(bookingId);
                         firebaseMessagingService.sendNotification(bookingId, NotificationType.REJECT_BOOKING.name(),
                                 NotificationMessage.REJECT_BOOKING + rejectedNote, Role.PATIENT.name());
+                        emailService.sendRejectBooking(booking);
                     } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                         return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                    } catch (MessagingException e) {
+                        return new ResponseEntity<>(new MessageResponse(Message.ERROR_SENDMAIL.name()), HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 }
                 break;
