@@ -6,10 +6,7 @@ import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.request.AccountFilterRequest;
-import com.teethcare.model.request.AccountUpdateStatusRequest;
-import com.teethcare.model.request.ProfileUpdateRequest;
-import com.teethcare.model.request.StaffPasswordRequest;
+import com.teethcare.model.request.*;
 import com.teethcare.repository.AccountRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.FileService;
@@ -138,6 +135,19 @@ public class AccountServiceImpl implements AccountService {
         account.setAvatarImage(fileService.uploadFile(image));
         save(account);
         return account;
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest changePasswordRequest, String username) {
+        Account account = accountRepository.findAccountByUsernameAndStatus(username, Status.Account.ACTIVE.name());
+        if (account == null) {
+            throw new NotFoundException("Account not found!");
+        }
+        if (changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())) {
+            account.setPassword(passwordEncoder.encode(changePasswordRequest.getPassword()));
+            update(account);
+        }
+        throw new BadRequestException("Confirm Password is not match with password");
     }
 
     @Override

@@ -1,10 +1,7 @@
 package com.teethcare.service;
 
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.request.AccountFilterRequest;
-import com.teethcare.model.request.AccountUpdateStatusRequest;
-import com.teethcare.model.request.ProfileUpdateRequest;
-import com.teethcare.model.request.StaffPasswordRequest;
+import com.teethcare.model.request.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,4 +30,5 @@ public interface AccountService extends CRUDService<Account> {
 
     Account updateProfile(ProfileUpdateRequest updateRequest, String username);
     Account updateImage(MultipartFile multipartFile, String username);
+    void changePassword(ChangePasswordRequest changePasswordRequest, String username);
 }

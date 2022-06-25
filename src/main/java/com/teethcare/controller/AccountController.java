@@ -9,6 +9,7 @@ import com.teethcare.mapper.AccountMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.request.AccountFilterRequest;
 import com.teethcare.model.request.AccountUpdateStatusRequest;
+import com.teethcare.model.request.ChangePasswordRequest;
 import com.teethcare.model.request.ProfileUpdateRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.MessageResponse;
@@ -93,5 +94,14 @@ public class AccountController {
         Account account = accountService.updateImage(image, username);
         AccountResponse accountResponse = accountMapper.mapAccountToAccountResponse(account);
         return new ResponseEntity<>(accountResponse, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/change-password")
+    public ResponseEntity<Message> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest,
+                                                  @RequestHeader(value = AUTHORIZATION) String token) {
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        accountService.changePassword(changePasswordRequest, username);
+        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 }
