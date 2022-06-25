@@ -79,11 +79,9 @@ public class EmailServiceImpl implements EmailService {
                         .lastname(booking.getPatient().getFirstName())
                         .email(booking.getPatient().getEmail())
                         .bookingId(booking.getId())
-                        .fwdLink(homepageUrl + "rejectBooking/" + booking.getId())
                         .content(booking.getRejectedNote())
                         .clinicName(booking.getClinic().getName())
                         .build();
-        log.info("Forward link: " + homepageUrl + "rejectBooking/" + booking.getId());
         MimeMessage message = emailSender.createMimeMessage();
 
         boolean multipart = true;
