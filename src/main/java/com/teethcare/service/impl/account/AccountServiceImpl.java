@@ -143,8 +143,11 @@ public class AccountServiceImpl implements AccountService {
         if (account == null) {
             throw new NotFoundException("Account not found!");
         }
-        if (changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())) {
-            account.setPassword(passwordEncoder.encode(changePasswordRequest.getPassword()));
+        if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), account.getPassword())) {
+            throw new NotFoundException("Old password is not correct!");
+        }
+        if (changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+            account.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
             update(account);
         }
         throw new BadRequestException("Confirm Password is not match with password");

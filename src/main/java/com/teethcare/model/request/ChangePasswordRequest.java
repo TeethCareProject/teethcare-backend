@@ -12,7 +12,10 @@ public class ChangePasswordRequest {
 
     @NotBlank
     @NotNull
-    private String password;
+    private String oldPassword;
+    @NotBlank
+    @NotNull
+    private String newPassword;
     @NotBlank
     @NotNull
     private String confirmPassword;
