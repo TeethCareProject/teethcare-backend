@@ -22,4 +22,5 @@ public class ClinicLoginResponse {
     private Long startTimeShift2;
     private Long endTimeShift2;
     private String status;
+    private Integer bookingGap;
 }
