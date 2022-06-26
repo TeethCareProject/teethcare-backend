@@ -10,6 +10,7 @@ import com.teethcare.model.response.LocationResponse;
 import com.teethcare.model.response.ProvinceResponse;
 import com.teethcare.service.ProvinceService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = EndpointConstant.Province.PROVINCE_ENDPOINT)
 @RequiredArgsConstructor
+@Slf4j
 public class LocationController {
     private final ProvinceService provinceService;
     private final LocationMapper locationMapper;
@@ -46,7 +48,9 @@ public class LocationController {
                 .queryParam("key", googleMapConfig.getAPIKey())
                 .queryParam("query", address)
                 .build();
-        ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
+        log.info(uri.toUriString());
+//        ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
+//        log.info(String.valueOf(locationRequest.getBody()));
     }
 }
 
