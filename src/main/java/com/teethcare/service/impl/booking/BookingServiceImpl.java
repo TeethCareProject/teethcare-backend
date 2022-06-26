@@ -14,7 +14,6 @@ import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import com.teethcare.utils.TimeUtils;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -229,19 +227,18 @@ public class BookingServiceImpl implements BookingService {
         return true;
     }
 
-
     @Override
     public boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest) {
         boolean check;
-        Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - 30 * 60 * 1000);
-        Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + 30 * 60 * 1000);
-        List<Booking> queryBookingList =
-                bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
-                        lowerBound, upperBound, lowerBound, upperBound);
         Clinic clinic = clinicService.findById(checkAvailableTimeRequest.getClinicId());
         if (clinic == null) {
             throw new BadRequestException("Clinic ID " + checkAvailableTimeRequest.getClinicId() + " not found!");
         }
+        Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - clinic.getBookingGap() * 60 * 1000);
+        Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + clinic.getBookingGap() * 60 * 1000);
+        List<Booking> queryBookingList =
+                bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
+                        lowerBound, upperBound, lowerBound, upperBound);
         long now = System.currentTimeMillis();
         LocalTime checkedTime = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime()).toLocalDateTime().toLocalTime();
         boolean isInvalidWorkTime = checkedTime.isAfter(clinic.getEndTimeShift2().toLocalTime()) || checkedTime.isBefore(clinic.getStartTimeShift1().toLocalTime())
@@ -256,18 +253,18 @@ public class BookingServiceImpl implements BookingService {
     public List<Integer> getAvailableTime(GetAvailableTimeRequest getAvailableTimeRequest) {
         Clinic neededClinic = clinicService.findById(getAvailableTimeRequest.getClinicId());
 
-        if(neededClinic == null) {
+        if (neededClinic == null) {
             throw new NotFoundException("Invalid clinic Id");
         }
 
         List<Integer> defaultTimes = IntStream.range(LocalTime.MIN.getHour(), LocalTime.MAX.getHour()).mapToObj(i -> i).collect(Collectors.toList());
 
-        List<Integer> shiftRange1 =  IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift1()), TimeUtils.floorHour(neededClinic.getEndTimeShift1())).mapToObj(i -> i).collect(Collectors.toList());
-        List<Integer> shiftRange2 =  IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift2()), TimeUtils.floorHour(neededClinic.getEndTimeShift2())).mapToObj(i -> i).collect(Collectors.toList());
+        List<Integer> shiftRange1 = IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift1()), TimeUtils.floorHour(neededClinic.getEndTimeShift1())).mapToObj(i -> i).collect(Collectors.toList());
+        List<Integer> shiftRange2 = IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift2()), TimeUtils.floorHour(neededClinic.getEndTimeShift2())).mapToObj(i -> i).collect(Collectors.toList());
 
         List<Integer> clinicWorkingTimes = defaultTimes.stream().filter(hour -> (shiftRange1.contains(hour) || shiftRange2.contains(hour))).collect(Collectors.toList());
 
-        List<Integer> availableTimes = clinicWorkingTimes.stream().filter(hour ->  {
+        List<Integer> availableTimes = clinicWorkingTimes.stream().filter(hour -> {
                     CheckAvailableTimeRequest check = new CheckAvailableTimeRequest(
                             getAvailableTimeRequest.getClinicId(),
                             ConvertUtils.getDate(getAvailableTimeRequest.getDate()).toLocalDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() + (hour * 60 * 60 * 1000)
