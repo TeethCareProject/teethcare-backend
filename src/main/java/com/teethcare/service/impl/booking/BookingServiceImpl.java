@@ -220,7 +220,7 @@ public class BookingServiceImpl implements BookingService {
                 }
                 if (System.currentTimeMillis() - booking.getExaminationTime().getTime() >= 10*60*1000
                         || System.currentTimeMillis() - booking.getExaminationTime().getTime() <= -10*60*1000) {
-                    throw new BadRequestException(Message.UNABLE_TO_CHECKIN.name() + ": Your checkin time is " + booking.getExaminationTime()
+                    throw new BadRequestException("Your checkin time is " + booking.getExaminationTime()
                             + ". You are soon/late at least for 10 minutes");
                 }
                 booking.setStatus(Status.Booking.TREATMENT.name());

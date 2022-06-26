@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
@@ -254,12 +256,11 @@ public class BookingController {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_IN_SUCCESS.name(),
                         NotificationMessage.CHECK_IN_SUCCESS, Role.PATIENT.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
-                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerError("Failed for send mail");
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse("Not reach time to check in"), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Not reach time to check in");
         }
     }
 
@@ -279,11 +280,11 @@ public class BookingController {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
                         NotificationMessage.CHECK_OUT_SUCCESS, Role.PATIENT.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
-                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerError("Failed for send mail");
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse("Not reach time to check out"), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Not reach time to check in");
         }
     }
 }
