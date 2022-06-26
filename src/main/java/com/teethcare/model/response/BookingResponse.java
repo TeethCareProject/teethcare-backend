@@ -30,7 +30,7 @@ public class BookingResponse {
     private boolean isConfirmed;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ServiceOfClinicResponse> services;
-    private ClinicInfoResponse clinic;
+    private ClinicSimpleResponse clinic;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private FeedbackResponse feedbackResponse;
 }
