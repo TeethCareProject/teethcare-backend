@@ -101,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
         LocalTime endTimeShift2 = clinic.getEndTimeShift2().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
-                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
+                                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
         if (isValidWorkTime) {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
@@ -150,7 +150,8 @@ public class BookingServiceImpl implements BookingService {
 
                 return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
-                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistIdAndStatusIsNotNull(accountId, sort);
+                List<String> statuses = List.of(Status.Booking.TREATMENT.name(), Status.Booking.DONE.name());
+                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistIdAndStatusIn(accountId, statuses, sort);
 
                 bookingListForDentist = bookingListForDentist.stream()
                         .filter(filterRequest.getPredicate())
@@ -409,6 +410,4 @@ public class BookingServiceImpl implements BookingService {
         }
         return null;
     }
-
-
 }
