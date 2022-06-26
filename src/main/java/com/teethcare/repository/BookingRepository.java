@@ -10,20 +10,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaSpecificationExecutor<Booking> {
     List<Booking> findBookingByPatientIdAndStatusIsNotNull(int id, Sort sort);
     List<Booking> findBookingByClinicAndStatusIsNotNull(Clinic clinic, Sort sort);
-    List<Booking> findBookingByPatientId(int id, Sort sort);
-    List<Booking> findBookingByClinic(Clinic clinic, Sort sort);
     List<Booking> findBookingByDentistIdAndStatusIn(Integer dentist_id, List<String> statuses, Sort sort);
-    List<Booking> findBookingByDentistIdAndStatusIsNotNull(int id, Sort sort);
     List<Booking> findBookingByClinic(Clinic id);
     List<Booking> findBookingByStatusAndExaminationTimeAndDentistId(String status, Timestamp examinationTime, int dentistId);
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
     Booking findBookingById(int id);
-    List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(int clinicId, Timestamp upperExaminationTime);
+    List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(int clinicId,
+                                                                                                Timestamp lowerDesiredCheckingTime,
+                                                                                                Timestamp upperDesiredCheckingTime,
+                                                                                                Timestamp lowerExaminationTime,
+                                                                                                Timestamp upperExaminationTime);
     Booking findBookingByPreBookingId(int preBookingId);
 }
