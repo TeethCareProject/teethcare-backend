@@ -46,7 +46,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             Account account = accountService.getAccountByUsername(username);
 
             Timestamp now = new Timestamp(System.currentTimeMillis());
-            appointment.setCreateBookingTime(now);
+            appointment.setCreateBookingDate(now);
             if (appointmentRequest.getAppointmentDate() - now.getTime() < 0) {
                 throw new BadRequestException("Appointment Date invalid");
             }
