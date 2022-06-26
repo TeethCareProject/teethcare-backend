@@ -36,4 +36,10 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void update(Location theEntity) {
     }
+
+    @Override
+    public Location findLocationInformationByWardId(int wardId) {
+
+        return null;
+    }
 }

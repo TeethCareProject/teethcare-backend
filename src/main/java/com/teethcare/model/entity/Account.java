@@ -53,4 +53,8 @@ public class Account {
 
     @Column(name = "status")
     private String status;
+
+    @OneToOne
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 }
