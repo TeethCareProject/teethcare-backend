@@ -62,6 +62,9 @@ public class Clinic {
     @Column(name = "end_time_shift_2")
     private Time endTimeShift2;
 
+    @Column(name = "booking_gap")
+    private int bookingGap;
+
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
     @JsonBackReference
