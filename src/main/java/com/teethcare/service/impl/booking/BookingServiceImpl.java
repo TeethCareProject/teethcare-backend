@@ -206,23 +206,28 @@ public class BookingServiceImpl implements BookingService {
     public boolean updateStatus(int bookingId, boolean isCheckin) {
         Booking booking = bookingRepository.findBookingById(bookingId);
         if (booking == null) {
-            throw new NotFoundException(Message.NOT_FOUND.name() + ": Booking is not existed!");
+            throw new NotFoundException(": Booking is not existed!");
         }
         String status = booking.getStatus();
         switch (Status.Booking.valueOf(status)) {
             case REQUEST:
                 if (!isCheckin) {
-                    throw new BadRequestException(Message.WRONG_STATUS.name() + ": Your booking status is " + booking.getStatus());
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
                 }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null) {
                     return false;
                 }
+                if (System.currentTimeMillis() - booking.getExaminationTime().getTime() >= 10*60*1000
+                        || System.currentTimeMillis() - booking.getExaminationTime().getTime() <= -10*60*1000) {
+                    throw new BadRequestException(Message.UNABLE_TO_CHECKIN.name() + ": Your checkin time is " + booking.getExaminationTime()
+                            + ". You are soon/late at least for 10 minutes");
+                }
                 booking.setStatus(Status.Booking.TREATMENT.name());
                 break;
             case TREATMENT:
                 if (isCheckin) {
-                    throw new BadRequestException(Message.WRONG_STATUS.name() + ": Your booking status is " + booking.getStatus());
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
                 }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
@@ -232,7 +237,7 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.Booking.DONE.name());
                 break;
             default:
-                throw new BadRequestException(Message.WRONG_STATUS.name() + ": Your booking status is " + booking.getStatus());
+                throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
         }
         bookingRepository.save(booking);
         return true;
