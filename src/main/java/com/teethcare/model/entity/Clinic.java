@@ -63,7 +63,7 @@ public class Clinic {
     private Time endTimeShift2;
 
     @Column(name = "booking_gap")
-    private int bookingGap;
+    private Integer bookingGap;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
