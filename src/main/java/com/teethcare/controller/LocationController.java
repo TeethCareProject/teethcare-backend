@@ -11,6 +11,10 @@ import com.teethcare.model.response.ProvinceResponse;
 import com.teethcare.service.ProvinceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +29,17 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = EndpointConstant.Province.PROVINCE_ENDPOINT)
+@RequestMapping(path = EndpointConstant.Province.LOCATION_ENDPOINT)
 @RequiredArgsConstructor
 @Slf4j
 public class LocationController {
     private final ProvinceService provinceService;
     private final LocationMapper locationMapper;
+    @Autowired
+    private ApplicationContext context;
+
+    @Value("${googlemap.key}")
+    private String keyJson;
 
     @GetMapping()
     public ResponseEntity<List<ProvinceResponse>> getAll() {
@@ -38,19 +47,20 @@ public class LocationController {
         return new ResponseEntity<>(locationMapper.mapProvinceListToProvinceResponseList(provinces), HttpStatus.OK);
     }
 
-    @GetMapping()
-    public void getByAddress(@RequestParam String address) throws IOException {
-        GoogleMapConfig googleMapConfig = new GoogleMapConfig();
+    @GetMapping("/test")
+    public LocationRequest getByAddress(@RequestParam String address) throws IOException {
+        GoogleMapConfig googleMapConfig = context.getBean(GoogleMapConfig.class);
         UriComponents uri = UriComponentsBuilder.newInstance()
                 .scheme("https")
                 .host("maps.googleapis.com")
-                .path("/maps/api/place/textsearch/")
-                .queryParam("key", googleMapConfig.getAPIKey())
+                .path("/maps/api/place/textsearch/json")
                 .queryParam("query", address)
+                .queryParam("key", googleMapConfig.getAPIKey2().getValue())
                 .build();
         log.info(uri.toUriString());
-//        ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
-//        log.info(String.valueOf(locationRequest.getBody()));
+        ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
+        log.info(String.valueOf(locationRequest.getBody()));
+        return locationRequest.getBody();
     }
 }
 

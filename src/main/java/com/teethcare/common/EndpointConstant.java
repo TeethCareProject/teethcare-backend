@@ -63,6 +63,7 @@ public final class EndpointConstant {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Province {
         public static final String PROVINCE_ENDPOINT = ROOT_ENDPOINT + "/provinces";
+        public static final String LOCATION_ENDPOINT = ROOT_ENDPOINT + "/locations";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
