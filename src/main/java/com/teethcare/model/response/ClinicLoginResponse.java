@@ -18,4 +18,5 @@ public class ClinicLoginResponse {
     private float avgRatingScore;
     private LocationResponse location;
     private String status;
+    private Integer bookingGap;
 }
