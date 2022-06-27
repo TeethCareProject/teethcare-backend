@@ -50,11 +50,11 @@ public class AppointmentServiceImpl implements AppointmentService {
             if (appointmentRequest.getAppointmentDate() - now.getTime() < 0) {
                 throw new BadRequestException("Appointment Date invalid");
             }
-            appointment.setAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getAppointmentDate()));
+            appointment.setAppointmentDate(new Timestamp(appointmentRequest.getAppointmentDate()));
             if (appointmentRequest.getExpirationAppointmentDate().compareTo(appointmentRequest.getAppointmentDate()) < 0) {
                 throw new BadRequestException("Expiration Appointment Date invalid");
             }
-            appointment.setExpireAppointmentDate(ConvertUtils.getTimestamp(appointmentRequest.getExpirationAppointmentDate()));
+            appointment.setExpireAppointmentDate(new Timestamp(appointmentRequest.getExpirationAppointmentDate()));
 
             Booking preBooking = bookingService.findBookingById(appointmentRequest.getPreBookingId());
             if (preBooking == null) {
