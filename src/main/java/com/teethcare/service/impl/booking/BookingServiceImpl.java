@@ -156,7 +156,8 @@ public class BookingServiceImpl implements BookingService {
 
               return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
-                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId, sort);
+                List<String> statuses = List.of(Status.Booking.TREATMENT.name(), Status.Booking.DONE.name());
+                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistIdAndStatusIn(accountId, statuses, sort);
 
                 bookingListForDentist = bookingListForDentist.stream()
                         .filter(filterRequest.getPredicate())
