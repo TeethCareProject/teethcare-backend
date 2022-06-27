@@ -1,8 +1,12 @@
 package com.teethcare.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.config.security.UserDetailUtil;
+import com.teethcare.config.security.UserDetailsImpl;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
@@ -19,11 +23,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
+import java.util.List;
+
 import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -122,19 +134,38 @@ public class BookingController {
         return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/accept")
-    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<MessageResponse> isAccepted(@RequestParam(value = "isAccepted") boolean isAccepted,
-                                                      @RequestParam(value = "bookingId") int bookingId,
+    @PutMapping("/{id}/accept")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE, T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<MessageResponse> isAccepted(@RequestBody ObjectNode objectNode,
+                                                      @PathVariable(value = "id") int bookingId,
                                                       @RequestHeader(AUTHORIZATION) String token) {
-        token = token.substring("Bearer ".length());
-        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        String username = UserDetailUtil.getUsername();
+        String role = UserDetailUtil.getRole();
 
-        Account account = accountService.getAccountByUsername(username);
+        switch (Role.valueOf(role)) {
+            case CUSTOMER_SERVICE:
+                Account account = accountService.getAccountByUsername(username);
+                CustomerService customerService = CSService.findById(account.getId());
 
-        CustomerService customerService = CSService.findById(account.getId());
-
-        bookingService.confirmBookingRequest(bookingId, isAccepted, customerService);
+                boolean isAccepted = bookingService.confirmBookingRequest(bookingId, customerService, objectNode);
+                String rejectedNote = bookingService.findBookingById(bookingId).getRejectedNote();
+                if (!isAccepted) {
+                    try {
+                        Booking booking = bookingService.findBookingById(bookingId);
+                        firebaseMessagingService.sendNotification(bookingId, NotificationType.REJECT_BOOKING.name(),
+                                NotificationMessage.REJECT_BOOKING + rejectedNote, Role.PATIENT.name());
+                        emailService.sendRejectBooking(booking);
+                    } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+                        return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                    } catch (MessagingException e) {
+                        return new ResponseEntity<>(new MessageResponse(Message.ERROR_SENDMAIL.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }
+                break;
+            case PATIENT:
+                bookingService.rejectBookingRequest(bookingId);
+                break;
+        }
 
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
     }
@@ -209,7 +240,7 @@ public class BookingController {
     public ResponseEntity<MessageResponse> confirmFinalBooking(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
         boolean isUpdated = bookingService.confirmFinalBooking(bookingUpdateRequest);
         int bookingId = bookingUpdateRequest.getBookingId();
-        Booking booking = bookingService.findBookingById(bookingId);
+
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),

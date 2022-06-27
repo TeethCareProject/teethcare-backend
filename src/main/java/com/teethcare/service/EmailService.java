@@ -7,6 +7,6 @@ import javax.mail.MessagingException;
 
 public interface EmailService {
     void sendStaffCreatingPasswordEmail(StaffCreatingPasswordDTO staffCreatingPasswordDTO) throws MessagingException;
-
     void sendBookingConfirmEmail(Booking booking) throws MessagingException;
+    void sendRejectBooking(Booking booking) throws MessagingException;
 }
