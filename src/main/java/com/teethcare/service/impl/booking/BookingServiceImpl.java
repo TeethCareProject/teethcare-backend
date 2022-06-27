@@ -274,13 +274,13 @@ public class BookingServiceImpl implements BookingService {
         if (clinic == null) {
             throw new BadRequestException("Clinic ID " + checkAvailableTimeRequest.getClinicId() + " not found!");
         }
-        Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - clinic.getBookingGap() * 60 * 1000);
-        Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + clinic.getBookingGap() * 60 * 1000);
+        Timestamp lowerBound = new Timestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - clinic.getBookingGap() * 60 * 1000);
+        Timestamp upperBound = new Timestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + clinic.getBookingGap() * 60 * 1000);
         List<Booking> queryBookingList =
                 bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
                         lowerBound, upperBound, lowerBound, upperBound);
         long now = System.currentTimeMillis();
-        LocalTime checkedTime = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime()).toLocalDateTime().toLocalTime();
+        LocalTime checkedTime = new Timestamp(checkAvailableTimeRequest.getDesiredCheckingTime()).toLocalDateTime().toLocalTime();
         boolean isInvalidWorkTime = checkedTime.isAfter(clinic.getEndTimeShift2().toLocalTime()) || checkedTime.isBefore(clinic.getStartTimeShift1().toLocalTime())
                 || checkedTime.isAfter(clinic.getStartTimeShift2().toLocalTime()) && checkedTime.isBefore(clinic.getStartTimeShift2().toLocalTime());
         check = !isInvalidWorkTime
