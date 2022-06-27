@@ -17,7 +17,7 @@ public class BookingResponse {
     private int id;
     private PatientResponse patient;
     private BigDecimal totalPrice;
-    private Long createBookingDate;
+    private Long createBookingTime;
     private Long examinationTime;
     private String status;
     private UserInforResponse dentist;

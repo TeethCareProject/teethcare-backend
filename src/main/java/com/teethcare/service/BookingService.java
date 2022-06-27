@@ -4,10 +4,7 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.request.BookingFilterRequest;
-import com.teethcare.model.request.BookingFromAppointmentRequest;
-import com.teethcare.model.request.BookingRequest;
-import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,4 +23,6 @@ public interface BookingService extends CRUDService<Booking> {
     List<Booking> findBookingByClinic(Clinic clinic);
     boolean updateStatus(int bookingId);
     Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account);
+    boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest);
+    List<Integer> getAvailableTime(GetAvailableTimeRequest getAvailableTimeRequest);
 }
