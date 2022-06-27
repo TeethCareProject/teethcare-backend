@@ -17,6 +17,10 @@ public class ClinicLoginResponse {
     private String taxCode;
     private float avgRatingScore;
     private LocationResponse location;
+    private Long startTimeShift1;
+    private Long endTimeShift1;
+    private Long startTimeShift2;
+    private Long endTimeShift2;
     private String status;
     private Integer bookingGap;
 }

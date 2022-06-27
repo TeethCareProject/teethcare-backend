@@ -8,6 +8,7 @@ import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
+import com.teethcare.model.request.*;
 import com.teethcare.model.request.BookingFilterRequest;
 import com.teethcare.model.request.BookingFromAppointmentRequest;
 import com.teethcare.model.request.BookingRequest;
@@ -15,10 +16,10 @@ import com.teethcare.model.request.BookingUpdateRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
-import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
+import com.teethcare.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,9 +32,11 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +46,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
-    private final ServiceRepository serviceRepository;
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
@@ -141,20 +143,20 @@ public class BookingServiceImpl implements BookingService {
         switch (Role.valueOf(role)) {
             case CUSTOMER_SERVICE:
                 Clinic clinic = clinicService.findClinicByCustomerServiceId(accountId);
-                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinic(clinic, sort);
+                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinicAndStatusIsNotNull(clinic, sort);
 
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
-                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId, sort);
+                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientIdAndStatusIsNotNull(accountId, sort);
 
                 bookingListForPatient = bookingListForPatient.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
                 List<String> statuses = List.of(Status.Booking.TREATMENT.name(), Status.Booking.DONE.name());
                 List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistIdAndStatusIn(accountId, statuses, sort);
@@ -265,6 +267,54 @@ public class BookingServiceImpl implements BookingService {
         return true;
     }
 
+    @Override
+    public boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest) {
+        boolean check;
+        Clinic clinic = clinicService.findById(checkAvailableTimeRequest.getClinicId());
+        if (clinic == null) {
+            throw new BadRequestException("Clinic ID " + checkAvailableTimeRequest.getClinicId() + " not found!");
+        }
+        Timestamp lowerBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() - clinic.getBookingGap() * 60 * 1000);
+        Timestamp upperBound = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime() + clinic.getBookingGap() * 60 * 1000);
+        List<Booking> queryBookingList =
+                bookingRepository.findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(checkAvailableTimeRequest.getClinicId(),
+                        lowerBound, upperBound, lowerBound, upperBound);
+        long now = System.currentTimeMillis();
+        LocalTime checkedTime = ConvertUtils.getTimestamp(checkAvailableTimeRequest.getDesiredCheckingTime()).toLocalDateTime().toLocalTime();
+        boolean isInvalidWorkTime = checkedTime.isAfter(clinic.getEndTimeShift2().toLocalTime()) || checkedTime.isBefore(clinic.getStartTimeShift1().toLocalTime())
+                || checkedTime.isAfter(clinic.getStartTimeShift2().toLocalTime()) && checkedTime.isBefore(clinic.getStartTimeShift2().toLocalTime());
+        check = !isInvalidWorkTime
+                && (clinic.getDentists().size() - queryBookingList.size() > 0)
+                && checkAvailableTimeRequest.getDesiredCheckingTime() >= now;
+        return check;
+    }
+
+    @Override
+    public List<Integer> getAvailableTime(GetAvailableTimeRequest getAvailableTimeRequest) {
+        Clinic neededClinic = clinicService.findById(getAvailableTimeRequest.getClinicId());
+
+        if (neededClinic == null) {
+            throw new NotFoundException("Invalid clinic Id");
+        }
+
+        List<Integer> defaultTimes = IntStream.range(LocalTime.MIN.getHour(), LocalTime.MAX.getHour()).mapToObj(i -> i).collect(Collectors.toList());
+
+        List<Integer> shiftRange1 = IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift1()), TimeUtils.floorHour(neededClinic.getEndTimeShift1())).mapToObj(i -> i).collect(Collectors.toList());
+        List<Integer> shiftRange2 = IntStream.range(TimeUtils.ceilHour(neededClinic.getStartTimeShift2()), TimeUtils.floorHour(neededClinic.getEndTimeShift2())).mapToObj(i -> i).collect(Collectors.toList());
+
+        List<Integer> clinicWorkingTimes = defaultTimes.stream().filter(hour -> (shiftRange1.contains(hour) || shiftRange2.contains(hour))).collect(Collectors.toList());
+
+        List<Integer> availableTimes = clinicWorkingTimes.stream().filter(hour -> {
+                    CheckAvailableTimeRequest check = new CheckAvailableTimeRequest(
+                            getAvailableTimeRequest.getClinicId(),
+                            ConvertUtils.getDate(getAvailableTimeRequest.getDate()).toLocalDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() + (hour * 60 * 60 * 1000)
+                    );
+                    return checkAvailableTime(check);
+                }
+        ).collect(Collectors.toList());
+
+        return availableTimes;
+    }
 
     @Override
     public Booking findBookingById(int id) {
@@ -355,6 +405,7 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
         return true;
     }
+
     @Override
     public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
         if (bookingRepository.findBookingByPreBookingId(bookingFromAppointmentRequest.getAppointmentId()) == null) {
@@ -394,7 +445,7 @@ public class BookingServiceImpl implements BookingService {
             if (patient != null && clinic != null) {
                 return bookingRepository.save(bookingTmp);
             }
-
         }
         return null;
-    }}
+    }
+}

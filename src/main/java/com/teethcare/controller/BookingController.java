@@ -12,13 +12,8 @@ import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.ServiceOfClinic;
-import com.teethcare.model.request.BookingFilterRequest;
-import com.teethcare.model.request.BookingFromAppointmentRequest;
-import com.teethcare.model.request.BookingRequest;
-import com.teethcare.model.request.BookingUpdateRequest;
-import com.teethcare.model.response.BookingResponse;
-import com.teethcare.model.response.MessageResponse;
-import com.teethcare.model.response.PatientBookingResponse;
+import com.teethcare.model.request.*;
+import com.teethcare.model.response.*;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +34,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
+import java.util.List;
 
 import java.util.List;
 
@@ -206,7 +202,7 @@ public class BookingController {
     @PutMapping("/second-update")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).DENTIST)")
     public ResponseEntity<MessageResponse> secondlyUpdated(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
-                                                  @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
+                                                           @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
         boolean isSuccess;
 
         int bookingId = bookingUpdateRequest.getBookingId();
@@ -223,7 +219,7 @@ public class BookingController {
             }
 
             try {
-                firebaseMessagingService.sendNotification(bookingId,NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name(),
+                firebaseMessagingService.sendNotification(bookingId, NotificationType.UPDATE_BOOKING_2RD_NOTIFICATION.name(),
                         NotificationMessage.UPDATE_2RD_MESSAGE + bookingId, Role.PATIENT.name());
                 log.info("Successful notification");
                 emailService.sendBookingConfirmEmail(booking);
@@ -248,7 +244,7 @@ public class BookingController {
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
-                                                        NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
+                        NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -256,7 +252,7 @@ public class BookingController {
         } else {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_FAIL.name(),
-                                                            NotificationMessage.CONFIRM_BOOKING_FAIL + bookingId, Role.DENTIST.name());
+                        NotificationMessage.CONFIRM_BOOKING_FAIL + bookingId, Role.DENTIST.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -297,5 +293,23 @@ public class BookingController {
         } else {
             return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/check-available-time")
+    public ResponseEntity<CheckAvailableTimeResponse> checkAvailableTime(@Valid CheckAvailableTimeRequest checkAvailableTimeRequest) {
+        boolean result = bookingService.checkAvailableTime(checkAvailableTimeRequest);
+        CheckAvailableTimeResponse checkAvailableTimeResponse = new CheckAvailableTimeResponse(Status.CheckTime.UNAVAILABLE.name());
+        if (result) {
+            checkAvailableTimeResponse.setStatus(Status.CheckTime.AVAILABLE.name());
+            return new ResponseEntity<>(checkAvailableTimeResponse, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(checkAvailableTimeResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/get-available-time")
+    public ResponseEntity<GetAvailableTimeResponse> getAvailableTimeByDate(@Valid GetAvailableTimeRequest getAvailableTimeRequest) {
+        List<Integer> result = bookingService.getAvailableTime(getAvailableTimeRequest);
+        GetAvailableTimeResponse getAvailableTimeResponse = new GetAvailableTimeResponse(result);
+        return new ResponseEntity<>(getAvailableTimeResponse, HttpStatus.OK);
     }
 }
