@@ -206,7 +206,7 @@ public class BookingServiceImpl implements BookingService {
     public boolean updateStatus(int bookingId, boolean isCheckin) {
         Booking booking = bookingRepository.findBookingById(bookingId);
         if (booking == null) {
-            throw new NotFoundException(": Booking is not existed!");
+            throw new NotFoundException("Booking is not existed!");
         }
         String status = booking.getStatus();
         switch (Status.Booking.valueOf(status)) {
