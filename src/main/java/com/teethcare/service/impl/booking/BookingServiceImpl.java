@@ -113,7 +113,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
-        bookingTmp.setCreateBookingDate(now);
+        bookingTmp.setCreateBookingTime(now);
 
         //set patient to booking
         Patient patient = patientService.findById(account.getId());
@@ -203,7 +203,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = findBookingById(bookingId);
 
         long currentTime = System.currentTimeMillis();
-        boolean notOver120s = (currentTime - booking.getCreateBookingDate().getTime()) <= 120*1000;
+        boolean notOver120s = (currentTime - booking.getCreateBookingTime().getTime()) <= 120*1000;
         log.info("It is not over 120s: " + notOver120s);
         if (notOver120s) {
             booking.setStatus(Status.Booking.REJECTED.name());
@@ -384,7 +384,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new BadRequestException("Desired checking time invalid");
             }
             bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
-            bookingTmp.setCreateBookingDate(now);
+            bookingTmp.setCreateBookingTime(now);
             //set patient to booking
             Patient patient = patientService.findById(account.getId());
             bookingTmp.setPatient(patient);
