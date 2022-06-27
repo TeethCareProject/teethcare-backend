@@ -35,6 +35,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -101,12 +102,9 @@ public class BookingServiceImpl implements BookingService {
         }
 
         LocalTime checkedTime = desiredCheckingTime.toLocalDateTime().toLocalTime();
-        log.info("CheckedTime: " + checkedTime.toString());
         LocalTime startTimeShift1 = clinic.getStartTimeShift1().toLocalTime();
         LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
-        log.info("startTimeShift2: " + startTimeShift2.toString());
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
-        log.info("endTimeShift1: " + endTimeShift1.toString());
         LocalTime endTimeShift2 = clinic.getEndTimeShift2().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
                                 || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
@@ -198,7 +196,6 @@ public class BookingServiceImpl implements BookingService {
             save(booking);
             return false;
         }
-
     }
 
     @Override
@@ -241,18 +238,32 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public boolean updateStatus(int bookingId) {
+    public boolean updateStatus(int bookingId, boolean isCheckin) {
         Booking booking = bookingRepository.findBookingById(bookingId);
+        if (booking == null) {
+            throw new NotFoundException("Booking is not existed!");
+        }
         String status = booking.getStatus();
         switch (Status.Booking.valueOf(status)) {
             case REQUEST:
+                if (!isCheckin) {
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
+                }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null) {
                     return false;
                 }
+                if (System.currentTimeMillis() - booking.getExaminationTime().getTime() >= 10*60*1000
+                        || System.currentTimeMillis() - booking.getExaminationTime().getTime() <= -10*60*1000) {
+                    throw new BadRequestException("Your checkin time is " + booking.getExaminationTime()
+                            + ". You are soon/late at least for 10 minutes");
+                }
                 booking.setStatus(Status.Booking.TREATMENT.name());
                 break;
             case TREATMENT:
+                if (isCheckin) {
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
+                }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
                         || !booking.isConfirmed()) {
@@ -261,7 +272,7 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.Booking.DONE.name());
                 break;
             default:
-                return false;
+                throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
         }
         bookingRepository.save(booking);
         return true;
@@ -405,7 +416,6 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
         return true;
     }
-
     @Override
     public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
         if (bookingRepository.findBookingByPreBookingId(bookingFromAppointmentRequest.getAppointmentId()) == null) {

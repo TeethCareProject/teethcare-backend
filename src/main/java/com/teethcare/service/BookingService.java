@@ -26,9 +26,9 @@ public interface BookingService extends CRUDService<Booking> {
 
     boolean confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest);
     boolean secondlyUpdated(BookingUpdateRequest bookingUpdateRequest, boolean isAllDeleted);
-    boolean updateStatus(int bookingId);
 
     List<Booking> findBookingByClinic(Clinic clinic);
     boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest);
     List<Integer> getAvailableTime(GetAvailableTimeRequest getAvailableTimeRequest);
+    boolean updateStatus(int bookingId, boolean isCheckin);
 }

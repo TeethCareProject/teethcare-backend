@@ -7,6 +7,8 @@ import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.config.security.UserDetailsImpl;
 import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Booking;
@@ -30,6 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
@@ -37,6 +40,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 import java.util.List;
+
+import java.util.Objects;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -261,37 +266,52 @@ public class BookingController {
     }
 
 
-    @PutMapping("/checkin")
+    @PutMapping("/checkin/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<MessageResponse> checkin(@RequestParam(value = "bookingId") int bookingId) {
-        boolean isUpdated = bookingService.updateStatus(bookingId);
+    public ResponseEntity<MessageResponse> checkin(@PathVariable(value = "id") String id) {
+        int bookingId;
+        try {
+            bookingId = Integer.parseInt(id);
+        } catch(NumberFormatException exception) {
+            bookingId = 0;
+        }
+        boolean isCheckin = true;
+        boolean isUpdated = bookingService.updateStatus(bookingId, isCheckin);
+
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_IN_SUCCESS.name(),
                         NotificationMessage.CHECK_IN_SUCCESS, Role.PATIENT.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
-                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerError("Failed for send mail");
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Not reach time to check in");
         }
     }
 
-    @PutMapping("/checkout")
+    @PutMapping("/checkout/{id}")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
-    public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
-        boolean isUpdated = bookingService.updateStatus(bookingId);
+    public ResponseEntity<MessageResponse> checkout(@PathVariable(value = "id") String id) {
+        int bookingId;
+        try {
+            bookingId = Integer.parseInt(id);
+        } catch(NumberFormatException exception) {
+            bookingId = 0;
+        }
+        boolean isCheckin = false;
+        boolean isUpdated = bookingService.updateStatus(bookingId, isCheckin);
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
                         NotificationMessage.CHECK_OUT_SUCCESS, Role.PATIENT.name());
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
-                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerError("Failed for send mail");
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageResponse(Message.UPDATE_FAIL.name()), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Not reach time to check in");
         }
     }
 
