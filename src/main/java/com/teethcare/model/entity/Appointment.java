@@ -43,8 +43,8 @@ public class Appointment {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    @Column(name = "create_booking_date")
-    private Timestamp createBookingDate;
+    @Column(name = "create_booking_time")
+    private Timestamp createBookingTime;
 
     @Column(name = "examination_time")
     private Timestamp examinationTime;

@@ -17,5 +17,4 @@ public class ServiceOfClinicResponse {
     private Integer duration;
     private String imageUrl;
     private String status;
-
 }

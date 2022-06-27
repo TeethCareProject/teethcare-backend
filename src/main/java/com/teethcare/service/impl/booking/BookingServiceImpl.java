@@ -7,16 +7,13 @@ import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
-import com.teethcare.model.request.BookingFilterRequest;
-import com.teethcare.model.request.BookingFromAppointmentRequest;
-import com.teethcare.model.request.BookingRequest;
-import com.teethcare.model.request.BookingUpdateRequest;
+import com.teethcare.model.request.*;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
-import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
+import com.teethcare.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,10 +26,12 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +41,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ServiceOfClinicService serviceOfClinicService;
-    private final ServiceRepository serviceRepository;
     private final PatientService patientService;
     private final DentistService dentistService;
     private final ClinicService clinicService;
@@ -102,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime startTimeShift1 = clinic.getStartTimeShift1().toLocalTime();
         LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
-        LocalTime endTimeShift2 = clinic.getEndTimeShift1().toLocalTime();
+        LocalTime endTimeShift2 = clinic.getEndTimeShift2().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
                                 || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
@@ -110,6 +108,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
         }
         bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
+        bookingTmp.setCreateBookingTime(now);
 
         //set patient to booking
         Patient patient = patientService.findById(account.getId());
@@ -137,22 +136,23 @@ public class BookingServiceImpl implements BookingService {
         switch (Role.valueOf(role)) {
             case CUSTOMER_SERVICE:
                 Clinic clinic = clinicService.findClinicByCustomerServiceId(accountId);
-                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinic(clinic, sort);
+                List<Booking> bookingListForCustomerService = bookingRepository.findBookingByClinicAndStatusIsNotNull(clinic, sort);
 
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
                 return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
             case PATIENT:
-                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientId(accountId, sort);
+                List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientIdAndStatusIsNotNull(accountId, sort);
 
                 bookingListForPatient = bookingListForPatient.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-              return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
             case DENTIST:
-                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistId(accountId, sort);
+                List<String> statuses = List.of(Status.Booking.TREATMENT.name(), Status.Booking.DONE.name());
+                List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistIdAndStatusIn(accountId, statuses, sort);
 
                 bookingListForDentist = bookingListForDentist.stream()
                         .filter(filterRequest.getPredicate())
@@ -288,7 +288,6 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setServices(services);
         booking.setExaminationTime(examinationTime);
-        booking.setCreateBookingDate(currentTime);
         booking.setDentist(dentist);
 
         save(booking);
@@ -364,7 +363,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new BadRequestException("Desired checking time invalid");
             }
             bookingTmp.setDesiredCheckingTime(desiredCheckingTime);
-            bookingTmp.setCreateBookingDate(now);
+            bookingTmp.setCreateBookingTime(now);
             //set patient to booking
             Patient patient = patientService.findById(account.getId());
             bookingTmp.setPatient(patient);
@@ -373,7 +372,7 @@ public class BookingServiceImpl implements BookingService {
             if (patient != null && clinic != null) {
                 return bookingRepository.save(bookingTmp);
             }
-
         }
         return null;
-    }}
+    }
+}
