@@ -20,5 +20,5 @@ public class AppointmentResponse {
     private UserInforResponse dentist;
     private UserInforResponse customerService;
     private List<ServiceOfClinicResponse> services;
-    private ClinicSimpleResponse clinic;
+    private ClinicInfoResponse clinic;
 }

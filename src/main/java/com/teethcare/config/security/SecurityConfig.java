@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Patient.PATIENT_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Service.SERVICE_ENDPOINT + "/**").permitAll();
-        http.authorizeRequests().antMatchers(EndpointConstant.Booking.BOOKING_ENDPOINT + "/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Booking.BOOKING_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Feedback.FEEDBACK_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Report.REPORT_ENDPOINT + "/**");
         http.authorizeRequests().antMatchers(EndpointConstant.Province.PROVINCE_ENDPOINT + "/**").permitAll();

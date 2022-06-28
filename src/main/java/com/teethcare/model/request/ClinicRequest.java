@@ -23,6 +23,10 @@ public class ClinicRequest {
 
     private Integer wardId;
 
+    private String email;
+
+    private Integer bookingGap;
+
     @Override
     public String toString() {
         return "ClinicRequest{" +
