@@ -23,7 +23,7 @@ public class Constant {
 
     @Component
     public static class LOCATION {
-        public static final double DEFAULT_DISTANCE = 15;
+        public static final double DEFAULT_DISTANCE = 5;
     }
 
     public static class EMAIL {

@@ -16,7 +16,7 @@ public interface ClinicService extends CRUDService<Clinic> {
 
 
     List<Clinic> findAll(Pageable pageable);
-    Page<ClinicResponse> findNear(double longitude, double latitude, String username, Pageable pageable);
+    Page<ClinicResponse> findNear(Double longitude, Double latitude, String username, Pageable pageable);
 
     Page<Clinic> findAllWithFilter(ClinicFilterRequest clinicFilterRequest,
                                    Pageable pageable);

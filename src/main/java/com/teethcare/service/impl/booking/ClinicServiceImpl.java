@@ -14,6 +14,7 @@ import com.teethcare.service.*;
 import com.teethcare.utils.LocationUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
     private final PatientRepository patientRepository;
@@ -49,20 +51,22 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public Page<ClinicResponse> findNear(double longitude, double latitude, String username, Pageable pageable) {
+    public Page<ClinicResponse> findNear(Double longitude, Double latitude, String username, Pageable pageable) {
         Patient patient = patientRepository.findPatientByUsername(username);
         Location patientLocation = patient.getLocation();
         if (patientLocation == null) {
             throw new NotFoundException("Your account does not have location .No clinic is found near you.");
         }
         List<Clinic> clinics = clinicRepository.findAll(pageable.getSort());
-        if (longitude != 0 || latitude != 0) {
+        if (longitude != null || latitude != null) {
             clinics = clinics.stream()
                     .filter(clinic -> LocationUtils.distance(latitude, clinic.getLocation().getLatitude(), longitude, clinic.getLocation().getLatitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
                     .collect(Collectors.toList());
         } else {
+            log.info("Patient longitude: " + patientLocation.getLongitude() + " latitude: " + patientLocation.getLatitude());
+            log.info("Clinic");
             clinics = clinics.stream()
-                    .filter(clinic -> LocationUtils.distance(patientLocation.getLatitude(), clinic.getLocation().getLatitude(), patientLocation.getLongitude(), clinic.getLocation().getLatitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
+                    .filter(clinic -> LocationUtils.distance(patientLocation.getLatitude(), clinic.getLocation().getLatitude(), patientLocation.getLongitude(), clinic.getLocation().getLongitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
                     .collect(Collectors.toList());
         }
         List<ClinicResponse> clinicResponse = clinicMapper.mapClinicListToClinicResponseList(clinics);

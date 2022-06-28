@@ -4,6 +4,7 @@ import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
@@ -65,11 +66,16 @@ public class ClinicController {
 
     @GetMapping("/suggested")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
-    public ResponseEntity<Page<ClinicResponse>> getNearClinic(@RequestParam double longitude,
-                                                              @RequestParam double latitude) {
-//        UserDetailsU
-//        clinicService.findNear(longitude, latitude, username, pageable);
-        return null;
+    public ResponseEntity<Page<ClinicResponse>> getNearClinic(@RequestParam(required = false) Double longitude,
+                                                              @RequestParam(required = false) Double latitude,
+                                                              @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                              @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                              @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                              @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        String username = UserDetailUtil.getUsername();
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
+        Page<ClinicResponse> clinicResponses = clinicService.findNear(longitude, latitude, username, pageable);
+        return ResponseEntity.ok(clinicResponses);
     }
 
     @GetMapping("/{id}")
