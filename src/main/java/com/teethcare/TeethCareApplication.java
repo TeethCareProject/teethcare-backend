@@ -12,5 +12,4 @@ public class TeethCareApplication {
         SpringApplication.run(TeethCareApplication.class, args);
     }
 
-
 }
