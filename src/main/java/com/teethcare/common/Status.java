@@ -58,4 +58,9 @@ public class Status {
         INACTIVE,
         PENDING
     }
+
+    public enum CheckTime {
+        AVAILABLE,
+        UNAVAILABLE
+    }
 }

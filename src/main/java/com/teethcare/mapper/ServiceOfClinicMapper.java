@@ -12,9 +12,11 @@ import java.util.List;
         config = ConfigurationMapper.class)
 public interface ServiceOfClinicMapper {
 
+    @Named(value =  "mapServiceOfClinicToServiceOfClinicResponse")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ServiceOfClinicResponse mapServiceOfClinicToServiceOfClinicResponse(ServiceOfClinic serviceOfClinic);
-
+    @Named(value =  "mapServiceOfClinicListToServiceOfClinicResponseList")
+    List<ServiceOfClinicResponse> mapServiceOfClinicListToServiceOfClinicResponseList(List<ServiceOfClinic> serviceOfClinics);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "clinic", target = "clinic")
     ServiceDetailResponse mapServiceOfClinicToServiceDetailResponse(ServiceOfClinic serviceOfClinic);
