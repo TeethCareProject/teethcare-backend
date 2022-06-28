@@ -147,8 +147,6 @@ public class BookingController {
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> update(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest,
                                                   @RequestParam(value = "isAllDeleted", required = false, defaultValue = "false") boolean isAllDeleted) {
-        boolean isSuccess = false;
-
         int bookingId = bookingUpdateRequest.getBookingId();
 
         Booking booking = bookingService.findBookingById(bookingId);
@@ -213,7 +211,6 @@ public class BookingController {
     public ResponseEntity<MessageResponse> confirmFinalBooking(@Valid @RequestBody BookingUpdateRequest bookingUpdateRequest) {
         boolean isUpdated = bookingService.confirmFinalBooking(bookingUpdateRequest);
         int bookingId = bookingUpdateRequest.getBookingId();
-        Booking booking = bookingService.findBookingById(bookingId);
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),

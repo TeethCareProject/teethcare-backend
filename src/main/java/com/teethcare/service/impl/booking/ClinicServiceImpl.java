@@ -1,16 +1,17 @@
 package com.teethcare.service.impl.booking;
 
+import com.teethcare.common.Constant;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.ClinicMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Clinic;
-import com.teethcare.model.entity.Location;
-import com.teethcare.model.entity.Manager;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
+import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.repository.ClinicRepository;
+import com.teethcare.repository.PatientRepository;
 import com.teethcare.service.*;
+import com.teethcare.utils.LocationUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
+    private final PatientRepository patientRepository;
     private final AccountService accountService;
     private final ClinicMapper clinicMapper;
     private final LocationService locationService;
@@ -45,6 +48,26 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicRepository.findAllByStatusIsNotNull(pageable);
     }
 
+    @Override
+    public Page<ClinicResponse> findNear(double longitude, double latitude, String username, Pageable pageable) {
+        Patient patient = patientRepository.findPatientByUsername(username);
+        Location patientLocation = patient.getLocation();
+        if (patientLocation == null) {
+            throw new NotFoundException("Your account does not have location .No clinic is found near you.");
+        }
+        List<Clinic> clinics = clinicRepository.findAll(pageable.getSort());
+        if (longitude != 0 || latitude != 0) {
+            clinics = clinics.stream()
+                    .filter(clinic -> LocationUtils.distance(latitude, clinic.getLocation().getLatitude(), longitude, clinic.getLocation().getLatitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
+                    .collect(Collectors.toList());
+        } else {
+            clinics = clinics.stream()
+                    .filter(clinic -> LocationUtils.distance(patientLocation.getLatitude(), clinic.getLocation().getLatitude(), patientLocation.getLongitude(), clinic.getLocation().getLatitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
+                    .collect(Collectors.toList());
+        }
+        List<ClinicResponse> clinicResponse = clinicMapper.mapClinicListToClinicResponseList(clinics);
+        return PaginationAndSortFactory.convertToPage(clinicResponse, pageable);
+    }
 
     @Override
     public Page<Clinic> findAllWithFilter(ClinicFilterRequest filter, Pageable pageable) {

@@ -250,9 +250,9 @@ public class BookingServiceImpl implements BookingService {
 
         List<ServiceOfClinic> services = new ArrayList<>();
         if (servicesIds != null) {
-            for (Integer servicesId : servicesIds) {
-                services.add(serviceOfClinicService.findById(servicesId));
-            }
+            services = servicesIds.stream()
+                    .map(serviceOfClinicService::findById)
+                    .collect(Collectors.toList());
         } else {
             if (!isAllDeleted) {
                 services = booking.getServices();
@@ -293,9 +293,9 @@ public class BookingServiceImpl implements BookingService {
 
         List<ServiceOfClinic> services = new ArrayList<>();
         if (servicesIds != null) {
-            for (Integer servicesId : servicesIds) {
-                services.add(serviceOfClinicService.findById(servicesId));
-            }
+            services = servicesIds.stream()
+                    .map(serviceOfClinicService::findById)
+                    .collect(Collectors.toList());
         } else {
             if (!isAllDeleted) {
                 services = booking.getServices();

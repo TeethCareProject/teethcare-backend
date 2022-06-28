@@ -19,6 +19,7 @@ import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,15 @@ public class ClinicController {
         Page<Clinic> list = clinicService.findAllWithFilter(clinicFilterRequest, pageable);
         Page<ClinicResponse> clinicResponses = list.map(clinicMapper::mapClinicToClinicResponse);
         return new ResponseEntity<>(clinicResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/suggested")
+    @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<Page<ClinicResponse>> getNearClinic(@RequestParam double longitude,
+                                                              @RequestParam double latitude) {
+//        UserDetailsU
+//        clinicService.findNear(longitude, latitude, username, pageable);
+        return null;
     }
 
     @GetMapping("/{id}")

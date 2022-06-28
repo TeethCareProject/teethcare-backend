@@ -16,11 +16,13 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public List<Location> findAll() {
+        //TODO: implements later
         return null;
     }
 
     @Override
     public Location findById(int id) {
+        //TODO: implements later
         return null;
     }
 
@@ -31,15 +33,12 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public void delete(int id) {
+        //TODO: implements later
     }
 
     @Override
     public void update(Location theEntity) {
+        //TODO: implements later
     }
 
-    @Override
-    public Location findLocationInformationByWardId(int wardId) {
-
-        return null;
-    }
 }

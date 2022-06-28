@@ -23,10 +23,10 @@ public class Location {
     private String addressString;
 
     @Column(name = "latitude")
-    private Float latitude;
+    private Double latitude;
 
     @Column(name = "longtitude")
-    private Float longitude;
+    private Double longitude;
 
     @OneToOne
     @JoinColumn(name = "ward_id", referencedColumnName = "id")

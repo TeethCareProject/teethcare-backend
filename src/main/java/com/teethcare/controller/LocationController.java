@@ -27,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = EndpointConstant.Province.LOCATION_ENDPOINT)
@@ -38,9 +39,6 @@ public class LocationController {
     @Autowired
     private ApplicationContext context;
 
-    @Value("${googlemap.key}")
-    private String keyJson;
-
     @GetMapping()
     public ResponseEntity<List<ProvinceResponse>> getAll() {
         List<Province> provinces = provinceService.findAll();
@@ -48,7 +46,7 @@ public class LocationController {
     }
 
     @GetMapping("/test")
-    public LocationRequest getByAddress(@RequestParam String address) throws IOException {
+    public ResponseEntity<LocationRequest> getByAddress(@RequestParam String address) throws IOException {
         GoogleMapConfig googleMapConfig = context.getBean(GoogleMapConfig.class);
         UriComponents uri = UriComponentsBuilder.newInstance()
                 .scheme("https")
@@ -59,8 +57,8 @@ public class LocationController {
                 .build();
         log.info(uri.toUriString());
         ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
-        log.info(String.valueOf(locationRequest.getBody()));
-        return locationRequest.getBody();
+        double longitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLatitude();
+        return locationRequest;
     }
 }
 

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PatientRepository extends JpaRepository<Patient, Integer> {
     List<Patient> getPatientByStatus(String status);
-
+    Patient findPatientByUsername(String username);
 }

@@ -5,6 +5,7 @@ import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
+import com.teethcare.model.response.ClinicResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ public interface ClinicService extends CRUDService<Clinic> {
 
 
     List<Clinic> findAll(Pageable pageable);
+    Page<ClinicResponse> findNear(double longitude, double latitude, String username, Pageable pageable);
 
     Page<Clinic> findAllWithFilter(ClinicFilterRequest clinicFilterRequest,
                                    Pageable pageable);

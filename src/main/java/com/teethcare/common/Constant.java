@@ -16,6 +16,10 @@ public class Constant {
         public static final String DEFAULT_SORT_DIRECTION = "asc";
     }
 
+    public static class LOCATION {
+        public static final double DEFAULT_DISTANCE = 15;
+    }
+
     public static class EMAIL {
         @Value("${front_end_origin}")
         private static String FRONT_END_ORIGIN;
