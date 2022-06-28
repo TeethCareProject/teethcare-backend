@@ -26,6 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -150,5 +151,21 @@ public class ClinicController {
         });
         return new ResponseEntity<>(responses, HttpStatus.OK);
 
+    }
+
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<ClinicResponse> approve(@PathVariable("id") int id) throws MessagingException {
+        Clinic clinic = clinicService.findById(id);
+        clinic = clinicService.approve(clinic);
+        ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<ClinicResponse> reject(@PathVariable("id") int id) throws MessagingException {
+        Clinic clinic = clinicService.findById(id);
+        clinic = clinicService.reject(clinic);
+        ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
     }
 }
