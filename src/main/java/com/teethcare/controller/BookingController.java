@@ -294,7 +294,8 @@ public class BookingController {
     @PutMapping("/checkout")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).CUSTOMER_SERVICE)")
     public ResponseEntity<MessageResponse> checkout(@RequestParam(value = "bookingId") int bookingId) {
-        boolean isUpdated = bookingService.updateStatus(bookingId);
+        boolean isCheckin = false;
+        boolean isUpdated = bookingService.updateStatus(bookingId, isCheckin);
         if (isUpdated) {
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CHECK_OUT_SUCCESS.name(),
