@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static com.teethcare.common.Constant.EMAIL.BOOKING_DETAIL_CONFIRM;
+import static com.teethcare.common.Constant.EMAIL.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -78,7 +79,7 @@ public class EmailServiceImpl implements EmailService {
 
         MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
 
-        String htmlMsg = MailTemplateUtils.getClinicApprovement(clinic.getManager().getFirstName());
+        String htmlMsg = MailTemplateUtils.getClinicApprovement(clinic.getManager().getFirstName(), LOGIN_URL);
 
         message.setContent(htmlMsg, "text/html");
 
@@ -97,7 +98,7 @@ public class EmailServiceImpl implements EmailService {
 
         MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
 
-        String htmlMsg = MailTemplateUtils.getClinicRejection(clinic.getManager().getFirstName());
+        String htmlMsg = MailTemplateUtils.getClinicRejection(clinic.getManager().getFirstName(), HOME_URL);
 
         message.setContent(htmlMsg, "text/html");
 

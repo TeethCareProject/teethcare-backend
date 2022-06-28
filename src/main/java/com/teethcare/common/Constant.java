@@ -23,7 +23,7 @@ public class Constant {
         public static final String SENDER_PASSWORD = "ptmbozrgnkgexitx";
         public static final String BOOKING_DETAIL_CONFIRM = FRONT_END_ORIGIN +"/confirmBooking/";
         public static final String LOGIN_URL = FRONT_END_ORIGIN +"/login/";
-        public static final String HOME_URL = FRONT_END_ORIGIN;
+        public static final String HOME_URL = FRONT_END_ORIGIN + "/";
     }
 
     public static class PASSWORD {
