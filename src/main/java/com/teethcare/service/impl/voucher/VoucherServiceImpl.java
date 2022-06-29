@@ -98,13 +98,13 @@ public class VoucherServiceImpl implements VoucherService {
         Long now = System.currentTimeMillis();
         if (voucher.getExpiredTime() != null) {
             if (voucher.getExpiredTime().getTime() < now) {
-                inactivate(voucher);
+                deactivate(voucher);
                 throw new BadRequestException("This voucher is expired!");
             }
         }
         if (voucher.getQuantity() != null) {
             if (!(voucher.getQuantity() > 0)) {
-                inactivate(voucher);
+                deactivate(voucher);
                 throw new BadRequestException("This voucher is out of stock!");
             }
         }
@@ -122,14 +122,19 @@ public class VoucherServiceImpl implements VoucherService {
             quantity--;
             voucher.setQuantity(quantity);
             if (quantity == 0) {
-                inactivate(voucher);
+                deactivate(voucher);
             }
         }
     }
 
     @Override
-    public void inactivate(Voucher voucher) {
+    public void deactivate(Voucher voucher) {
         voucher.setStatus(Status.Voucher.UNAVAILABLE.toString());
         update(voucher);
+    }
+
+    @Override
+    public List<Voucher> findAllVouchersByExpiredTime(long expiredTime) {
+        return voucherRepository.findAllByExpiredTime(new Timestamp(expiredTime));
     }
 }

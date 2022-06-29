@@ -3,7 +3,11 @@ package com.teethcare.repository;
 import com.teethcare.model.entity.Voucher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 public interface VoucherRepository extends JpaRepository<Voucher, String> {
     Voucher findVoucherByVoucherCode(String voucherCode);
     Voucher findVoucherByVoucherCodeAndStatus(String voucherCode, String status);
+    List<Voucher> findAllByExpiredTime(Timestamp expiredTime);
 }
