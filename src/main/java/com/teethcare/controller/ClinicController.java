@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -203,5 +204,21 @@ public class ClinicController {
         });
         return new ResponseEntity<>(responses, HttpStatus.OK);
 
+    }
+
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<ClinicResponse> approve(@PathVariable("id") int id) throws MessagingException {
+        Clinic clinic = clinicService.findById(id);
+        clinic = clinicService.approve(clinic);
+        ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<ClinicResponse> reject(@PathVariable("id") int id) throws MessagingException {
+        Clinic clinic = clinicService.findById(id);
+        clinic = clinicService.reject(clinic);
+        ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
+        return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
     }
 }

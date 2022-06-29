@@ -2,6 +2,7 @@ package com.teethcare.service.impl.booking;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.Status;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
@@ -15,6 +16,7 @@ import com.teethcare.model.request.ClinicRequest;
 import com.teethcare.model.response.ClinicResponse;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.PatientRepository;
+import com.teethcare.repository.ManagerRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.LocationUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -42,6 +44,7 @@ public class ClinicServiceImpl implements ClinicService {
     private final ClinicMapper clinicMapper;
     private final LocationService locationService;
     private final FileService fileService;
+    private final EmailService emailService;
     private final WardService wardService;
     private final LocationMapper locationMapper;
 
@@ -163,6 +166,36 @@ public class ClinicServiceImpl implements ClinicService {
         Clinic clinic = clinicRepository.getClinicByManager(manager);
         clinic.setImageUrl(fileService.uploadFile(image));
         clinicRepository.save(clinic);
+        return clinic;
+    }
+
+    @Override
+    @Transactional
+    public Clinic approve(Clinic clinic) throws MessagingException {
+        if (!clinic.getStatus().equals(Status.Clinic.PENDING.name())) {
+            throw new BadRequestException("This Clinic has been approved/rejected before!");
+        }
+        clinic.setStatus(Status.Clinic.ACTIVE.name());
+        Account manager = clinic.getManager();
+        manager.setStatus(Status.Account.ACTIVE.name());
+        managerRepository.save((Manager) manager);
+        update(clinic);
+        emailService.sendClinicApprovementEmail(clinic);
+        return clinic;
+    }
+
+    @Override
+    @Transactional
+    public Clinic reject(Clinic clinic) throws MessagingException {
+        if (!clinic.getStatus().equals(Status.Clinic.PENDING.name())) {
+            throw new BadRequestException("This Clinic has been approved/rejected before!");
+        }
+        clinic.setStatus(Status.Clinic.INACTIVE.name());
+        Account manager = clinic.getManager();
+        manager.setStatus(Status.Account.INACTIVE.name());
+        managerRepository.save((Manager) manager);
+        update(clinic);
+        emailService.sendClinicRejectionEmail(clinic);
         return clinic;
     }
 
