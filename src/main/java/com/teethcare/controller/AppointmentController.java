@@ -2,6 +2,7 @@ package com.teethcare.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.request.AppointmentFilterRequest;
@@ -45,16 +46,15 @@ public class AppointmentController {
 
                 firebaseMessagingService.sendNotification(appointment.getId(), NotificationType.CREATE_APPOINTMENT_SUCCESS.name(),
                         NotificationMessage.CREATE_APPOINTMENT_SUCCESS + appointment.getId(), Role.DENTIST.name());
-
                 return new ResponseEntity<>(appointmentResponse, HttpStatus.OK);
             } else {
                 firebaseMessagingService.sendNotification(appointmentRequest.getPreBookingId(), NotificationType.CREATE_APPOINTMENT_FAIL.name(),
                         NotificationMessage.CREATE_APPOINTMENT_FAIL, Role.DENTIST.name());
+                throw new BadRequestException("The appointment corresponding to this booking has been created!");
             }
         } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
             return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(Message.CREATE_FAIL, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping
