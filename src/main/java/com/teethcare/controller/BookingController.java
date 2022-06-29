@@ -69,7 +69,7 @@ public class BookingController {
     @PostMapping(path = "/create-from-appointment")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<Object> createFromAppointment(@Valid @RequestBody BookingFromAppointmentRequest bookingFromAppointmentRequest,
-                                                 @RequestHeader(value = AUTHORIZATION) String token) {
+                                                        @RequestHeader(value = AUTHORIZATION) String token) {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
 
@@ -259,7 +259,7 @@ public class BookingController {
         int bookingId;
         try {
             bookingId = Integer.parseInt(id);
-        } catch(NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             bookingId = 0;
         }
         boolean isCheckin = true;
@@ -284,7 +284,7 @@ public class BookingController {
         int bookingId;
         try {
             bookingId = Integer.parseInt(id);
-        } catch(NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             bookingId = 0;
         }
         boolean isCheckin = false;
