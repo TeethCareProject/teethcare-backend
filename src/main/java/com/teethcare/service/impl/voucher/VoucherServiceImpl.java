@@ -1,6 +1,7 @@
 package com.teethcare.service.impl.voucher;
 
 import com.teethcare.common.Status;
+import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.VoucherMapper;
 import com.teethcare.model.entity.Voucher;
@@ -26,7 +27,7 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public List<Voucher> findAll() {
-        return null;
+        return voucherRepository.findAll();
     }
 
     @Override
@@ -36,13 +37,14 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public void save(Voucher entity) {
-        entity.setStatus(Status.Voucher.ACTIVE.name());
+        entity.setStatus(Status.Voucher.AVAILABLE.name());
         entity.setCreatedTime(System.currentTimeMillis());
         voucherRepository.save(entity);
     }
 
     @Override
     public void delete(int id) {
+        // NOT USE
     }
 
     @Override
@@ -69,7 +71,7 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public void deleteByVoucherCode(String voucherCode) {
         Voucher voucher = findByVoucherCode(voucherCode);
-        voucher.setStatus(Status.Voucher.INACTIVE.name());
+        voucher.setStatus(Status.Voucher.UNAVAILABLE.name());
         update(voucher);
     }
 
@@ -84,5 +86,49 @@ public class VoucherServiceImpl implements VoucherService {
         List<Voucher> vouchers = findAll();
         vouchers = vouchers.stream().filter(voucherFilterRequest.getPredicate()).collect(Collectors.toList());
         return PaginationAndSortFactory.convertToPage(vouchers, pageable);
+    }
+
+    @Override
+    public boolean isAvailable(String voucherCode) {
+        Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherCode);
+        if (voucher == null) {
+            throw new BadRequestException("Voucher is not found!");
+        }
+        Long now = System.currentTimeMillis();
+        if (voucher.getQuantity() != null) {
+            if (voucher.getExpiredTime() < now) {
+                inactivate(voucher);
+                throw new BadRequestException("This voucher is expired!");
+            }
+        }
+        if (voucher.getQuantity() != null) {
+            if (!(voucher.getQuantity() > 0)) {
+                inactivate(voucher);
+                throw new BadRequestException("This voucher is out of stock!");
+            }
+        }
+        return voucherRepository.findVoucherByVoucherCodeAndStatus(voucherCode, Status.Voucher.AVAILABLE.toString()) != null;
+    }
+
+    @Override
+    public void useVoucher(String voucherCode) {
+        if (!isAvailable(voucherCode)) {
+            throw new BadRequestException("This voucher is not available");
+        }
+        Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherCode);
+        Integer quantity = voucher.getQuantity();
+        if (quantity != null && quantity > 0) {
+            quantity--;
+            voucher.setQuantity(quantity);
+            if (quantity == 0) {
+                inactivate(voucher);
+            }
+        }
+    }
+
+    @Override
+    public void inactivate(Voucher voucher) {
+        voucher.setStatus(Status.Voucher.UNAVAILABLE.toString());
+        update(voucher);
     }
 }

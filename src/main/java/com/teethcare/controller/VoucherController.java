@@ -3,11 +3,13 @@ package com.teethcare.controller;
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
+import com.teethcare.common.Status;
 import com.teethcare.mapper.VoucherMapper;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
 import com.teethcare.model.request.VoucherUpdateRequest;
+import com.teethcare.model.response.CheckVoucherResponse;
 import com.teethcare.model.response.VoucherResponse;
 import com.teethcare.service.VoucherService;
 import com.teethcare.utils.PaginationAndSortFactory;
@@ -65,5 +67,13 @@ public class VoucherController {
                                                        @Valid @RequestBody VoucherUpdateRequest voucherUpdateRequest) {
         voucherService.updateByVoucherCode(voucherCode, voucherUpdateRequest);
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
+    }
+
+    @GetMapping("/{voucher-code}/check-available")
+    public ResponseEntity<CheckVoucherResponse> checkAvailable(@PathVariable("voucher-code") String voucherCode) {
+        boolean check = voucherService.isAvailable(voucherCode);
+        return check
+                ? new ResponseEntity<>(new CheckVoucherResponse(Status.Voucher.AVAILABLE.name()), HttpStatus.OK)
+                : new ResponseEntity<>(new CheckVoucherResponse(Status.Voucher.UNAVAILABLE.name()), HttpStatus.BAD_REQUEST);
     }
 }

@@ -21,4 +21,6 @@ public class BookingRequest {
     @NotNull
     private long desiredCheckingTime;
 
+    private String voucherCode;
+
 }

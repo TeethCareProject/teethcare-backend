@@ -14,5 +14,8 @@ public interface VoucherService extends CRUDService<Voucher> {
     Voucher addNew(VoucherRequest voucherRequest);
     void deleteByVoucherCode(String voucherCode);
     void updateByVoucherCode(String voucherCode, VoucherUpdateRequest voucherUpdateRequest);
+    boolean isAvailable(String voucherCode);
+    void useVoucher(String voucherCode);
+    void inactivate(Voucher voucher);
 
 }

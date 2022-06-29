@@ -65,7 +65,7 @@ public class Status {
     }
 
     public enum Voucher {
-        ACTIVE,
-        INACTIVE
+        AVAILABLE,
+        UNAVAILABLE
     }
 }

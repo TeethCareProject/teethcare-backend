@@ -1,10 +1,14 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.entity.Voucher;
+
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
 import static com.teethcare.utils.ConvertUtils.convertToTime;
+
 public class ConfigurationMapping {
     static Long mapDateToLong(Date date) {
         if (date != null) {
@@ -38,5 +42,12 @@ public class ConfigurationMapping {
         } else {
             return null;
         }
+    }
+
+    static BigDecimal mapTotalPriceAndVoucherToFinalPrice(BigDecimal totalPrice, Voucher voucher) {
+        if (voucher != null) {
+            return totalPrice.subtract(voucher.getDiscountValue());
+        }
+        return totalPrice;
     }
 }

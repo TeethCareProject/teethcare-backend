@@ -9,11 +9,6 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.*;
-import com.teethcare.model.request.BookingFilterRequest;
-import com.teethcare.model.request.BookingFromAppointmentRequest;
-import com.teethcare.model.request.BookingRequest;
-import com.teethcare.model.request.BookingUpdateRequest;
-import com.teethcare.model.response.AccountResponse;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.service.*;
@@ -35,7 +30,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,6 +45,7 @@ public class BookingServiceImpl implements BookingService {
     private final DentistService dentistService;
     private final ClinicService clinicService;
     private final AppointmentRepository appointmentRepository;
+    private final VoucherService voucherService;
 
     @Override
     public List<Booking> findAll() {
@@ -107,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
         LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
         LocalTime endTimeShift2 = clinic.getEndTimeShift2().toLocalTime();
         boolean isValidWorkTime = checkedTime.isAfter(endTimeShift2) || checkedTime.isBefore(startTimeShift1)
-                                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
+                || checkedTime.isAfter(endTimeShift1) && checkedTime.isBefore(startTimeShift2);
 
         if (isValidWorkTime) {
             throw new BadRequestException(Message.OUT_OF_WORKING_TIME.name());
@@ -119,6 +114,13 @@ public class BookingServiceImpl implements BookingService {
         Patient patient = patientService.findById(account.getId());
         bookingTmp.setPatient(patient);
         bookingTmp.setStatus(Status.Booking.PENDING.name());
+
+        //voucher section
+        if (bookingRequest.getVoucherCode() != null) {
+            Voucher voucher = voucherService.findByVoucherCode(bookingRequest.getVoucherCode());
+            bookingTmp.setVoucher(voucher);
+            voucherService.useVoucher(bookingRequest.getVoucherCode());
+        }
 
         if (patient != null && !serviceOfClinicList.isEmpty()) {
             return bookingRepository.save(bookingTmp);
@@ -203,7 +205,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = findBookingById(bookingId);
 
         long currentTime = System.currentTimeMillis();
-        boolean notOver120s = (currentTime - booking.getCreateBookingTime().getTime()) <= 120*1000;
+        boolean notOver120s = (currentTime - booking.getCreateBookingTime().getTime()) <= 120 * 1000;
         log.info("It is not over 120s: " + notOver120s);
         if (notOver120s) {
             booking.setStatus(Status.Booking.REJECTED.name());
@@ -253,8 +255,8 @@ public class BookingServiceImpl implements BookingService {
                         || booking.getCustomerService() == null || booking.getServices() == null) {
                     return false;
                 }
-                if (System.currentTimeMillis() - booking.getExaminationTime().getTime() >= 10*60*1000
-                        || System.currentTimeMillis() - booking.getExaminationTime().getTime() <= -10*60*1000) {
+                if (System.currentTimeMillis() - booking.getExaminationTime().getTime() >= 10 * 60 * 1000
+                        || System.currentTimeMillis() - booking.getExaminationTime().getTime() <= -10 * 60 * 1000) {
                     throw new BadRequestException("Your checkin time is " + booking.getExaminationTime()
                             + ". You are soon/late at least for 10 minutes");
                 }
@@ -416,6 +418,7 @@ public class BookingServiceImpl implements BookingService {
         save(booking);
         return true;
     }
+
     @Override
     public Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account) {
         if (bookingRepository.findBookingByPreBookingId(bookingFromAppointmentRequest.getAppointmentId()) == null) {
