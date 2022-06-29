@@ -3,6 +3,7 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.common.Constant;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
+import com.teethcare.exception.InternalServerError;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,7 @@ public class ClinicServiceImpl implements ClinicService {
     private final EmailService emailService;
     private final WardService wardService;
     private final LocationMapper locationMapper;
+    private final ManagerRepository managerRepository;
 
     @Override
     public List<Clinic> findAll() {
@@ -171,7 +174,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     @Transactional
-    public Clinic approve(Clinic clinic) throws MessagingException {
+    public Clinic approve(Clinic clinic) {
         if (!clinic.getStatus().equals(Status.Clinic.PENDING.name())) {
             throw new BadRequestException("This Clinic has been approved/rejected before!");
         }
@@ -180,7 +183,11 @@ public class ClinicServiceImpl implements ClinicService {
         manager.setStatus(Status.Account.ACTIVE.name());
         managerRepository.save((Manager) manager);
         update(clinic);
-        emailService.sendClinicApprovementEmail(clinic);
+        try {
+            emailService.sendClinicApprovementEmail(clinic);
+        } catch (MessagingException e) {
+            throw new InternalServerError("Errors occurs when sending mails");
+        }
         return clinic;
     }
 
