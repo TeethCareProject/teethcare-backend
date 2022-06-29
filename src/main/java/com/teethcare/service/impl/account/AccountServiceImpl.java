@@ -107,10 +107,10 @@ public class AccountServiceImpl implements AccountService {
         if (status != null
                 && (status.toUpperCase().trim().equals(Status.Account.INACTIVE.name())
                 || status.toUpperCase().trim().equals(Status.Account.ACTIVE.name()))) {
-            Account account = this.findById(id);
+            Account account = findById(id);
             if (account != null) {
                 account.setStatus(status.toUpperCase().trim());
-                this.update(account);
+                update(account);
             } else {
                 throw new NotFoundException("Account not found!");
             }

@@ -12,10 +12,7 @@ import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.DentistRepository;
-import com.teethcare.service.AccountService;
-import com.teethcare.service.DentistService;
-import com.teethcare.service.ManagerService;
-import com.teethcare.service.RoleService;
+import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

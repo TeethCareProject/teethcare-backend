@@ -1,18 +1,19 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.entity.Appointment;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.request.BookingRequest;
+import com.teethcare.model.response.AppointmentResponse;
 import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import org.mapstruct.*;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
         config = ConfigurationMapper.class,
         uses = {ServiceOfClinicMapper.class, AccountMapper.class,
-        UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
+                UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)
@@ -51,4 +52,19 @@ public interface BookingMapper {
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponseWithoutService")
     List<BookingResponse> mapBookingListToBookingResponseListWithoutService(List<Booking> bookingList);
+
+    @Named(value = "mapBookingToAppointmentResponse")
+    @Mapping(source = "services", target = "services",
+            qualifiedByName = "mapServiceOfClinicListToServiceOfClinicResponseList")
+    @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
+    @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicInfoResponse")
+    @Mapping(source = "preBooking", target = "preBooking", qualifiedByName = "mapBookingToBookingResponse")
+    AppointmentResponse mapAppointmentToAppointmentResponse(Appointment appointment);
+
+    @IterableMapping(qualifiedByName = "mapBookingToAppointmentResponse")
+    List<AppointmentResponse> mapAppointmentListToAppointmentResponseList(List<Appointment> bookingList);
+
+    @Named(value = "mapAppointmentToBooking")
+    @Mapping(source = "mappedPreBooking", target = "mappedPreBooking", ignore = true)
+    Booking mapAppointmentToBooking(Appointment appointment);
 }

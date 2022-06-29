@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(EndpointConstant.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Clinic.CLINIC_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Account.ACCOUNT_ENDPOINT + "/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Appointment.APPOINTMENT_ENDPOINT + "/**");
         http.authorizeRequests().antMatchers(EndpointConstant.Manager.MANAGER_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Notification.NOTIFICATION_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Email.EMAIL_ENDPOINT + "/**").permitAll();
@@ -56,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(EndpointConstant.CustomerService.CUSTOMER_SERVICE_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Patient.PATIENT_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Service.SERVICE_ENDPOINT + "/**").permitAll();
-        http.authorizeRequests().antMatchers(EndpointConstant.Booking.BOOKING_ENDPOINT + "/**");
+        http.authorizeRequests().antMatchers(EndpointConstant.Booking.BOOKING_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Feedback.FEEDBACK_ENDPOINT + "/**").permitAll();
         http.authorizeRequests().antMatchers(EndpointConstant.Report.REPORT_ENDPOINT + "/**");
         http.authorizeRequests().antMatchers(EndpointConstant.Province.PROVINCE_ENDPOINT + "/**").permitAll();

@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 public class ClinicRequest {
@@ -25,6 +22,10 @@ public class ClinicRequest {
     private String clinicAddress;
 
     private Integer wardId;
+
+    private String email;
+
+    private Integer bookingGap;
 
     @Override
     public String toString() {

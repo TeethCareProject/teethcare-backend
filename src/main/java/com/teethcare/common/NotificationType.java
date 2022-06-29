@@ -1,7 +1,5 @@
 package com.teethcare.common;
 
-import javax.annotation.Resource;
-
 public enum NotificationType {
     NORMAL_NOTIFICATION,
     OPEN_BOOKING_NOTIFICATION,
@@ -10,5 +8,10 @@ public enum NotificationType {
     CONFIRM_BOOKING_SUCCESS,
     CONFIRM_BOOKING_FAIL,
     CHECK_IN_SUCCESS,
-    CHECK_OUT_SUCCESS
+    CHECK_OUT_SUCCESS,
+    CREATE_APPOINTMENT_SUCCESS,
+    CREATE_APPOINTMENT_FAIL,
+    CREATE_BOOKING_SUCCESS,
+    CREATE_BOOKING_FAIL,
+    REJECT_BOOKING
 }

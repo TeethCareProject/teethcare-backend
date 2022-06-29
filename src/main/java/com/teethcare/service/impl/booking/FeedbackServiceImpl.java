@@ -12,7 +12,6 @@ import com.teethcare.model.response.FeedbackByClinicResponse;
 import com.teethcare.model.response.ReportResponse;
 import com.teethcare.repository.FeedbackRepository;
 import com.teethcare.service.BookingService;
-import com.teethcare.service.ClinicService;
 import com.teethcare.service.FeedbackService;
 import com.teethcare.service.ReportService;
 import com.teethcare.utils.PaginationAndSortFactory;

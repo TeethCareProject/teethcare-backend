@@ -6,7 +6,6 @@ import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.Account;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.request.ServiceRequest;
@@ -26,6 +25,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor

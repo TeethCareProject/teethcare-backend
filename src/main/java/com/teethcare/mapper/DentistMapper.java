@@ -2,7 +2,6 @@ package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.response.DentistResponse;
-import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
