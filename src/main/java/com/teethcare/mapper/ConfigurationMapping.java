@@ -1,8 +1,5 @@
 package com.teethcare.mapper;
 
-import com.teethcare.model.entity.Voucher;
-
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -28,6 +25,10 @@ public class ConfigurationMapping {
 
     }
 
+    static Timestamp mapLongToDateTime(Long time) {
+        return new Timestamp(time);
+    }
+
     static Time mapLongToTime(Long milliseconds) {
         if (milliseconds != null) {
             return convertToTime(milliseconds);
@@ -42,12 +43,5 @@ public class ConfigurationMapping {
         } else {
             return null;
         }
-    }
-
-    static BigDecimal mapTotalPriceAndVoucherToFinalPrice(BigDecimal totalPrice, Voucher voucher) {
-        if (voucher != null) {
-            return totalPrice.subtract(voucher.getDiscountValue());
-        }
-        return totalPrice;
     }
 }

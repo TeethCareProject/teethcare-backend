@@ -1,13 +1,13 @@
 package com.teethcare.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -18,10 +18,10 @@ public class Voucher {
     private String voucherCode;
 
     @Column(name = "created_time")
-    private Long createdTime;
+    private Timestamp createdTime;
 
     @Column(name = "expired_time")
-    private Long expiredTime;
+    private Timestamp expiredTime;
 
     @Column(name = "quantity")
     private Integer quantity;

@@ -72,7 +72,6 @@ public interface BookingMapper {
     @Mapping(source = "mappedPreBooking", target = "mappedPreBooking", ignore = true)
     Booking mapAppointmentToBooking(Appointment appointment);
 
-
     @AfterMapping
     default void setFinalPrice(@MappingTarget BookingResponse bookingResponse, Booking booking) {
         BigDecimal finalPrice = booking.getTotalPrice();

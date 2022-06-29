@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public void save(Voucher entity) {
         entity.setStatus(Status.Voucher.AVAILABLE.name());
-        entity.setCreatedTime(System.currentTimeMillis());
+        entity.setCreatedTime(new Timestamp(System.currentTimeMillis()));
         voucherRepository.save(entity);
     }
 
@@ -95,8 +96,8 @@ public class VoucherServiceImpl implements VoucherService {
             throw new BadRequestException("Voucher is not found!");
         }
         Long now = System.currentTimeMillis();
-        if (voucher.getQuantity() != null) {
-            if (voucher.getExpiredTime() < now) {
+        if (voucher.getExpiredTime() != null) {
+            if (voucher.getExpiredTime().getTime() < now) {
                 inactivate(voucher);
                 throw new BadRequestException("This voucher is expired!");
             }
