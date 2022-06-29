@@ -262,7 +262,7 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case TREATMENT:
                 if (isCheckin) {
-                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkout");
                 }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
@@ -272,7 +272,11 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.Booking.DONE.name());
                 break;
             default:
-                throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
+                if (isCheckin) {
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkout");
+                } else {
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
+                }
         }
         bookingRepository.save(booking);
         return true;
