@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @EnableAsync
-public class CheckVoucherExpiredScheduling {
+public class SchedulingTasks {
     private final VoucherService voucherService;
 
     @Async

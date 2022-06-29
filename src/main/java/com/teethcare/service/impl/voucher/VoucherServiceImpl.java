@@ -65,6 +65,10 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public Voucher addNew(VoucherRequest voucherRequest) {
         Voucher voucher = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (voucher.getExpiredTime().before(now)) {
+            throw new BadRequestException("Voucher Expired Time is invalid!");
+        }
         save(voucher);
         return voucher;
     }
