@@ -1,5 +1,7 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.dto.AccountDTO;
+import com.teethcare.model.dto.ManagerDTO;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ManagerRegisterRequest;
 import com.teethcare.model.request.PatientRegisterRequest;
@@ -56,11 +58,24 @@ public interface AccountMapper {
     @InheritConfiguration(name = "mapAccountToAccountResponse")
     Patient mapPatientRegisterRequestToPatient(PatientRegisterRequest patientRegisterRequest);
 
+//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+//    @Mapping(target = "role", ignore = true)
+//    @Mapping(source = "phoneNumber", target = "phone")
+//    @Mapping(source = "email", target = "email")
+//    Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "roleId", ignore = true)
     @Mapping(source = "phoneNumber", target = "phone")
     @Mapping(source = "email", target = "email")
-    Manager mapManagerRegisterRequestToManager(ManagerRegisterRequest managerRegisterRequest);
+    AccountDTO mapManagerRegisterRequestToAccountDTO(ManagerRegisterRequest managerRegisterRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "roleId", ignore = true)
+    @Mapping(source = "phoneNumber", target = "phone")
+    @Mapping(source = "email", target = "email")
+    ManagerDTO mapManagerRegisterRequestToManagerDTO(ManagerRegisterRequest managerRegisterRequest);
+
+    Manager mapManagerDTOToManager(ManagerDTO managerDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "role", ignore = true)

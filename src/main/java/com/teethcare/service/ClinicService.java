@@ -1,5 +1,8 @@
 package com.teethcare.service;
 
+import com.teethcare.model.dto.ClinicDTO;
+import com.teethcare.model.dto.LocationDTO;
+import com.teethcare.model.dto.ManagerDTO;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
@@ -24,6 +27,7 @@ public interface ClinicService extends CRUDService<Clinic> {
     Clinic getClinicByManager(Manager manager);
     Clinic findClinicByCustomerServiceId(int csId);
     Clinic findById(int theId);
+    Clinic create(ClinicDTO clinicDTO, LocationDTO locationDTO);
 
     void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location);
 

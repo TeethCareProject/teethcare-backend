@@ -3,7 +3,12 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.common.Constant;
 import com.teethcare.common.Status;
 import com.teethcare.exception.NotFoundException;
+import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
+import com.teethcare.mapper.LocationMapper;
+import com.teethcare.model.dto.ClinicDTO;
+import com.teethcare.model.dto.LocationDTO;
+import com.teethcare.model.dto.ManagerDTO;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
@@ -38,12 +43,12 @@ public class ClinicServiceImpl implements ClinicService {
     private final LocationService locationService;
     private final FileService fileService;
     private final WardService wardService;
+    private final LocationMapper locationMapper;
 
     @Override
     public List<Clinic> findAll() {
         return clinicRepository.findAll();
     }
-
 
     @Override
     public List<Clinic> findAll(Pageable pageable) {
@@ -57,7 +62,9 @@ public class ClinicServiceImpl implements ClinicService {
         if (patientLocation == null) {
             throw new NotFoundException("Your account does not have location .No clinic is found near you.");
         }
+
         List<Clinic> clinics = clinicRepository.findAll(pageable.getSort());
+
         if (longitude != null || latitude != null) {
             clinics = clinics.stream()
                     .filter(clinic -> LocationUtils.distance(latitude, clinic.getLocation().getLatitude(), longitude, clinic.getLocation().getLatitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
@@ -99,6 +106,24 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    @Transactional
+    public Clinic create(ClinicDTO clinicDTO, LocationDTO locationDTO) {
+
+        clinicDTO.setBookingGap(30);
+        clinicDTO.setExpiredDay(3);
+
+        Location location = locationMapper.mapLocationDTOToLocation(locationDTO);
+        location.setWard(wardService.findById(locationDTO.getWardId()));
+        locationService.save(location);
+
+        Clinic clinic = clinicMapper.mapClinicDTOToClinic(clinicDTO);
+        clinic.setLocation(location);
+        save(clinic);
+        log.info("Save clinic success!");
+        return clinic;
+    }
+
+    @Override
     public void save(Clinic clinic) {
         clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
@@ -129,7 +154,6 @@ public class ClinicServiceImpl implements ClinicService {
             locationService.save(location);
             clinic.setLocation(location);
         }
-        clinicRepository.save(clinic);
         return clinic;
     }
 
@@ -158,5 +182,4 @@ public class ClinicServiceImpl implements ClinicService {
     public void update(Clinic theEntity) {
         clinicRepository.save(theEntity);
     }
-
 }

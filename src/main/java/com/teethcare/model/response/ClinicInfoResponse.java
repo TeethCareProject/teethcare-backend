@@ -23,4 +23,7 @@ public class ClinicInfoResponse {
     private Long endTimeShift1;
     private Long startTimeShift2;
     private Long endTimeShift2;
+    private String gmail;
+    private Double longitude;
+    private Double latitude;
 }

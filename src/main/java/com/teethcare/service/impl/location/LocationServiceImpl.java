@@ -54,12 +54,12 @@ public class LocationServiceImpl implements LocationService {
     }
 
 
-    @Override
-    public Location getLongitudeAndLatitudeFromLocation(String address, int wardId) {
-        Ward ward = wardRepository.findById(wardId);
-        District district = districtRepository.findById(ward.getId());
-        Province province = provinceRepository.findById(district.getId());
-        address = address + ward.getName() + district.getName() + province.getName();
-        return null;
-    }
+//    @Override
+//    public Location getLongitudeAndLatitudeFromLocation(String address, int wardId) {
+//        Ward ward = wardRepository.findById(wardId);
+//        District district = districtRepository.findById(ward.getId());
+//        Province province = provinceRepository.findById(district.getId());
+//        address = address + ward.getName() + district.getName() + province.getName();
+//        return null;
+//    }
 }

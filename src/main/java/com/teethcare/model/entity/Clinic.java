@@ -25,8 +25,8 @@ public class Clinic {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "manager_id", referencedColumnName = "id")
-    private Account manager;
+    @JoinColumn(name = "manager_id", referencedColumnName = "account_id")
+    private Manager manager;
 
     @OneToOne
     @JoinColumn(name = "location_id", referencedColumnName = "id")
@@ -64,6 +64,12 @@ public class Clinic {
 
     @Column(name = "booking_gap")
     private Integer bookingGap;
+
+    @Column(name = "expired_day")
+    private Integer expiredDay;
+
+    @Column(name = "email")
+    private String email;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")

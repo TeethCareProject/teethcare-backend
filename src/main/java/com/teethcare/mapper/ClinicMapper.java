@@ -1,5 +1,6 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.dto.ClinicDTO;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.ServiceOfClinic;
@@ -11,7 +12,8 @@ import org.mapstruct.*;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
-        config = ConfigurationMapper.class)
+        config = ConfigurationMapper.class,
+        uses = LocationMapper.class)
 public interface ClinicMapper {
 
     @Mapping(source = "manager.role.id", target = "manager.roleId")
@@ -33,10 +35,16 @@ public interface ClinicMapper {
     @Mapping(source = "location", target = "location")
     ClinicInfoResponse mapClinicListToClinicInfoResponse(Clinic clinic);
 
+//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+//    @Mapping(source = "clinicName", target = "name")
+//    @Mapping(source = "clinicTaxCode", target = "taxCode")
+//    Clinic mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "clinicName", target = "name")
     @Mapping(source = "clinicTaxCode", target = "taxCode")
-    Clinic mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
+    @Mapping(source = "clinicEmail", target = "email")
+    ClinicDTO mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "manager", ignore = true)
@@ -45,6 +53,9 @@ public interface ClinicMapper {
     @Mapping(target = "taxCode", ignore = true)
     @Mapping(target = "status", ignore = true)
     Clinic mapClinicRequestToClinic(ClinicRequest clinicRequest);
+    
+    @Mapping(source = "locationDTO", target = "location", qualifiedByName = "mapLocationDTOToLocation")
+    Clinic mapClinicDTOToClinic(ClinicDTO clinic);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateClinicFromClinicRequest(ClinicRequest clinicRequest,@MappingTarget Clinic clinic);
 

@@ -6,6 +6,10 @@ import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
+import com.teethcare.mapper.LocationMapper;
+import com.teethcare.model.dto.ClinicDTO;
+import com.teethcare.model.dto.LocationDTO;
+import com.teethcare.model.dto.ManagerDTO;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
@@ -15,6 +19,7 @@ import com.teethcare.model.response.ManagerResponse;
 import com.teethcare.repository.ManagerRepository;
 import com.teethcare.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +29,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository managerRepository;
@@ -31,10 +37,9 @@ public class ManagerServiceImpl implements ManagerService {
     private final AccountService accountService;
     private final AccountMapper accountMapper;
     private final ClinicMapper clinicMapper;
-    private final LocationService locationService;
     private final ClinicService clinicService;
-    private final WardService wardService;
     private final PasswordEncoder passwordEncoder;
+    private final LocationMapper locationMapper;
 
     @Override
     public List<Manager> findAll() {
@@ -82,22 +87,25 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ManagerResponse addNew(ManagerRegisterRequest managerRegisterRequest) {
+    public Clinic addNew(ManagerRegisterRequest managerRegisterRequest) {
         managerRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
         if (!isDuplicated) {
             if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
-                Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
-                Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
-                clinic.setBookingGap(30);
-                Location location = new Location();
-                location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
-                location.setAddressString(managerRegisterRequest.getClinicAddress());
-                locationService.save(location);
-                this.save(manager);
-                clinicService.saveWithManagerAndLocation(clinic, manager, location);
-                ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
-                return accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);
+                ManagerDTO managerDTO = accountMapper.mapManagerRegisterRequestToManagerDTO(managerRegisterRequest);
+                Manager manager = accountMapper.mapManagerDTOToManager(managerDTO);
+                save(manager);
+
+                ClinicDTO clinicDTO = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
+                log.info("Clinic email: " + clinicDTO.getEmail());
+                LocationDTO locationDTO = locationMapper.mapManagerRegisterRequestToLocationDTO(managerRegisterRequest);
+                Clinic clinic = clinicService.create(clinicDTO, locationDTO);
+                clinic.setManager(manager);
+//                clinicService.save(clinic);
+//                ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
+//                accountMapper.mapManagerToManagerResponse(clinic.getManager(), clinicInfoResponse)
+                log.info("Save clinic with manager successfully");
+                return clinic;
             } else {
                 throw new BadRequestException("confirm Password is not match with password");
             }
