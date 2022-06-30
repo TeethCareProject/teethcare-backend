@@ -1,7 +1,7 @@
 package com.teethcare.service.impl.email;
 
-import com.teethcare.model.dto.booking.BookingConfirmationDTO;
 import com.teethcare.model.dto.account.StaffCreatingPasswordDTO;
+import com.teethcare.model.dto.booking.BookingConfirmationDTO;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.service.EmailService;
@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static com.teethcare.common.Constant.EMAIL.*;
+import static com.teethcare.common.Constant.EMAIL.HOME_URL;
+import static com.teethcare.common.Constant.EMAIL.LOGIN_URL;
 
 
 @Service

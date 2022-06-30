@@ -1,7 +1,5 @@
 package com.teethcare.model.dto.account;
 
-import com.teethcare.model.dto.account.AccountDTO;
-
 import java.util.Date;
 
 public class DentistDTO extends AccountDTO {

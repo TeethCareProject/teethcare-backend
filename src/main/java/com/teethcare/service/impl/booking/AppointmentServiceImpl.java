@@ -11,7 +11,6 @@ import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
-import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

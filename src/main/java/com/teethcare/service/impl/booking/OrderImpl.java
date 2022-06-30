@@ -3,7 +3,6 @@ package com.teethcare.service.impl.booking;
 import com.teethcare.mapper.OrderMapper;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Order;
-import com.teethcare.model.entity.OrderDetail;
 import com.teethcare.repository.OrderRepository;
 import com.teethcare.service.OrderService;
 import lombok.RequiredArgsConstructor;
