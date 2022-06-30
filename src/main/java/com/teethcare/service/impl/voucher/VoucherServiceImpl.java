@@ -78,6 +78,10 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     @Transactional
     public Voucher addNew(VoucherRequest voucherRequest) {
+        Voucher voucher = findByVoucherCode(voucherRequest.getVoucherCode());
+        if (voucher != null) {
+            throw new BadRequestException("This voucher code existed!");
+        }
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
         if (account.getRole().getName().equals(Role.ADMIN.name())) {
             return addByAdmin(voucherRequest);
@@ -150,19 +154,22 @@ public class VoucherServiceImpl implements VoucherService {
     public boolean isAvailable(String voucherCode, Integer clinicId) {
         Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherCode);
         if (voucher == null) {
-            throw new BadRequestException("Voucher is not found!");
+            return false;
+//            throw new BadRequestException("Voucher is not found!");
         }
         if (clinicId != null && !voucher.getClinic().getId().equals(clinicId)) {
-            throw new BadRequestException("Voucher is invalid!");
+            return false;
+//            throw new BadRequestException("Voucher is invalid!");
         }
         long now = System.currentTimeMillis();
         if (voucher.getExpiredTime() != null && voucher.getExpiredTime().getTime() < now) {
             deactivate(voucher);
-            throw new BadRequestException("This voucher is expired!");
+            return false;
+//            throw new BadRequestException("This voucher is expired!");
         }
         if (voucher.getQuantity() != null && !(voucher.getQuantity() > 0)) {
-            deactivate(voucher);
-            throw new BadRequestException("This voucher is out of stock!");
+            return false;
+//            throw new BadRequestException("This voucher is out of stock!");
         }
         return voucherRepository.findVoucherByVoucherCodeAndStatus(voucherCode, Status.Voucher.AVAILABLE.toString()) != null;
     }

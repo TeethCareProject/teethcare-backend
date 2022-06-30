@@ -7,12 +7,13 @@ import com.teethcare.model.response.VoucherResponse;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
-        config = ConfigurationMapper.class)
+        config = ConfigurationMapper.class, uses = {ClinicMapper.class})
 public interface VoucherMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Voucher mapVoucherRequestToVoucher(VoucherRequest voucherRequest);
 
     @Named("mapVoucherToVoucherResponse")
+    @Mapping(target = "clinic", source = "clinic", qualifiedByName = "mapClinicToClinicInfoResponse")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VoucherResponse mapVoucherToVoucherResponse(Voucher voucher);
 

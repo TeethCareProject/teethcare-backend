@@ -14,4 +14,5 @@ public class VoucherResponse {
     private Integer quantity;
     private String status;
     private BigDecimal discountValue;
+    private ClinicInfoResponse clinic;
 }
