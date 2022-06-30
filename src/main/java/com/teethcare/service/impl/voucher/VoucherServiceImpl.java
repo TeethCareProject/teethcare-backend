@@ -78,6 +78,9 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     @Transactional
     public Voucher addNew(VoucherRequest voucherRequest) {
+        if (voucherRequest.getQuantity() == null && voucherRequest.getExpiredTime() == null) {
+            throw new BadRequestException("Both quantity and expired time can not be null");
+        }
         Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherRequest.getVoucherCode());
         if (voucher != null) {
             throw new BadRequestException("This voucher code existed!");
@@ -106,7 +109,7 @@ public class VoucherServiceImpl implements VoucherService {
     public Voucher addByManager(VoucherRequest voucherRequest, Manager manager) {
         Voucher voucher = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (voucher.getExpiredTime().before(now)) {
+        if (voucher.getExpiredTime() != null && voucher.getExpiredTime().before(now)) {
             throw new BadRequestException("Voucher Expired Time is invalid!");
         }
         voucher.setClinic(clinicService.getClinicByManager(manager));
