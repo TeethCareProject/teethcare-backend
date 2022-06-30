@@ -164,7 +164,7 @@ public class VoucherServiceImpl implements VoucherService {
             return false;
 //            throw new BadRequestException("Voucher is not found!");
         }
-        if (clinicId != null && !voucher.getClinic().getId().equals(clinicId)) {
+        if (clinicId != null && voucher.getClinic() != null && !voucher.getClinic().getId().equals(clinicId)) {
             return false;
 //            throw new BadRequestException("Voucher is invalid!");
         }
