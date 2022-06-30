@@ -119,7 +119,6 @@ public class VoucherServiceImpl implements VoucherService {
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
         Voucher voucher = findByVoucherCode(voucherCode);
         if (account.getRole().getName().equals(Role.MANAGER.name()) && !voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
-
             throw new BadRequestException("Voucher is not match with this clinic!");
         }
         deactivate(voucher);
@@ -142,7 +141,7 @@ public class VoucherServiceImpl implements VoucherService {
         Account account = accountService.getAccountByUsername(username);
         List<Voucher> vouchers;
         if (account.getRole().getName().equals(Role.ADMIN.name())) {
-            vouchers = voucherRepository.findAllByClinicIsNull();
+            vouchers = voucherRepository.findAll();
         } else {
             vouchers = voucherRepository.findAllByClinic(clinicService.getClinicByManager((Manager) account));
         }
