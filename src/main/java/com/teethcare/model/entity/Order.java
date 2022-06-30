@@ -78,5 +78,5 @@ public class Order {
     @OneToMany(fetch = FetchType.EAGER,
             mappedBy = "order")
     @JsonManagedReference
-    private List<OrderDetail> orderDetail;
+    private List<OrderDetail> orderDetails;
 }

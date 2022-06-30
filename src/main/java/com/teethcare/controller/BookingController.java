@@ -58,6 +58,7 @@ public class BookingController {
     private final AccountService accountService;
     private final FirebaseMessagingService firebaseMessagingService;
     private final EmailService emailService;
+    private final OrderService orderService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping
@@ -247,6 +248,7 @@ public class BookingController {
         int bookingId = bookingUpdateRequest.getBookingId();
 
         if (isUpdated) {
+            orderService.createOrderFromBooking(bookingService.findBookingById(bookingId));
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
                         NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
