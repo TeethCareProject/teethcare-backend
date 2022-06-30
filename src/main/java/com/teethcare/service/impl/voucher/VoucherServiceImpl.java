@@ -98,8 +98,11 @@ public class VoucherServiceImpl implements VoucherService {
     public Voucher addByAdmin(VoucherRequest voucherRequest) {
         Voucher voucher = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (voucher.getExpiredTime().before(now)) {
+        if (voucher.getExpiredTime() != null && voucher.getExpiredTime().before(now)) {
             throw new BadRequestException("Voucher Expired Time is invalid!");
+        }
+        if (voucher.getQuantity() != null && voucher.getQuantity() <= 0) {
+            throw new BadRequestException("Voucher Quantity is invalid!");
         }
         save(voucher);
         return voucher;
@@ -111,6 +114,9 @@ public class VoucherServiceImpl implements VoucherService {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         if (voucher.getExpiredTime() != null && voucher.getExpiredTime().before(now)) {
             throw new BadRequestException("Voucher Expired Time is invalid!");
+        }
+        if (voucher.getQuantity() != null && voucher.getQuantity() <= 0) {
+            throw new BadRequestException("Voucher Quantity is invalid!");
         }
         voucher.setClinic(clinicService.getClinicByManager(manager));
         save(voucher);
