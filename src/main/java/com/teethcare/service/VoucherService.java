@@ -22,6 +22,6 @@ public interface VoucherService extends CRUDService<Voucher> {
     void useVoucher(String voucherCode, Clinic clinic);
     void deactivate(Voucher voucher);
     List<Voucher> findAllVouchersByExpiredTime(long expiredTime);
-    Voucher addByManager(VoucherRequest voucherRequest, Manager manager);
-    Voucher addByAdmin(VoucherRequest voucherRequest);
+    Voucher addByManager(Voucher voucherRequest, Manager manager);
+    Voucher addByAdmin(Voucher voucherRequest);
 }

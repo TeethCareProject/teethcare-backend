@@ -10,6 +10,7 @@ import org.mapstruct.*;
         config = ConfigurationMapper.class, uses = {ClinicMapper.class})
 public interface VoucherMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "expiredTime", ignore = true)
     Voucher mapVoucherRequestToVoucher(VoucherRequest voucherRequest);
 
     @Named("mapVoucherToVoucherResponse")

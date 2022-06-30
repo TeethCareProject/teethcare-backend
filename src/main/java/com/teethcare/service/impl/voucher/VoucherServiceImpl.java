@@ -82,21 +82,24 @@ public class VoucherServiceImpl implements VoucherService {
             throw new BadRequestException("Both quantity and expired time can not be null");
         }
         Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherRequest.getVoucherCode());
+        Voucher voucherTmp = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
+        if (voucherRequest.getExpiredTime() != null) {
+            voucherTmp.setExpiredTime(new Timestamp(voucherRequest.getExpiredTime()));
+        }
         if (voucher != null) {
             throw new BadRequestException("This voucher code existed!");
         }
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
         if (account.getRole().getName().equals(Role.ADMIN.name())) {
-            return addByAdmin(voucherRequest);
+            return addByAdmin(voucherTmp);
         } else if (account.getRole().getName().equals(Role.MANAGER.name())) {
-            return addByManager(voucherRequest, (Manager) account);
+            return addByManager(voucherTmp, (Manager) account);
         }
         return null;
     }
 
     @Override
-    public Voucher addByAdmin(VoucherRequest voucherRequest) {
-        Voucher voucher = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
+    public Voucher addByAdmin(Voucher voucher) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         if (voucher.getExpiredTime() != null && voucher.getExpiredTime().before(now)) {
             throw new BadRequestException("Voucher Expired Time is invalid!");
@@ -109,8 +112,7 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public Voucher addByManager(VoucherRequest voucherRequest, Manager manager) {
-        Voucher voucher = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
+    public Voucher addByManager(Voucher voucher, Manager manager) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         if (voucher.getExpiredTime() != null && voucher.getExpiredTime().before(now)) {
             throw new BadRequestException("Voucher Expired Time is invalid!");
