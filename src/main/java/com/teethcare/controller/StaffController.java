@@ -5,7 +5,7 @@ import com.teethcare.common.EndpointConstant;
 import com.teethcare.common.Message;
 import com.teethcare.common.Role;
 import com.teethcare.mapper.AccountMapper;
-import com.teethcare.model.dto.StaffCreatingPasswordDTO;
+import com.teethcare.model.dto.account.StaffCreatingPasswordDTO;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.StaffPasswordRequest;

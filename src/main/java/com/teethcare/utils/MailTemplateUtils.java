@@ -1,7 +1,6 @@
 package com.teethcare.utils;
 
-import com.teethcare.model.dto.BookingConfirmationDTO;
-import com.teethcare.model.entity.Booking;
+import com.teethcare.model.dto.booking.BookingConfirmationDTO;
 
 public class MailTemplateUtils {
     public static String getStaffCreatingPasswordEmail(String username, String password, String fwdLink) {

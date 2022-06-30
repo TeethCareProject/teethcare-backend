@@ -1,4 +1,4 @@
-package com.teethcare.model.dto;
+package com.teethcare.model.dto.booking;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.teethcare.model.dto;
+package com.teethcare.model.dto.booking;
 
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;

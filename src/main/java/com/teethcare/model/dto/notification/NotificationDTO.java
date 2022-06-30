@@ -1,4 +1,4 @@
-package com.teethcare.model.dto;
+package com.teethcare.model.dto.notification;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
