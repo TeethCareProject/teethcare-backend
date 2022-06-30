@@ -1,6 +1,8 @@
 package com.teethcare.service;
 
 
+import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Manager;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
@@ -16,8 +18,10 @@ public interface VoucherService extends CRUDService<Voucher> {
     Voucher addNew(VoucherRequest voucherRequest);
     void deleteByVoucherCode(String voucherCode);
     void updateByVoucherCode(String voucherCode, VoucherUpdateRequest voucherUpdateRequest);
-    boolean isAvailable(String voucherCode);
-    void useVoucher(String voucherCode);
+    boolean isAvailable(String voucherCode, Integer clinicId);
+    void useVoucher(String voucherCode, Clinic clinic);
     void deactivate(Voucher voucher);
     List<Voucher> findAllVouchersByExpiredTime(long expiredTime);
+    Voucher addByManager(VoucherRequest voucherRequest, Manager manager);
+    Voucher addByAdmin(VoucherRequest voucherRequest);
 }

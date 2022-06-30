@@ -119,7 +119,7 @@ public class BookingServiceImpl implements BookingService {
         if (bookingRequest.getVoucherCode() != null) {
             Voucher voucher = voucherService.findByVoucherCode(bookingRequest.getVoucherCode());
             bookingTmp.setVoucher(voucher);
-            voucherService.useVoucher(bookingRequest.getVoucherCode());
+            voucherService.useVoucher(bookingRequest.getVoucherCode(), clinic);
         }
 
         if (patient != null && !serviceOfClinicList.isEmpty()) {

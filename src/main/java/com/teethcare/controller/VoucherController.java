@@ -26,12 +26,12 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Voucher.VOUCHER_ENDPOINT)
-@PreAuthorize("hasAuthority(T(com.teethcare.common.Role).ADMIN)")
 public class VoucherController {
     private final VoucherService voucherService;
     private final VoucherMapper voucherMapper;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<VoucherResponse> add(@Valid @RequestBody VoucherRequest voucherRequest) {
         Voucher voucher = voucherService.addNew(voucherRequest);
         VoucherResponse voucherResponse = voucherMapper.mapVoucherToVoucherResponse(voucher);
@@ -39,6 +39,7 @@ public class VoucherController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<Page<VoucherResponse>> findAll(VoucherFilterRequest voucherFilterRequest,
                                                          @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
                                                          @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
@@ -51,18 +52,21 @@ public class VoucherController {
     }
 
     @GetMapping("/{voucher-code}")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<VoucherResponse> findByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
         Voucher voucher = voucherService.findByVoucherCode(voucherCode);
         return new ResponseEntity<>(voucherMapper.mapVoucherToVoucherResponse(voucher), HttpStatus.OK);
     }
 
     @DeleteMapping("/{voucher-code}")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<Message> deleteByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
         voucherService.deleteByVoucherCode(voucherCode);
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 
     @PutMapping("/{voucher-code}")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<Message> updateByVoucherCode(@PathVariable("voucher-code") String voucherCode,
                                                        @Valid @RequestBody VoucherUpdateRequest voucherUpdateRequest) {
         voucherService.updateByVoucherCode(voucherCode, voucherUpdateRequest);
@@ -70,8 +74,10 @@ public class VoucherController {
     }
 
     @GetMapping("/{voucher-code}/check-available")
-    public ResponseEntity<CheckVoucherResponse> checkAvailable(@PathVariable("voucher-code") String voucherCode) {
-        boolean check = voucherService.isAvailable(voucherCode);
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<CheckVoucherResponse> checkAvailable(@PathVariable("voucher-code") String voucherCode,
+                                                               @RequestBody Integer clinicId) {
+        boolean check = voucherService.isAvailable(voucherCode, clinicId);
         return check
                 ? new ResponseEntity<>(new CheckVoucherResponse(Status.Voucher.AVAILABLE.name()), HttpStatus.OK)
                 : new ResponseEntity<>(new CheckVoucherResponse(Status.Voucher.UNAVAILABLE.name()), HttpStatus.BAD_REQUEST);

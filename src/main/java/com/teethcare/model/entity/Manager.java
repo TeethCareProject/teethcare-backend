@@ -13,6 +13,4 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Entity(name = "manager")
 @PrimaryKeyJoinColumn(name = "account_id")
 public class Manager extends Account {
-//    @OneToOne(mappedBy = "manager")
-//    private Clinic clinic;
 }

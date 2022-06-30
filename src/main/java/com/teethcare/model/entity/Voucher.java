@@ -3,9 +3,7 @@ package com.teethcare.model.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
@@ -31,4 +29,8 @@ public class Voucher {
 
     @Column(name = "discount_value")
     private BigDecimal discountValue;
+
+    @ManyToOne
+    @JoinColumn(name = "clinic_id", referencedColumnName = "id")
+    private Clinic clinic;
 }
