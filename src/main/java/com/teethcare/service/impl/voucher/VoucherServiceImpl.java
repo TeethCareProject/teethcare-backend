@@ -78,9 +78,6 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     @Transactional
     public Voucher addNew(VoucherRequest voucherRequest) {
-        if (voucherRequest.getQuantity() == null && voucherRequest.getExpiredTime() == null) {
-            throw new BadRequestException("Both quantity and expired time can not be null");
-        }
         Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherRequest.getVoucherCode());
         Voucher voucherTmp = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
         if (voucherRequest.getExpiredTime() != null) {
