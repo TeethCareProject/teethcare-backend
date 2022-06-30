@@ -78,7 +78,7 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     @Transactional
     public Voucher addNew(VoucherRequest voucherRequest) {
-        Voucher voucher = findByVoucherCode(voucherRequest.getVoucherCode());
+        Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherRequest.getVoucherCode());
         if (voucher != null) {
             throw new BadRequestException("This voucher code existed!");
         }
