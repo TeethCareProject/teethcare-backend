@@ -23,9 +23,6 @@ public class SchedulingTasks {
     public void checkExpiredVoucher() {
         long now = System.currentTimeMillis() / 1_000;
         List<Voucher> vouchers = voucherService.findAllVouchersByExpiredTime(now * 1_000);
-        if (vouchers.size() > 0) {
-            System.out.println(vouchers.get(0).getExpiredTime().getTime());
-        }
         vouchers.forEach(voucherService::deactivate);
     }
 }
