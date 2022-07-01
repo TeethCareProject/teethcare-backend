@@ -44,8 +44,8 @@ public class Booking {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    @Column(name = "create_booking_date")
-    private Timestamp createBookingDate;
+    @Column(name = "create_booking_time")
+    private Timestamp createBookingTime;
 
     @Column(name = "examination_time")
     private Timestamp examinationTime;
@@ -58,6 +58,9 @@ public class Booking {
 
     @Column(name = "is_confirmed")
     private boolean isConfirmed;
+
+    @Column(name = "rejected_note")
+    private String rejectedNote;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dentist_id")

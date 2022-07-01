@@ -10,25 +10,11 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.TimeZone;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConvertUtils {
-
-    public static int covertID(String inputId) {
-        int theID = 0;
-        if (!NumberUtils.isCreatable(inputId)) {
-            throw new BadRequestException("Id " + inputId + " invalid");
-        }
-        return Integer.parseInt(inputId);
-    }
-
-    public static Timestamp getTimestamp(long timestampInString) {
-        Date date = new Date(timestampInString);
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formatted = format.format(date);
-        return Timestamp.valueOf(formatted);
-    }
 
     public static Date getDate(long timestampInString) {
         Date date = new Date(timestampInString);

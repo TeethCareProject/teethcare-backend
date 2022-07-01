@@ -89,6 +89,7 @@ public class ManagerServiceImpl implements ManagerService {
             if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
                 Manager manager = accountMapper.mapManagerRegisterRequestToManager(managerRegisterRequest);
                 Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
+                clinic.setBookingGap(30);
                 Location location = new Location();
                 location.setWard(wardService.findById(managerRegisterRequest.getWardId()));
                 location.setAddressString(managerRegisterRequest.getClinicAddress());
