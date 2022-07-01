@@ -8,6 +8,7 @@ import com.teethcare.mapper.VoucherMapper;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
+import com.teethcare.model.response.AvailableVoucherResponse;
 import com.teethcare.model.response.CheckVoucherResponse;
 import com.teethcare.model.response.VoucherResponse;
 import com.teethcare.service.VoucherService;
@@ -66,11 +67,16 @@ public class VoucherController {
 
     @GetMapping("/{voucher-code}/check-available")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
-    public ResponseEntity<CheckVoucherResponse> checkAvailable(@PathVariable("voucher-code") String voucherCode,
-                                                               @RequestParam Integer clinicId) {
+    public ResponseEntity<Object> checkAvailable(@PathVariable("voucher-code") String voucherCode,
+                                                 @RequestParam Integer clinicId) {
         boolean check = voucherService.isAvailable(voucherCode, clinicId);
+        Voucher voucher = voucherService.findByVoucherCode(voucherCode);
+        Long expiredTime = null;
+        if (voucher.getExpiredTime() != null) {
+            expiredTime = voucher.getExpiredTime().getTime();
+        }
         return check
-                ? new ResponseEntity<>(new CheckVoucherResponse(Status.Voucher.AVAILABLE.name()), HttpStatus.OK)
+                ? new ResponseEntity<>(new AvailableVoucherResponse(voucher.getVoucherCode(), expiredTime, voucher.getDiscountValue()), HttpStatus.OK)
                 : new ResponseEntity<>(new CheckVoucherResponse(Status.Voucher.UNAVAILABLE.name()), HttpStatus.BAD_REQUEST);
     }
 }
