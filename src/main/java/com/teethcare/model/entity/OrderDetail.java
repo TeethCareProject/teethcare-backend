@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ public class OrderDetail {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     @JsonBackReference
     private Order order;
@@ -29,8 +30,8 @@ public class OrderDetail {
     private int serviceId;
 
     @Column(name = "service_name")
-    private int serviceName;
+    private String serviceName;
 
     @Column(name = "service_price")
-    private int servicePrice;
+    private BigDecimal servicePrice;
 }

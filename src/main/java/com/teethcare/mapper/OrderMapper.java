@@ -12,10 +12,10 @@ import java.util.List;
         config = ConfigurationMapper.class)
 public interface OrderMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "services", target = "orderDetails", qualifiedByName = "mapServicesToOrderDetail")
+    @Mapping(source = "services", target = "orderDetails", qualifiedByName = "mapServicesListToOrderDetailList")
     @Mapping(source = "clinic.name", target = "clinicName")
     @Mapping(source = "clinic.taxCode", target = "clinicTaxCode")
-    @Mapping(source = "clinic.taxCode", target = "clinicEmail")
+    @Mapping(source = "clinic.email", target = "clinicEmail")
     @Mapping(target = "clinicLocation", expression = "java(booking.getClinic().getLocation().getFullAddress())")
     Order mapBookingToOrder(Booking booking);
 
@@ -24,9 +24,13 @@ public interface OrderMapper {
     @Mapping(source = "name", target = "serviceName")
     @Mapping(source = "id", target = "serviceId")
     @Mapping(source = "price", target = "servicePrice")
+    @Mapping(target = "id", ignore = true)
     OrderDetail mapServicesToOrderDetail(ServiceOfClinic serviceOfClinic);
 
-    @InheritConfiguration(name = "mapServicesToOrderDetail")
-    @Named(value = "mapServicesToOrderDetail")
-    List<OrderDetail> mapServicesToOrderDetail(List<ServiceOfClinic> serviceOfClinicList);
+    @Named(value = "mapServicesListToOrderDetailList")
+    List<OrderDetail> mapServicesListToOrderDetailList(List<ServiceOfClinic> serviceOfClinicList);
+
+    default OrderDetail map (ServiceOfClinic service) {
+        return mapServicesToOrderDetail(service);
+    }
 }
