@@ -13,7 +13,6 @@ import com.teethcare.model.entity.Manager;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
-import com.teethcare.model.request.VoucherUpdateRequest;
 import com.teethcare.repository.VoucherRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.ClinicService;
@@ -131,18 +130,6 @@ public class VoucherServiceImpl implements VoucherService {
         }
         deactivate(voucher);
     }
-
-    @Override
-    public void updateByVoucherCode(String voucherCode, VoucherUpdateRequest voucherUpdateRequest) {
-        Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
-        Voucher voucher = findByVoucherCode(voucherCode);
-
-        if (account.getRole().getName().equals(Role.MANAGER.name()) && !voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
-            throw new BadRequestException("Voucher is not match with this clinic!");
-        }
-        voucherMapper.updateVoucherFromVoucherUpdateRequest(voucherUpdateRequest, voucher);
-    }
-
     @Override
     public Page<Voucher> findAllWithFilter(VoucherFilterRequest voucherFilterRequest, Pageable pageable) {
         String username = UserDetailUtil.getUsername();

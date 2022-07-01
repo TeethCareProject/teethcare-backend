@@ -6,7 +6,6 @@ import com.teethcare.model.entity.Manager;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
-import com.teethcare.model.request.VoucherUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,7 +16,6 @@ public interface VoucherService extends CRUDService<Voucher> {
     Page<Voucher> findAllWithFilter(VoucherFilterRequest voucherFilterRequest, Pageable pageable);
     Voucher addNew(VoucherRequest voucherRequest);
     void deleteByVoucherCode(String voucherCode);
-    void updateByVoucherCode(String voucherCode, VoucherUpdateRequest voucherUpdateRequest);
     boolean isAvailable(String voucherCode, Integer clinicId);
     void useVoucher(String voucherCode, Clinic clinic);
     void deactivate(Voucher voucher);

@@ -8,7 +8,6 @@ import com.teethcare.mapper.VoucherMapper;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
-import com.teethcare.model.request.VoucherUpdateRequest;
 import com.teethcare.model.response.CheckVoucherResponse;
 import com.teethcare.model.response.VoucherResponse;
 import com.teethcare.service.VoucherService;
@@ -62,14 +61,6 @@ public class VoucherController {
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<Message> deleteByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
         voucherService.deleteByVoucherCode(voucherCode);
-        return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
-    }
-
-    @PutMapping("/{voucher-code}")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
-    public ResponseEntity<Message> updateByVoucherCode(@PathVariable("voucher-code") String voucherCode,
-                                                       @Valid @RequestBody VoucherUpdateRequest voucherUpdateRequest) {
-        voucherService.updateByVoucherCode(voucherCode, voucherUpdateRequest);
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 
