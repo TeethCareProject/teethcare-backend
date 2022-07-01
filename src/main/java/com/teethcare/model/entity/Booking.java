@@ -93,6 +93,6 @@ public class Booking {
     private List<ServiceOfClinic> services;
 
     @ManyToOne
-    @JoinColumn(name = "voucher_code")
+    @JoinColumn(name = "voucher_id")
     private Voucher voucher;
 }

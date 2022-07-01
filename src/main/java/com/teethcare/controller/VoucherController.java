@@ -54,7 +54,7 @@ public class VoucherController {
     @GetMapping("/{voucher-code}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<VoucherResponse> findByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
-        Voucher voucher = voucherService.findByVoucherCode(voucherCode);
+        Voucher voucher = voucherService.findActiveByVoucherCode(voucherCode);
         return new ResponseEntity<>(voucherMapper.mapVoucherToVoucherResponse(voucher), HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class VoucherController {
     public ResponseEntity<Object> checkAvailable(@PathVariable("voucher-code") String voucherCode,
                                                  @RequestParam Integer clinicId) {
         boolean check = voucherService.isAvailable(voucherCode, clinicId);
-        Voucher voucher = voucherService.findByVoucherCode(voucherCode);
+        Voucher voucher = voucherService.findActiveByVoucherCode(voucherCode);
         Long expiredTime = null;
         if (voucher.getExpiredTime() != null) {
             expiredTime = voucher.getExpiredTime().getTime();

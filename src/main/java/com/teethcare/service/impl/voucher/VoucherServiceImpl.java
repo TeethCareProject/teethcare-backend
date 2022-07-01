@@ -2,7 +2,6 @@ package com.teethcare.service.impl.voucher;
 
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
-import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 public class VoucherServiceImpl implements VoucherService {
     private final VoucherRepository voucherRepository;
     private final VoucherMapper voucherMapper;
-    private final JwtTokenUtil jwtTokenUtil;
     private final AccountService accountService;
     private final ClinicService clinicService;
 
@@ -66,8 +64,8 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public Voucher findByVoucherCode(String voucherCode) {
-        Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherCode);
+    public Voucher findActiveByVoucherCode(String voucherCode) {
+        Voucher voucher = voucherRepository.findVoucherByVoucherCodeAndStatus(voucherCode, Status.Voucher.AVAILABLE.name());
         if (voucher == null) {
             throw new NotFoundException("Voucher Code " + voucherCode + " not found!");
         }
@@ -77,13 +75,13 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     @Transactional
     public Voucher addNew(VoucherRequest voucherRequest) {
-        Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherRequest.getVoucherCode());
+        Voucher voucher = voucherRepository.findVoucherByVoucherCodeAndStatus(voucherRequest.getVoucherCode(), Status.Voucher.AVAILABLE.name());
+        if (voucher != null) {
+            throw new BadRequestException("This voucher code existed!");
+        }
         Voucher voucherTmp = voucherMapper.mapVoucherRequestToVoucher(voucherRequest);
         if (voucherRequest.getExpiredTime() != null) {
             voucherTmp.setExpiredTime(new Timestamp(voucherRequest.getExpiredTime()));
-        }
-        if (voucher != null) {
-            throw new BadRequestException("This voucher code existed!");
         }
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
         if (account.getRole().getName().equals(Role.ADMIN.name())) {
@@ -107,6 +105,7 @@ public class VoucherServiceImpl implements VoucherService {
         return voucher;
     }
 
+
     @Override
     public Voucher addByManager(Voucher voucher, Manager manager) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -124,12 +123,13 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public void deleteByVoucherCode(String voucherCode) {
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
-        Voucher voucher = findByVoucherCode(voucherCode);
+        Voucher voucher = findActiveByVoucherCode(voucherCode);
         if (account.getRole().getName().equals(Role.MANAGER.name()) && !voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
             throw new BadRequestException("Voucher is not match with this clinic!");
         }
         deactivate(voucher);
     }
+
     @Override
     public Page<Voucher> findAllWithFilter(VoucherFilterRequest voucherFilterRequest, Pageable pageable) {
         String username = UserDetailUtil.getUsername();
@@ -146,7 +146,7 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public boolean isAvailable(String voucherCode, Integer clinicId) {
-        Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherCode);
+        Voucher voucher = findActiveByVoucherCode(voucherCode);
         if (voucher == null) {
             return false;
 //            throw new BadRequestException("Voucher is not found!");
@@ -157,7 +157,7 @@ public class VoucherServiceImpl implements VoucherService {
         }
         long now = System.currentTimeMillis();
         if (voucher.getExpiredTime() != null && voucher.getExpiredTime().getTime() < now) {
-            deactivate(voucher);
+            disable(voucher);
             return false;
 //            throw new BadRequestException("This voucher is expired!");
         }
@@ -173,19 +173,26 @@ public class VoucherServiceImpl implements VoucherService {
         if (!isAvailable(voucherCode, clinic == null ? null : clinic.getId())) {
             throw new BadRequestException("This voucher is not available");
         }
-        Voucher voucher = voucherRepository.findVoucherByVoucherCode(voucherCode);
+        Voucher voucher = findActiveByVoucherCode(voucherCode);
         Integer quantity = voucher.getQuantity();
         if (quantity != null && quantity > 0) {
             quantity--;
             voucher.setQuantity(quantity);
             if (quantity == 0) {
-                deactivate(voucher);
+                disable(voucher);
             }
         }
     }
 
     @Override
     public void deactivate(Voucher voucher) {
+        voucher.setStatus(Status.Voucher.INACTIVE.toString());
+        update(voucher);
+    }
+
+
+    @Override
+    public void disable(Voucher voucher) {
         voucher.setStatus(Status.Voucher.UNAVAILABLE.toString());
         update(voucher);
     }

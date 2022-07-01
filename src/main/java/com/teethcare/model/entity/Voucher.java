@@ -12,6 +12,10 @@ import java.sql.Timestamp;
 @Entity(name = "voucher")
 public class Voucher {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
     @Column(name = "voucher_code")
     private String voucherCode;
 

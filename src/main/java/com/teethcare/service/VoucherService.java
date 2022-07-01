@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface VoucherService extends CRUDService<Voucher> {
-    Voucher findByVoucherCode(String voucherCode);
+    Voucher findActiveByVoucherCode(String voucherCode);
     Page<Voucher> findAllWithFilter(VoucherFilterRequest voucherFilterRequest, Pageable pageable);
     Voucher addNew(VoucherRequest voucherRequest);
     void deleteByVoucherCode(String voucherCode);
@@ -20,6 +20,7 @@ public interface VoucherService extends CRUDService<Voucher> {
     void useVoucher(String voucherCode, Clinic clinic);
     void deactivate(Voucher voucher);
     List<Voucher> findAllVouchersByExpiredTime(long expiredTime);
-    Voucher addByManager(Voucher voucherRequest, Manager manager);
-    Voucher addByAdmin(Voucher voucherRequest);
+    Voucher addByManager(Voucher voucher, Manager manager);
+    Voucher addByAdmin(Voucher voucher);
+    void disable(Voucher voucher);
 }

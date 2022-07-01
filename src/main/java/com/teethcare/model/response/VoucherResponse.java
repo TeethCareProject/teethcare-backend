@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class VoucherResponse {
+    private int id;
     private String voucherCode;
     private Long createdTime;
     private Long expiredTime;

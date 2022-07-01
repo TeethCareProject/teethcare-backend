@@ -23,6 +23,6 @@ public class SchedulingTasks {
     public void checkExpiredVoucher() {
         long now = System.currentTimeMillis() / 1_000;
         List<Voucher> vouchers = voucherService.findAllVouchersByExpiredTime(now * 1_000);
-        vouchers.forEach(voucherService::deactivate);
+        vouchers.forEach(voucherService::disable);
     }
 }
