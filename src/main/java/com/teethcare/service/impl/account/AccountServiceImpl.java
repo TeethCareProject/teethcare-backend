@@ -2,6 +2,7 @@ package com.teethcare.service.impl.account;
 
 import com.teethcare.common.Message;
 import com.teethcare.common.Status;
+import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.AccountMapper;
@@ -138,19 +139,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void changePassword(ChangePasswordRequest changePasswordRequest, String username) {
-        Account account = accountRepository.findAccountByUsernameAndStatus(username, Status.Account.ACTIVE.name());
+    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+        Account account = accountRepository.findAccountByUsernameAndStatus(UserDetailUtil.getUsername(), Status.Account.ACTIVE.name());
         if (account == null) {
             throw new NotFoundException("Account not found!");
         }
         if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), account.getPassword())) {
             throw new NotFoundException("Old password is not correct!");
         }
-        if (changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
-            account.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
-            update(account);
+        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+            throw new BadRequestException("Confirm Password is not match with password");
         }
-        throw new BadRequestException("Confirm Password is not match with password");
+        account.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        update(account);
     }
 
     @Override

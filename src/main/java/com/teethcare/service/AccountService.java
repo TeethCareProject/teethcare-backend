@@ -30,5 +30,5 @@ public interface AccountService extends CRUDService<Account> {
 
     Account updateProfile(ProfileUpdateRequest updateRequest, String username);
     Account updateImage(MultipartFile multipartFile, String username);
-    void changePassword(ChangePasswordRequest changePasswordRequest, String username);
+    void changePassword(ChangePasswordRequest changePasswordRequest);
 }

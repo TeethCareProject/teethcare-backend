@@ -97,11 +97,8 @@ public class AccountController {
     }
 
     @PutMapping(path = "/change-password")
-    public ResponseEntity<Message> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest,
-                                                  @RequestHeader(value = AUTHORIZATION) String token) {
-        token = token.substring("Bearer ".length());
-        String username = jwtTokenUtil.getUsernameFromJwt(token);
-        accountService.changePassword(changePasswordRequest, username);
+    public ResponseEntity<Message> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+        accountService.changePassword(changePasswordRequest);
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 }
