@@ -1,13 +1,9 @@
 package com.teethcare.service.impl.voucher;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.teethcare.common.NotificationMessage;
-import com.teethcare.common.NotificationType;
 import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.BadRequestException;
-import com.teethcare.exception.InternalServerError;
 import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.VoucherMapper;
 import com.teethcare.model.entity.Account;
@@ -19,11 +15,9 @@ import com.teethcare.model.request.VoucherRequest;
 import com.teethcare.repository.VoucherRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.ClinicService;
-import com.teethcare.service.FirebaseMessagingService;
 import com.teethcare.service.VoucherService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,14 +28,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class VoucherServiceImpl implements VoucherService {
     private final VoucherRepository voucherRepository;
     private final VoucherMapper voucherMapper;
     private final AccountService accountService;
     private final ClinicService clinicService;
-    private final FirebaseMessagingService firebaseMessagingService;
 
 
     @Override
@@ -134,15 +126,6 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = findActiveByVoucherCode(voucherCode);
         if (account.getRole().getName().equals(Role.MANAGER.name()) && voucher.getClinic() != null && !voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
             throw new BadRequestException("Voucher is not match with this clinic!");
-        }
-        if (account.getRole().getName().equals(Role.MANAGER.name()) && voucher.getClinic() != null && voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
-            try {
-                firebaseMessagingService.sendNotificationToManagerByClinic(voucher.getClinic(), NotificationType.DELETE_VOUCHER.name(),
-                        NotificationMessage.DELETE_VOUCHER + voucherCode);
-                log.info("Successful notification");
-            } catch (FirebaseMessagingException ex) {
-                throw new InternalServerError("Error while sending notification");
-            }
         }
         deactivate(voucher);
     }

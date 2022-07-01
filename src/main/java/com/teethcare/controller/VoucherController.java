@@ -1,19 +1,25 @@
 package com.teethcare.controller;
 
-import com.teethcare.common.Constant;
-import com.teethcare.common.EndpointConstant;
-import com.teethcare.common.Message;
-import com.teethcare.common.Status;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.teethcare.common.*;
+import com.teethcare.config.security.UserDetailUtil;
+import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.VoucherMapper;
+import com.teethcare.model.entity.Account;
+import com.teethcare.model.entity.Manager;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
 import com.teethcare.model.response.AvailableVoucherResponse;
 import com.teethcare.model.response.CheckVoucherResponse;
 import com.teethcare.model.response.VoucherResponse;
+import com.teethcare.service.AccountService;
+import com.teethcare.service.ClinicService;
+import com.teethcare.service.FirebaseMessagingService;
 import com.teethcare.service.VoucherService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,11 +30,15 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping(path = EndpointConstant.Voucher.VOUCHER_ENDPOINT)
 public class VoucherController {
     private final VoucherService voucherService;
     private final VoucherMapper voucherMapper;
+    private final AccountService accountService;
+    private final FirebaseMessagingService firebaseMessagingService;
+    private final ClinicService clinicService;
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
@@ -61,7 +71,18 @@ public class VoucherController {
     @DeleteMapping("/{voucher-code}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
     public ResponseEntity<Message> deleteByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
+        Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
+        Voucher voucher = voucherService.findActiveByVoucherCode(voucherCode);
         voucherService.deleteByVoucherCode(voucherCode);
+        if (account.getRole().getName().equals(Role.MANAGER.name()) && voucher.getClinic() != null && voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
+            try {
+                firebaseMessagingService.sendNotificationToManagerByClinic(voucher.getClinic(), NotificationType.DELETE_VOUCHER.name(),
+                        NotificationMessage.DELETE_VOUCHER + voucherCode);
+                log.info("Successful notification");
+            } catch (FirebaseMessagingException ex) {
+                throw new InternalServerError("Error while sending notification");
+            }
+        }
         return new ResponseEntity<>(Message.SUCCESS_FUNCTION, HttpStatus.OK);
     }
 
