@@ -76,7 +76,7 @@ public class VoucherController {
     @GetMapping("/{voucher-code}/check-available")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<CheckVoucherResponse> checkAvailable(@PathVariable("voucher-code") String voucherCode,
-                                                               @RequestBody Integer clinicId) {
+                                                               @RequestParam Integer clinicId) {
         boolean check = voucherService.isAvailable(voucherCode, clinicId);
         return check
                 ? new ResponseEntity<>(new CheckVoucherResponse(Status.Voucher.AVAILABLE.name()), HttpStatus.OK)
