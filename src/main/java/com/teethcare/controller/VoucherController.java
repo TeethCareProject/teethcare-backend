@@ -63,8 +63,15 @@ public class VoucherController {
 
     @GetMapping("/{voucher-code}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
-    public ResponseEntity<VoucherResponse> findByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
+    public ResponseEntity<VoucherResponse> findActiveByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
         Voucher voucher = voucherService.findActiveByVoucherCode(voucherCode);
+        return new ResponseEntity<>(voucherMapper.mapVoucherToVoucherResponse(voucher), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
+    public ResponseEntity<VoucherResponse> findByVoucherCode(@PathVariable("id") int voucherId) {
+        Voucher voucher = voucherService.findVoucherById(voucherId);
         return new ResponseEntity<>(voucherMapper.mapVoucherToVoucherResponse(voucher), HttpStatus.OK);
     }
 
@@ -74,7 +81,7 @@ public class VoucherController {
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
         Voucher voucher = voucherService.findActiveByVoucherCode(voucherCode);
         voucherService.deleteByVoucherCode(voucherCode);
-        if (account.getRole().getName().equals(Role.MANAGER.name()) && voucher.getClinic() != null && voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
+        if (account.getRole().getName().equals(Role.ADMIN.name()) && voucher.getClinic() != null && voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
             try {
                 firebaseMessagingService.sendNotificationToManagerByClinic(voucher.getClinic(), NotificationType.DELETE_VOUCHER.name(),
                         NotificationMessage.DELETE_VOUCHER + voucherCode);

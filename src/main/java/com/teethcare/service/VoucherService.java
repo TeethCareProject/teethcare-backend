@@ -23,4 +23,5 @@ public interface VoucherService extends CRUDService<Voucher> {
     Voucher addByManager(Voucher voucher, Manager manager);
     Voucher addByAdmin(Voucher voucher);
     void disable(Voucher voucher);
+    Voucher findVoucherById(int id);
 }

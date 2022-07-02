@@ -47,6 +47,15 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
+    public Voucher findVoucherById(int id) {
+        Voucher voucher = voucherRepository.findVoucherById(id);
+        if (voucher == null) {
+            throw new NotFoundException("Voucher Id " + id + " not found!");
+        }
+        return voucher;
+    }
+
+    @Override
     public void save(Voucher entity) {
         entity.setStatus(Status.Voucher.AVAILABLE.name());
         entity.setCreatedTime(new Timestamp(System.currentTimeMillis()));
