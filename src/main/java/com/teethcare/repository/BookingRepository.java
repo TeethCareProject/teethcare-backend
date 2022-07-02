@@ -14,16 +14,21 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaSpecificationExecutor<Booking> {
     List<Booking> findBookingByPatientIdAndStatusIsNotNull(int id, Sort sort);
+
     List<Booking> findBookingByClinicAndStatusIsNotNull(Clinic clinic, Sort sort);
+
     List<Booking> findBookingByDentistIdAndStatusIn(Integer dentist_id, List<String> statuses, Sort sort);
+
     List<Booking> findBookingByClinic(Clinic id);
+
     List<Booking> findBookingByStatusAndExaminationTimeAndDentistId(String status, Timestamp examinationTime, int dentistId);
+
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
+
     Booking findBookingById(int id);
-    List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(int clinicId,
-                                                                                                Timestamp lowerDesiredCheckingTime,
-                                                                                                Timestamp upperDesiredCheckingTime,
-                                                                                                Timestamp lowerExaminationTime,
-                                                                                                Timestamp upperExaminationTime);
+    List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenAndExaminationTimeIsNull(int clinicId, Timestamp lowerDesiredCheckingTime, Timestamp upperDesiredCheckingTime);
+
+    List<Booking> findAllBookingByClinicIdAndExaminationTimeBetweenAndExaminationTimeIsNotNull(int clinicId, Timestamp lowerExaminationTime, Timestamp upperExaminationTime);
+
     Booking findBookingByPreBookingId(int preBookingId);
 }
