@@ -2,6 +2,7 @@ package com.teethcare.mapper;
 
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherRequest;
+import com.teethcare.model.response.VoucherBookingResponse;
 import com.teethcare.model.response.VoucherResponse;
 import org.mapstruct.*;
 
@@ -16,4 +17,9 @@ public interface VoucherMapper {
     @Mapping(target = "clinic", source = "clinic", qualifiedByName = "mapClinicToClinicInfoResponse")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VoucherResponse mapVoucherToVoucherResponse(Voucher voucher);
+
+    @Named("mapVoucherToVoucherBookingResponse")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    VoucherBookingResponse mapVoucherToVoucherBookingResponse(Voucher voucher);
+
 }

@@ -34,5 +34,5 @@ public class BookingResponse {
     private ClinicSimpleResponse clinic;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private FeedbackResponse feedbackResponse;
-    private VoucherResponse voucherResponse;
+    private VoucherBookingResponse voucher;
 }

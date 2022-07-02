@@ -40,7 +40,7 @@ public interface BookingMapper {
     @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
     @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
-    @Mapping(source = "voucher", target = "voucherResponse", qualifiedByName = "mapVoucherToVoucherResponse")
+    @Mapping(source = "voucher", target = "voucher", qualifiedByName = "mapVoucherToVoucherBookingResponse")
     @Mapping(target = "feedbackResponse", ignore = true)
     @Mapping(target = "finalPrice", ignore = true)
     BookingResponse mapBookingToBookingResponse(Booking booking);
