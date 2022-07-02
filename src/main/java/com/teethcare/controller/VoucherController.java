@@ -6,7 +6,6 @@ import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.VoucherMapper;
 import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Manager;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
@@ -74,7 +73,7 @@ public class VoucherController {
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
         Voucher voucher = voucherService.findVoucherById(voucherId);
         voucherService.deleteById(voucherId);
-        if (account.getRole().getName().equals(Role.ADMIN.name()) && voucher.getClinic() != null && voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
+        if (account.getRole().getName().equals(Role.ADMIN.name()) && voucher.getClinic() != null) {
             try {
                 firebaseMessagingService.sendNotificationToManagerByClinic(voucher.getClinic(), NotificationType.DELETE_VOUCHER.name(),
                         NotificationMessage.DELETE_VOUCHER + voucher.getVoucherCode());
