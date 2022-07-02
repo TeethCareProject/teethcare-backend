@@ -68,16 +68,16 @@ public class VoucherController {
         return new ResponseEntity<>(voucherMapper.mapVoucherToVoucherResponse(voucher), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{voucher-code}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER)")
-    public ResponseEntity<Message> deleteByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
+    public ResponseEntity<Message> deleteByVoucherCode(@PathVariable("id") int voucherId) {
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
-        Voucher voucher = voucherService.findActiveByVoucherCode(voucherCode);
-        voucherService.deleteByVoucherCode(voucherCode);
+        Voucher voucher = voucherService.findVoucherById(voucherId);
+        voucherService.deleteById(voucherId);
         if (account.getRole().getName().equals(Role.ADMIN.name()) && voucher.getClinic() != null && voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
             try {
                 firebaseMessagingService.sendNotificationToManagerByClinic(voucher.getClinic(), NotificationType.DELETE_VOUCHER.name(),
-                        NotificationMessage.DELETE_VOUCHER + voucherCode);
+                        NotificationMessage.DELETE_VOUCHER + voucher.getVoucherCode());
                 log.info("Successful notification");
             } catch (FirebaseMessagingException ex) {
                 throw new InternalServerError("Error while sending notification");

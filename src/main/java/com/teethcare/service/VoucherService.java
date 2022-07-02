@@ -15,7 +15,7 @@ public interface VoucherService extends CRUDService<Voucher> {
     Voucher findActiveByVoucherCode(String voucherCode);
     Page<Voucher> findAllWithFilter(VoucherFilterRequest voucherFilterRequest, Pageable pageable);
     Voucher addNew(VoucherRequest voucherRequest);
-    void deleteByVoucherCode(String voucherCode);
+    void deleteById(int id);
     boolean isAvailable(String voucherCode, Integer clinicId);
     void useVoucher(String voucherCode, Clinic clinic);
     void deactivate(Voucher voucher);

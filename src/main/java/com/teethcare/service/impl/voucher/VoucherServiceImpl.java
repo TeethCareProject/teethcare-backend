@@ -130,9 +130,9 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public void deleteByVoucherCode(String voucherCode) {
+    public void deleteById(int id) {
         Account account = accountService.getAccountByUsername(UserDetailUtil.getUsername());
-        Voucher voucher = findActiveByVoucherCode(voucherCode);
+        Voucher voucher = findVoucherById(id);
         if (account.getRole().getName().equals(Role.MANAGER.name()) && voucher.getClinic() != null && !voucher.getClinic().equals(clinicService.getClinicByManager((Manager) account))) {
             throw new BadRequestException("Voucher is not match with this clinic!");
         }
