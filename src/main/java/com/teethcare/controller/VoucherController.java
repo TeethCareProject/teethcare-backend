@@ -70,7 +70,7 @@ public class VoucherController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
-    public ResponseEntity<VoucherResponse> findByVoucherCode(@PathVariable("id") int voucherId) {
+    public ResponseEntity<VoucherResponse> findVoucherById(@PathVariable("id") int voucherId) {
         Voucher voucher = voucherService.findVoucherById(voucherId);
         return new ResponseEntity<>(voucherMapper.mapVoucherToVoucherResponse(voucher), HttpStatus.OK);
     }
