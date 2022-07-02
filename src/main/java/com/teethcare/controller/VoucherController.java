@@ -61,13 +61,6 @@ public class VoucherController {
         return new ResponseEntity<>(voucherResponses, HttpStatus.OK);
     }
 
-    @GetMapping("/{voucher-code}")
-    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
-    public ResponseEntity<VoucherResponse> findActiveByVoucherCode(@PathVariable("voucher-code") String voucherCode) {
-        Voucher voucher = voucherService.findActiveByVoucherCode(voucherCode);
-        return new ResponseEntity<>(voucherMapper.mapVoucherToVoucherResponse(voucher), HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).ADMIN, T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).PATIENT)")
     public ResponseEntity<VoucherResponse> findVoucherById(@PathVariable("id") int voucherId) {
