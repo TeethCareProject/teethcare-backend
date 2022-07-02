@@ -26,6 +26,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
 
     Booking findBookingById(int id);
+
     List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenAndExaminationTimeIsNull(int clinicId, Timestamp lowerDesiredCheckingTime, Timestamp upperDesiredCheckingTime);
 
     List<Booking> findAllBookingByClinicIdAndExaminationTimeBetweenAndExaminationTimeIsNotNull(int clinicId, Timestamp lowerExaminationTime, Timestamp upperExaminationTime);
