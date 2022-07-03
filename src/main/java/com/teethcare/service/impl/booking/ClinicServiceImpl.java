@@ -71,9 +71,10 @@ public class ClinicServiceImpl implements ClinicService {
 
         List<Clinic> clinics = clinicRepository.findAll(pageable.getSort());
 
-        if (longitude != null || latitude != null) {
+        if (longitude != null && latitude != null) {
+            log.info("input longitude: " + longitude + " latitude: " + latitude);
             clinics = clinics.stream()
-                    .filter(clinic -> LocationUtils.distance(latitude, clinic.getLocation().getLatitude(), longitude, clinic.getLocation().getLatitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
+                    .filter(clinic -> LocationUtils.distance(latitude, clinic.getLocation().getLatitude(), longitude, clinic.getLocation().getLongitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
                     .collect(Collectors.toList());
         } else {
             log.info("Patient longitude: " + patientLocation.getLongitude() + " latitude: " + patientLocation.getLatitude());

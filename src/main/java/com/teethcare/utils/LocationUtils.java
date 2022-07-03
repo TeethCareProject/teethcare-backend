@@ -1,8 +1,15 @@
 package com.teethcare.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class LocationUtils {
     public static double distance(double lat1, double lat2, double lon1, double lon2)
     {
+        log.info("Lat input: " + lat1);
+        log.info("Lat clinic: " + lat2);
+        log.info("Long input: " + lon1);
+        log.info("Long clinic: " + lon2);
 
         lon1 = Math.toRadians(lon1);
         lon2 = Math.toRadians(lon2);
@@ -25,6 +32,17 @@ public class LocationUtils {
         double r = 6371;
 
         // calculate the result
+
+        log.info("Distance: " + c*r);
         return(c * r);
+    }
+
+    public static void main(String[] args) {
+        double lat1 = 10.8472086;
+        double lat2 = 10.8471035;
+        double lon1 = 106.7998789;
+        double lon2 = 106.7765438;
+        System.out.println(distance(lat1, lat2,
+                lon1, lon2) + " K.M");
     }
 }
