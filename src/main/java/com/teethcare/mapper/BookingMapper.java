@@ -79,7 +79,9 @@ public interface BookingMapper {
             if (booking.getVoucher() != null) {
                 finalPrice = booking.getTotalPrice().subtract(booking.getVoucher().getDiscountValue());
             }
+            bookingResponse.setFinalPrice(finalPrice.compareTo(BigDecimal.ZERO) > 0 ? finalPrice : BigDecimal.ZERO);
+        } else {
+            bookingResponse.setFinalPrice(null);
         }
-        bookingResponse.setFinalPrice(finalPrice);
     }
 }
