@@ -91,4 +91,8 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonManagedReference
     private List<ServiceOfClinic> services;
+
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
 }

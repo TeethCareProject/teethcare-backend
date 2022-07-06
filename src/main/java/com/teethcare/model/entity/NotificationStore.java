@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Entity(name = "notification_store")
 public class NotificationStore {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne

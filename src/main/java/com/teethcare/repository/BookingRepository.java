@@ -2,6 +2,7 @@ package com.teethcare.repository;
 
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Voucher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,4 +27,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
                                                                                                 Timestamp lowerExaminationTime,
                                                                                                 Timestamp upperExaminationTime);
     Booking findBookingByPreBookingId(int preBookingId);
+    List<Booking> findAllByVoucher(Voucher voucher);
 }

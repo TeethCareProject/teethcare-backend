@@ -12,4 +12,5 @@ public class NotificationMessage {
     public final static String CREATE_BOOKING_SUCCESS = "An booking has been recently created! Booking ID is: ";
     public final static String CREATE_BOOKING_FAIL = "The booking corresponding to this appointment has been created!";
     public final static String REJECT_BOOKING = "Your booking is rejected. Notification is from clinic: ";
+    public final static String DELETE_VOUCHER = "Your clinic's voucher has been deleted. Voucher code: ";
 }
