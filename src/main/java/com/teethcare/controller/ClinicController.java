@@ -172,6 +172,9 @@ public class ClinicController {
     @GetMapping("/{id}/facebookPageId")
     public ResponseEntity<String> getFacebookPageId(@PathVariable String id) {
         String facebookPageId = clinicService.findFacebookPageIdByClinicId(id);
+        if (facebookPageId == null) {
+            return ResponseEntity.ok("{\"facebookPageId\": null}");
+        }
         return ResponseEntity.ok("{\"facebookPageId\": \""+facebookPageId+"\"}");
     }
 }
