@@ -63,6 +63,7 @@ public class ClinicController {
     private final ServiceOfClinicService serviceOfClinicService;
     private final ServiceOfClinicMapper serviceOfClinicMapper;
     private final ApplicationContext context;
+    private final LocationService locationService;
 
 
     @GetMapping
@@ -114,31 +115,31 @@ public class ClinicController {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
         Clinic clinic = clinicService.updateProfile(clinicRequest, username);
-        String address = clinic.getLocation().getFullAddress();
-        GoogleMapConfig googleMapConfig = context.getBean(GoogleMapConfig.class);
-        UriComponents uri;
-        if (clinicRequest.getClinicAddress() != null) {
-            try {
-                uri = UriComponentsBuilder.newInstance()
-                        .scheme("https")
-                        .host("maps.googleapis.com")
-                        .path("/maps/api/place/textsearch/json")
-                        .queryParam("query", address)
-                        .queryParam("key", googleMapConfig.getAPIKey2().getValue())
-                        .build();
-                log.info(uri.toUriString());
-                ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
+//        String address = clinic.getLocation().getFullAddress();
+//        GoogleMapConfig googleMapConfig = context.getBean(GoogleMapConfig.class);
+//        UriComponents uri;
+//        if (clinicRequest.getClinicAddress() != null) {
+//            try {
+//                uri = UriComponentsBuilder.newInstance()
+//                        .scheme("https")
+//                        .host("maps.googleapis.com")
+//                        .path("/maps/api/place/textsearch/json")
+//                        .queryParam("query", address)
+//                        .queryParam("key", googleMapConfig.getAPIKey2().getValue())
+//                        .build();
+//                log.info(uri.toUriString());
+//                ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
+//
+//                double latitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLatitude();
+//                clinic.getLocation().setLatitude(latitude);
+//                double longitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLongitude();
+//                clinic.getLocation().setLongitude(longitude);
+//            } catch (IOException e) {
+//                throw new InternalServerError("Getting clinic's location from API fail");
+//            }
+//        }
 
-                double latitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLatitude();
-                clinic.getLocation().setLatitude(latitude);
-                double longitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLongitude();
-                clinic.getLocation().setLongitude(longitude);
-            } catch (IOException e) {
-                throw new InternalServerError("Getting clinic's location from API fail");
-            }
-        }
-
-        clinicService.save(clinic);
+//        clinicService.save(clinic);
         ClinicResponse response = clinicMapper.mapClinicToClinicResponse(clinic);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

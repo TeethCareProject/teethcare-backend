@@ -24,7 +24,7 @@ public class Clinic {
     @Column(name = "id")
     private Integer id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "manager_id", referencedColumnName = "account_id")
     private Manager manager;
 

@@ -43,7 +43,7 @@ public class ManagerController {
     private final LocationService locationService;
     private final ClinicMapper clinicMapper;
     private final AccountMapper accountMapper;
-    private final ApplicationContext context;
+
 
 
     @GetMapping
@@ -75,28 +75,28 @@ public class ManagerController {
         Clinic clinic = managerService.addNew(managerRegisterRequest);
         String address = clinic.getLocation().getFullAddress();
         log.info(address);
-        GoogleMapConfig googleMapConfig = context.getBean(GoogleMapConfig.class);
-        UriComponents uri = null;
-        try {
-            uri = UriComponentsBuilder.newInstance()
-                    .scheme("https")
-                    .host("maps.googleapis.com")
-                    .path("/maps/api/place/textsearch/json")
-                    .queryParam("query", address)
-                    .queryParam("key", googleMapConfig.getAPIKey2().getValue())
-                    .build();
-            log.info(uri.toUriString());
-            ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
+//        GoogleMapConfig googleMapConfig = context.getBean(GoogleMapConfig.class);
+//        UriComponents uri = null;
+//        try {
+//            uri = UriComponentsBuilder.newInstance()
+//                    .scheme("https")
+//                    .host("maps.googleapis.com")
+//                    .path("/maps/api/place/textsearch/json")
+//                    .queryParam("query", address)
+//                    .queryParam("key", googleMapConfig.getAPIKey2().getValue())
+//                    .build();
+//            log.info(uri.toUriString());
+//            ResponseEntity<LocationRequest> locationRequest = new RestTemplate().getForEntity(uri.toUriString(), LocationRequest.class);
+//
+//            double latitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLatitude();
+//            clinic.getLocation().setLatitude(latitude);
+//            double longitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLongitude();
+//            clinic.getLocation().setLongitude(longitude);
+//        } catch (IOException e) {
+//            throw new InternalServerError("Getting clinic's location from API fail");
+//        }
 
-            double latitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLatitude();
-            clinic.getLocation().setLatitude(latitude);
-            double longitude = Objects.requireNonNull(locationRequest.getBody()).getResults().get(0).getGeometry().getLocation().getLongitude();
-            clinic.getLocation().setLongitude(longitude);
-        } catch (IOException e) {
-            throw new InternalServerError("Getting clinic's location from API fail");
-        }
-
-        clinicService.save(clinic);
+//        clinicService.save(clinic);
         ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
         ManagerResponse managerResponse = accountMapper.mapManagerToManagerResponse(clinic.getManager(), clinicInfoResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);

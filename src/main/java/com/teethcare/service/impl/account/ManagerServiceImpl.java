@@ -87,6 +87,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public Clinic addNew(ManagerRegisterRequest managerRegisterRequest) {
         managerRegisterRequest.trim();
         boolean isDuplicated = accountService.isDuplicated(managerRegisterRequest.getUsername());
@@ -99,12 +100,13 @@ public class ManagerServiceImpl implements ManagerService {
                 ClinicDTO clinicDTO = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
                 log.info("Clinic email: " + clinicDTO.getEmail());
                 LocationDTO locationDTO = locationMapper.mapManagerRegisterRequestToLocationDTO(managerRegisterRequest);
-                Clinic clinic = clinicService.create(clinicDTO, locationDTO);
-                clinic.setManager(manager);
+                Clinic clinic = clinicService.create(clinicDTO, locationDTO, manager);
+//                clinic.setManager(manager);
 //                clinicService.save(clinic);
 //                ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
 //                accountMapper.mapManagerToManagerResponse(clinic.getManager(), clinicInfoResponse)
                 log.info("Save clinic with manager successfully");
+//                save(manager);
                 return clinic;
             } else {
                 throw new BadRequestException("confirm Password is not match with password");

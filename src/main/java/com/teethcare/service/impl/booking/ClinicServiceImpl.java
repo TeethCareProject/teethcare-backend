@@ -50,6 +50,7 @@ public class ClinicServiceImpl implements ClinicService {
     private final WardService wardService;
     private final LocationMapper locationMapper;
     private final ManagerRepository managerRepository;
+    private final AccountMapper accountMapper;
 
     @Override
     public List<Clinic> findAll() {
@@ -114,7 +115,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     @Transactional
-    public Clinic create(ClinicDTO clinicDTO, LocationDTO locationDTO) {
+    public Clinic create(ClinicDTO clinicDTO, LocationDTO locationDTO, Manager manager) {
 
         clinicDTO.setBookingGap(30);
         clinicDTO.setExpiredDay(3);
@@ -122,9 +123,11 @@ public class ClinicServiceImpl implements ClinicService {
         Location location = locationMapper.mapLocationDTOToLocation(locationDTO);
         location.setWard(wardService.findById(locationDTO.getWardId()));
         locationService.save(location);
+        locationService.updateLongitudeAndLatitudeByFullAddress(location);
 
         Clinic clinic = clinicMapper.mapClinicDTOToClinic(clinicDTO);
         clinic.setLocation(location);
+        clinic.setManager(manager);
         save(clinic);
         log.info("Save clinic success!");
         return clinic;
@@ -159,8 +162,10 @@ public class ClinicServiceImpl implements ClinicService {
                 location.setWard(clinic.getLocation().getWard());
             }
             locationService.save(location);
+            locationService.updateLongitudeAndLatitudeByFullAddress(location);
             clinic.setLocation(location);
         }
+        save(clinic);
         return clinic;
     }
 

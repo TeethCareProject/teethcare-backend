@@ -28,7 +28,7 @@ public interface ClinicService extends CRUDService<Clinic> {
     Clinic getClinicByManager(Manager manager);
     Clinic findClinicByCustomerServiceId(int csId);
     Clinic findById(int theId);
-    Clinic create(ClinicDTO clinicDTO, LocationDTO locationDTO);
+    Clinic create(ClinicDTO clinicDTO, LocationDTO locationDTO, Manager manager);
 
     void saveWithManagerAndLocation(Clinic clinic, Manager manager, Location location);
 
