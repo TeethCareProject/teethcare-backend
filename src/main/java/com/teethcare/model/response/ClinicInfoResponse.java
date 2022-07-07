@@ -18,6 +18,7 @@ public class ClinicInfoResponse {
     private String taxCode;
     private String email;
     private float avgRatingScore;
+    private Integer bookingGap;
     private String status;
     private Long startTimeShift1;
     private Long endTimeShift1;

@@ -58,4 +58,15 @@ public class Status {
         INACTIVE,
         PENDING
     }
+
+    public enum CheckTime {
+        AVAILABLE,
+        UNAVAILABLE
+    }
+
+    public enum Voucher {
+        AVAILABLE,
+        UNAVAILABLE,
+        INACTIVE
+    }
 }

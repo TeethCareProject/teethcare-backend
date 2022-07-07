@@ -27,4 +27,5 @@ public class ClinicResponse {
     private Long startTimeShift2;
     private Long endTimeShift2;
     private List<ServiceOfClinicResponse> serviceOfClinicResponses;
+    private Integer bookingGap;
 }

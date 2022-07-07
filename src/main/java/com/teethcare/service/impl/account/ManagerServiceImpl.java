@@ -93,6 +93,7 @@ public class ManagerServiceImpl implements ManagerService {
         if (!isDuplicated) {
             if (managerRegisterRequest.getPassword().equals(managerRegisterRequest.getConfirmPassword())) {
                 Clinic clinic = clinicMapper.mapManagerRegisterRequestListToClinic(managerRegisterRequest);
+                clinic.setBookingGap(30);
                 LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
                 LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
                 if (endTimeShift1.isAfter(startTimeShift2)) {

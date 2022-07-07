@@ -31,7 +31,6 @@ public class Clinic {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
-    @JsonManagedReference
     private Location location;
 
     @Column(name = "name")
@@ -66,6 +65,9 @@ public class Clinic {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "booking_gap")
+    private Integer bookingGap;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")

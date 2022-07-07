@@ -6,10 +6,7 @@ import com.teethcare.common.NotificationType;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.FCMTokenStore;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.NotificationMsgRequest;
 import com.teethcare.repository.FCMTokenStoreRepository;
 import com.teethcare.service.AccountService;
@@ -122,5 +119,17 @@ public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
                         .build();
 
         this.sendNotification(confirmNotification);
+    }
+
+    @Override
+    public void sendNotificationToManagerByClinic(Clinic clinic, String title, String body) throws FirebaseMessagingException {
+        Account manager = clinic.getManager();
+        NotificationMsgRequest deleteVoucher =
+                NotificationMsgRequest.builder()
+                        .accountId(manager.getId())
+                        .title(title)
+                        .body(body)
+                        .build();
+        this.sendNotification(deleteVoucher);
     }
 }

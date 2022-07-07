@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 public interface ClinicService extends CRUDService<Clinic> {
@@ -27,5 +28,7 @@ public interface ClinicService extends CRUDService<Clinic> {
 
     Clinic updateProfile (ClinicRequest clinicRequest, String username);
     Clinic updateImage (MultipartFile image, String username);
+    Clinic approve(Clinic clinic) throws MessagingException;
+    Clinic reject(Clinic clinic) throws MessagingException;
 
 }

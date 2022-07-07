@@ -5,6 +5,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 
 import static com.teethcare.utils.ConvertUtils.convertToTime;
+
 public class ConfigurationMapping {
     static Long mapDateToLong(Date date) {
         if (date != null) {
@@ -22,6 +23,10 @@ public class ConfigurationMapping {
             return null;
         }
 
+    }
+
+    static Timestamp mapLongToDateTime(Long time) {
+        return new Timestamp(time);
     }
 
     static Time mapLongToTime(Long milliseconds) {

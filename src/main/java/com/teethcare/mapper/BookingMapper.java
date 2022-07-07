@@ -8,12 +8,14 @@ import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.PatientBookingResponse;
 import org.mapstruct.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
         config = ConfigurationMapper.class,
         uses = {ServiceOfClinicMapper.class, AccountMapper.class,
-                UserInforMapper.class, ClinicMapper.class, DentistMapper.class})
+                UserInforMapper.class, ClinicMapper.class, DentistMapper.class,
+                VoucherMapper.class})
 public interface BookingMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "desiredCheckingTime", ignore = true)
@@ -38,7 +40,9 @@ public interface BookingMapper {
     @Mapping(source = "customerService", target = "customerService", qualifiedByName = "mapAccountToUserInforResponse")
     @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
     @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
+    @Mapping(source = "voucher", target = "voucher", qualifiedByName = "mapVoucherToVoucherBookingResponse")
     @Mapping(target = "feedbackResponse", ignore = true)
+    @Mapping(target = "finalPrice", ignore = true)
     BookingResponse mapBookingToBookingResponse(Booking booking);
 
     @IterableMapping(qualifiedByName = "mapBookingToBookingResponse")
@@ -55,9 +59,9 @@ public interface BookingMapper {
 
     @Named(value = "mapBookingToAppointmentResponse")
     @Mapping(source = "services", target = "services",
-            qualifiedByName = "mapServiceListToServiceResponseListWithoutFields")
+            qualifiedByName = "mapServiceOfClinicListToServiceOfClinicResponseList")
     @Mapping(source = "patient", target = "patient", qualifiedByName = "mapPatientToPatientResponseForBooking")
-    @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicSimpleResponse")
+    @Mapping(source = "clinic", target = "clinic", qualifiedByName = "mapClinicToClinicInfoResponse")
     @Mapping(source = "preBooking", target = "preBooking", qualifiedByName = "mapBookingToBookingResponse")
     AppointmentResponse mapAppointmentToAppointmentResponse(Appointment appointment);
 
@@ -67,4 +71,17 @@ public interface BookingMapper {
     @Named(value = "mapAppointmentToBooking")
     @Mapping(source = "mappedPreBooking", target = "mappedPreBooking", ignore = true)
     Booking mapAppointmentToBooking(Appointment appointment);
+
+    @AfterMapping
+    default void setFinalPrice(@MappingTarget BookingResponse bookingResponse, Booking booking) {
+        BigDecimal finalPrice = booking.getTotalPrice();
+        if (finalPrice != null) {
+            if (booking.getVoucher() != null) {
+                finalPrice = booking.getTotalPrice().subtract(booking.getVoucher().getDiscountValue());
+            }
+            bookingResponse.setFinalPrice(finalPrice.compareTo(BigDecimal.ZERO) > 0 ? finalPrice : BigDecimal.ZERO);
+        } else {
+            bookingResponse.setFinalPrice(null);
+        }
+    }
 }

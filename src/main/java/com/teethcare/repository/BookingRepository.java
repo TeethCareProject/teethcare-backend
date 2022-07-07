@@ -2,6 +2,7 @@ package com.teethcare.repository;
 
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Voucher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,13 +14,18 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaSpecificationExecutor<Booking> {
-
-    List<Booking> findBookingByPatientId(int id, Sort sort);
-    List<Booking> findBookingByClinic(Clinic clinic, Sort sort);
-    List<Booking> findBookingByDentistId(int id, Sort sort);
+    List<Booking> findBookingByPatientIdAndStatusIsNotNull(int id, Sort sort);
+    List<Booking> findBookingByClinicAndStatusIsNotNull(Clinic clinic, Sort sort);
+    List<Booking> findBookingByDentistIdAndStatusIn(Integer dentist_id, List<String> statuses, Sort sort);
     List<Booking> findBookingByClinic(Clinic id);
     List<Booking> findBookingByStatusAndExaminationTimeAndDentistId(String status, Timestamp examinationTime, int dentistId);
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
     Booking findBookingById(int id);
-    Booking findBookingByPreBookingId(int id);
+    List<Booking> findAllBookingByClinicIdAndDesiredCheckingTimeBetweenOrExaminationTimeBetween(int clinicId,
+                                                                                                Timestamp lowerDesiredCheckingTime,
+                                                                                                Timestamp upperDesiredCheckingTime,
+                                                                                                Timestamp lowerExaminationTime,
+                                                                                                Timestamp upperExaminationTime);
+    Booking findBookingByPreBookingId(int preBookingId);
+    List<Booking> findAllByVoucher(Voucher voucher);
 }
