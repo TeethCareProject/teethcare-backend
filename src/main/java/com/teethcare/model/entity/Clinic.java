@@ -65,6 +65,9 @@ public class Clinic {
     @Column(name = "booking_gap")
     private Integer bookingGap;
 
+    @Column(name = "facebook_page_id")
+    private String facebookPageId;
+
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
     @JsonBackReference

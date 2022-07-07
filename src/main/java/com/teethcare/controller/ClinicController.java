@@ -168,4 +168,10 @@ public class ClinicController {
         ClinicResponse clinicResponse = clinicMapper.mapClinicToClinicResponse(clinic);
         return new ResponseEntity<>(clinicResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/facebookPageId")
+    public ResponseEntity<String> getFacebookPageId(@PathVariable String id) {
+        String facebookPageId = clinicService.findFacebookPageIdByClinicId(id);
+        return ResponseEntity.ok(facebookPageId);
+    }
 }
