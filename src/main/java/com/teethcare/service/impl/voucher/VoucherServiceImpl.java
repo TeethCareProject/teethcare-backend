@@ -12,6 +12,7 @@ import com.teethcare.model.entity.Manager;
 import com.teethcare.model.entity.Voucher;
 import com.teethcare.model.request.VoucherFilterRequest;
 import com.teethcare.model.request.VoucherRequest;
+import com.teethcare.repository.BookingRepository;
 import com.teethcare.repository.VoucherRepository;
 import com.teethcare.service.AccountService;
 import com.teethcare.service.ClinicService;
@@ -34,6 +35,7 @@ public class VoucherServiceImpl implements VoucherService {
     private final VoucherMapper voucherMapper;
     private final AccountService accountService;
     private final ClinicService clinicService;
+    private final BookingRepository bookingRepository;
 
 
     @Override
@@ -84,6 +86,9 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     @Transactional
     public Voucher addNew(VoucherRequest voucherRequest) {
+        if (voucherRequest.getExpiredTime() == null && voucherRequest.getQuantity() == null) {
+            throw new BadRequestException("Both expired time and quantity cannot be null!");
+        }
         Voucher voucher = voucherRepository.findVoucherByVoucherCodeAndStatus(voucherRequest.getVoucherCode(), Status.Voucher.AVAILABLE.name());
         if (voucher != null) {
             throw new BadRequestException("This voucher code existed!");
@@ -170,8 +175,11 @@ public class VoucherServiceImpl implements VoucherService {
             return false;
 //            throw new BadRequestException("This voucher is expired!");
         }
-        if (voucher.getQuantity() != null && !(voucher.getQuantity() > 0)) {
-            return false;
+        if (voucher.getQuantity() != null) {
+            int numOfUses = bookingRepository.findAllByVoucher(voucher).size();
+            if (voucher.getQuantity() <= numOfUses) {
+                return false;
+            }
 //            throw new BadRequestException("This voucher is out of stock!");
         }
         return voucherRepository.findVoucherByVoucherCodeAndStatus(voucherCode, Status.Voucher.AVAILABLE.toString()) != null;
@@ -184,10 +192,9 @@ public class VoucherServiceImpl implements VoucherService {
         }
         Voucher voucher = findActiveByVoucherCode(voucherCode);
         Integer quantity = voucher.getQuantity();
-        if (quantity != null && quantity > 0) {
-            quantity--;
-            voucher.setQuantity(quantity);
-            if (quantity == 0) {
+        if (quantity != null) {
+            int numOfUses = bookingRepository.findAllByVoucher(voucher).size();
+            if (voucher.getQuantity() - numOfUses == 1) {
                 disable(voucher);
             }
         }

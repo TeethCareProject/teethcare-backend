@@ -75,9 +75,13 @@ public interface BookingMapper {
     @AfterMapping
     default void setFinalPrice(@MappingTarget BookingResponse bookingResponse, Booking booking) {
         BigDecimal finalPrice = booking.getTotalPrice();
-        if (booking.getVoucher() != null) {
-            finalPrice = booking.getTotalPrice().subtract(booking.getVoucher().getDiscountValue());
+        if (finalPrice != null) {
+            if (booking.getVoucher() != null) {
+                finalPrice = booking.getTotalPrice().subtract(booking.getVoucher().getDiscountValue());
+            }
+            bookingResponse.setFinalPrice(finalPrice.compareTo(BigDecimal.ZERO) > 0 ? finalPrice : BigDecimal.ZERO);
+        } else {
+            bookingResponse.setFinalPrice(null);
         }
-        bookingResponse.setFinalPrice(finalPrice);
     }
 }
