@@ -24,4 +24,5 @@ public class ClinicLoginResponse {
     private String status;
     private Integer bookingGap;
     private String email;
+    private String phone;
 }

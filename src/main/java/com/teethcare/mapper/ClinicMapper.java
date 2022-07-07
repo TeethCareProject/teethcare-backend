@@ -37,6 +37,7 @@ public interface ClinicMapper {
     @Mapping(source = "clinicName", target = "name")
     @Mapping(source = "clinicTaxCode", target = "taxCode")
     @Mapping(source = "clinicEmail", target = "email")
+    @Mapping(source = "clinicPhone", target = "phone")
     Clinic mapManagerRegisterRequestListToClinic(ManagerRegisterRequest managerRegisterRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

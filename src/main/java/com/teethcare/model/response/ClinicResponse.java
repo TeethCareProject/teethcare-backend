@@ -19,6 +19,7 @@ public class ClinicResponse {
     private String taxCode;
     private float avgRatingScore;
     private String email;
+    private String phone;
     private LocationResponse location;
     private AccountResponse manager;
     private String status;

@@ -66,6 +66,9 @@ public class Clinic {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "booking_gap")
     private Integer bookingGap;
 
