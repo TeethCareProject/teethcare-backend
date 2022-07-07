@@ -27,6 +27,8 @@ public class ClinicRequest {
 
     private Integer bookingGap;
 
+    private String facebookPageId;
+
     @Override
     public String toString() {
         return "ClinicRequest{" +
