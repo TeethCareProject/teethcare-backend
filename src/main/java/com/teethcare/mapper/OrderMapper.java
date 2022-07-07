@@ -16,6 +16,8 @@ public interface OrderMapper {
     @Mapping(source = "clinic.name", target = "clinicName")
     @Mapping(source = "clinic.taxCode", target = "clinicTaxCode")
     @Mapping(source = "clinic.email", target = "clinicEmail")
+    @Mapping(source = "voucher.voucherCode", target = "voucherCode")
+    @Mapping(source = "voucher.discountValue", target = "discountValue")
     @Mapping(target = "clinicLocation", expression = "java(booking.getClinic().getLocation().getFullAddress())")
     Order mapBookingToOrder(Booking booking);
 

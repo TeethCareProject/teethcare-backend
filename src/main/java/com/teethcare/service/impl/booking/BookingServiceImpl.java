@@ -408,6 +408,10 @@ public class BookingServiceImpl implements BookingService {
             }
         }
 
+        if (booking.getVoucher() != null) {
+            totalPrice = totalPrice.subtract(booking.getVoucher().getDiscountValue());
+        }
+
         int bookingVersion = booking.getVersion() + 1;
 
         booking.setStatus(Status.Booking.TREATMENT.name());
