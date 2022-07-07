@@ -72,8 +72,17 @@ public class ClinicServiceImpl implements ClinicService {
 
         List<Clinic> clinics = clinicRepository.findAll(pageable.getSort());
 
+        clinics = clinics.stream()
+                .filter(clinic -> clinic.getLocation().getLatitude() != null || clinic.getLocation().getLongitude() != null)
+                .collect(Collectors.toList());
+
+        if (clinics.size() == 0) {
+            throw new NotFoundException("No clinic is found near you.");
+        }
+
         if (longitude != null && latitude != null) {
             log.info("input longitude: " + longitude + " latitude: " + latitude);
+
             clinics = clinics.stream()
                     .filter(clinic -> LocationUtils.distance(latitude, clinic.getLocation().getLatitude(), longitude, clinic.getLocation().getLongitude()) < Constant.LOCATION.DEFAULT_DISTANCE)
                     .collect(Collectors.toList());
@@ -123,7 +132,7 @@ public class ClinicServiceImpl implements ClinicService {
         Location location = locationMapper.mapLocationDTOToLocation(locationDTO);
         location.setWard(wardService.findById(locationDTO.getWardId()));
         locationService.save(location);
-        locationService.updateLongitudeAndLatitudeByFullAddress(location);
+//        locationService.updateLongitudeAndLatitudeByFullAddress(location);
 
         Clinic clinic = clinicMapper.mapClinicDTOToClinic(clinicDTO);
         clinic.setLocation(location);
@@ -158,11 +167,15 @@ public class ClinicServiceImpl implements ClinicService {
             location.setAddressString(clinicRequest.getClinicAddress());
             if (clinicRequest.getWardId() != null) {
                 location.setWard(wardService.findById(clinicRequest.getWardId()));
+                location.setLongitude(clinicRequest.getLongitude());
+                location.setLatitude(clinicRequest.getLatitude());
             } else {
                 location.setWard(clinic.getLocation().getWard());
+                location.setLongitude(clinic.getLocation().getLongitude());
+                location.setLatitude(clinic.getLocation().getLatitude());
             }
             locationService.save(location);
-            locationService.updateLongitudeAndLatitudeByFullAddress(location);
+//            locationService.updateLongitudeAndLatitudeByFullAddress(location);
             clinic.setLocation(location);
         }
         save(clinic);

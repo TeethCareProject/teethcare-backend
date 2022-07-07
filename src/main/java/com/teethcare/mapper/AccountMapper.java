@@ -45,6 +45,7 @@ public interface AccountMapper {
     @Mapping(source = "manager.status", target = "status")
     @Mapping(source = "manager.phone", target = "phone")
     @Mapping(source = "manager.role.id", target = "roleId")
+    @Mapping(source = "manager.email", target = "email")
     @Mapping(source = "manager.role.name", target = "roleName")
     @Mapping(target = "clinic", expression = "java(clinicInfoResponse)")
     ManagerResponse mapManagerToManagerResponse(Manager manager, ClinicInfoResponse clinicInfoResponse);

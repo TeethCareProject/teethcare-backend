@@ -27,6 +27,10 @@ public class ClinicRequest {
 
     private Integer bookingGap;
 
+    private Double longitude;
+
+    private Double latitude;
+
     @Override
     public String toString() {
         return "ClinicRequest{" +

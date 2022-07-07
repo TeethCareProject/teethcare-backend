@@ -37,6 +37,10 @@ public class ManagerRegisterRequest extends PatientRegisterRequest implements Tr
     @NotNull
     private Integer wardId;
 
+    private Double longitude;
+
+    private Double latitude;
+
     @NotNull
     private Long startTimeShift1;
 
