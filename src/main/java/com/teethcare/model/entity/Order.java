@@ -23,10 +23,26 @@ public class Order {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id")
-    @JsonManagedReference
-    private Patient patient;
+    @Column(name = "patient_id")
+    private int patientId;
+
+    @Column(name = "patient_name")
+    private String patientName;
+
+    @Column(name = "patient_phone")
+    private String patientPhone;
+
+    @Column(name = "patient_date_of_birth")
+    private Timestamp patientDateOfBirth;
+
+    @Column(name = "patient_gender")
+    private String patientGender;
+
+    @Column(name = "patient_email")
+    private String patientEmail;
+
+    @Column(name = "patient_address")
+    private String patientAddress;
 
     @Column(name = "total_price")
     private BigDecimal totalPrice;
@@ -43,10 +59,11 @@ public class Order {
     @Column(name = "status")
     private String status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dentist_id")
-    @JsonManagedReference
-    private Dentist dentist;
+    @Column(name = "dentist_id")
+    private int dentistId;
+
+    @Column(name = "dentist_name")
+    private String dentistName;
 
     @Column(name = "note")
     private String note;
@@ -69,10 +86,11 @@ public class Order {
     @Column(name = "discount_value")
     private String discountValue;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_service_id")
-    @JsonManagedReference
-    private CustomerService customerService;
+    @Column(name = "customer_service_id")
+    private int customerServiceId;
+
+    @Column(name = "customer_service_name")
+    private String customerServiceName;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,
             mappedBy = "order")

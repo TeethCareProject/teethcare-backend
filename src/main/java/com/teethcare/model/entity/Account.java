@@ -53,4 +53,8 @@ public class Account {
 
     @Column(name = "status")
     private String status;
+
+    public String getFullName() {
+        return lastName + " " + firstName;
+    }
 }

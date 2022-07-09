@@ -18,6 +18,17 @@ public interface OrderMapper {
     @Mapping(source = "clinic.email", target = "clinicEmail")
     @Mapping(source = "voucher.voucherCode", target = "voucherCode")
     @Mapping(source = "voucher.discountValue", target = "discountValue")
+    @Mapping(source = "patient.id", target = "patientId")
+    @Mapping(source = "patient.gender", target = "patientGender")
+    @Mapping(source = "patient.dateOfBirth", target = "patientDateOfBirth")
+    @Mapping(source = "patient.phone", target = "patientPhone")
+    @Mapping(source = "patient.email", target = "patientEmail")
+    @Mapping(target = "patientName", expression = "java(booking.getPatient().getFullName())")
+    @Mapping(target = "patientAddress", expression = "java(booking.getPatient().getLocation().getFullAddress())")
+    @Mapping(source = "dentist.id", target = "dentistId")
+    @Mapping(target = "dentistName", expression = "java(booking.getDentist().getFullName())")
+    @Mapping(source = "customerService.id", target = "customerServiceId")
+    @Mapping(target = "customerServiceName", expression = "java(booking.getCustomerService().getFullName())")
     @Mapping(target = "clinicLocation", expression = "java(booking.getClinic().getLocation().getFullAddress())")
     Order mapBookingToOrder(Booking booking);
 
