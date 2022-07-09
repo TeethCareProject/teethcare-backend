@@ -1,5 +1,7 @@
 package com.teethcare.mapper;
 
+import com.teethcare.model.dto.booking.OrderDTO;
+import com.teethcare.model.dto.booking.OrderDetailDTO;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Order;
 import com.teethcare.model.entity.OrderDetail;
@@ -39,6 +41,14 @@ public interface OrderMapper {
     @Mapping(source = "price", target = "servicePrice")
     @Mapping(target = "id", ignore = true)
     OrderDetail mapServicesToOrderDetail(ServiceOfClinic serviceOfClinic);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "orderDetails", target = "orderDetailDTOs")
+    OrderDTO mapOrderToOrderDTO(Order order);
+
+//    @Named(value = "mapOrderDetailToOrderDetailDTO")
+//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+//    OrderDetailDTO mapOrderDetailToOrderDetailDTO(OrderDetail orderDetail);
 
     @Named(value = "mapServicesListToOrderDetailList")
     List<OrderDetail> mapServicesListToOrderDetailList(List<ServiceOfClinic> serviceOfClinicList);

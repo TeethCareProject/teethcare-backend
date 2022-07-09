@@ -1,9 +1,12 @@
 package com.teethcare.service.impl.email;
 
+import com.teethcare.mapper.OrderMapper;
 import com.teethcare.model.dto.account.StaffCreatingPasswordDTO;
 import com.teethcare.model.dto.booking.BookingConfirmationDTO;
+import com.teethcare.model.dto.booking.OrderDTO;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
+import com.teethcare.model.entity.Order;
 import com.teethcare.service.EmailService;
 import com.teethcare.utils.MailTemplateUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,7 @@ public class EmailServiceImpl implements EmailService {
     private String homepageUrl;
 
     public final JavaMailSender emailSender;
+    private static OrderMapper orderMapper;
 
     @Override
     public void sendStaffCreatingPasswordEmail(StaffCreatingPasswordDTO staffCreatingPasswordDTO) throws MessagingException {
@@ -102,6 +106,27 @@ public class EmailServiceImpl implements EmailService {
 
         this.emailSender.send(message);
     }
+
+    @Override
+    public void sendOrderDetail(Order order) throws MessagingException {
+        OrderDTO orderDTO = orderMapper.mapOrderToOrderDTO(order);
+
+        MimeMessage message = emailSender.createMimeMessage();
+
+        boolean multipart = true;
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
+
+        String htmlMsg = MailTemplateUtils.getOrderDetails(orderDTO);
+
+        message.setContent(htmlMsg, "text/html");
+
+        helper.setTo(orderDTO.getPatientEmail());
+        helper.setSubject("[TEETHCARE] YOUR ORDER IS CREATED!");
+
+        this.emailSender.send(message);
+    }
+
     @Override
     public void sendClinicApprovementEmail(Clinic clinic) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();

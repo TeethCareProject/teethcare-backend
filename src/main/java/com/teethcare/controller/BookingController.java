@@ -3,15 +3,13 @@ package com.teethcare.controller;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
+import com.teethcare.common.Role;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.BookingMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.*;
 import com.teethcare.model.response.*;
 import com.teethcare.service.*;
@@ -237,12 +235,15 @@ public class BookingController {
         int bookingId = bookingUpdateRequest.getBookingId();
 
         if (isUpdated) {
-            orderService.createOrderFromBooking(bookingService.findBookingById(bookingId));
+            Order order = orderService.createOrderFromBooking(bookingService.findBookingById(bookingId));
             try {
                 firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
                         NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
+                emailService.sendOrderDetail(order);
             } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
                 return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (MessagingException e) {
+                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SENDMAIL.name()), HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
@@ -302,7 +303,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            throw new BadRequestException("Not reach time to check in");
+            throw new BadRequestException("Not reach time to check out");
         }
     }
 

@@ -29,6 +29,8 @@ public class OrderDTO {
 
     private String patientAddress;
 
+    private String patientEmail;
+
     private BigDecimal totalPrice;
 
     private String dentistName;
@@ -47,7 +49,7 @@ public class OrderDTO {
 
     private String customerServiceName;
 
-    private List<OrderDetailDTO> orderDetails;
+    private List<OrderDetailDTO> orderDetailDTOs;
 
     public BigDecimal getFinalPrice() {
         if (voucherCode != null && discountValue != null) {
