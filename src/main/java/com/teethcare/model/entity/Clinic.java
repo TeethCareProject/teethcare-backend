@@ -92,7 +92,4 @@ public class Clinic {
             mappedBy = "clinic")
     @JsonBackReference
     private List<ServiceOfClinic> serviceOfClinic;
-
-    @Column(name = "expired_day")
-    private  int expiredDay;
 }
