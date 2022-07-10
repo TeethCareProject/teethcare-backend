@@ -78,7 +78,6 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public void save(Clinic clinic) {
-        clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
     }
 
@@ -148,6 +147,16 @@ public class ClinicServiceImpl implements ClinicService {
         update(clinic);
         emailService.sendClinicRejectionEmail(clinic);
         return clinic;
+    }
+
+    @Override
+    public String findFacebookPageIdByClinicId(String id) {
+        try {
+            Clinic clinic = findById(Integer.parseInt(id));
+            return clinic.getFacebookPageId();
+        } catch (NumberFormatException e) {
+            throw new NotFoundException("Clinic is not found");
+        }
     }
 
     @Override

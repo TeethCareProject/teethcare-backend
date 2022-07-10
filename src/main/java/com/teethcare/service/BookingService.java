@@ -28,4 +28,8 @@ public interface BookingService extends CRUDService<Booking> {
     boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest);
     List<Integer> getAvailableTime(GetAvailableTimeRequest getAvailableTimeRequest);
     boolean updateStatus(int bookingId, boolean isCheckin);
+
+    List<Booking> findAllBookingByExpiredTime();
+
+    void expired (Booking booking);
 }
