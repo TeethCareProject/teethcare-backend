@@ -26,4 +26,5 @@ public class ClinicLoginResponse {
     private String email;
     private String phone;
     private String expiredDay;
+    private String facebookPageId;
 }

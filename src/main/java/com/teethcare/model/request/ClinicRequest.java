@@ -31,6 +31,8 @@ public class ClinicRequest {
 
     private Integer expiredDay;
 
+    private String facebookPageId;
+
     @Override
     public String toString() {
         return "ClinicRequest{" +

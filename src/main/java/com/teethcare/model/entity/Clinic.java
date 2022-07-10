@@ -72,6 +72,9 @@ public class Clinic {
     @Column(name = "booking_gap")
     private Integer bookingGap;
 
+    @Column(name = "facebook_page_id")
+    private String facebookPageId;
+
     @Column(name = "expired_day")
     private Integer expiredDay = 3;
 

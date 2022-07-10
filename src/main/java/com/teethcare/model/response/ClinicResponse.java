@@ -30,4 +30,5 @@ public class ClinicResponse {
     private List<ServiceOfClinicResponse> serviceOfClinicResponses;
     private Integer bookingGap;
     private Integer expiredDay;
+    private String facebookPageId;
 }
