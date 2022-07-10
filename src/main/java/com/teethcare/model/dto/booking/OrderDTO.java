@@ -57,7 +57,7 @@ public class OrderDTO {
     public BigDecimal getFinalPrice() {
         if (voucherCode != null && discountValue != null) {
             BigDecimal finalPrice = BigDecimal.valueOf(0);
-            if (discountValue.compareTo(finalPrice) >= 0) {
+            if (discountValue.compareTo(finalPrice) < 0) {
                 return totalPrice.subtract(discountValue);
             }
             return finalPrice;
