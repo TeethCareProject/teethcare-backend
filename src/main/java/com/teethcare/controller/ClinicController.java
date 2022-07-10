@@ -116,14 +116,14 @@ public class ClinicController {
         List<Dentist> dentistList = dentistService.findByClinicIdAndStatus(id, Status.Account.ACTIVE.name());
         List<CustomerService> customerServiceList = csService.findByClinicIdAndStatus(id, Status.Account.ACTIVE.name());
 
-        staffList.addAll(dentistList);
-        staffList.addAll(customerServiceList);
-
+        if (!dentistList.isEmpty()) {
+            staffList.addAll(dentistList);
+        }
+        if (!customerServiceList.isEmpty()) {
+            staffList.addAll(customerServiceList);
+        }
         List<AccountResponse> staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
         Page<AccountResponse> responses = PaginationAndSortFactory.convertToPage(staffResponseList, pageable);
-        if (staffResponseList == null || staffResponseList.size() == 0) {
-            throw new NotFoundException("With id " + id + ", the list of hospital staff could not be found.");
-        }
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
