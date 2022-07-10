@@ -47,7 +47,7 @@ public class OrderDTO {
 
     private String voucherCode;
 
-    private BigDecimal discountValue;
+    private BigDecimal discountValue = BigDecimal.valueOf(0);
 
     private String customerServiceName;
     private Timestamp examinationTime;

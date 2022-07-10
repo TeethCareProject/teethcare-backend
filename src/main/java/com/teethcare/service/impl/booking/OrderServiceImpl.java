@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
@@ -49,16 +50,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Order createOrderFromBooking(Booking booking) {
         Order order = orderMapper.mapBookingToOrder(booking);
-//        OrderDetail =
-        log.info("Booking is confirmed has services: " + booking.getServices().get(0).getName());
-//        orderDetailRepository.saveAll(orderDetails);
-//        order.setOrderDetails(orderDetails);
+        List<OrderDetail> orderDetails = order.getOrderDetails();
+        for(OrderDetail orderDetail : orderDetails) {
+            orderDetail.setOrder(order);
+        }
         log.info("Order has services: " + order.getOrderDetails().get(0).getServiceName());
-        log.info("Saving order");
         save(order);
-
+        log.info("Saving order");
         return order;
     }
 }

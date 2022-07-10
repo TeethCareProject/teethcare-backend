@@ -46,6 +46,7 @@ public class BookingServiceImpl implements BookingService {
     private final ClinicService clinicService;
     private final AppointmentRepository appointmentRepository;
     private final VoucherService voucherService;
+    private final OrderService orderService;
 
     @Override
     public List<Booking> findAll() {
@@ -216,7 +217,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest) {
+    @Transactional
+    public Order confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest) {
         int bookingId = bookingUpdateRequest.getBookingId();
 
         if (bookingUpdateRequest.getVersion() == null) {
@@ -226,12 +228,14 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = findBookingById(bookingId);
 
         if (booking.getVersion() != bookingUpdateRequest.getVersion() || booking.isConfirmed()) {
-            return false;
+            throw new BadRequestException("Version of booking is out of date or booking is confirmed");
         }
 
         booking.setConfirmed(true);
         bookingRepository.save(booking);
-        return true;
+
+        Order order = orderService.createOrderFromBooking(booking);
+        return order;
     }
 
     @Override
