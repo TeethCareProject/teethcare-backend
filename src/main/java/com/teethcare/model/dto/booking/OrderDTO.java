@@ -56,14 +56,13 @@ public class OrderDTO {
 
     public BigDecimal getFinalPrice() {
         if (voucherCode != null && discountValue != null) {
-            return totalPrice.subtract(discountValue);
+            BigDecimal finalPrice = BigDecimal.valueOf(0);
+            if (discountValue.compareTo(finalPrice) >= 0) {
+                return totalPrice.subtract(discountValue);
+            }
+            return finalPrice;
         } else {
             return totalPrice;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Clinic ";
     }
 }
