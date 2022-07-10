@@ -25,7 +25,11 @@ public class ClinicRequest {
 
     private String email;
 
+    private String phone;
+
     private Integer bookingGap;
+
+    private Integer expiredDay;
 
     private String facebookPageId;
 

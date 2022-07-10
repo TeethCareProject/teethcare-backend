@@ -78,7 +78,6 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public void save(Clinic clinic) {
-        clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
     }
 
