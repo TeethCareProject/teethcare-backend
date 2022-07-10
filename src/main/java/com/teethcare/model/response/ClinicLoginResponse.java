@@ -23,4 +23,5 @@ public class ClinicLoginResponse {
     private Long endTimeShift2;
     private String status;
     private Integer bookingGap;
+    private String facebookPageId;
 }

@@ -31,4 +31,5 @@ public interface ClinicService extends CRUDService<Clinic> {
     Clinic approve(Clinic clinic) throws MessagingException;
     Clinic reject(Clinic clinic) throws MessagingException;
 
+    String findFacebookPageIdByClinicId(String id);
 }

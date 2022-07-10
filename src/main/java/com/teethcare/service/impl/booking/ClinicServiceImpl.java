@@ -151,6 +151,16 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    public String findFacebookPageIdByClinicId(String id) {
+        try {
+            Clinic clinic = findById(Integer.parseInt(id));
+            return clinic.getFacebookPageId();
+        } catch (NumberFormatException e) {
+            throw new NotFoundException("Clinic is not found");
+        }
+    }
+
+    @Override
     public void delete(int id) {
         Optional<Clinic> clinicData = clinicRepository.findById(id);
         if (clinicData.isPresent()) {
