@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.teethcare.utils.PaginationAndSortFactory;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -102,7 +103,13 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}/staffs")
-    public ResponseEntity<List<AccountResponse>> findAllStaffs(@PathVariable int id) {
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).MANAGER)")
+    public ResponseEntity<Page<AccountResponse>> findAllStaffs (@PathVariable int id,
+                                                                @RequestParam(name = "page", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_NUMBER) int page,
+                                                                @RequestParam(name = "size", required = false, defaultValue = Constant.PAGINATION.DEFAULT_PAGE_SIZE) int size,
+                                                                @RequestParam(name = "sortBy", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_BY) String field,
+                                                                @RequestParam(name = "sortDir", required = false, defaultValue = Constant.SORT.DEFAULT_SORT_DIRECTION) String direction) {
+        Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
 
         List<Account> staffList = new ArrayList<>();
 
@@ -113,12 +120,12 @@ public class ClinicController {
         staffList.addAll(customerServiceList);
 
         List<AccountResponse> staffResponseList = accountMapper.mapAccountListToAccountResponseList(staffList);
-
+        Page<AccountResponse> responses = PaginationAndSortFactory.convertToPage(staffResponseList, pageable);
         if (staffResponseList == null || staffResponseList.size() == 0) {
             throw new NotFoundException("With id " + id + ", the list of hospital staff could not be found.");
         }
 
-        return new ResponseEntity<>(staffResponseList, HttpStatus.OK);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/services")
@@ -143,12 +150,7 @@ public class ClinicController {
 
         Page<ServiceOfClinic> list = serviceOfClinicService.findAllWithFilter(serviceFilterRequest, pageable, account);
 
-        Page<ServiceOfClinicResponse> responses = list.map(new Function<ServiceOfClinic, ServiceOfClinicResponse>() {
-            @Override
-            public ServiceOfClinicResponse apply(ServiceOfClinic service) {
-                return serviceOfClinicMapper.mapServiceOfClinicToServiceOfClinicResponse(service);
-            }
-        });
+        Page<ServiceOfClinicResponse> responses = list.map(serviceOfClinicMapper::mapServiceOfClinicToServiceOfClinicResponse);
         return new ResponseEntity<>(responses, HttpStatus.OK);
 
     }

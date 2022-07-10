@@ -78,7 +78,7 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public List<Dentist> findByClinicIdAndStatus(int theId, String status) {
-        return dentistRepository.findByClinicIdAndStatus(theId, status);
+         return dentistRepository.findByClinicIdAndStatus(theId, status);
     }
 
     @Override
