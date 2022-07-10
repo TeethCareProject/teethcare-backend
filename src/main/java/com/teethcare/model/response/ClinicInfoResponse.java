@@ -20,6 +20,7 @@ public class ClinicInfoResponse {
     private float avgRatingScore;
     private Integer bookingGap;
     private String phone;
+    private Integer expiredDay;
     private String status;
     private Long startTimeShift1;
     private Long endTimeShift1;
