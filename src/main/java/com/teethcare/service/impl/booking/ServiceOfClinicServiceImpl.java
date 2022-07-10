@@ -118,7 +118,8 @@ public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
 
     @Override
     public void save(ServiceOfClinic theEntity) {
-
+        theEntity.setStatus(Status.Service.ACTIVE.name());
+        serviceRepository.save(theEntity);
     }
 
     @Override
