@@ -29,6 +29,8 @@ public class ClinicRequest {
 
     private Integer bookingGap;
 
+    private Integer expiredDay;
+
     @Override
     public String toString() {
         return "ClinicRequest{" +

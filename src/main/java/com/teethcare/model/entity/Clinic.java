@@ -72,6 +72,9 @@ public class Clinic {
     @Column(name = "booking_gap")
     private Integer bookingGap;
 
+    @Column(name = "expired_day")
+    private Integer expiredDay = 3;
+
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
     @JsonBackReference
