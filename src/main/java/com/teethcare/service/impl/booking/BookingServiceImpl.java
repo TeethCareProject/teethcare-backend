@@ -405,8 +405,11 @@ public class BookingServiceImpl implements BookingService {
         if (services.size() != 0) {
             for (ServiceOfClinic service : services) {
                 totalPrice = totalPrice.add(service.getPrice());
+                log.info("Service price: " + service.getPrice());
             }
         }
+
+        log.info("Total price: " + totalPrice);
 
         int bookingVersion = booking.getVersion() + 1;
 

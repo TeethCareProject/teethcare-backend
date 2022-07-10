@@ -31,7 +31,7 @@ public class EmailServiceImpl implements EmailService {
     private String homepageUrl;
 
     public final JavaMailSender emailSender;
-    private static OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
     @Override
     public void sendStaffCreatingPasswordEmail(StaffCreatingPasswordDTO staffCreatingPasswordDTO) throws MessagingException {

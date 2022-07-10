@@ -58,4 +58,9 @@ public class OrderDTO {
             return totalPrice;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Clinic ";
+    }
 }
