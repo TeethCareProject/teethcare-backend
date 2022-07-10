@@ -1,6 +1,7 @@
 package com.teethcare.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,11 +25,11 @@ public class Clinic {
     @Column(name = "id")
     private Integer id;
 
-    @OneToOne
-    @JoinColumn(name = "manager_id", referencedColumnName = "id")
-    private Account manager;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
 
@@ -62,8 +63,20 @@ public class Clinic {
     @Column(name = "end_time_shift_2")
     private Time endTimeShift2;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "booking_gap")
     private Integer bookingGap;
+
+    @Column(name = "facebook_page_id")
+    private String facebookPageId;
+
+    @Column(name = "expired_day")
+    private Integer expiredDay = 3;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
@@ -79,4 +92,7 @@ public class Clinic {
             mappedBy = "clinic")
     @JsonBackReference
     private List<ServiceOfClinic> serviceOfClinic;
+
+    @Column(name = "expired_day")
+    private  int expiredDay;
 }
