@@ -1,7 +1,6 @@
 package com.teethcare.mapper;
 
 import com.teethcare.model.dto.booking.OrderDTO;
-import com.teethcare.model.dto.booking.OrderDetailDTO;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Order;
 import com.teethcare.model.entity.OrderDetail;

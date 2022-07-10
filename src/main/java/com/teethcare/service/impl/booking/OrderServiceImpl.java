@@ -4,7 +4,6 @@ import com.teethcare.mapper.OrderMapper;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Order;
 import com.teethcare.model.entity.OrderDetail;
-import com.teethcare.model.entity.ServiceOfClinic;
 import com.teethcare.repository.OrderDetailRepository;
 import com.teethcare.repository.OrderRepository;
 import com.teethcare.service.OrderService;
@@ -13,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -58,6 +58,9 @@ public class OrderServiceImpl implements OrderService {
             orderDetail.setOrder(order);
         }
         log.info("Order has services: " + order.getOrderDetails().get(0).getServiceName());
+        if (order.getDiscountValue() == null) {
+            order.setDiscountValue(BigDecimal.ZERO);
+        }
         save(order);
         log.info("Saving order");
         return order;

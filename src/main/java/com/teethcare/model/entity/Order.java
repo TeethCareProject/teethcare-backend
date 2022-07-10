@@ -84,7 +84,7 @@ public class Order {
     private String voucherCode;
 
     @Column(name = "discount_value")
-    private BigDecimal discountValue;
+    private BigDecimal discountValue = BigDecimal.ZERO;
 
     @Column(name = "customer_service_id")
     private int customerServiceId;

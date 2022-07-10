@@ -1,13 +1,10 @@
 package com.teethcare.model.dto.booking;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.teethcare.model.entity.OrderDetail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
@@ -47,21 +44,23 @@ public class OrderDTO {
 
     private String voucherCode;
 
-    private BigDecimal discountValue = BigDecimal.valueOf(0);
+    private BigDecimal discountValue = BigDecimal.ZERO;
 
     private String customerServiceName;
     private Timestamp examinationTime;
 
     private List<OrderDetailDTO> orderDetailDTOs;
+    private String finalPrice;
 
     public BigDecimal getFinalPrice() {
-        if (voucherCode != null && discountValue != null) {
+        if (voucherCode != null) {
             BigDecimal finalPrice = BigDecimal.valueOf(0);
-            if (discountValue.compareTo(finalPrice) < 0) {
+            if (discountValue.compareTo(totalPrice) < 0) {
                 return totalPrice.subtract(discountValue);
             }
             return finalPrice;
         } else {
+            this.discountValue = BigDecimal.valueOf(0);
             return totalPrice;
         }
     }
