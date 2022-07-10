@@ -5,8 +5,6 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailUtil;
-import com.teethcare.config.security.UserDetailsImpl;
-import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.BookingMapper;
@@ -25,23 +23,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
 import javax.mail.MessagingException;
 import javax.management.BadAttributeValueExpException;
 import javax.validation.Valid;
 import java.util.List;
-
-import java.util.List;
-
-import java.util.Objects;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -81,8 +68,8 @@ public class BookingController {
 
     @PostMapping(path = "/create-from-appointment")
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
-    public ResponseEntity<Object> bookingService(@Valid @RequestBody BookingFromAppointmentRequest bookingFromAppointmentRequest,
-                                                 @RequestHeader(value = AUTHORIZATION) String token) {
+    public ResponseEntity<Object> createFromAppointment(@Valid @RequestBody BookingFromAppointmentRequest bookingFromAppointmentRequest,
+                                                        @RequestHeader(value = AUTHORIZATION) String token) {
         token = token.substring("Bearer ".length());
         String username = jwtTokenUtil.getUsernameFromJwt(token);
 
@@ -272,7 +259,7 @@ public class BookingController {
         int bookingId;
         try {
             bookingId = Integer.parseInt(id);
-        } catch(NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             bookingId = 0;
         }
         boolean isCheckin = true;
@@ -297,7 +284,7 @@ public class BookingController {
         int bookingId;
         try {
             bookingId = Integer.parseInt(id);
-        } catch(NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             bookingId = 0;
         }
         boolean isCheckin = false;

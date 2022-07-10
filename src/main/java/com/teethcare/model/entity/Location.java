@@ -25,7 +25,7 @@ public class Location {
     @Column(name = "latitude")
     private Float latitude;
 
-    @Column(name = "longtitude")
+    @Column(name = "longitude")
     private Float longitude;
 
     @OneToOne
