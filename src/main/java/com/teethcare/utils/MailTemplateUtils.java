@@ -28,12 +28,7 @@ public class MailTemplateUtils {
     }
 
     public static String getOrderDetails(OrderDTO orderDTO) {
-        StringBuilder result = new StringBuilder();
-        for (OrderDetailDTO orderDetailDTO : orderDTO.getOrderDetailDTOs()) {
-            log.info(orderDetailDTO.getServiceName());
-            result.append(" ").append("<table class=\"row row-7\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n").append("                <tbody>\n").append("                <tr>\n").append("                    <td>\n").append("                        <table class=\"row-content\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n").append("                            <tbody>\n").append("                            <tr>\n").append("                                <td class=\"column column-1\" width=\"66.66666666666667%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n").append("                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n").append("                                        <tr>\n").append("                                            <td style=\"padding-bottom:15px;padding-left:10px;padding-top:15px;\">\n").append("                                                <div style=\"font-family: sans-serif\">\n").append("                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n").append("                                                        <p style=\"margin: 0; font-size: 14px;\">" + orderDetailDTO.getServiceName() + "</p>\n").append("                                                    </div>\n").append("                                                </div>\n").append("                                            </td>\n").append("                                        </tr>\n").append("                                    </table>\n").append("                                </td>\n").append("                                <td class=\"column column-2\" width=\"33.333333333333336%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n").append("                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n").append("                                        <tr>\n").append("                                            <td style=\"padding-bottom:15px;padding-right:10px;padding-top:15px;\">\n").append("                                                <div style=\"font-family: sans-serif\">\n").append("                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n").append("                                                        <p style=\"margin: 0; font-size: 14px; text-align: right;\">" + orderDetailDTO.getServicePrice() + "</p>\n").append("                                                    </div>\n").append("                                                </div>\n").append("                                            </td>\n").append("                                        </tr>\n").append("                                    </table>\n").append("                                </td>\n").append("                            </tr>\n").append("                            </tbody>\n").append("                        </table>\n").append("                    </td>\n").append("                </tr>\n").append("                </tbody>\n").append("            </table>");
-        }
-        return "<!DOCTYPE html>\n" +
+        String head = "<!DOCTYPE html>\n" +
                 "<html xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" lang=\"en\">\n" +
                 "<head>\n" +
                 "    <title></title>\n" +
@@ -154,9 +149,9 @@ public class MailTemplateUtils {
                 "                                            </td>\n" +
                 "                                        </tr>\n" +
                 "                                    </table>\n" +
-                "                                    <table class=\"image_block\" width=\"100%\" border=\"0\" cellpadding=\"25\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "                                    <table class=\"image_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
                 "                                        <tr>\n" +
-                "                                            <td>\n" +
+                "                                            <td style=\"padding-bottom:20px;padding-left:25px;padding-right:25px;padding-top:20px;width:100%;\">\n" +
                 "                                                <div align=\"center\" style=\"line-height:10px\"><img src=\"https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/812445_796351/editor_images/separator_2.png\" style=\"display: block; height: auto; border: 0; width: 180px; max-width: 100%;\" width=\"180\" alt=\"Separator\" title=\"Separator\"></div>\n" +
                 "                                            </td>\n" +
                 "                                        </tr>\n" +
@@ -179,13 +174,12 @@ public class MailTemplateUtils {
                 "                                <td class=\"column column-1\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 10px; padding-right: 10px; padding-top: 15px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
                 "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
                 "                                        <tr>\n" +
-                "                                            <td style=\"padding-bottom:25px;padding-left:15px;padding-right:15px;padding-top:15px;\">\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:15px;padding-right:15px;padding-top:15px;\">\n" +
                 "                                                <div style=\"font-family: sans-serif\">\n" +
                 "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #44464a; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
-                "                                                        <p style=\"margin: 0; font-size: 15px;\"><span style=\"font-size:15px;\">Hi <strong>{{"+ orderDTO.getPatientName()+"}}</strong>,</span></p>\n" +
+                "                                                        <p style=\"margin: 0; font-size: 15px;\"><span style=\"font-size:15px;\">Hi <strong>" + orderDTO.getPatientName() + "</strong>,</span></p>\n" +
                 "                                                        <p style=\"margin: 0; font-size: 15px; mso-line-height-alt: 14.399999999999999px;\">&nbsp;</p>\n" +
-                "                                                        <p style=\"margin: 0; font-size: 15px;\"><span style=\"font-size:15px;\">Hope you feel satisfied with our services. Here is your invoice information.</span></p>\n" +
-                "                                                        <p style=\"margin: 0; font-size: 15px;\"><span style=\"font-size:15px;\">" + orderDTO + "</span></p>\n" +
+                "                                                        <p style=\"margin: 0; font-size: 15px;\"><span style=\"font-size:15px;\">Hope you feel satisfied with our services. Here is your invoice which is due for the examination on " + ConvertUtils.getDateTime(orderDTO.getExaminationTime()) + " at " + orderDTO.getClinicName() + "&nbsp;</span></p>\n" +
                 "                                                    </div>\n" +
                 "                                                </div>\n" +
                 "                                            </td>\n" +
@@ -199,7 +193,305 @@ public class MailTemplateUtils {
                 "                </tr>\n" +
                 "                </tbody>\n" +
                 "            </table>\n" +
-                "            <table class=\"row row-6\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "            <table class=\"row row-6 mobile_hide\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <table class=\"row-content\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" +
+                "                            <tbody>\n" +
+                "                            <tr>\n" +
+                "                                <td class=\"column column-1\" width=\"50%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 10px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:20px;padding-top:15px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><em><strong>Patient information:</strong></em></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Name: </strong>" + orderDTO.getPatientName() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0;\"><span style=\"font-size:14px;\"><strong>●&nbsp; Phone Number: </strong>" + orderDTO.getPatientPhone() + "</span></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Date of Birth: </strong>"+ orderDTO.getPatientDateOfBirth() +"</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Gender: </strong>" + orderDTO.getPatientGender() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:25px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Address: </strong>" + orderDTO.getPatientAddress() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                </td>\n" +
+                "                                <td class=\"column column-2\" width=\"50%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; background-color: #ffffff; padding-left: 5px; padding-right: 10px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:20px;padding-top:15px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px; text-align: left;\"><em><strong>Clinic Information:</strong></em></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Dentist: </strong>" + orderDTO.getDentistName() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Clinic Name: </strong>" + orderDTO.getClinicName() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Tax Code: </strong>" + orderDTO.getClinicTaxCode() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Clinic Phone: </strong>" + orderDTO.getClinicPhone() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:10px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Address: </strong>" + orderDTO.getClinicLocation() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                </td>\n" +
+                "                            </tr>\n" +
+                "                            </tbody>\n" +
+                "                        </table>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>\n" +
+                "            <table class=\"row row-7 desktop_hide\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <table class=\"row-content\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; mso-hide: all; display: none; max-height: 0; overflow: hidden; color: #000000; width: 680px;\" width=\"680\">\n" +
+                "                            <tbody>\n" +
+                "                            <tr>\n" +
+                "                                <td class=\"column column-1\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 20px; padding-top: 5px; padding-bottom: 20px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:20px;padding-top:10px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><em><strong>Patient information:</strong></em></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Name: </strong>" + orderDTO.getPatientName() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0;\"><span style=\"font-size:14px;\"><strong>●&nbsp; Phone Number: </strong>" + orderDTO.getPatientPhone() + "</span></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Date of Birth: </strong>"+ orderDTO.getPatientDateOfBirth() +"</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Gender: </strong>" + orderDTO.getPatientGender() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Address: </strong>" + orderDTO.getPatientAddress() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:20px;padding-top:10px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px; text-align: left;\"><em><strong>Clinic Information:</strong></em></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Dentist: </strong>" + orderDTO.getDentistName() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Clinic Name: </strong>" + orderDTO.getClinicName() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Tax Code: </strong>" + orderDTO.getClinicTaxCode() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Clinic Phone: </strong>" + orderDTO.getClinicPhone() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word; mso-hide: all; display: none; max-height: 0; overflow: hidden;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:5px;padding-left:30px;padding-top:5px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><strong>●&nbsp; Address: </strong>" + orderDTO.getClinicLocation() + "</p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                </td>\n" +
+                "                            </tr>\n" +
+                "                            </tbody>\n" +
+                "                        </table>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>\n" +
+                "            <table class=\"row row-8\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
                 "                <tbody>\n" +
                 "                <tr>\n" +
                 "                    <td>\n" +
@@ -238,7 +530,8 @@ public class MailTemplateUtils {
                 "                    </td>\n" +
                 "                </tr>\n" +
                 "                </tbody>\n" +
-                "            </table>" + result + "<table class=\"row row-13\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "            </table>";
+        String bottom = "<table class=\"row row-15\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
                 "                <tbody>\n" +
                 "                <tr>\n" +
                 "                    <td>\n" +
@@ -265,75 +558,6 @@ public class MailTemplateUtils {
                 "                                                <div style=\"font-family: sans-serif\">\n" +
                 "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
                 "                                                        <p style=\"margin: 0; font-size: 14px; text-align: right;\"><span style=\"font-size:16px;\">" + orderDTO.getTotalPrice() + "</span></p>\n" +
-                "                                                    </div>\n" +
-                "                                                </div>\n" +
-                "                                            </td>\n" +
-                "                                        </tr>\n" +
-                "                                    </table>\n" +
-                "                                </td>\n" +
-                "                            </tr>\n" +
-                "                            </tbody>\n" +
-                "                        </table>\n" +
-                "                    </td>\n" +
-                "                </tr>\n" +
-                "                </tbody>\n" +
-                "            </table>\n" +
-                "            <table class=\"row row-14\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
-                "                <tbody>\n" +
-                "                <tr>\n" +
-                "                    <td>\n" +
-                "                        <table class=\"row-content stack\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" +
-                "                            <tbody>\n" +
-                "                            <tr>\n" +
-                "                                <td class=\"column column-1\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 5px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
-                "                                    <table class=\"divider_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
-                "                                        <tr>\n" +
-                "                                            <td>\n" +
-                "                                                <div align=\"center\">\n" +
-                "                                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
-                "                                                        <tr>\n" +
-                "                                                            <td class=\"divider_inner\" style=\"font-size: 1px; line-height: 1px; border-top: 1px solid #E1ECEF;\"><span>&#8202;</span></td>\n" +
-                "                                                        </tr>\n" +
-                "                                                    </table>\n" +
-                "                                                </div>\n" +
-                "                                            </td>\n" +
-                "                                        </tr>\n" +
-                "                                    </table>\n" +
-                "                                </td>\n" +
-                "                            </tr>\n" +
-                "                            </tbody>\n" +
-                "                        </table>\n" +
-                "                    </td>\n" +
-                "                </tr>\n" +
-                "                </tbody>\n" +
-                "            </table>\n" +
-                "            <table class=\"row row-15\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
-                "                <tbody>\n" +
-                "                <tr>\n" +
-                "                    <td>\n" +
-                "                        <table class=\"row-content\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" +
-                "                            <tbody>\n" +
-                "                            <tr>\n" +
-                "                                <td class=\"column column-1\" width=\"66.66666666666667%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
-                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
-                "                                        <tr>\n" +
-                "                                            <td style=\"padding-bottom:15px;padding-left:10px;padding-right:10px;padding-top:15px;\">\n" +
-                "                                                <div style=\"font-family: sans-serif\">\n" +
-                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
-                "                                                        <p style=\"margin: 0; font-size: 14px;\"><span style=\"font-size:16px;\"><strong>Discount</strong></span></p>\n" +
-                "                                                    </div>\n" +
-                "                                                </div>\n" +
-                "                                            </td>\n" +
-                "                                        </tr>\n" +
-                "                                    </table>\n" +
-                "                                </td>\n" +
-                "                                <td class=\"column column-2\" width=\"33.333333333333336%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
-                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
-                "                                        <tr>\n" +
-                "                                            <td style=\"padding-bottom:15px;padding-left:10px;padding-right:10px;padding-top:15px;\">\n" +
-                "                                                <div style=\"font-family: sans-serif\">\n" +
-                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
-                "                                                        <p style=\"margin: 0; font-size: 14px; text-align: right;\"><span style=\"font-size:16px;\"> " + orderDTO.getDiscountValue() + "</span></p>\n" +
                 "                                                    </div>\n" +
                 "                                                </div>\n" +
                 "                                            </td>\n" +
@@ -380,16 +604,29 @@ public class MailTemplateUtils {
                 "                <tbody>\n" +
                 "                <tr>\n" +
                 "                    <td>\n" +
-                "                        <table class=\"row-content stack\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" +
+                "                        <table class=\"row-content\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" +
                 "                            <tbody>\n" +
                 "                            <tr>\n" +
-                "                                <td class=\"column column-1\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
-                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"10\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                <td class=\"column column-1\" width=\"66.66666666666667%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
                 "                                        <tr>\n" +
-                "                                            <td>\n" +
+                "                                            <td style=\"padding-bottom:15px;padding-left:10px;padding-right:10px;padding-top:15px;\">\n" +
                 "                                                <div style=\"font-family: sans-serif\">\n" +
-                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #3a8ef6; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
-                "                                                        <p style=\"margin: 0; font-size: 14px; text-align: right;\"><span style=\"font-size:22px;\"><strong><span style>Total  " + orderDTO.getFinalPrice() + "</span></strong></span></p>\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px;\"><span style=\"font-size:16px;\"><strong>Discount</strong></span></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                </td>\n" +
+                "                                <td class=\"column column-2\" width=\"33.333333333333336%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td style=\"padding-bottom:15px;padding-left:10px;padding-right:10px;padding-top:15px;\">\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px; text-align: right;\"><span style=\"font-size:16px;\">" + orderDTO.getDiscountValue() + "</span></p>\n" +
                 "                                                    </div>\n" +
                 "                                                </div>\n" +
                 "                                            </td>\n" +
@@ -403,7 +640,63 @@ public class MailTemplateUtils {
                 "                </tr>\n" +
                 "                </tbody>\n" +
                 "            </table>\n" +
+                "            <table class=\"row row-18\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <table class=\"row-content stack\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" +
+                "                            <tbody>\n" +
+                "                            <tr>\n" +
+                "                                <td class=\"column column-1\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 5px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
+                "                                    <table class=\"divider_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td>\n" +
+                "                                                <div align=\"center\">\n" +
+                "                                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "                                                        <tr>\n" +
+                "                                                            <td class=\"divider_inner\" style=\"font-size: 1px; line-height: 1px; border-top: 1px solid #E1ECEF;\"><span>&#8202;</span></td>\n" +
+                "                                                        </tr>\n" +
+                "                                                    </table>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                </td>\n" +
+                "                            </tr>\n" +
+                "                            </tbody>\n" +
+                "                        </table>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>\n" +
                 "            <table class=\"row row-19\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <table class=\"row-content stack\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" +
+                "                            <tbody>\n" +
+                "                            <tr>\n" +
+                "                                <td class=\"column column-1\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" +
+                "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"10\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" +
+                "                                        <tr>\n" +
+                "                                            <td>\n" +
+                "                                                <div style=\"font-family: sans-serif\">\n" +
+                "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #3a8ef6; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" +
+                "                                                        <p style=\"margin: 0; font-size: 14px; text-align: right;\"><span style=\"font-size:22px;\"><strong><span style>Total " + orderDTO.getFinalPrice() + "</span></strong></span></p>\n" +
+                "                                                    </div>\n" +
+                "                                                </div>\n" +
+                "                                            </td>\n" +
+                "                                        </tr>\n" +
+                "                                    </table>\n" +
+                "                                </td>\n" +
+                "                            </tr>\n" +
+                "                            </tbody>\n" +
+                "                        </table>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>\n" +
+                "            <table class=\"row row-21\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" +
                 "                <tbody>\n" +
                 "                <tr>\n" +
                 "                    <td>\n" +
@@ -426,7 +719,7 @@ public class MailTemplateUtils {
                 "                </tr>\n" +
                 "                </tbody>\n" +
                 "            </table>\n" +
-                "            <table class=\"row row-20\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f5f5f5;\">\n" +
+                "            <table class=\"row row-22\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f5f5f5;\">\n" +
                 "                <tbody>\n" +
                 "                <tr>\n" +
                 "                    <td>\n" +
@@ -460,5 +753,11 @@ public class MailTemplateUtils {
                 "<!-- End -->\n" +
                 "</body>\n" +
                 "</html>";
+        StringBuilder result = new StringBuilder();
+        for (OrderDetailDTO orderDetailDTO : orderDTO.getOrderDetailDTOs()) {
+            log.info(orderDetailDTO.getServiceName());
+            result.append("<table class=\"row row-9\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n" + "                <tbody>\n" + "                <tr>\n" + "                    <td>\n" + "                        <table class=\"row-content\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n" + "                            <tbody>\n" + "                            <tr>\n" + "                                <td class=\"column column-1\" width=\"66.66666666666667%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n" + "                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n" + "                                        <tr>\n" + "                                            <td style=\"padding-bottom:15px;padding-left:10px;padding-top:15px;\">\n" + "                                                <div style=\"font-family: sans-serif\">\n" + "                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n" + "                                                        <p style=\"margin: 0; font-size: 14px;\">").append(orderDetailDTO.getServiceName()).append("</p>\n").append("                                                    </div>\n").append("                                                </div>\n").append("                                            </td>\n").append("                                        </tr>\n").append("                                    </table>\n").append("                                </td>\n").append("                                <td class=\"column column-2\" width=\"33.333333333333336%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-left: 5px; padding-right: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n").append("                                    <table class=\"text_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;\">\n").append("                                        <tr>\n").append("                                            <td style=\"padding-bottom:15px;padding-right:10px;padding-top:15px;\">\n").append("                                                <div style=\"font-family: sans-serif\">\n").append("                                                    <div class=\"txtTinyMce-wrapper\" style=\"font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #393d47; line-height: 1.2; font-family: Nunito, Arial, Helvetica Neue, Helvetica, sans-serif;\">\n").append("                                                        <p style=\"margin: 0; font-size: 14px; text-align: right;\">").append(orderDetailDTO.getServicePrice()).append("</p>\n").append("                                                    </div>\n").append("                                                </div>\n").append("                                            </td>\n").append("                                        </tr>\n").append("                                    </table>\n").append("                                </td>\n").append("                            </tr>\n").append("                            </tbody>\n").append("                        </table>\n").append("                    </td>\n").append("                </tr>\n").append("                </tbody>\n").append("            </table>\n").append("            <table class=\"row row-10\" align=\"center\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n").append("                <tbody>\n").append("                <tr>\n").append("                    <td>\n").append("                        <table class=\"row-content stack\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px;\" width=\"680\">\n").append("                            <tbody>\n").append("                            <tr>\n").append("                                <td class=\"column column-1\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 5px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;\">\n").append("                                    <table class=\"divider_block\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n").append("                                        <tr>\n").append("                                            <td>\n").append("                                                <div align=\"center\">\n").append("                                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" width=\"100%\" style=\"mso-table-lspace: 0pt; mso-table-rspace: 0pt;\">\n").append("                                                        <tr>\n").append("                                                            <td class=\"divider_inner\" style=\"font-size: 1px; line-height: 1px; border-top: 1px solid #E1ECEF;\"><span>&#8202;</span></td>\n").append("                                                        </tr>\n").append("                                                    </table>\n").append("                                                </div>\n").append("                                            </td>\n").append("                                        </tr>\n").append("                                    </table>\n").append("                                </td>\n").append("                            </tr>\n").append("                            </tbody>\n").append("                        </table>\n").append("                    </td>\n").append("                </tr>\n").append("                </tbody>\n").append("            </table>");
+        }
+        return head + " " + result.toString() + " " + bottom;
     }
 }

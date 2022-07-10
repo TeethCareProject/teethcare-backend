@@ -43,11 +43,14 @@ public class OrderDTO {
 
     private String clinicEmail;
 
+    private String clinicPhone;
+
     private String voucherCode;
 
     private BigDecimal discountValue;
 
     private String customerServiceName;
+    private Timestamp examinationTime;
 
     private List<OrderDetailDTO> orderDetailDTOs;
 

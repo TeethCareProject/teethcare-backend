@@ -89,6 +89,9 @@ public class Order {
     @Column(name = "customer_service_id")
     private int customerServiceId;
 
+    @Column(name = "clinic_phone")
+    private String clinicPhone;
+
     @Column(name = "customer_service_name")
     private String customerServiceName;
 

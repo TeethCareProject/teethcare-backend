@@ -55,6 +55,6 @@ public class Account {
     private String status;
 
     public String getFullName() {
-        return lastName + " " + firstName;
+        return firstName + " " + lastName;
     }
 }

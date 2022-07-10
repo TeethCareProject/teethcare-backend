@@ -68,6 +68,9 @@ public class Clinic {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "phone")
+    private String phone;
+
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "clinic")
     @JsonBackReference

@@ -119,7 +119,7 @@ public class EmailServiceImpl implements EmailService {
 
         String htmlMsg = MailTemplateUtils.getOrderDetails(orderDTO);
 
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
         helper.setTo(orderDTO.getPatientEmail());
         helper.setSubject("[TEETHCARE] YOUR ORDER IS CREATED!");
