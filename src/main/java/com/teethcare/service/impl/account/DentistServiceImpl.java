@@ -56,7 +56,7 @@ public class DentistServiceImpl implements DentistService {
     }
 
     @Override
-    public void delete(int theId) {
+    public void delete(int id) {
         //TODO
     }
 
@@ -66,8 +66,8 @@ public class DentistServiceImpl implements DentistService {
     }
 
     @Override
-    public List<Dentist> findByClinicId(int theId) {
-        List<Dentist> dentistList = dentistRepository.findByClinicId(theId);
+    public List<Dentist> findByClinicId(int id) {
+        List<Dentist> dentistList = dentistRepository.findByClinicId(id);
 
         if (dentistList == null || dentistList.size() == 0) {
             throw new NotFoundException("ID not found");
@@ -77,8 +77,8 @@ public class DentistServiceImpl implements DentistService {
     }
 
     @Override
-    public List<Dentist> findByClinicIdAndStatus(int theId, String status) {
-         return dentistRepository.findByClinicIdAndStatus(theId, status);
+    public List<Dentist> findByClinicIdAndStatus(int id, String status) {
+         return dentistRepository.findByClinicIdAndStatus(id, status);
     }
 
     @Override
