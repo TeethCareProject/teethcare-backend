@@ -41,10 +41,10 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public CustomerService findById(int theId) {
-        Optional<CustomerService> result = customerServiceRepository.findById(theId);
+    public CustomerService findById(int id) {
+        Optional<CustomerService> result = customerServiceRepository.findById(id);
         if (result.isEmpty()) {
-            throw new NotFoundException("CustomerService id " + theId + " not found!");
+            throw new NotFoundException("CustomerService id " + id + " not found!");
         }
         return result.get();
     }
@@ -58,8 +58,8 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public void delete(int theId) {
-        customerServiceRepository.deleteById(theId);
+    public void delete(int id) {
+        customerServiceRepository.deleteById(id);
     }
 
     @Override
@@ -68,8 +68,8 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public List<CustomerService> findByClinicId(int theId) {
-        List<CustomerService> customerServiceList = customerServiceRepository.findByClinicId(theId);
+    public List<CustomerService> findByClinicId(int id) {
+        List<CustomerService> customerServiceList = customerServiceRepository.findByClinicId(id);
 
         if (customerServiceList == null || customerServiceList.size() == 0) {
             throw new NotFoundException("ID not found");
@@ -79,8 +79,8 @@ public class CSServiceImpl implements CSService {
     }
 
     @Override
-    public List<CustomerService> findByClinicIdAndStatus(int theId, String status) {
-        return customerServiceRepository.findByClinicIdAndStatus(theId, status);
+    public List<CustomerService> findByClinicIdAndStatus(int id, String status) {
+        return customerServiceRepository.findByClinicIdAndStatus(id, status);
     }
 
     @Override
