@@ -115,8 +115,7 @@ public class BookingController {
 
         Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
-        Page<BookingResponse> bookingResponseTmp = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
-        List<BookingResponse> responseList = bookingResponseTmp.getContent();
+        List<BookingResponse> responseList = bookingMapper.mapBookingListToBookingResponseList(bookingPage.getContent());
         for (BookingResponse bookingResponse: responseList) {
             Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
             FeedbackResponse feedbackResponse = null;
