@@ -1,7 +1,6 @@
 package com.teethcare.model.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,9 +31,10 @@ public class Location {
     @OneToOne
     @JoinColumn(name = "ward_id", referencedColumnName = "id")
     Ward ward;
-//
-//    @OneToOne(mappedBy = "location")
-//    @Column(nullable = true)
-//    @JsonBackReference
-//    Clinic clinic;
+
+    public String getFullAddress() {
+        return addressString + ", " + ward.getName() +
+                ", " + ward.getDistrict().getName() +
+                ", " + ward.getDistrict().getProvince().getName();
+    }
 }

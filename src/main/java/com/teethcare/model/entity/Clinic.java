@@ -1,7 +1,6 @@
 package com.teethcare.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -63,14 +62,14 @@ public class Clinic {
     @Column(name = "end_time_shift_2")
     private Time endTimeShift2;
 
+    @Column(name = "booking_gap")
+    private Integer bookingGap;
+
     @Column(name = "email")
     private String email;
 
     @Column(name = "phone")
     private String phone;
-
-    @Column(name = "booking_gap")
-    private Integer bookingGap;
 
     @Column(name = "facebook_page_id")
     private String facebookPageId;

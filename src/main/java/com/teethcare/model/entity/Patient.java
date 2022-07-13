@@ -19,4 +19,7 @@ public class Patient extends Account {
     @Column(nullable = true)
     @JsonBackReference
     private List<Booking> bookingList;
+
+    @OneToOne
+    private Location location;
 }

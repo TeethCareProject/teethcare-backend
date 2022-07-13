@@ -1,4 +1,4 @@
-package com.teethcare.model.dto;
+package com.teethcare.model.dto.account;
 
 import java.util.Date;
 

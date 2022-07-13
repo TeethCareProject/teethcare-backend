@@ -47,6 +47,7 @@ public class BookingServiceImpl implements BookingService {
     private final ClinicService clinicService;
     private final AppointmentRepository appointmentRepository;
     private final VoucherService voucherService;
+    private final OrderService orderService;
 
     @Override
     public List<Booking> findAll() {
@@ -217,7 +218,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest) {
+    @Transactional
+    public Order confirmFinalBooking(BookingUpdateRequest bookingUpdateRequest) {
         int bookingId = bookingUpdateRequest.getBookingId();
 
         if (bookingUpdateRequest.getVersion() == null) {
@@ -227,12 +229,14 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = findBookingById(bookingId);
 
         if (booking.getVersion() != bookingUpdateRequest.getVersion() || booking.isConfirmed()) {
-            return false;
+            throw new BadRequestException("Version of booking is out of date or booking is confirmed");
         }
 
         booking.setConfirmed(true);
         bookingRepository.save(booking);
-        return true;
+
+        Order order = orderService.createOrderFromBooking(booking);
+        return order;
     }
 
     @Override
@@ -265,7 +269,7 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case TREATMENT:
                 if (isCheckin) {
-                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
+                    throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkout");
                 }
                 if (booking.getExaminationTime() == null || booking.getDentist() == null
                         || booking.getCustomerService() == null || booking.getServices() == null || booking.getTotalPrice() == null
@@ -275,7 +279,7 @@ public class BookingServiceImpl implements BookingService {
                 booking.setStatus(Status.Booking.DONE.name());
                 break;
             default:
-                throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin");
+                throw new BadRequestException("Your booking status is " + booking.getStatus() + " not valid for checkin/checkout");
         }
         bookingRepository.save(booking);
         return true;
@@ -426,8 +430,11 @@ public class BookingServiceImpl implements BookingService {
         if (services.size() != 0) {
             for (ServiceOfClinic service : services) {
                 totalPrice = totalPrice.add(service.getPrice());
+                log.info("Service price: " + service.getPrice());
             }
         }
+
+        log.info("Total price: " + totalPrice);
 
         int bookingVersion = booking.getVersion() + 1;
 
