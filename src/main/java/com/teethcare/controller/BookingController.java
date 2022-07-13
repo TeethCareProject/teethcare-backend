@@ -3,15 +3,14 @@ package com.teethcare.controller;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.*;
+import com.teethcare.common.Role;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.BookingMapper;
-import com.teethcare.model.entity.Account;
-import com.teethcare.model.entity.Booking;
-import com.teethcare.model.entity.CustomerService;
-import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.mapper.FeedbackMapper;
+import com.teethcare.model.entity.*;
 import com.teethcare.model.request.*;
 import com.teethcare.model.response.*;
 import com.teethcare.service.*;
@@ -46,6 +45,8 @@ public class BookingController {
     private final FirebaseMessagingService firebaseMessagingService;
     private final EmailService emailService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final FeedbackService feedbackService;
+    private final FeedbackMapper feedbackMapper;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
@@ -114,15 +115,30 @@ public class BookingController {
 
         Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
-        Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
-
-        return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
+        Page<BookingResponse> bookingResponseTmp = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
+        List<BookingResponse> responseList = bookingResponseTmp.getContent();
+        for (BookingResponse bookingResponse: responseList) {
+            Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
+            FeedbackResponse feedbackResponse = null;
+            if (feedback != null){
+                feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
+            }
+            bookingResponse.setFeedbackResponse(feedbackResponse);
+        }
+        Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseList, pageable);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookingResponse> getById(@PathVariable("id") int id) {
         Booking booking = bookingService.findBookingById(id);
         BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);
+        Feedback feedback = feedbackService.findByBookingId(booking.getId());
+        FeedbackResponse feedbackResponse = null;
+        if (feedback != null) {
+            feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
+        }
+        bookingResponse.setFeedbackResponse(feedbackResponse);
         return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
     }
 
