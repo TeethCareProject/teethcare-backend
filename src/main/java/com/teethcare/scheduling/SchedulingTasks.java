@@ -39,7 +39,6 @@ public class SchedulingTasks {
     @Scheduled(fixedDelay = 1_000 * 60, initialDelay = 1_000)
     public void checkExpiredBooking() {
         long now = System.currentTimeMillis() / 1_000;
-        //*2*24*60*60*1000
         List<Booking> bookings = bookingService.findAllBookingByExpiredTime();
         if (bookings.size() > 0) {
             bookings.forEach(bookingService::expired);

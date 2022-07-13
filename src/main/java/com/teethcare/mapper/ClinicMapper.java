@@ -22,10 +22,7 @@ public interface ClinicMapper {
 
 
     @Mapping(target = "ward", source = "ward")
-    @Mapping(target = "address",
-            expression = "java(location.getAddressString() + \", \" + location.getWard().getName() + \", \" " +
-                    "+ location.getWard().getDistrict().getName() + \", \" " +
-                    "+ location.getWard().getDistrict().getProvince().getName())")
+    @Mapping(target = "address",source = "addressString")
     LocationResponse mapLocationToLocationResponse(Location location);
 
     List<ClinicResponse> mapClinicListToClinicResponseList(List<Clinic> clinics);
