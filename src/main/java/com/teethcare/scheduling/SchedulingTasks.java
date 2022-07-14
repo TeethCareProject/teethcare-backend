@@ -1,6 +1,8 @@
 package com.teethcare.scheduling;
 
+import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Voucher;
+import com.teethcare.service.BookingService;
 import com.teethcare.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class SchedulingTasks {
     private final VoucherService voucherService;
+    private final BookingService bookingService;
 
     @Async
     @Transactional
@@ -28,6 +31,17 @@ public class SchedulingTasks {
         if (vouchers.size() > 0) {
             vouchers.forEach(voucherService::disable);
             log.info("voucher status updated!");
+        }
+    }
+
+    @Async
+    @Transactional
+    @Scheduled(fixedDelay = 1_000 * 60, initialDelay = 1_000)
+    public void checkExpiredBooking() {
+        long now = System.currentTimeMillis() / 1_000;
+        List<Booking> bookings = bookingService.findAllBookingByExpiredTime();
+        if (bookings.size() > 0) {
+            bookings.forEach(bookingService::expired);
         }
     }
 }

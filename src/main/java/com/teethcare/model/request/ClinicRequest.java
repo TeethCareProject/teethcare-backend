@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 public class ClinicRequest {
@@ -25,7 +27,21 @@ public class ClinicRequest {
 
     private String email;
 
+    private String phone;
+
     private Integer bookingGap;
+
+    private Integer expiredDay;
+
+    private String facebookPageId;
+
+    private Long startTimeShift1;
+
+    private Long endTimeShift1;
+
+    private Long startTimeShift2;
+
+    private Long endTimeShift2;
 
     @Override
     public String toString() {

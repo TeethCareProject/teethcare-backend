@@ -15,7 +15,6 @@ import java.util.List;
 public class BookingUpdateRequest {
     @NotNull
     private Integer bookingId;
-
     private List<Integer> serviceIds;
     private Integer dentistId;
     private Long examinationTime;

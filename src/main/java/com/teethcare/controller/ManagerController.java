@@ -53,7 +53,6 @@ public class ManagerController {
         ClinicInfoResponse clinicInfoResponse = clinicMapper.mapClinicListToClinicInfoResponse(clinic);
         ManagerResponse managerResponse = accountMapper.mapManagerToManagerResponse(manager, clinicInfoResponse);
         return new ResponseEntity<>(managerResponse, HttpStatus.OK);
-
     }
 
     @PostMapping
@@ -69,7 +68,6 @@ public class ManagerController {
         Clinic clinic = clinicService.getClinicByManager(manager);
         clinicService.delete(clinic.getId());
         return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
-
     }
 
 }

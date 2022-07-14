@@ -16,11 +16,15 @@ public class ClinicInfoResponse {
     private String description;
     private String imageUrl;
     private String taxCode;
+    private String email;
     private float avgRatingScore;
     private Integer bookingGap;
+    private String phone;
+    private Integer expiredDay;
     private String status;
     private Long startTimeShift1;
     private Long endTimeShift1;
     private Long startTimeShift2;
     private Long endTimeShift2;
+    private String facebookPageId;
 }

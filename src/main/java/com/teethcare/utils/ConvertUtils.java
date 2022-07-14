@@ -1,17 +1,12 @@
 package com.teethcare.utils;
 
-import com.teethcare.exception.BadRequestException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.util.TimeZone;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConvertUtils {
