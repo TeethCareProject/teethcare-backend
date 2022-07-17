@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,8 +31,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findById(int id) {
-        //TODO: implements later
-        return null;
+        return orderRepository.findById(id).orElse(null);
     }
 
     @Override

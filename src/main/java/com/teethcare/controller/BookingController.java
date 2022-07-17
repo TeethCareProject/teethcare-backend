@@ -120,10 +120,15 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookingResponse> getById(@PathVariable("id") int id) {
+    public ResponseEntity getById(@PathVariable("id") int id) {
         Booking booking = bookingService.findBookingById(id);
-        BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);
-        return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
+        if (booking.isConfirmed()) {
+            Order order = orderService.findById(booking.getId());
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        } else {
+            BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);
+            return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
+        }
     }
 
     @PutMapping("/{id}/accept")

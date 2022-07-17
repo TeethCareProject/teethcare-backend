@@ -13,7 +13,7 @@ import java.util.List;
         config = ConfigurationMapper.class)
 public interface OrderMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "id", target = "id", ignore = true)
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "services", target = "orderDetails", qualifiedByName = "mapServicesListToOrderDetailList")
     @Mapping(source = "clinic.name", target = "clinicName")
     @Mapping(source = "clinic.taxCode", target = "clinicTaxCode")

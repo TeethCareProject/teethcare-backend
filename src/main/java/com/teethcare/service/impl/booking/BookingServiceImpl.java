@@ -368,6 +368,10 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = bookingRepository.findBookingById(bookingId);
 
+        if (booking.isConfirmed()) {
+            throw new BadRequestException("Booking is confirmed!");
+        }
+
         if (dentistId == null || examinationTimeRequest == null) {
             throw new BadRequestException(Message.PARAMS_MISSING.name());
         }
