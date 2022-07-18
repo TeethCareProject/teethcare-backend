@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static com.teethcare.common.Constant.EMAIL.*;
-
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class EmailServiceImpl implements EmailService {
 
         String htmlMsg = MailTemplateUtils.getStaffCreatingPasswordEmail(staffCreatingPasswordDTO.getUsername(), staffCreatingPasswordDTO.getPassword(), staffCreatingPasswordDTO.getFwdLink());
 
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
         helper.setTo(staffCreatingPasswordDTO.getEmail());
 
@@ -67,7 +65,7 @@ public class EmailServiceImpl implements EmailService {
 
         String htmlMsg = MailTemplateUtils.getBookingConfirmation(bookingConfirmationDTO);
 
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
         helper.setTo(bookingConfirmationDTO.getEmail());
         helper.setSubject("[TEETHCARE] YOUR BOOKING IS UPDATED!");
@@ -94,7 +92,7 @@ public class EmailServiceImpl implements EmailService {
 
         String htmlMsg = MailTemplateUtils.getBookingRejection(bookingConfirmationDTO);
 
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
         helper.setTo(bookingConfirmationDTO.getEmail());
         helper.setSubject("[TEETHCARE] YOUR BOOKING IS REJECTD!");
@@ -109,9 +107,9 @@ public class EmailServiceImpl implements EmailService {
 
         MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
 
-        String htmlMsg = MailTemplateUtils.getClinicApprovement(clinic.getManager().getFirstName(), LOGIN_URL);
+        String htmlMsg = MailTemplateUtils.getClinicApprovement(clinic.getManager().getFirstName(), homepageUrl + "/login");
 
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
         helper.setTo(clinic.getManager().getEmail());
 
@@ -128,9 +126,9 @@ public class EmailServiceImpl implements EmailService {
 
         MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
 
-        String htmlMsg = MailTemplateUtils.getClinicRejection(clinic.getManager().getFirstName(), HOME_URL);
+        String htmlMsg = MailTemplateUtils.getClinicRejection(clinic.getManager().getFirstName(), homepageUrl);
 
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
         helper.setTo(clinic.getManager().getEmail());
 

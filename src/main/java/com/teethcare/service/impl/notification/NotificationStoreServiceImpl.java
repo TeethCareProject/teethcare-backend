@@ -42,7 +42,7 @@ public class NotificationStoreServiceImpl implements NotificationStoreService {
     public Page<NotificationStore> findAllByAccount(String jwtToken, Pageable pageable) {
         String username = jwtTokenUtil.getUsernameFromJwt(jwtToken);
         Account account = accountService.getAccountByUsername(username);
-        List<NotificationStore> notificationStores = notificationStoreRepository.findAllByAccount(account);
+        List<NotificationStore> notificationStores = notificationStoreRepository.findAllByAccount(account, pageable.getSort());
         return PaginationAndSortFactory.convertToPage(notificationStores, pageable);
     }
 
