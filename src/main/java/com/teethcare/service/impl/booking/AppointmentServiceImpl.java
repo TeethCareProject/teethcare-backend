@@ -11,7 +11,6 @@ import com.teethcare.model.request.AppointmentRequest;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.ServiceRepository;
 import com.teethcare.service.*;
-import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -125,6 +124,17 @@ public class AppointmentServiceImpl implements AppointmentService {
                 return null;
         }
         return PaginationAndSortFactory.convertToPage(appointments, pageable);
+    }
+
+    @Override
+    public List<Appointment> findAllByExpiredDate(Long expiredDate) {
+        return appointmentRepository.findAllByExpireAppointmentDate(new Timestamp(expiredDate));
+    }
+
+    @Override
+    public void disableAppointment(Appointment appointment) {
+        appointment.setStatus(Status.Appointment.EXPIRED.name());
+        update(appointment);
     }
 
     @Override
