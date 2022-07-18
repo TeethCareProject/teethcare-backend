@@ -24,7 +24,7 @@ public class CustomerService extends Account {
     private Clinic clinic;
 
     @OneToMany(mappedBy = "customerService", fetch = FetchType.LAZY)
-    @Column(nullable = true)
+    @Column()
     @JsonBackReference
     private List<Booking> bookingList;
 

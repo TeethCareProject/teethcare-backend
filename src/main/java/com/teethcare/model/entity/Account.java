@@ -52,5 +52,5 @@ public class Account {
     private String gender;
 
     @Column(name = "status")
-    private String status;
+    private String status = "PENDING";
 }

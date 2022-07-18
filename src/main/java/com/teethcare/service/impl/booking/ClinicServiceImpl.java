@@ -1,5 +1,6 @@
 package com.teethcare.service.impl.booking;
 
+import com.teethcare.common.Message;
 import com.teethcare.common.Status;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.NotFoundException;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,7 +80,6 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public void save(Clinic clinic) {
-        clinic.setStatus(Status.Clinic.PENDING.name());
         clinicRepository.save(clinic);
     }
 
@@ -96,6 +97,14 @@ public class ClinicServiceImpl implements ClinicService {
         Account manager = accountService.getAccountByUsername(username);
         Clinic clinic = clinicRepository.getClinicByManager(manager);
         clinicMapper.updateClinicFromClinicRequest(clinicRequest, clinic);
+        if (clinic.getStartTimeShift1() != null && clinic.getStartTimeShift2() != null
+                && clinic.getEndTimeShift1() != null && clinic.getEndTimeShift2() != null) {
+            LocalTime endTimeShift1 = clinic.getEndTimeShift1().toLocalTime();
+            LocalTime startTimeShift2 = clinic.getStartTimeShift2().toLocalTime();
+            if (endTimeShift1.isAfter(startTimeShift2)) {
+                throw new BadRequestException(Message.WORKING_TIME_INVALID.name());
+            }
+        }
         if (clinicRequest.getClinicAddress() != null) {
             Location location = new Location();
             location.setAddressString(clinicRequest.getClinicAddress());
@@ -148,6 +157,16 @@ public class ClinicServiceImpl implements ClinicService {
         update(clinic);
         emailService.sendClinicRejectionEmail(clinic);
         return clinic;
+    }
+
+    @Override
+    public String findFacebookPageIdByClinicId(String id) {
+        try {
+            Clinic clinic = findById(Integer.parseInt(id));
+            return clinic.getFacebookPageId();
+        } catch (NumberFormatException e) {
+            throw new NotFoundException("Clinic is not found");
+        }
     }
 
     @Override

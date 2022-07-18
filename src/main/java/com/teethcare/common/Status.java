@@ -36,6 +36,7 @@ public class Status {
         DONE,
         REJECTED,
         UNAVAILABLE,
+        EXPIRED
     }
 
     public enum Appointment {

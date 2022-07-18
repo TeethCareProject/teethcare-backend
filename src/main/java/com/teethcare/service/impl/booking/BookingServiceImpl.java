@@ -30,6 +30,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -55,7 +56,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(int id) {
-        return bookingRepository.findBookingById(id);
+        Booking booking = bookingRepository.findBookingById(id);
+        if (booking == null) {
+            throw new NotFoundException("Booking " + id + " was not found!");
+        }
+        return  booking;
     }
 
     @Override
@@ -281,6 +286,26 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<Booking> findAllBookingByExpiredTime() {
+        long now = System.currentTimeMillis();
+        List<Booking> bookings = bookingRepository.findAll();
+        Predicate<Booking> condition = booking -> (booking.getExaminationTime() != null && (int) ((now - booking.getExaminationTime().getTime())/24/60/60/1000) >= booking.getClinic().getExpiredDay())
+                || (booking.getExaminationTime() == null &&  booking.getDesiredCheckingTime()!= null && (int) ((now - booking.getDesiredCheckingTime().getTime())/24/60/60/1000) >= booking.getClinic().getExpiredDay());
+        bookings = bookings.stream()
+                .filter(condition)
+                .collect(Collectors.toList());
+        return bookings;
+    }
+
+    @Override
+    public void expired(Booking booking) {
+        if(booking.getStatus().equals(Status.Booking.PENDING.name())||booking.getStatus().equals(Status.Booking.REQUEST.name())) {
+            booking.setStatus(Status.Booking.EXPIRED.toString());
+            bookingRepository.save(booking);
+        }
+    }
+
+    @Override
     public boolean checkAvailableTime(CheckAvailableTimeRequest checkAvailableTimeRequest) {
         boolean check;
         Clinic clinic = clinicService.findById(checkAvailableTimeRequest.getClinicId());
@@ -331,6 +356,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findBookingById(int id) {
+        Booking booking = bookingRepository.findBookingById(id);
+        if (booking == null){
+            throw new NotFoundException("Booking " + id + " was not found!");
+        }
         return bookingRepository.findBookingById(id);
     }
 

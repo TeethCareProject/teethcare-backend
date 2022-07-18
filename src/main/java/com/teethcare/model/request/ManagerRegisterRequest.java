@@ -48,4 +48,6 @@ public class ManagerRegisterRequest extends PatientRegisterRequest implements Tr
 
     @NotNull
     private Long endTimeShift2;
+
+    private String clinicPhone;
 }
