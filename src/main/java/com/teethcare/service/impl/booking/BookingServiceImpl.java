@@ -57,7 +57,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findById(int id) {
-        return bookingRepository.findBookingById(id);
+        Booking booking = bookingRepository.findBookingById(id);
+        if (booking == null) {
+            throw new NotFoundException("Booking " + id + " was not found!");
+        }
+        return  booking;
     }
 
     @Override
@@ -356,6 +360,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findBookingById(int id) {
+        Booking booking = bookingRepository.findBookingById(id);
+        if (booking == null){
+            throw new NotFoundException("Booking " + id + " was not found!");
+        }
         return bookingRepository.findBookingById(id);
     }
 

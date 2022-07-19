@@ -203,6 +203,11 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedback;
     }
 
+    @Override
+    public Feedback findByBookingId(int bookingId) {
+        return feedbackRepository.findByBookingId(bookingId);
+    }
+
     public List<Feedback> getAllBookingForCS(List<Booking> bookings) {
         List<Feedback> feedbacks = new ArrayList<>();
         for (Booking booking : bookings) {
@@ -224,5 +229,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         return feedbacks;
     }
+
+
 
 }

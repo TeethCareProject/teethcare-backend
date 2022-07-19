@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.teethcare.common.Role;
 import com.teethcare.common.*;
+import com.teethcare.common.Role;
 import com.teethcare.config.security.JwtTokenUtil;
 import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.BookingMapper;
+import com.teethcare.model.entity.*;
+import com.teethcare.mapper.FeedbackMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.*;
 import com.teethcare.model.response.*;
@@ -46,6 +49,8 @@ public class BookingController {
     private final EmailService emailService;
     private final OrderService orderService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final FeedbackService feedbackService;
+    private final FeedbackMapper feedbackMapper;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
@@ -114,9 +119,17 @@ public class BookingController {
 
         Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
-        Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
-
-        return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
+        List<BookingResponse> responseList = bookingMapper.mapBookingListToBookingResponseList(bookingPage.getContent());
+        for (BookingResponse bookingResponse: responseList) {
+            Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
+            FeedbackResponse feedbackResponse = null;
+            if (feedback != null){
+                feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
+            }
+            bookingResponse.setFeedbackResponse(feedbackResponse);
+        }
+        Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseList, pageable);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
