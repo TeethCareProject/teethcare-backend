@@ -5,6 +5,8 @@ import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Order;
 import com.teethcare.model.entity.OrderDetail;
 import com.teethcare.model.entity.ServiceOfClinic;
+import com.teethcare.model.response.BookingResponse;
+import com.teethcare.model.response.ServiceOfClinicResponse;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -54,7 +56,48 @@ public interface OrderMapper {
     @Named(value = "mapServicesListToOrderDetailList")
     List<OrderDetail> mapServicesListToOrderDetailList(List<ServiceOfClinic> serviceOfClinicList);
 
-    default OrderDetail map (ServiceOfClinic service) {
+    default OrderDetail map(ServiceOfClinic service) {
         return mapServicesToOrderDetail(service);
     }
+
+    @Named(value = "mapOrderToBookingResponse")
+    @Mapping(source = "orderDetails", target = "services",
+            qualifiedByName = "mapOrderDetailListToServiceResponseListWithoutFields")
+    @Mapping(target = "patient.id", source = "patientId")
+    @Mapping(target = "patient.firstName", source = "patientName")
+    @Mapping(target = "patient.lastName", ignore = true)
+    @Mapping(target = "dentist.id", source = "dentistId")
+    @Mapping(target = "dentist.firstName", source = "dentistName")
+    @Mapping(target = "dentist.lastName", ignore = true)
+    @Mapping(target = "customerService.id", source = "customerServiceId")
+    @Mapping(target = "customerService.firstName", source = "customerServiceName")
+    @Mapping(target = "customerService.lastName", ignore = true)
+    @Mapping(source = "clinicName", target = "clinic.name")
+    @Mapping(target = "clinic.id", ignore = true)
+    @Mapping(target = "clinic.startTimeShift1", ignore = true)
+    @Mapping(target = "clinic.endTimeShift1", ignore = true)
+    @Mapping(target = "clinic.startTimeShift2", ignore = true)
+    @Mapping(target = "clinic.endTimeShift2", ignore = true)
+    @Mapping(source = "discountValue", target = "voucher.discountValue")
+    @Mapping(source = "voucherCode", target = "voucher.voucherCode")
+    @Mapping(target = "voucher.createdTime", ignore = true)
+    @Mapping(target = "voucher.expiredTime", ignore = true)
+    @Mapping(target = "voucher.quantity", ignore = true)
+    @Mapping(target = "feedbackResponse", ignore = true)
+    @Mapping(target = "finalPrice", ignore = true)
+    BookingResponse mapOrderToBookingResponse(Order order);
+
+    @Named("mapOrderDetailListToServiceResponseListWithoutFields")
+    @IterableMapping(qualifiedByName = "mapOrderDetailToServiceResponseWithoutFields")
+    List<ServiceOfClinicResponse> mapOrderDetailListToServiceResponseListWithoutFields(List<OrderDetail> orderDetails);
+
+    @Named("mapOrderDetailToServiceResponseWithoutFields")
+    @Mapping(target = "id", source = "serviceId")
+    @Mapping(target = "name", source = "serviceName")
+    @Mapping(target = "price", source = "servicePrice")
+    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "imageUrl", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "duration", ignore = true)
+    ServiceOfClinicResponse mapOrderDetailToServiceResponseWithoutFields(OrderDetail orderDetail);
 }
