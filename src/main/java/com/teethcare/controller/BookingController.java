@@ -30,6 +30,7 @@ import javax.management.BadAttributeValueExpException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -120,6 +121,7 @@ public class BookingController {
         Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
         List<BookingResponse> responseList = bookingMapper.mapBookingListToBookingResponseList(bookingPage.getContent());
+
         for (BookingResponse bookingResponse : responseList) {
             Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
             FeedbackResponse feedbackResponse = null;
@@ -128,12 +130,23 @@ public class BookingController {
             }
             bookingResponse.setFeedbackResponse(feedbackResponse);
         }
-        Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseList, pageable);
+
+        List<BookingResponse> responseListTmp = responseList.stream()
+                .map(bookingResponse -> {
+                    if (bookingResponse.isConfirmed()) {
+                        Order order = orderService.findById(bookingResponse.getId());
+                        return orderMapper.mapOrderToBookingResponse(order);
+                    } else {
+                        return bookingResponse;
+                    }
+                }).collect(Collectors.toList());
+
+        Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseListTmp, pageable);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable("id") int id) {
+    public ResponseEntity<BookingResponse> getById(@PathVariable("id") int id) {
         Booking booking = bookingService.findBookingById(id);
         if (booking.isConfirmed()) {
             Order order = orderService.findById(booking.getId());

@@ -4,7 +4,6 @@ import com.teethcare.mapper.OrderMapper;
 import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Order;
 import com.teethcare.model.entity.OrderDetail;
-import com.teethcare.repository.OrderDetailRepository;
 import com.teethcare.repository.OrderRepository;
 import com.teethcare.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final OrderDetailRepository orderDetailRepository;
     @Override
     public List<Order> findAll() {
         //TODO: implements later
@@ -30,8 +28,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findById(int id) {
-        Order order = orderRepository.findById(id).get();
-        return order;
+        return orderRepository.findById(id).orElse(null);
     }
 
     @Override
