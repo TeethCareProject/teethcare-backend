@@ -9,6 +9,8 @@ import com.teethcare.config.security.UserDetailUtil;
 import com.teethcare.exception.BadRequestException;
 import com.teethcare.exception.InternalServerError;
 import com.teethcare.mapper.BookingMapper;
+import com.teethcare.mapper.FeedbackMapper;
+import com.teethcare.mapper.OrderMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.*;
 import com.teethcare.model.response.*;
@@ -28,6 +30,7 @@ import javax.management.BadAttributeValueExpException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -46,6 +49,9 @@ public class BookingController {
     private final EmailService emailService;
     private final OrderService orderService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final OrderMapper orderMapper;
+    private final FeedbackService feedbackService;
+    private final FeedbackMapper feedbackMapper;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.teethcare.common.Role).PATIENT)")
@@ -114,17 +120,38 @@ public class BookingController {
 
         Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
-        Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
+        List<BookingResponse> responseList = bookingMapper.mapBookingListToBookingResponseList(bookingPage.getContent());
 
-        return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
+        for (BookingResponse bookingResponse : responseList) {
+            Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
+            FeedbackResponse feedbackResponse = null;
+            if (feedback != null) {
+                feedbackResponse = feedbackMapper.mapFeedbackToFeedbackResponse(feedback);
+            }
+            bookingResponse.setFeedbackResponse(feedbackResponse);
+        }
+
+        List<BookingResponse> responseListTmp = responseList.stream()
+                .map(bookingResponse -> {
+                    if (bookingResponse.isConfirmed()) {
+                        Order order = orderService.findById(bookingResponse.getId());
+                        return orderMapper.mapOrderToBookingResponse(order);
+                    } else {
+                        return bookingResponse;
+                    }
+                }).collect(Collectors.toList());
+
+        Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseListTmp, pageable);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getById(@PathVariable("id") int id) {
+    public ResponseEntity<BookingResponse> getById(@PathVariable("id") int id) {
         Booking booking = bookingService.findBookingById(id);
         if (booking.isConfirmed()) {
             Order order = orderService.findById(booking.getId());
-            return new ResponseEntity<>(order, HttpStatus.OK);
+            BookingResponse bookingResponse = orderMapper.mapOrderToBookingResponse(order);
+            return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
         } else {
             BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);
             return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
@@ -239,16 +266,16 @@ public class BookingController {
         Order order = bookingService.confirmFinalBooking(bookingUpdateRequest);
         int bookingId = bookingUpdateRequest.getBookingId();
 
-            try {
-                firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
-                        NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
-                emailService.sendOrderDetail(order);
-            } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
-                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
-            } catch (MessagingException e) {
-                return new ResponseEntity<>(new MessageResponse(Message.ERROR_SENDMAIL.name()), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
+        try {
+            firebaseMessagingService.sendNotification(bookingId, NotificationType.CONFIRM_BOOKING_SUCCESS.name(),
+                    NotificationMessage.CONFIRM_BOOKING_SUCCESS + bookingId, Role.DENTIST.name());
+            emailService.sendOrderDetail(order);
+        } catch (FirebaseMessagingException | BadAttributeValueExpException e) {
+            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SEND_NOTIFICATION.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessagingException e) {
+            return new ResponseEntity<>(new MessageResponse(Message.ERROR_SENDMAIL.name()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
 
     }
 
@@ -298,7 +325,7 @@ public class BookingController {
             }
             return new ResponseEntity<>(new MessageResponse(Message.SUCCESS_FUNCTION.name()), HttpStatus.OK);
         } else {
-            throw new BadRequestException("Not reach time to check out");
+            throw new BadRequestException("Not reach time to check in");
         }
     }
 
