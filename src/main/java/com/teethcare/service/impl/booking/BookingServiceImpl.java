@@ -13,7 +13,6 @@ import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
-import com.teethcare.utils.PaginationAndSortFactory;
 import com.teethcare.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -140,7 +139,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<Booking> findAll(String role, int accountId,
+    public List<Booking> findAll(String role, int accountId,
                                  BookingFilterRequest filterRequest,
                                  Pageable pageable) {
 
@@ -154,7 +153,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingListForCustomerService = bookingListForCustomerService.stream()
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
-                return PaginationAndSortFactory.convertToPage(bookingListForCustomerService, pageable);
+                return bookingListForCustomerService;
             case PATIENT:
                 List<Booking> bookingListForPatient = bookingRepository.findBookingByPatientIdAndStatusIsNotNull(accountId, sort);
 
@@ -162,7 +161,7 @@ public class BookingServiceImpl implements BookingService {
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-                return PaginationAndSortFactory.convertToPage(bookingListForPatient, pageable);
+                return bookingListForPatient;
             case DENTIST:
                 List<String> statuses = List.of(Status.Booking.TREATMENT.name(), Status.Booking.DONE.name());
                 List<Booking> bookingListForDentist = bookingRepository.findBookingByDentistIdAndStatusIn(accountId, statuses, sort);
@@ -171,10 +170,11 @@ public class BookingServiceImpl implements BookingService {
                         .filter(filterRequest.getPredicate())
                         .collect(Collectors.toList());
 
-                return PaginationAndSortFactory.convertToPage(bookingListForDentist, pageable);
+                return bookingListForDentist;
         }
         return null;
     }
+
 
     @Override
     @Transactional

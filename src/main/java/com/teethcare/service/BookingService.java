@@ -15,7 +15,7 @@ public interface BookingService extends CRUDService<Booking> {
     Booking saveBookingFromAppointment(BookingFromAppointmentRequest bookingFromAppointmentRequest, Account account);
 
     Page<Booking> findAll(Specification<Booking> bookingSpecification, Pageable pageable);
-    Page<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
+    List<Booking> findAll(String role, int id, BookingFilterRequest filterRequest, Pageable pageable);
 
     boolean confirmBookingRequest(int bookingId, CustomerService customerService, ObjectNode objectNode);
     void rejectBookingRequest(int bookingId);

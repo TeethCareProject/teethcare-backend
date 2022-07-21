@@ -118,12 +118,10 @@ public class BookingController {
 
         Pageable pageable = PaginationAndSortFactory.getPagable(size, page, field, direction);
 
-        Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
+        List<Booking> bookingList = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
-        Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
-
-        List<BookingResponse> responseList = bookingResponsePage.getContent();
-        for (BookingResponse bookingResponse: responseList) {
+        List<BookingResponse> bookingResponseList = bookingMapper.mapBookingListToBookingResponseList(bookingList);
+        for (BookingResponse bookingResponse : bookingResponseList) {
             Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
             FeedbackResponse feedbackResponse = null;
             if (feedback != null) {
@@ -132,8 +130,7 @@ public class BookingController {
             bookingResponse.setFeedbackResponse(feedbackResponse);
         }
 
-
-        List<BookingResponse> responseListTmp = responseList.stream()
+        bookingResponseList = bookingResponseList.stream()
                 .map(bookingResponse -> {
                     if (bookingResponse.isConfirmed()) {
                         Order order = orderService.findById(bookingResponse.getId());
@@ -143,8 +140,8 @@ public class BookingController {
                     }
                 }).collect(Collectors.toList());
 
-        Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseListTmp, pageable);
-        return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
+        Page<BookingResponse> responsePage = PaginationAndSortFactory.convertToPage(bookingResponseList, pageable);
+        return new ResponseEntity<>(responsePage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
