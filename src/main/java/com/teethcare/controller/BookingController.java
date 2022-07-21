@@ -120,9 +120,10 @@ public class BookingController {
 
         Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
-        List<BookingResponse> responseList = bookingMapper.mapBookingListToBookingResponseList(bookingPage.getContent());
+        Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
 
-        for (BookingResponse bookingResponse : responseList) {
+        List<BookingResponse> responseList = bookingResponsePage.getContent();
+        for (BookingResponse bookingResponse: responseList) {
             Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
             FeedbackResponse feedbackResponse = null;
             if (feedback != null) {
@@ -130,6 +131,7 @@ public class BookingController {
             }
             bookingResponse.setFeedbackResponse(feedbackResponse);
         }
+
 
         List<BookingResponse> responseListTmp = responseList.stream()
                 .map(bookingResponse -> {
@@ -142,7 +144,7 @@ public class BookingController {
                 }).collect(Collectors.toList());
 
         Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseListTmp, pageable);
-        return new ResponseEntity<>(responses, HttpStatus.OK);
+        return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
