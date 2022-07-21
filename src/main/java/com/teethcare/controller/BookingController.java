@@ -126,7 +126,6 @@ public class BookingController {
             }
             bookingResponse.setFeedbackResponse(feedbackResponse);
         }
-        //Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseList, pageable);
         return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
     }
 
