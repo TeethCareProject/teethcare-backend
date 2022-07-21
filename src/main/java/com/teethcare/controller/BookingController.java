@@ -115,7 +115,9 @@ public class BookingController {
 
         Page<Booking> bookingPage = bookingService.findAll(account.getRole().getName(), account.getId(), requestFilter, pageable);
 
-        List<BookingResponse> responseList = bookingMapper.mapBookingListToBookingResponseList(bookingPage.getContent());
+        Page<BookingResponse> bookingResponsePage = bookingPage.map(bookingMapper::mapBookingToBookingResponse);
+
+        List<BookingResponse> responseList = bookingResponsePage.getContent();
         for (BookingResponse bookingResponse: responseList) {
             Feedback feedback = feedbackService.findByBookingId(bookingResponse.getId());
             FeedbackResponse feedbackResponse = null;
@@ -124,8 +126,7 @@ public class BookingController {
             }
             bookingResponse.setFeedbackResponse(feedbackResponse);
         }
-        Page<BookingResponse> responses = PaginationAndSortFactory.convertToPage(responseList, pageable);
-        return new ResponseEntity<>(responses, HttpStatus.OK);
+        return new ResponseEntity<>(bookingResponsePage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
