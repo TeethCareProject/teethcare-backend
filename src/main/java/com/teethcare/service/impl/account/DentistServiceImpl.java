@@ -124,7 +124,7 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public int getDentistTotal(Clinic clinic) {
-        List<Dentist> dentists = dentistRepository.findByClinicId(clinic.getId());
+        List<Dentist> dentists = dentistRepository.findByClinicIdAndStatus(clinic.getId(), Status.Account.ACTIVE.name());
         if (dentists == null){
             return 0;
         }

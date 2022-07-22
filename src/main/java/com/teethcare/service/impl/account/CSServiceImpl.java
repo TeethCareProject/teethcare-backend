@@ -118,7 +118,7 @@ public class CSServiceImpl implements CSService {
 
     @Override
     public int getCustomerServiceTotal(Clinic clinic) {
-        List<CustomerService> customerServices = customerServiceRepository.findByClinicId(clinic.getId());
+        List<CustomerService> customerServices = customerServiceRepository.findByClinicIdAndStatus(clinic.getId(), Status.Account.ACTIVE.name());
         if (customerServices == null){
             return 0;
         }
