@@ -6,6 +6,7 @@ import com.teethcare.model.entity.Booking;
 import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.CustomerService;
 import com.teethcare.model.request.*;
+import com.teethcare.model.response.BookingStatisticResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,4 +36,8 @@ public interface BookingService extends CRUDService<Booking> {
     List<Booking> findAllBookingByExpiredTime();
 
     void expired (Booking booking);
+
+    BookingStatisticResponse statistic(ClinicStatisticRequest clinicStatisticRequest, Clinic clinic);
+
+    int getBookingTotal(ClinicStatisticRequest clinicStatisticRequest, Clinic clinic);
 }

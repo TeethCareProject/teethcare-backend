@@ -6,6 +6,7 @@ import com.teethcare.model.entity.Ward;
 import com.teethcare.repository.WardRepository;
 import com.teethcare.service.WardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.Optional;
 @Service
 public class WardServiceImpl implements WardService {
 
-    private final WardRepository wardRepository;
+    @Autowired
+    private WardRepository wardRepository;
 
     @Override
     public List<Ward> findAllByDistrictIdAndDistrictProvinceId(int districtId, int provinceId) {

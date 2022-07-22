@@ -4,6 +4,7 @@ import com.teethcare.model.entity.Location;
 import com.teethcare.repository.LocationRepository;
 import com.teethcare.service.LocationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
 
-    private final LocationRepository locationRepository;
+    @Autowired
+    private LocationRepository locationRepository;
 
     @Override
     public List<Location> findAll() {

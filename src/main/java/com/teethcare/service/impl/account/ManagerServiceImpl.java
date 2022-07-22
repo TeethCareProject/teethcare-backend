@@ -17,6 +17,7 @@ import com.teethcare.repository.ManagerRepository;
 import com.teethcare.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,16 +31,25 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class ManagerServiceImpl implements ManagerService {
+    @Autowired
+    private ManagerRepository managerRepository;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private ClinicMapper clinicMapper;
+    @Autowired
+    private LocationService locationService;
+    @Autowired
+    private WardService wardService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    private final ManagerRepository managerRepository;
-    private final RoleService roleService;
-    private final AccountService accountService;
-    private final AccountMapper accountMapper;
-    private final ClinicMapper clinicMapper;
-    private final LocationService locationService;
-    private final ClinicService clinicService;
-    private final WardService wardService;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private ClinicService clinicService;
 
     @Override
     public List<Manager> findAll() {

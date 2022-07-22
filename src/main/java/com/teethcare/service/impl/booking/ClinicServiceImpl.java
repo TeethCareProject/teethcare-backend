@@ -11,11 +11,15 @@ import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
+import com.teethcare.model.request.ClinicStatisticRequest;
+import com.teethcare.model.response.BookingStatisticResponse;
+import com.teethcare.model.response.ClinicStatisticResponse;
 import com.teethcare.repository.ClinicRepository;
 import com.teethcare.repository.ManagerRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,14 +36,28 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ClinicServiceImpl implements ClinicService {
-    private final ClinicRepository clinicRepository;
-    private final AccountService accountService;
-    private final ManagerRepository managerRepository;
-    private final ClinicMapper clinicMapper;
-    private final LocationService locationService;
-    private final FileService fileService;
-    private final EmailService emailService;
-    private final WardService wardService;
+    @Autowired
+    private ClinicRepository clinicRepository;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private ManagerRepository managerRepository;
+    @Autowired
+    private ClinicMapper clinicMapper;
+    @Autowired
+    private LocationService locationService;
+    @Autowired
+    private FileService fileService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private WardService wardService;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private CSService csService;
+    @Autowired
+    private DentistService dentistService;
 
     @Override
     public List<Clinic> findAll() {
@@ -70,10 +88,10 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public Clinic findById(int theId) {
-        Optional<Clinic> result = clinicRepository.findById(theId);
+    public Clinic findById(int id) {
+        Optional<Clinic> result = clinicRepository.findById(id);
         if (result.isEmpty()) {
-            throw new NotFoundException("Clinic id " + theId + " not found!");
+            throw new NotFoundException("Clinic id " + id + " not found!");
         }
         return result.get();
     }
@@ -167,6 +185,24 @@ public class ClinicServiceImpl implements ClinicService {
         } catch (NumberFormatException e) {
             throw new NotFoundException("Clinic is not found");
         }
+    }
+
+    @Override
+    public ClinicStatisticResponse statistic(ClinicStatisticRequest statisticRequest, Clinic clinic) {
+        ClinicStatisticResponse response = new ClinicStatisticResponse();
+        BookingStatisticResponse bookingStatisticResponse = bookingService.statistic(statisticRequest, clinic);
+        response.setBookingStatisticResponse(bookingStatisticResponse);
+
+        int bookingTotal = bookingService.getBookingTotal(statisticRequest, clinic);
+        response.setBookingTotal(bookingTotal);
+
+        int customerServiceTotal = csService.getCustomerServiceTotal(clinic);
+        response.setCustomerSeviceTotal(customerServiceTotal);
+
+        int dentistTotal = dentistService.getDentistTotal(clinic);
+        response.setDentistTotal(dentistTotal);
+
+        return response;
     }
 
     @Override

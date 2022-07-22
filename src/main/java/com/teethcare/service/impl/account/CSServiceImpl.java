@@ -13,6 +13,7 @@ import com.teethcare.model.request.StaffRegisterRequest;
 import com.teethcare.repository.CustomerServiceRepository;
 import com.teethcare.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,15 +27,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CSServiceImpl implements CSService {
 
-    private final CustomerServiceRepository customerServiceRepository;
-    private final RoleService roleService;
-    private final AccountService accountService;
-    private final ClinicService clinicService;
-    private final ManagerService managerService;
-    private final AccountMapper accountMapper;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private CustomerServiceRepository customerServiceRepository;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private ManagerService managerService;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ClinicService clinicService;
     @Override
     public List<CustomerService> findAll() {
         return customerServiceRepository.findAll();
@@ -106,5 +114,14 @@ public class CSServiceImpl implements CSService {
         } else {
             throw new BadRequestException("User existed!");
         }
+    }
+
+    @Override
+    public int getCustomerServiceTotal(Clinic clinic) {
+        List<CustomerService> customerServices = customerServiceRepository.findByClinicId(clinic.getId());
+        if (customerServices == null){
+            return 0;
+        }
+        return customerServices.size();
     }
 }

@@ -14,6 +14,7 @@ import com.teethcare.service.BookingService;
 import com.teethcare.service.FirebaseMessagingService;
 import com.teethcare.service.NotificationStoreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.management.BadAttributeValueExpException;
@@ -25,12 +26,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
 
-
-    private final JwtTokenUtil jwtTokenUtil;
-    private final FCMTokenStoreRepository fcmTokenStoreRepository;
-    private final AccountService accountService;
-    private final NotificationStoreService notificationStoreService;
-    private final BookingService bookingService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private FCMTokenStoreRepository fcmTokenStoreRepository;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private NotificationStoreService notificationStoreService;
+    @Autowired
+    private BookingService bookingService;
 
     @Override
     public void sendNotification(NotificationMsgRequest notificationMsgRequest) throws FirebaseMessagingException {

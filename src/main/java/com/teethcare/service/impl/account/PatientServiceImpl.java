@@ -12,6 +12,7 @@ import com.teethcare.service.AccountService;
 import com.teethcare.service.PatientService;
 import com.teethcare.service.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PatientServiceImpl implements PatientService {
-    private final PatientRepository patientRepository;
-    private final AccountService accountService;
-    private final AccountMapper accountMapper;
-    private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PatientRepository patientRepository;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<Patient> findAll() {

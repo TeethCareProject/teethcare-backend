@@ -8,6 +8,7 @@ import com.teethcare.service.EmailService;
 import com.teethcare.utils.MailTemplateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -24,7 +25,8 @@ public class EmailServiceImpl implements EmailService {
     @Value("${front.end.origin}")
     private String homepageUrl;
 
-    public final JavaMailSender emailSender;
+    @Autowired
+    public JavaMailSender emailSender;
 
     @Override
     public void sendStaffCreatingPasswordEmail(StaffCreatingPasswordDTO staffCreatingPasswordDTO) throws MessagingException {

@@ -15,6 +15,7 @@ import com.teethcare.repository.DentistRepository;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,15 +27,22 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DentistServiceImpl implements DentistService {
-    private final DentistRepository dentistRepository;
-    private final RoleService roleService;
-    private final ClinicRepository clinicService;
-    private final ManagerService managerService;
-    private final AccountMapper accountMapper;
-    private final AccountService accountService;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private DentistRepository dentistRepository;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private ClinicRepository clinicService;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ManagerService managerService;
 
     @Override
     public Dentist findById(int id) {
@@ -112,6 +120,15 @@ public class DentistServiceImpl implements DentistService {
         } else {
             throw new BadRequestException("User existed!");
         }
+    }
+
+    @Override
+    public int getDentistTotal(Clinic clinic) {
+        List<Dentist> dentists = dentistRepository.findByClinicId(clinic.getId());
+        if (dentists == null){
+            return 0;
+        }
+        return dentists.size();
     }
 
 }
