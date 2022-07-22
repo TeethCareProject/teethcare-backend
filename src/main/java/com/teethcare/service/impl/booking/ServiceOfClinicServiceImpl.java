@@ -16,6 +16,7 @@ import com.teethcare.service.FileService;
 import com.teethcare.service.ServiceOfClinicService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,12 +31,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ServiceOfClinicServiceImpl implements ServiceOfClinicService {
-    private final ServiceRepository serviceRepository;
-    private final CSService csService;
-    private final AccountService accountService;
-    private final ServiceOfClinicMapper serviceOfClinicMapper;
-    private final FileService fileService;
-
+    @Autowired
+    private ServiceRepository serviceRepository;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private ServiceOfClinicMapper serviceOfClinicMapper;
+    @Autowired
+    private FileService fileService;
+    @Autowired
+    private CSService csService;
     @Override
     public List<ServiceOfClinic> findAll() {
         return serviceRepository.findAll();

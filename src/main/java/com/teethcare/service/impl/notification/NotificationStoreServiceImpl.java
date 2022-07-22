@@ -11,6 +11,7 @@ import com.teethcare.service.AccountService;
 import com.teethcare.service.NotificationStoreService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class NotificationStoreServiceImpl implements NotificationStoreService {
-    private final NotificationStoreRepository notificationStoreRepository;
-    private final NotificationMapper notificationMapper;
-    private final AccountService accountService;
-
-    private final JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private NotificationStoreRepository notificationStoreRepository;
+    @Autowired
+    private NotificationMapper notificationMapper;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public void addNew(Account account, NotificationMsgRequest notificationMsgRequest) {

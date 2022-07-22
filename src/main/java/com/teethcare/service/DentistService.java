@@ -1,5 +1,6 @@
 package com.teethcare.service;
 
+import com.teethcare.model.entity.Clinic;
 import com.teethcare.model.entity.Dentist;
 import com.teethcare.model.request.StaffRegisterRequest;
 import org.springframework.data.domain.Page;
@@ -17,4 +18,6 @@ public interface DentistService extends CRUDService<Dentist> {
     Page<Dentist> findDentistByClinicId(int clinicId, Pageable pageable);
 
     Dentist addNew(StaffRegisterRequest staffRegisterRequest, String token);
+
+    int getDentistTotal(Clinic clinic);
 }

@@ -5,6 +5,7 @@ import com.teethcare.model.entity.District;
 import com.teethcare.repository.DistrictRepository;
 import com.teethcare.service.DistrictService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,7 +14,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DistrictServiceImpl implements DistrictService {
 
-    private final DistrictRepository districtRepository;
+    @Autowired
+    private DistrictRepository districtRepository;
 
     @Override
     public District findById(int id) {

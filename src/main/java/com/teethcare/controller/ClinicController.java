@@ -2,21 +2,27 @@ package com.teethcare.controller;
 
 import com.teethcare.common.Constant;
 import com.teethcare.common.EndpointConstant;
+import com.teethcare.common.Role;
 import com.teethcare.common.Status;
 import com.teethcare.config.security.JwtTokenUtil;
+import com.teethcare.exception.ForbiddenException;
 import com.teethcare.exception.NotFoundException;
+import com.teethcare.exception.UnauthorizedException;
 import com.teethcare.mapper.AccountMapper;
 import com.teethcare.mapper.ClinicMapper;
 import com.teethcare.mapper.ServiceOfClinicMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
+import com.teethcare.model.request.ClinicStatisticRequest;
 import com.teethcare.model.request.ServiceFilterRequest;
 import com.teethcare.model.response.AccountResponse;
 import com.teethcare.model.response.ClinicResponse;
+import com.teethcare.model.response.ClinicStatisticResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import com.teethcare.service.*;
 import com.teethcare.utils.PaginationAndSortFactory;
+import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -178,5 +184,22 @@ public class ClinicController {
             return ResponseEntity.ok("{\"facebookPageId\": null}");
         }
         return ResponseEntity.ok("{\"facebookPageId\": \""+facebookPageId+"\"}");
+    }
+
+    @GetMapping("/{id}/statistics")
+    @PreAuthorize("hasAnyAuthority(T(com.teethcare.common.Role).MANAGER, T(com.teethcare.common.Role).ADMIN)")
+    public ResponseEntity<ClinicStatisticResponse> statistic(@PathVariable("id") int id,
+                                                             ClinicStatisticRequest clinicStatisticRequest,
+                                                             @RequestHeader(value = AUTHORIZATION) String token){
+        token = token.substring("Bearer ".length());
+        String username = jwtTokenUtil.getUsernameFromJwt(token);
+        Account account = accountService.getAccountByUsername(username);
+        Clinic clinic = clinicService.findById(id);
+        if (account.getRole().getName().equals(Role.MANAGER.name()) && account.getId().compareTo(clinic.getManager().getId()) != 0){
+            throw new UnauthorizedException("Cannot access this clinic statistic.");
+        }
+        ClinicStatisticResponse response = clinicService.statistic(clinicStatisticRequest, clinic);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

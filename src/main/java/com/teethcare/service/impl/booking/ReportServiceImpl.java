@@ -13,6 +13,7 @@ import com.teethcare.repository.ReportRepository;
 import com.teethcare.service.ReportService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
-    private final ReportRepository reportRepository;
-    private final FeedbackMapper feedbackMapper;
+    @Autowired
+    private ReportRepository reportRepository;
+    @Autowired
+    private FeedbackMapper feedbackMapper;
 
     @Override
     public List<Report> findAll() {

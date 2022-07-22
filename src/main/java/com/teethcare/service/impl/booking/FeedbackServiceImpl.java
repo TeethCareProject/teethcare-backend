@@ -16,6 +16,7 @@ import com.teethcare.service.FeedbackService;
 import com.teethcare.service.ReportService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FeedbackServiceImpl implements FeedbackService {
-    private final FeedbackRepository feedbackRepository;
-    private final BookingService bookingService;
-    private final FeedbackMapper feedbackMapper;
-    private final ReportService reportService;
+    @Autowired
+    private FeedbackRepository feedbackRepository;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private FeedbackMapper feedbackMapper;
+    @Autowired
+    private ReportService reportService;
 
     @Override
     public List<Feedback> findAll() {

@@ -9,6 +9,7 @@ import com.teethcare.exception.NotFoundException;
 import com.teethcare.mapper.BookingMapper;
 import com.teethcare.model.entity.*;
 import com.teethcare.model.request.*;
+import com.teethcare.model.response.BookingStatisticResponse;
 import com.teethcare.repository.AppointmentRepository;
 import com.teethcare.repository.BookingRepository;
 import com.teethcare.service.*;
@@ -17,6 +18,7 @@ import com.teethcare.utils.PaginationAndSortFactory;
 import com.teethcare.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,14 +41,22 @@ import java.util.stream.IntStream;
 @Slf4j
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingRepository bookingRepository;
-    private final BookingMapper bookingMapper;
-    private final ServiceOfClinicService serviceOfClinicService;
-    private final PatientService patientService;
-    private final DentistService dentistService;
-    private final ClinicService clinicService;
-    private final AppointmentRepository appointmentRepository;
-    private final VoucherService voucherService;
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private BookingMapper bookingMapper;
+    @Autowired
+    private PatientService patientService;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+    @Autowired
+    private VoucherService voucherService;
+    @Autowired
+    private ServiceOfClinicService serviceOfClinicService;
+    @Autowired
+    private DentistService dentistService;
+    @Autowired
+    private ClinicService clinicService;
 
     @Override
     public List<Booking> findAll() {
@@ -303,6 +313,67 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(Status.Booking.EXPIRED.toString());
             bookingRepository.save(booking);
         }
+    }
+
+    @Override
+    public BookingStatisticResponse statistic(ClinicStatisticRequest clinicStatisticRequest, Clinic clinic) {
+        BookingStatisticResponse response = new BookingStatisticResponse();
+        List<Booking> bookings = bookingRepository.findBookingByClinic(clinic);
+        if (bookings != null) {
+            List<Booking> bookingTotal = bookings.stream()
+                    .filter(clinicStatisticRequest.rangeTimePredicate())
+                    .collect(Collectors.toList());
+            //get booking total size
+            float bookingTotalSize = 0;
+            if (!bookingTotal.isEmpty()) {
+                bookingTotalSize = bookingTotal.size();
+
+                List<Booking> doneBooking = bookingTotal.stream()
+                        .filter(clinicStatisticRequest.doneStatusPredicate())
+                        .collect(Collectors.toList());
+                //get done booking size
+                float doneBookingSize = doneBooking.size();
+                response.setDoneBooking((float) Math.round((doneBookingSize/bookingTotalSize) * 10000) / 100);
+
+                List<Booking> pendingBooking = bookingTotal.stream()
+                        .filter(clinicStatisticRequest.pendingStatusPredicate())
+                        .collect(Collectors.toList());
+                //get pending booking size
+                float pendingBookingSize = pendingBooking.size();
+                response.setPendingBooking((float) Math.round((pendingBookingSize/bookingTotalSize) * 10000) / 100);
+
+
+                List<Booking> failBooking = bookingTotal.stream()
+                        .filter(clinicStatisticRequest.failedStatusPredicate())
+                        .collect(Collectors.toList());
+                //get done booking size
+                float failedBookingSize = failBooking.size();
+                response.setFailedBooking((float) Math.round((failedBookingSize/bookingTotalSize) * 10000) / 100);
+
+                List<Booking> processingBooking = bookingTotal.stream()
+                        .filter(clinicStatisticRequest.processingStatusPredicate())
+                        .collect(Collectors.toList());
+                //get done booking size
+                float processingBookingSize = processingBooking.size();
+                response.setProcessingBooking((float) Math.round((processingBookingSize/bookingTotalSize) * 10000) / 100);
+            }
+        }
+            return response;
+
+    }
+
+    @Override
+    public int getBookingTotal(ClinicStatisticRequest clinicStatisticRequest, Clinic clinic) {
+        List<Booking> bookings = bookingRepository.findBookingByClinic(clinic);
+        List<Booking> bookingTotal = bookings.stream()
+                .filter(clinicStatisticRequest.rangeTimePredicate())
+                .collect(Collectors.toList());
+        //get booking total size
+        if (bookingTotal == null){
+            return 0;
+        }
+        int bookingTotalSize = bookingTotal.size();
+        return bookingTotalSize;
     }
 
     @Override
