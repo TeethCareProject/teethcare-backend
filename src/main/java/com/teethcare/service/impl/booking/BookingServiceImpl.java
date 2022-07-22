@@ -355,9 +355,8 @@ public class BookingServiceImpl implements BookingService {
                 List<Booking> failBooking = bookingTotal.stream()
                         .filter(clinicStatisticRequest.failedStatusPredicate())
                         .collect(Collectors.toList());
-                //get done booking size
-                float failedBookingSize = failBooking.size();
-                float failedBookingPercent = 100 - doneBookingPercent - processingBookingPercent - pendingBookingPercent;
+                //get done booking percent
+                float failedBookingPercent = (float) Math.round((100 - doneBookingPercent - processingBookingPercent - pendingBookingPercent)*100)/100;
                 response.setFailedBooking(failedBookingPercent);
 
 
