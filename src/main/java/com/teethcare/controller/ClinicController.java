@@ -199,7 +199,6 @@ public class ClinicController {
             throw new UnauthorizedException("Cannot access this clinic statistic.");
         }
         ClinicStatisticResponse response = clinicService.statistic(clinicStatisticRequest, clinic);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

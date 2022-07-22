@@ -333,29 +333,34 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 //get done booking size
                 float doneBookingSize = doneBooking.size();
-                response.setDoneBooking((float) Math.round((doneBookingSize/bookingTotalSize) * 10000) / 100);
+                float doneBookingPercent = (float) Math.round((doneBookingSize/bookingTotalSize) * 10000) / 100;
+                response.setDoneBooking(doneBookingPercent);
 
                 List<Booking> pendingBooking = bookingTotal.stream()
                         .filter(clinicStatisticRequest.pendingStatusPredicate())
                         .collect(Collectors.toList());
                 //get pending booking size
                 float pendingBookingSize = pendingBooking.size();
-                response.setPendingBooking((float) Math.round((pendingBookingSize/bookingTotalSize) * 10000) / 100);
-
-
-                List<Booking> failBooking = bookingTotal.stream()
-                        .filter(clinicStatisticRequest.failedStatusPredicate())
-                        .collect(Collectors.toList());
-                //get done booking size
-                float failedBookingSize = failBooking.size();
-                response.setFailedBooking((float) Math.round((failedBookingSize/bookingTotalSize) * 10000) / 100);
+                float pendingBookingPercent = (float) Math.round((pendingBookingSize/bookingTotalSize) * 10000) / 100;
+                response.setPendingBooking(pendingBookingPercent);
 
                 List<Booking> processingBooking = bookingTotal.stream()
                         .filter(clinicStatisticRequest.processingStatusPredicate())
                         .collect(Collectors.toList());
                 //get done booking size
                 float processingBookingSize = processingBooking.size();
-                response.setProcessingBooking((float) Math.round((processingBookingSize/bookingTotalSize) * 10000) / 100);
+                float processingBookingPercent = (float) Math.round((processingBookingSize/bookingTotalSize) * 10000) / 100;
+                response.setProcessingBooking(processingBookingPercent);
+
+                List<Booking> failBooking = bookingTotal.stream()
+                        .filter(clinicStatisticRequest.failedStatusPredicate())
+                        .collect(Collectors.toList());
+                //get done booking size
+                float failedBookingSize = failBooking.size();
+                float failedBookingPercent = 100 - doneBookingPercent - processingBookingPercent - pendingBookingPercent;
+                response.setFailedBooking(failedBookingPercent);
+
+
             }
         }
             return response;
