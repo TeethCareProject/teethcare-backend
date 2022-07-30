@@ -9,14 +9,17 @@ import com.teethcare.model.response.BookingResponse;
 import com.teethcare.model.response.ServiceOfClinicResponse;
 import org.mapstruct.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
         config = ConfigurationMapper.class)
 public interface OrderMapper {
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id", target = "id")
     @Mapping(source = "services", target = "orderDetails", qualifiedByName = "mapServicesListToOrderDetailList")
+    @Mapping(source = "clinic.id", target = "clinicId")
     @Mapping(source = "clinic.name", target = "clinicName")
     @Mapping(source = "clinic.taxCode", target = "clinicTaxCode")
     @Mapping(source = "clinic.email", target = "clinicEmail")
@@ -36,6 +39,7 @@ public interface OrderMapper {
     @Mapping(target = "dentistLastName", source = "dentist.lastName")
     @Mapping(source = "customerService.id", target = "customerServiceId")
     @Mapping(target = "customerServiceLastName", source = "customerService.lastName")
+    @Mapping(target = "voucherId", source = "voucher.id")
     @Mapping(target = "customerServiceFirstName", source = "customerService.firstName")
     @Mapping(target = "clinicLocation", expression = "java(booking.getClinic().getLocation().getFullAddress())")
     Order mapBookingToOrder(Booking booking);
@@ -80,18 +84,22 @@ public interface OrderMapper {
     @Mapping(target = "customerService.firstName", source = "customerServiceFirstName")
     @Mapping(target = "customerService.lastName", source = "customerServiceLastName")
     @Mapping(source = "clinicName", target = "clinic.name")
-    @Mapping(target = "clinic.id", ignore = true)
+    @Mapping(target = "clinic.id", source = "clinicId")
     @Mapping(target = "clinic.startTimeShift1", ignore = true)
     @Mapping(target = "clinic.endTimeShift1", ignore = true)
     @Mapping(target = "clinic.startTimeShift2", ignore = true)
     @Mapping(target = "clinic.endTimeShift2", ignore = true)
     @Mapping(source = "discountValue", target = "voucher.discountValue")
     @Mapping(source = "voucherCode", target = "voucher.voucherCode")
+    @Mapping(target = "voucher.id", source = "voucherId")
     @Mapping(target = "voucher.createdTime", ignore = true)
     @Mapping(target = "voucher.expiredTime", ignore = true)
     @Mapping(target = "voucher.quantity", ignore = true)
     @Mapping(target = "feedbackResponse", ignore = true)
     @Mapping(target = "finalPrice", ignore = true)
+    @Mapping(target = "isConfirmed", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "isRequestChanged", ignore = true)
     BookingResponse mapOrderToBookingResponse(Order order);
 
     @Named("mapOrderDetailListToServiceResponseListWithoutFields")
@@ -107,4 +115,18 @@ public interface OrderMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "duration", ignore = true)
     ServiceOfClinicResponse mapOrderDetailToServiceResponseWithoutFields(OrderDetail orderDetail);
+
+
+    @AfterMapping
+    default void setFinalPrice(@MappingTarget BookingResponse bookingResponse, Order order) {
+        BigDecimal finalPrice = order.getTotalPrice();
+        if (finalPrice != null) {
+            if (order.getDiscountValue() != null) {
+                finalPrice = order.getTotalPrice().subtract(order.getDiscountValue());
+            }
+            bookingResponse.setFinalPrice(finalPrice.compareTo(BigDecimal.ZERO) > 0 ? finalPrice : BigDecimal.ZERO);
+        } else {
+            bookingResponse.setFinalPrice(null);
+        }
+    }
 }

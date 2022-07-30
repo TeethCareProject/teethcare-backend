@@ -85,6 +85,9 @@ public class Order {
     @Column(name = "clinic_email")
     private String clinicEmail;
 
+    @Column(name = "voucher_id")
+    private int voucherId;
+
     @Column(name = "voucher_code")
     private String voucherCode;
 
@@ -93,6 +96,9 @@ public class Order {
 
     @Column(name = "customer_service_id")
     private int customerServiceId;
+
+    @Column(name = "clinic_id")
+    private int clinicId;
 
     @Column(name = "clinic_phone")
     private String clinicPhone;

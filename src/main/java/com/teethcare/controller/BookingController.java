@@ -46,9 +46,11 @@ public class BookingController {
     private final AccountService accountService;
     private final FirebaseMessagingService firebaseMessagingService;
     private final EmailService emailService;
+    private final VoucherService voucherService;
     private final OrderService orderService;
     private final JwtTokenUtil jwtTokenUtil;
     private final OrderMapper orderMapper;
+    private final ClinicService clinicService;
     private final FeedbackService feedbackService;
     private final FeedbackMapper feedbackMapper;
 
@@ -149,6 +151,26 @@ public class BookingController {
         if (booking.isConfirmed()) {
             Order order = orderService.findById(booking.getId());
             BookingResponse bookingResponse = orderMapper.mapOrderToBookingResponse(order);
+
+            Account account = accountService.findById(order.getPatientId());
+            if(account != null) {
+                bookingResponse.getPatient().setUsername(account.getUsername());
+            }
+
+            Clinic clinic = clinicService.findById(order.getClinicId());
+            if (clinic != null) {
+                bookingResponse.getClinic().setStartTimeShift1(clinic.getStartTimeShift1() == null ? null : clinic.getStartTimeShift1().getTime());
+                bookingResponse.getClinic().setStartTimeShift2(clinic.getStartTimeShift2() == null ? null : clinic.getStartTimeShift2().getTime());
+                bookingResponse.getClinic().setEndTimeShift1(clinic.getEndTimeShift1() == null ? null : clinic.getEndTimeShift1().getTime());
+                bookingResponse.getClinic().setEndTimeShift2(clinic.getEndTimeShift2() == null ? null : clinic.getEndTimeShift2().getTime());
+            }
+
+            Voucher voucher = voucherService.findVoucherById(order.getVoucherId());
+            if (voucher != null) {
+                bookingResponse.getVoucher().setCreatedTime(voucher.getCreatedTime() == null ? null : voucher.getCreatedTime().getTime());
+                bookingResponse.getVoucher().setExpiredTime(voucher.getExpiredTime() == null ? null : voucher.getExpiredTime().getTime());
+                bookingResponse.getVoucher().setQuantity(voucher.getQuantity());
+            }
             return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
         } else {
             BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);

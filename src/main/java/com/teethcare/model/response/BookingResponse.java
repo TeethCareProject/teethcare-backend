@@ -25,9 +25,9 @@ public class BookingResponse {
     private Long desiredCheckingTime;
     private UserInforResponse customerService;
     private String description;
-    private boolean isRequestChanged;
-    private int version;
-    private boolean isConfirmed;
+    private Boolean isRequestChanged;
+    private Integer version;
+    private Boolean isConfirmed;
     private BigDecimal finalPrice;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ServiceOfClinicResponse> services;
