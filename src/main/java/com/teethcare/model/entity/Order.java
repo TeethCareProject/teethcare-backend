@@ -25,8 +25,11 @@ public class Order {
     @Column(name = "patient_id")
     private int patientId;
 
-    @Column(name = "patient_name")
-    private String patientName;
+    @Column(name = "patient_first_name")
+    private String patientFirstName;
+
+    @Column(name = "patient_last_name")
+    private String patientLastName;
 
     @Column(name = "patient_phone")
     private String patientPhone;
@@ -61,8 +64,11 @@ public class Order {
     @Column(name = "dentist_id")
     private int dentistId;
 
-    @Column(name = "dentist_name")
-    private String dentistName;
+    @Column(name = "dentist_first_name")
+    private String dentistFirstName;
+
+    @Column(name = "dentist_last_name")
+    private String dentistLastName;
 
     @Column(name = "note")
     private String note;
@@ -91,8 +97,12 @@ public class Order {
     @Column(name = "clinic_phone")
     private String clinicPhone;
 
-    @Column(name = "customer_service_name")
-    private String customerServiceName;
+    @Column(name = "customer_service_first_name")
+    private String customerServiceFirstName;
+
+    @Column(name = "customer_service_last_name")
+    private String customerServiceLastName;
+
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,
             mappedBy = "order")

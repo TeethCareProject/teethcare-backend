@@ -30,7 +30,6 @@ import javax.management.BadAttributeValueExpException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -130,15 +129,15 @@ public class BookingController {
             bookingResponse.setFeedbackResponse(feedbackResponse);
         }
 
-        bookingResponseList = bookingResponseList.stream()
-                .map(bookingResponse -> {
-                    if (bookingResponse.isConfirmed()) {
-                        Order order = orderService.findById(bookingResponse.getId());
-                        return orderMapper.mapOrderToBookingResponse(order);
-                    } else {
-                        return bookingResponse;
-                    }
-                }).collect(Collectors.toList());
+//        bookingResponseList = bookingResponseList.stream()
+//                .map(bookingResponse -> {
+//                    if (bookingResponse.isConfirmed()) {
+//                        Order order = orderService.findById(bookingResponse.getId());
+//                        return orderMapper.mapOrderToBookingResponse(order);
+//                    } else {
+//                        return bookingResponse;
+//                    }
+//                }).collect(Collectors.toList());
 
         Page<BookingResponse> responsePage = PaginationAndSortFactory.convertToPage(bookingResponseList, pageable);
         return new ResponseEntity<>(responsePage, HttpStatus.OK);
