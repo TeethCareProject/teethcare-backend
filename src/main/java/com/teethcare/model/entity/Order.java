@@ -86,7 +86,7 @@ public class Order {
     private String clinicEmail;
 
     @Column(name = "voucher_id")
-    private int voucherId;
+    private Integer voucherId;
 
     @Column(name = "voucher_code")
     private String voucherCode;

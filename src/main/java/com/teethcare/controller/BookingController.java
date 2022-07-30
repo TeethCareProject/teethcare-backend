@@ -165,12 +165,17 @@ public class BookingController {
                 bookingResponse.getClinic().setEndTimeShift2(clinic.getEndTimeShift2() == null ? null : clinic.getEndTimeShift2().getTime());
             }
 
-            Voucher voucher = voucherService.findVoucherById(order.getVoucherId());
-            if (voucher != null) {
-                bookingResponse.getVoucher().setCreatedTime(voucher.getCreatedTime() == null ? null : voucher.getCreatedTime().getTime());
-                bookingResponse.getVoucher().setExpiredTime(voucher.getExpiredTime() == null ? null : voucher.getExpiredTime().getTime());
-                bookingResponse.getVoucher().setQuantity(voucher.getQuantity());
+            if(order.getVoucherId() != null) {
+                Voucher voucher = voucherService.findVoucherById(order.getVoucherId());
+                if (voucher != null) {
+                    bookingResponse.getVoucher().setCreatedTime(voucher.getCreatedTime() == null ? null : voucher.getCreatedTime().getTime());
+                    bookingResponse.getVoucher().setExpiredTime(voucher.getExpiredTime() == null ? null : voucher.getExpiredTime().getTime());
+                    bookingResponse.getVoucher().setQuantity(voucher.getQuantity());
+                }
+            } else {
+                bookingResponse.setVoucher(null);
             }
+
             return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
         } else {
             BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);
