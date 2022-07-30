@@ -319,10 +319,13 @@ public class BookingServiceImpl implements BookingService {
     public BookingStatisticResponse statistic(ClinicStatisticRequest clinicStatisticRequest, Clinic clinic) {
         BookingStatisticResponse response = new BookingStatisticResponse();
         List<Booking> bookings = bookingRepository.findBookingByClinic(clinic);
+        List<Booking> bookingTotal = bookings;
         if (bookings != null) {
-            List<Booking> bookingTotal = bookings.stream()
-                    .filter(clinicStatisticRequest.rangeTimePredicate())
-                    .collect(Collectors.toList());
+            if (clinicStatisticRequest.getEndDate() != 0 && clinicStatisticRequest.getEndDate() !=0) {
+                bookingTotal = bookings.stream()
+                        .filter(clinicStatisticRequest.rangeTimePredicate())
+                        .collect(Collectors.toList());
+            }
             //get booking total size
             float bookingTotalSize = 0;
             if (!bookingTotal.isEmpty()) {
