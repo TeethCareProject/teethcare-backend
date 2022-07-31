@@ -372,7 +372,7 @@ public class BookingServiceImpl implements BookingService {
     public int getBookingTotal(ClinicStatisticRequest clinicStatisticRequest, Clinic clinic) {
         List<Booking> bookings = bookingRepository.findBookingByClinic(clinic);
         List<Booking> bookingTotal = bookings;
-        if (clinicStatisticRequest.getEndDate() == 0 && clinicStatisticRequest.getStartDate() == 0) {
+        if (clinicStatisticRequest.getEndDate() != 0 && clinicStatisticRequest.getStartDate() != 0) {
             bookingTotal = bookings.stream()
                     .filter(clinicStatisticRequest.rangeTimePredicate())
                     .collect(Collectors.toList());
@@ -382,6 +382,7 @@ public class BookingServiceImpl implements BookingService {
             return 0;
         }
         int bookingTotalSize = bookingTotal.size();
+
         return bookingTotalSize;
     }
 
