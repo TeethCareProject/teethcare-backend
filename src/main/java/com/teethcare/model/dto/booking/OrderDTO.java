@@ -16,7 +16,9 @@ import java.util.List;
 public class OrderDTO {
     private int id;
 
-    private String patientName;
+    private String patientFirstName;
+
+    private String patientLastName;
 
     private String patientPhone;
 
@@ -30,7 +32,9 @@ public class OrderDTO {
 
     private BigDecimal totalPrice;
 
-    private String dentistName;
+    private String dentistFirstName;
+
+    private String dentistLastName;
 
     private String clinicName;
 
@@ -46,7 +50,8 @@ public class OrderDTO {
 
     private BigDecimal discountValue = BigDecimal.ZERO;
 
-    private String customerServiceName;
+    private String customerServiceFirstName;
+    private String customerServiceLastName;
     private Timestamp examinationTime;
 
     private List<OrderDetailDTO> orderDetailDTOs;
