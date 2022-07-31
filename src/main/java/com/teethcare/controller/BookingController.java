@@ -176,6 +176,9 @@ public class BookingController {
                 bookingResponse.setVoucher(null);
             }
 
+            bookingResponse.setVersion(booking.getVersion());
+            bookingResponse.setIsConfirmed(booking.isConfirmed());
+
             return new ResponseEntity<>(bookingResponse, HttpStatus.OK);
         } else {
             BookingResponse bookingResponse = bookingMapper.mapBookingToBookingResponse(booking);
