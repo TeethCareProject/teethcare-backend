@@ -362,7 +362,6 @@ public class BookingServiceImpl implements BookingService {
                 float failedBookingPercent = (float) Math.round((100 - doneBookingPercent - processingBookingPercent - pendingBookingPercent)*100)/100;
                 response.setFailedBooking(failedBookingPercent);
 
-
             }
         }
             return response;
@@ -372,9 +371,12 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public int getBookingTotal(ClinicStatisticRequest clinicStatisticRequest, Clinic clinic) {
         List<Booking> bookings = bookingRepository.findBookingByClinic(clinic);
-        List<Booking> bookingTotal = bookings.stream()
-                .filter(clinicStatisticRequest.rangeTimePredicate())
-                .collect(Collectors.toList());
+        List<Booking> bookingTotal = bookings;
+        if (clinicStatisticRequest.getEndDate() == 0 && clinicStatisticRequest.getStartDate() == 0) {
+            bookingTotal = bookings.stream()
+                    .filter(clinicStatisticRequest.rangeTimePredicate())
+                    .collect(Collectors.toList());
+        }
         //get booking total size
         if (bookingTotal == null){
             return 0;
