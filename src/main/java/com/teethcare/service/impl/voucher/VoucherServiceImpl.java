@@ -19,6 +19,7 @@ import com.teethcare.service.ClinicService;
 import com.teethcare.service.VoucherService;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class VoucherServiceImpl implements VoucherService {
-    private final VoucherRepository voucherRepository;
-    private final VoucherMapper voucherMapper;
-    private final AccountService accountService;
-    private final ClinicService clinicService;
-    private final BookingRepository bookingRepository;
+    @Autowired
+    private VoucherRepository voucherRepository;
+    @Autowired
+    private VoucherMapper voucherMapper;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private ClinicService clinicService;
+    @Autowired
+    private BookingRepository bookingRepository;
 
 
     @Override

@@ -5,6 +5,8 @@ import com.teethcare.model.entity.Location;
 import com.teethcare.model.entity.Manager;
 import com.teethcare.model.request.ClinicFilterRequest;
 import com.teethcare.model.request.ClinicRequest;
+import com.teethcare.model.request.ClinicStatisticRequest;
+import com.teethcare.model.response.ClinicStatisticResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +32,6 @@ public interface ClinicService extends CRUDService<Clinic> {
     Clinic updateImage (MultipartFile image, String username);
     Clinic approve(Clinic clinic) throws MessagingException;
     Clinic reject(Clinic clinic) throws MessagingException;
-
     String findFacebookPageIdByClinicId(String id);
+    ClinicStatisticResponse statistic(ClinicStatisticRequest statisticRequest, Clinic clinicId);
 }

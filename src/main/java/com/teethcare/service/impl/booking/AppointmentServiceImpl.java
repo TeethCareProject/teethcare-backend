@@ -14,6 +14,7 @@ import com.teethcare.service.*;
 import com.teethcare.utils.ConvertUtils;
 import com.teethcare.utils.PaginationAndSortFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,24 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
 
-    private final BookingService bookingService;
-    private final ServiceRepository serviceRepository;
-    private final AppointmentRepository appointmentRepository;
-    private final AccountService accountService;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final ManagerService managerService;
-    private final ClinicService clinicService;
-    private final DentistService dentistService;
-    private final CSService csService;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private ServiceRepository serviceRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private ManagerService managerService;
+    @Autowired
+    private ClinicService clinicService;
+    @Autowired
+    private DentistService dentistService;
+    @Autowired
+    private CSService csService;
 
     @Override
     @Transactional

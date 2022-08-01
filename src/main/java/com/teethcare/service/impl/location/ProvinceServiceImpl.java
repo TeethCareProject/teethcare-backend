@@ -5,6 +5,7 @@ import com.teethcare.model.entity.Province;
 import com.teethcare.repository.ProvinceRepository;
 import com.teethcare.service.ProvinceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.Optional;
 @Service
 public class ProvinceServiceImpl implements ProvinceService {
 
-    private final ProvinceRepository provinceRepository;
+    @Autowired
+    private ProvinceRepository provinceRepository;
 
     @Override
     public List<Province> findAll() {
