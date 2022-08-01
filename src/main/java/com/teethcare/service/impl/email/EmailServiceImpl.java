@@ -107,7 +107,7 @@ public class EmailServiceImpl implements EmailService {
 
         MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
 
-        String htmlMsg = MailTemplateUtils.getClinicApprovement(clinic.getManager().getFirstName(), homepageUrl + "/login");
+        String htmlMsg = MailTemplateUtils.getClinicApprovement(clinic.getManager().getFirstName(), homepageUrl + "login");
 
         message.setContent(htmlMsg, "text/html;charset=UTF-8");
 
