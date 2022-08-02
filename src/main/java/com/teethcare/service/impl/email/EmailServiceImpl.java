@@ -51,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
         BookingConfirmationDTO bookingConfirmationDTO =
                 BookingConfirmationDTO.builder()
                         .firstname(booking.getPatient().getFirstName())
-                        .lastname(booking.getPatient().getFirstName())
+                        .lastname(booking.getPatient().getLastName())
                         .email(booking.getPatient().getEmail())
                         .bookingId(booking.getId())
                         .fwdLink(homepageUrl + "confirmBooking/" + booking.getId() + "?version=" + booking.getVersion())
