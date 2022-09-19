@@ -41,7 +41,8 @@ public class Status {
 
     public enum Appointment {
         ACTIVE,
-        INACTIVE;
+        INACTIVE,
+        EXPIRED;
 
         public static List<String> getNames() {
             return Arrays.stream(Appointment.values()).map(Enum::name).collect(Collectors.toList());
